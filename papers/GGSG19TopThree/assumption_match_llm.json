@@ -1,164 +1,61 @@
 {
-  "schema": 1,
-  "paper": "GGSG19TopThree",
-  "prompt_version": "assumption-provenance-v2-exact-premise-source",
-  "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "validated_at": "2026-06-13T00:00:00Z",
-  "comment": "Refreshed under the exact premise-source provenance prompt. Every audit-premise is judged independently where present.",
-  "prompt_summary": [
-    "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
-    "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
-    "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
-    "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
-    "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption."
-  ],
+  "comment": "Semantic premise provenance rejudge. Certificate/replay/process premises are not accepted by name and must be paper conditions, documented caveats, partial boundaries, or derived from primitives.",
   "items": {
-    "assumption_strict_cross_tier_no_ties": {
-      "judgment": "paper_condition",
-      "reason": "Proposition 1 is exactly the strict cross-tier top-prefix regime; the source states strict inequalities between every higher-tier and lower-tier candidate at every prefix cutoff.",
-      "source_location": "source_tex/arxiv.tex lines 385-392, Proposition thm:consistency",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hNoTie : \u2200 stage : Fin Stage, \u2200 hi lo : Candidate n, hi \u2208 targetPrefix stage \u2192 lo \u2209 targetPrefix stage \u2192 \u2200 cut : RankingProperPrefixCut n, rankingTopPrefixProb law lo cut \u2260 rankingTopPrefixProb law hi cut": {
-          "judgment": "source_text",
-          "source_location": "source_tex/arxiv.tex lines 385-392: higher-tier candidates are strictly more likely to be ranked in every top-k prefix than lower-tier candidates.",
-          "reason": "Strict greater-than source inequalities imply the Lean no-equality/no-cross-tier-tie premise.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source",
-      "lean_statement_sha256": "1ac5e4ce529cd240c94ace46e6d3807b0828b7cd3460dafef0620da7ca2e1ce5"
-    },
-    "assumption_pairwise_approval_ternary_gap_domain": {
-      "judgment": "paper_condition",
-      "reason": "Proposition 3 specializes to K-approval, where score gaps are ternary, and uses the source condition that the higher-score candidate has larger expected score.",
-      "source_location": "source_tex/arxiv.tex lines 508-517, Proposition lem:pairwiselearning_approval",
-      "premise_count": 2,
-      "premise_judgments": {
-        "hle : pDown \u2264 pUp": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "source_tex/arxiv.tex lines 508-517: Proposition 3 assumes candidates i,j such that s_i > s_j and K-approval score \u03b2(k)=1[k\u2264K].",
-          "reason": "Under K-approval the expected pairwise score gap is pUp - pDown, so the source condition s_i > s_j derives pDown \u2264 pUp.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        },
-        "hscore : \u2200 signal, hiScore signal - loScore signal = 1 \u2228 hiScore signal - loScore signal = 0 \u2228 hiScore signal - loScore signal = -1": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "source_tex/arxiv.tex lines 508-517: K-approval scores are \u03b2(k)=1[k\u2264K], so a pairwise score difference is 1, 0, or -1.",
-          "reason": "The ternary Lean score-gap premise is the finite-signal expansion of the source K-approval scoring rule.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source",
-      "lean_statement_sha256": "08c3ed3458916508b01fa7d42853b5585b515fdf5116600e53981b6a70218068"
-    },
-    "assumption_randomized_mechanism_probability_weights": {
-      "judgment": "paper_condition",
-      "reason": "Randomized scoring and K-approval mechanisms choose component rules with probabilities.",
-      "source_location": "source_tex/arxiv.tex lines 667-669 and 1399-1407",
-      "premise_count": 2,
-      "premise_judgments": {
-        "hweight : \u2200 rule, 0 \u2264 weight rule": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "source_tex/arxiv.tex lines 667-669: \u03b2_p is selected with probability d_p.",
-          "reason": "Probability weights are nonnegative by the source randomized-mechanism setup.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        },
-        "hsum : (\u2211 rule : Rule, weight rule) = 1": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "source_tex/arxiv.tex lines 667-669 and 1405-1407: component rules are selected with probabilities d^u.",
-          "reason": "A randomized mechanism's component probabilities sum to one in the source model.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source",
-      "lean_statement_sha256": "4c557344aeeeaad443362287ff29138717f3bcce26602cbb8c53c67bcca8ec3a"
-    },
     "assumption_mallows_nontrivial_winner_and_noise": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "13be07790831e316040d153984d00dfeca7455a9b4f3a8f6ab2c001ceb8287ff",
+      "paper_statement_sha256": "8a964ecbd60b59f8789b06eff4134768e0df0516aa9c0fda1783abff8efb80db",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "The Mallows no-randomization corollary selects W winners from the reference ranking and uses the adjacent pivotal pair W,W+1.",
-      "source_location": "source_tex/arxiv.tex lines 729-733 and 752-759",
-      "premise_count": 2,
-      "premise_judgments": {
-        "hW : 0 < W.val": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "source_tex/arxiv.tex lines 729-733: selecting W winners separates candidates 1..W from W+1..M and uses pivotal pair W,W+1.",
-          "reason": "The Lean positivity condition states that the selected-winner boundary is nontrivial, which is implicit in the source's adjacent pivotal-pair setup.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        },
-        "hq_lt : M.q < 1": {
-          "judgment": "paper_condition",
-          "source_location": "source_tex/arxiv.tex lines 291-295, 725-733, and 755-759.",
-          "reason": "The corollary reasons about the reference-ranking top-W set and adjacent pivotal pair under the Mallows model. The uniform endpoint \u03c6=1 does not induce the strict reference top-W outcome used by that source proof, so Lean records the non-uniform Mallows regime as an implicit paper condition.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source",
-      "lean_statement_sha256": "13be07790831e316040d153984d00dfeca7455a9b4f3a8f6ab2c001ceb8287ff"
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_nontrivial_k_approval_cutoffs": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "952c5858f9376a6544bf3eec646760beecae2b12ebcb5082bdf3983288c1e8b3",
+      "paper_statement_sha256": "3998841e1d0354d2fa4d6697c0d0c7efbe4a83759c32fff2fa285ce837917a56",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "The K-approval randomization theorem ranges over proper nontrivial K-approval cutoffs.",
-      "source_location": "source_tex/arxiv.tex lines 1513-1517 and 729-733",
-      "premise_count": 2,
-      "premise_judgments": {
-        "hK_pos : \u2200 rule, 0 < K rule": {
-          "judgment": "source_text",
-          "source_location": "source_tex/arxiv.tex lines 1513-1517: randomization over K-approval mechanisms for K in {1,...,M-1}.",
-          "reason": "The source K range gives positive cutoffs.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        },
-        "hK_lt : \u2200 rule, K rule < n + 2": {
-          "judgment": "source_text",
-          "source_location": "source_tex/arxiv.tex lines 1513-1517: randomization over K-approval mechanisms for K in {1,...,M-1}.",
-          "reason": "For the Lean candidate indexing convention, K < n+2 is the proper-cutoff form of the source upper bound K \u2264 M-1.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source",
-      "lean_statement_sha256": "952c5858f9376a6544bf3eec646760beecae2b12ebcb5082bdf3983288c1e8b3"
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_pairwise_approval_ternary_gap_domain": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "08c3ed3458916508b01fa7d42853b5585b515fdf5116600e53981b6a70218068",
+      "paper_statement_sha256": "2b198efdd2e44cd58ac0e50cee946df60bdcf04e1631f918d42e2c4de79fa52e",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Proposition 3 specializes to K-approval, where score gaps are ternary, and uses the source condition that the higher-score candidate has larger expected score.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_randomized_mechanism_probability_weights": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "4c557344aeeeaad443362287ff29138717f3bcce26602cbb8c53c67bcca8ec3a",
+      "paper_statement_sha256": "652cce3fee59a3829a255835f273d964c0ff5e7ee7a1ebdc3e3d69bc815d6bc3",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Randomized scoring and K-approval mechanisms choose component rules with probabilities.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_strict_cross_tier_no_ties": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "1ac5e4ce529cd240c94ace46e6d3807b0828b7cd3460dafef0620da7ca2e1ce5",
+      "paper_statement_sha256": "14738df3047384c164f33095d5bb750d194c554f7970f5b5a6e3671640f76923",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Proposition 1 is exactly the strict cross-tier top-prefix regime; the source states strict inequalities between every higher-tier and lower-tier candidate at every prefix cutoff.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "GGSG19TopThree",
+  "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+  "schema": 1,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

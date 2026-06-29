@@ -131,47 +131,36 @@
       }
     },
     {
-      "schema": 1,
-      "id": "GCG24UserItemFairness",
-      "title": "User-item fairness tradeoffs in recommendations",
-      "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
-      "source_version": "NeurIPS 2024 / arXiv:2412.04466",
-      "build_target": "lake build GCG24UserItemFairness",
-      "status": "formalized",
-      "main_caveat": "",
-      "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
-      "human_review": {
-        "reviewed_rows": 0,
-        "total_rows": 18,
-        "stale_rows": 0,
-        "mismatch_rows": 0,
-        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
-      },
-      "paper_interface": {
-        "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
-        "line_count": 286,
-        "declaration_rows": 18,
-        "review_rows": 18,
-        "oversized": false,
-        "maintainability_issue": null
-      },
       "artifacts": {
-        "readme": "papers/GCG24UserItemFairness/README.md",
-        "source_text": "papers/GCG24UserItemFairness/GCG24UserItemFairness.txt",
-        "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
         "assumptions": "papers/GCG24UserItemFairness/Assumptions.lean",
-        "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf",
         "dependency_dag_tex": "papers/GCG24UserItemFairness/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf"
+        "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+        "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
+        "readme": "papers/GCG24UserItemFairness/README.md",
+        "source_text": "papers/GCG24UserItemFairness/GCG24UserItemFairness.txt"
       },
+      "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
+      "build_target": "lake build GCG24UserItemFairness",
+      "human_review": {
+        "mismatch_rows": 0,
+        "reviewed_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs",
+        "stale_rows": 0,
+        "total_rows": 18
+      },
+      "id": "GCG24UserItemFairness",
+      "main_caveat": "",
+      "paper_interface": {
+        "declaration_rows": 18,
+        "line_count": 286,
+        "maintainability_issue": null,
+        "oversized": false,
+        "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
+        "review_rows": 18
+      },
+      "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
-        "source_file": "papers/GCG24UserItemFairness/PaperInterface.lean",
-        "assumption_source_file": "papers/GCG24UserItemFairness/Assumptions.lean",
-        "llm_assumption_review": {
-          "assumption_judgment_file": "papers/GCG24UserItemFairness/assumption_match_llm.json",
-          "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption or paper-statement condition rather than a proof assumption."
-        },
-        "assumption_policy": "strict",
         "assumption_names": [
           "assumption_positive_recommendation_utilities",
           "assumption_theorem3_opposing_type_model",
@@ -184,6 +173,8 @@
           "assumption_theorem4_cold_start_type_wiring",
           "assumption_theorem4_parameter_domain"
         ],
+        "assumption_policy": "strict",
+        "assumption_source_file": "papers/GCG24UserItemFairness/Assumptions.lean",
         "include_names": [
           "recommendationUtility",
           "rawUserUtility",
@@ -197,6 +188,26 @@
           "priceOfFairnessAt",
           "priceOfFairness",
           "priceOfMisestimation",
+          "example1_diverse_favorite_policy_user_fairness",
+          "example1_diverse_favorite_policy_item_fairness",
+          "example1_homogeneous_tradeoff_bound",
+          "appendix_c_lemma1_item_fairness_positive",
+          "appendix_c_lemma2_item_fairness_lp_value",
+          "appendix_d_lemma3_unconstrained_baseline",
+          "appendix_d_lemma4_problem6_structure",
+          "appendix_d_lemma5_problem6_closed_form",
+          "appendix_d_lemma6_mirror_inverse_gap",
+          "appendix_d_lemma7_pivot_monotonicity",
+          "appendix_d_lemma8_selected_pivot_stitching",
+          "appendix_d_lemma9_pair_share_algebra",
+          "appendix_d_lemma10_midpoint_candidate",
+          "appendix_d_lemma11_denominator_monotonicity",
+          "appendix_e_lemma12_symmetrized_policy",
+          "appendix_e_lemma13_pivot_support",
+          "appendix_e_lemma14_uniqueness",
+          "appendix_e_lemma15_closed_formula",
+          "appendix_e_lemma16_midpoint_order_algebra",
+          "appendix_e_lemma17_no_right_half_support",
           "proposition1_symmetric_lp_reduction",
           "proposition2_symmetric_optimum_exists",
           "theorem3_price_decreases_first_half",
@@ -204,10 +215,13 @@
           "theorem4_misestimation_tradeoff_typeZero",
           "theorem4_misestimation_tradeoff_typeOne"
         ],
+        "llm_assumption_review": {
+          "assumption_judgment_file": "papers/GCG24UserItemFairness/assumption_match_llm.json",
+          "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption or paper-statement condition rather than a proof assumption."
+        },
         "slices": [
           {
             "id": "all",
-            "title": "All source-facing review rows",
             "names": [
               "recommendationUtility",
               "rawUserUtility",
@@ -227,58 +241,56 @@
               "theorem3_price_increases_second_half",
               "theorem4_misestimation_tradeoff_typeZero",
               "theorem4_misestimation_tradeoff_typeOne"
-            ]
+            ],
+            "title": "All source-facing review rows"
           }
-        ]
-      }
+        ],
+        "source_file": "papers/GCG24UserItemFairness/PaperInterface.lean"
+      },
+      "schema": 1,
+      "source_version": "NeurIPS 2024 / arXiv:2412.04466",
+      "status": "formalized",
+      "title": "User-item fairness tradeoffs in recommendations"
     },
     {
-      "schema": 1,
-      "id": "GGSG19TopThree",
-      "title": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates",
-      "authors": "Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel",
-      "publication_venue": "HCOMP 2019",
-      "source_version": "arXiv version, 2019",
-      "build_target": "lake build GGSG19TopThree",
-      "status": "formalized",
-      "main_caveat": "",
-      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
-      "human_review": {
-        "reviewed_rows": 0,
-        "total_rows": 10,
-        "stale_rows": 0,
-        "mismatch_rows": 0,
-        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
-      },
-      "paper_interface": {
-        "path": "papers/GGSG19TopThree/PaperInterface.lean",
-        "line_count": 317,
-        "declaration_rows": 10,
-        "review_rows": 10,
-        "oversized": false,
-        "maintainability_issue": null,
-        "proof_interface_path": "papers/GGSG19TopThree/ProofInterface.lean",
-        "proof_interface_line_count": 12771
-      },
       "artifacts": {
-        "readme": "papers/GGSG19TopThree/README.md",
-        "paper_interface": "papers/GGSG19TopThree/PaperInterface.lean",
-        "source_theorems": "papers/GGSG19TopThree/SourceTheorems.lean",
-        "proof_interface": "papers/GGSG19TopThree/ProofInterface.lean",
-        "final_validation_report": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
-        "post_formalization_audit": "papers/GGSG19TopThree/POST_FORMALIZATION_AUDIT.md",
-        "dependency_dag_tex": "papers/GGSG19TopThree/DependencyDAG.tex",
+        "assumptions": "papers/GGSG19TopThree/Assumptions.lean",
         "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf",
-        "source_pdf": "papers/GGSG19TopThree/source.pdf",
+        "dependency_dag_tex": "papers/GGSG19TopThree/DependencyDAG.tex",
+        "final_validation_report": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+        "paper_interface": "papers/GGSG19TopThree/PaperInterface.lean",
+        "post_formalization_audit": "papers/GGSG19TopThree/POST_FORMALIZATION_AUDIT.md",
+        "proof_interface": "papers/GGSG19TopThree/ProofInterface.lean",
+        "readme": "papers/GGSG19TopThree/README.md",
         "source_archive": "papers/GGSG19TopThree/source.tar.gz",
+        "source_pdf": "papers/GGSG19TopThree/source.pdf",
         "source_tex": "papers/GGSG19TopThree/source_tex/arxiv.tex",
-        "assumptions": "papers/GGSG19TopThree/Assumptions.lean"
+        "source_theorems": "papers/GGSG19TopThree/SourceTheorems.lean"
       },
+      "authors": "Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel",
+      "build_target": "lake build GGSG19TopThree",
+      "human_review": {
+        "mismatch_rows": 0,
+        "reviewed_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs",
+        "stale_rows": 0,
+        "total_rows": 10
+      },
+      "id": "GGSG19TopThree",
+      "main_caveat": "",
+      "paper_interface": {
+        "declaration_rows": 10,
+        "line_count": 317,
+        "maintainability_issue": null,
+        "oversized": false,
+        "path": "papers/GGSG19TopThree/PaperInterface.lean",
+        "proof_interface_line_count": 12771,
+        "proof_interface_path": "papers/GGSG19TopThree/ProofInterface.lean",
+        "review_rows": 10
+      },
+      "publication_venue": "HCOMP 2019",
+      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
-        "source_file": "papers/GGSG19TopThree/PaperInterface.lean",
-        "assumption_source_file": "papers/GGSG19TopThree/Assumptions.lean",
-        "llm_assumption_review": "papers/GGSG19TopThree/assumption_match_llm.json",
-        "assumption_policy": "strict",
         "assumption_names": [
           "assumption_strict_cross_tier_no_ties",
           "assumption_pairwise_approval_ternary_gap_domain",
@@ -286,8 +298,12 @@
           "assumption_mallows_nontrivial_winner_and_noise",
           "assumption_nontrivial_k_approval_cutoffs"
         ],
+        "assumption_policy": "strict",
+        "assumption_source_file": "papers/GGSG19TopThree/Assumptions.lean",
         "include_names": [
           "paper_definition_large_deviation_rate",
+          "paper_definition_design_invariant",
+          "paper_definition_rate_optimal",
           "source_proposition1_thm_consistency_tiered",
           "source_proposition2_thm_pairwiselearning_finite_support",
           "source_proposition3_lem_pairwiselearning_approval_finite_ternary",
@@ -298,10 +314,10 @@
           "source_corollary_lem_mallowsnorando",
           "source_theorem_lem_mallowsnotWK_counterexample"
         ],
+        "llm_assumption_review": "papers/GGSG19TopThree/assumption_match_llm.json",
         "slices": [
           {
             "id": "all",
-            "title": "All source-facing review rows",
             "names": [
               "paper_definition_large_deviation_rate",
               "source_proposition1_thm_consistency_tiered",
@@ -313,10 +329,16 @@
               "source_theorem_lem_randomizebetterapproval_w_selection_constructed",
               "source_corollary_lem_mallowsnorando",
               "source_theorem_lem_mallowsnotWK_counterexample"
-            ]
+            ],
+            "title": "All source-facing review rows"
           }
-        ]
-      }
+        ],
+        "source_file": "papers/GGSG19TopThree/PaperInterface.lean"
+      },
+      "schema": 1,
+      "source_version": "arXiv version, 2019",
+      "status": "formalized",
+      "title": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates"
     },
     {
       "schema": 1,
@@ -571,6 +593,7 @@
           "paper_lemmaC4_piecewise_constant_iff_exists_positive_exponential_rate_of_defined_tieErasedSourceWbar_nonpiecewise_nonTie_interval_witness",
           "corollaryC3_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq",
           "theorem32_exists_grid_depth_rate_loss_and_runtime_le_of_nested_bisection_uniform_doubled_closed_run_calculated_grid_low_bisection_upper_one_sub_grid_early_exact_return_of_eps_pos",
+          "definitionC1_kendall_spearman_population_objectives",
           "paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective",
           "paper_lemmaC11_kendall_constant_weight_ordered_pair_interval_objective_le_equispaced",
           "paper_lemmaC12_spearman_linear_weight_ordered_pair_interval_objective_le_equispaced",
@@ -2259,7 +2282,8 @@
       "review_surface": {
         "assumption_names": [
           "assumption_conditions_c123",
-          "assumption_ssgm_convergence_theorem"
+          "assumption_ssgm_convergence_theorem",
+          "assumption_expected_subgradient_theorem"
         ],
         "assumption_policy": "source-plus-proof-boundary",
         "assumption_source_file": "papers/GKGMM19IterativeLocalVoting/Assumptions.lean",
@@ -2375,11 +2399,15 @@
           "c3_product_density_coordinate_noncollision_ae",
           "definition2_weighted_euclidean_utilities_formula",
           "definition3_decomposable_utilities_formula",
+          "dlcdBudgetUtility",
+          "paper_definition4_dlcd_formula",
           "theorem1_lp_normed_dual_cases",
           "theorem2_modelB_holder_dual_norms",
           "proposition1_weighted_euclidean_l2",
           "proposition2_decomposable_linf_medians",
-          "theorem3_statement_of_full_sampled_projected_source_semantics_univ"
+          "theorem3_statement_of_full_sampled_projected_source_semantics_univ",
+          "appendix_theorem4_expected_subgradient_boundary",
+          "appendix_theorem5_ssgm_convergence_boundary"
         ],
         "llm_assumption_review": {
           "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/assumption_match_llm.json",
@@ -2395,7 +2423,8 @@
           "surface_warning_threshold": 120
         },
         "proof_boundary_names": [
-          "assumption_ssgm_convergence_theorem"
+          "assumption_ssgm_convergence_theorem",
+          "assumption_expected_subgradient_theorem"
         ],
         "slices": [
           {
@@ -2495,47 +2524,39 @@
       "title": "Iterative Local Voting for Collective Decision-making in Continuous Spaces"
     },
     {
-      "schema": 1,
-      "id": "GN21DriverSurgePricing",
-      "title": "Driver Surge Pricing",
-      "authors": "Nikhil Garg and Hamid Nazerzadeh",
-      "source_version": "Management Science 2022 / arXiv v4, 2021",
-      "build_target": "lake build GN21DriverSurgePricing",
-      "status": "formalized",
-      "main_caveat": "",
-      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
-      "human_review": {
-        "reviewed_rows": 0,
-        "total_rows": 34,
-        "stale_rows": 0,
-        "mismatch_rows": 0,
-        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
-      },
-      "paper_interface": {
-        "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-        "line_count": 379,
-        "declaration_rows": 24,
-        "review_rows": 34,
-        "oversized": false,
-        "maintainability_issue": null,
-        "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
-        "proof_interface_line_count": 5534
-      },
       "artifacts": {
-        "readme": "papers/GN21DriverSurgePricing/README.md",
-        "paper_interface": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-        "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
+        "assumptions": "papers/GN21DriverSurgePricing/Assumptions.lean",
         "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
+        "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+        "paper_interface": "papers/GN21DriverSurgePricing/PaperInterface.lean",
         "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean",
-        "source_text": "papers/GN21DriverSurgePricing/source.txt",
-        "assumptions": "papers/GN21DriverSurgePricing/Assumptions.lean"
+        "readme": "papers/GN21DriverSurgePricing/README.md",
+        "source_text": "papers/GN21DriverSurgePricing/source.txt"
       },
+      "authors": "Nikhil Garg and Hamid Nazerzadeh",
+      "build_target": "lake build GN21DriverSurgePricing",
+      "human_review": {
+        "mismatch_rows": 0,
+        "reviewed_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs",
+        "stale_rows": 0,
+        "total_rows": 34
+      },
+      "id": "GN21DriverSurgePricing",
+      "main_caveat": "",
+      "paper_interface": {
+        "declaration_rows": 24,
+        "line_count": 379,
+        "maintainability_issue": null,
+        "oversized": false,
+        "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+        "proof_interface_line_count": 5534,
+        "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
+        "review_rows": 34
+      },
+      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
-        "source_file": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-        "assumption_source_file": "papers/GN21DriverSurgePricing/Assumptions.lean",
-        "llm_assumption_review": "papers/GN21DriverSurgePricing/assumption_match_llm.json",
-        "assumption_policy": "strict",
         "assumption_names": [
           "assumption_affine_single_state_parameter_domain",
           "assumption_single_state_defined_reward_domain",
@@ -2548,6 +2569,8 @@
           "assumption_nonsurge_derivative_source_bounds",
           "assumption_theorem3_source_data_domain"
         ],
+        "assumption_policy": "strict",
+        "assumption_source_file": "papers/GN21DriverSurgePricing/Assumptions.lean",
         "include_names": [
           "review_definition_single_state_ic",
           "review_definition_dynamic_ic",
@@ -2561,6 +2584,8 @@
           "review_lemma2_switch_probability_formula",
           "review_lemma3_measured_time_fraction_formula",
           "review_remark1_switch_probability_per_time_strictAntiOn",
+          "review_remark2_structured_scaled_earning_algebra",
+          "review_remark2_structured_derivative_kernel_algebra",
           "review_remark3_switch_probability_per_time_tendsto_at_zero",
           "review_remark4_switch_time_minus_switch_probability_nonneg",
           "review_lemma5_fixed_response_policy_form",
@@ -2574,10 +2599,10 @@
           "review_theorem4_structural_policy_representatives",
           "review_theorem3_defined_reward_source_statement"
         ],
+        "llm_assumption_review": "papers/GN21DriverSurgePricing/assumption_match_llm.json",
         "slices": [
           {
             "id": "all",
-            "title": "All source-facing review rows",
             "names": [
               "review_definition_single_state_ic",
               "review_definition_dynamic_ic",
@@ -2603,10 +2628,16 @@
               "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
               "review_theorem4_structural_policy_representatives",
               "review_theorem3_defined_reward_source_statement"
-            ]
+            ],
+            "title": "All source-facing review rows"
           }
-        ]
-      }
+        ],
+        "source_file": "papers/GN21DriverSurgePricing/PaperInterface.lean"
+      },
+      "schema": 1,
+      "source_version": "Management Science 2022 / arXiv v4, 2021",
+      "status": "formalized",
+      "title": "Driver Surge Pricing"
     },
     {
       "schema": 1,
@@ -2725,7 +2756,7 @@
           "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/assumption_match_llm.json",
           "surface_audit_threshold": 30,
           "surface_warning_threshold": 120,
-          "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, equivalence direction, and conclusion. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions; conditional wrappers, source-row packages, omitted subclaims, weakened/strengthened statements, or broad aggregates must be judged `mismatch` or `uncertain`. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
+          "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, named predicate/wrapper application, equivalence direction, conclusion, and visible input. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label or phrase. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, conclusions, and the semantics of every Lean premise. If a Lean premise is a named predicate or wrapper, the judge must inspect what that predicate means in the paper model; source-looking names are not evidence. Extra replay, certificate, process, bridge, source-row, or broad package assumptions must be judged `mismatch` or `uncertain` unless explicitly source-backed or derived from source primitives. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
         },
         "llm_assumption_review": {
           "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/assumption_match_llm.json",
@@ -3290,8 +3321,8 @@
       "source_version": "ICWSM 2025 / arXiv:2207.04369",
       "build_target": "lake build MBJG25ProducerFairness",
       "status": "formalized",
-      "main_caveat": "Additional assumption: the strict variance-decrease statement is formalized with the interior-quality condition 0 < q_v < 1; boundary rows record why the unconditional strict statement is not claimed at q_v = 0 or q_v = 1.",
-      "human_summary": "Formalization required an additional interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
+      "main_caveat": "",
+      "human_summary": "Additional assumption recorded in the validation report: strict variance decrease is stated with 0 < q_v < 1; human review treats this as formalized rather than a caveat.",
       "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 10,
@@ -3385,6 +3416,10 @@
             ]
           }
         ]
+      },
+      "human_summary_review": {
+        "status": "human_approved",
+        "note": "Do not rewrite this summary without explicit human instruction."
       }
     },
     {
@@ -3454,6 +3489,13 @@
           "paperBalanceScore_formula",
           "paperCanAssign_iff",
           "paperIsBalanceChoice_iff",
+          "section4_lemma1_balance_pays_no_later_slab",
+          "section4_lemma2_factor_revealing_lp_constraint",
+          "section4_lemma3_factor_revealing_lp_optimality",
+          "section5_lemma4_dual_optimal_from_primal_dual_match",
+          "section5_lemma5_tradeoff_rhs_eq_base_add_delta",
+          "section5_lemma6_per_query_tradeoff",
+          "section5_lemma7_weighted_perturbation_bound",
           "paperSmallBidsLimitFamily_fields",
           "theorem8_balance_msvv_competitive_of_small_bids_limit_family",
           "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error",
@@ -3479,64 +3521,67 @@
       }
     },
     {
-      "schema": 1,
-      "id": "PKG25NoFreeLunch",
-      "title": "A No Free Lunch Theorem for Human-AI Collaboration",
+      "artifacts": {
+        "dependency_dag_pdf": "papers/PKG25NoFreeLunch/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/PKG25NoFreeLunch/DependencyDAG.tex",
+        "final_validation_report": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+        "paper_interface": "papers/PKG25NoFreeLunch/PaperInterface.lean",
+        "readme": "papers/PKG25NoFreeLunch/README.md"
+      },
       "authors": "Kenny Peng, Nikhil Garg, Jon Kleinberg",
-      "source_version": "Proceedings of the AAAI Conference on Artificial Intelligence, 39(13), 14369–14376 (AAAI 2025)",
       "build_target": "lake build PKG25NoFreeLunch",
-      "status": "formalized",
-      "main_caveat": "None",
+      "human_review": {
+        "mismatch_rows": 0,
+        "reviewed_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs",
+        "stale_rows": 0,
+        "total_rows": 6
+      },
       "human_summary": "",
       "human_summary_review": {
-        "status": "draft",
-        "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
+        "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction.",
+        "status": "draft"
+      },
+      "id": "PKG25NoFreeLunch",
+      "main_caveat": "None",
+      "paper_interface": {
+        "declaration_rows": 6,
+        "line_count": 71,
+        "maintainability_issue": null,
+        "oversized": false,
+        "path": "papers/PKG25NoFreeLunch/PaperInterface.lean",
+        "review_rows": 6
       },
       "review_entrypoint": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
-      "human_review": {
-        "reviewed_rows": 0,
-        "total_rows": 6,
-        "stale_rows": 0,
-        "mismatch_rows": 0,
-        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
-      },
-      "paper_interface": {
-        "path": "papers/PKG25NoFreeLunch/PaperInterface.lean",
-        "line_count": 71,
-        "declaration_rows": 6,
-        "review_rows": 6,
-        "oversized": false,
-        "maintainability_issue": null
-      },
-      "artifacts": {
-        "readme": "papers/PKG25NoFreeLunch/README.md",
-        "paper_interface": "papers/PKG25NoFreeLunch/PaperInterface.lean",
-        "final_validation_report": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/PKG25NoFreeLunch/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/PKG25NoFreeLunch/DependencyDAG.pdf"
-      },
       "review_surface": {
-        "source_file": "papers/PKG25NoFreeLunch/PaperInterface.lean",
-        "llm_statement_review": {
-          "lean_to_tex_file": "papers/PKG25NoFreeLunch/lean_to_tex_llm.json",
-          "match_judgment_file": "papers/PKG25NoFreeLunch/statement_match_llm.json",
-          "review_surface_audit_file": "papers/PKG25NoFreeLunch/review_surface_llm.json",
-          "surface_audit_threshold": 30,
-          "surface_warning_threshold": 120,
-          "policy": "Translate each Lean statement with an LLM that has no paper context; have a third LLM compare that TeX/prose translation with the original paper statement, record the model/agent validator metadata, and iterate on PaperInterface.lean until they match. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
-        },
         "include_names": [
           "definition_rounding_convention",
+          "definition_collaboration_setting",
           "definition_collaboration_strategy",
           "definition_interior_prediction_profile",
           "definition_non_collaborative",
           "definition_reliable",
+          "definition_correct_on",
+          "definition_incorrect_on",
+          "definition_agree_on",
+          "definition_disagree_on",
+          "proposition6_linear_combination_settings",
+          "lemma8_bad_tuple_counterexample_setting",
+          "proposition7_reliability_forces_fixed_deferral",
+          "proposition9_reliability_forces_fixed_tie_label",
           "theorem_main_no_free_lunch"
         ],
+        "llm_statement_review": {
+          "lean_to_tex_file": "papers/PKG25NoFreeLunch/lean_to_tex_llm.json",
+          "match_judgment_file": "papers/PKG25NoFreeLunch/statement_match_llm.json",
+          "policy": "Translate each Lean statement with an LLM that has no paper context; have a third LLM compare that TeX/prose translation with the original paper statement, record the model/agent validator metadata, and iterate on PaperInterface.lean until they match. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review.",
+          "review_surface_audit_file": "papers/PKG25NoFreeLunch/review_surface_llm.json",
+          "surface_audit_threshold": 30,
+          "surface_warning_threshold": 120
+        },
         "slices": [
           {
             "id": "all",
-            "title": "All source-facing review rows",
             "names": [
               "definition_rounding_convention",
               "definition_collaboration_strategy",
@@ -3544,10 +3589,16 @@
               "definition_non_collaborative",
               "definition_reliable",
               "theorem_main_no_free_lunch"
-            ]
+            ],
+            "title": "All source-facing review rows"
           }
-        ]
-      }
+        ],
+        "source_file": "papers/PKG25NoFreeLunch/PaperInterface.lean"
+      },
+      "schema": 1,
+      "source_version": "Proceedings of the AAAI Conference on Artificial Intelligence, 39(13), 14369–14376 (AAAI 2025)",
+      "status": "formalized",
+      "title": "A No Free Lunch Theorem for Human-AI Collaboration"
     },
     {
       "schema": 1,
@@ -3558,7 +3609,7 @@
       "build_target": "lake build PRPKG24AccuracyDiversity",
       "status": "formalized",
       "main_caveat": "",
-      "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result.",
+      "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Human review treats this as a source-quality note rather than a caveat.",
       "human_summary_review": {
         "status": "human_approved",
         "note": "Do not rewrite this summary without explicit human instruction."

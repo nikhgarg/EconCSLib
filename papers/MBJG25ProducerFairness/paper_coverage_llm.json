@@ -1,367 +1,447 @@
 {
-  "schema": 1,
-  "paper": "MBJG25ProducerFairness",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "4d692fb1614f74581e7189dc922f89dd39286c6ad23e889202f98b5d6d2ffc26",
-  "review_surface_sha256": "18aaea21e0197dfcd9ed870355f82f817bc10b57995cc132260d6c32c4cd6c74",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
     "assumption_nonnegative_time": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_nonnegative_time",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Nonnegative time/sample mass for Jensen concavity and global maximum statements. The dashboard row `assumption_nonnegative_time` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_nonnegative_time"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Nonnegative time/sample mass for Jensen concavity and global maximum statements. The dashboard row `assumption_nonnegative_time` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: Nonnegative time/sample mass for Jensen concavity and global maximum statements.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_nonnegative_time`.",
-      "statement_sha256": "c94cc8e3f8e737b50627757b972d1737521f34cae1044ae66925df8f1c0fa17d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "c94cc8e3f8e737b50627757b972d1737521f34cae1044ae66925df8f1c0fa17d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_positive_prior_shape": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_positive_prior_shape",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The prior shape has positive total mass. The dashboard row `assumption_positive_prior_shape` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_positive_prior_shape"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The prior shape has positive total mass. The dashboard row `assumption_positive_prior_shape` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: The prior shape has positive total mass.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_positive_prior_shape`.",
-      "statement_sha256": "d8baf3c85210282a9ce7a6388206b4b50f56f8bac4de608e1a1ce22dadb6d0c3",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d8baf3c85210282a9ce7a6388206b4b50f56f8bac4de608e1a1ce22dadb6d0c3",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_positive_time": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_positive_time",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The fixed-setting theorem is evaluated after a positive number of timesteps. The dashboard row `assumption_positive_time` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_positive_time"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The fixed-setting theorem is evaluated after a positive number of timesteps. The dashboard row `assumption_positive_time` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: The fixed-setting theorem is evaluated after a positive number of timesteps.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_positive_time`.",
-      "statement_sha256": "3cf265af47438ca3af58c342805b345e5321e6855b6e4170a086df9ea59f94bb",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3cf265af47438ca3af58c342805b345e5321e6855b6e4170a086df9ea59f94bb",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_prior_strength_nonnegative": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_prior_strength_nonnegative",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Prior strength is nonnegative. The dashboard row `assumption_prior_strength_nonnegative` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_prior_strength_nonnegative"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Prior strength is nonnegative. The dashboard row `assumption_prior_strength_nonnegative` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: Prior strength is nonnegative.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_prior_strength_nonnegative`.",
-      "statement_sha256": "15f4d821b209923a98b3bc210ec7a0f94a6d27408619f1fb3a80084e2cfcc23d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "15f4d821b209923a98b3bc210ec7a0f94a6d27408619f1fb3a80084e2cfcc23d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_prior_strength_strict_order": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_prior_strength_strict_order",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Prior strength strictly increases. The dashboard row `assumption_prior_strength_strict_order` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_prior_strength_strict_order"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Prior strength strictly increases. The dashboard row `assumption_prior_strength_strict_order` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: Prior strength strictly increases.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_prior_strength_strict_order`.",
-      "statement_sha256": "e977a6e2e98cb580c41e39c153c59378d279b3708c702e69e58415339b29bd14",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e977a6e2e98cb580c41e39c153c59378d279b3708c702e69e58415339b29bd14",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_prior_strength_weak_order": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_prior_strength_weak_order",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Prior strength weakly increases. The dashboard row `assumption_prior_strength_weak_order` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_prior_strength_weak_order"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Prior strength weakly increases. The dashboard row `assumption_prior_strength_weak_order` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: Prior strength weakly increases.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_prior_strength_weak_order`.",
-      "statement_sha256": "3a6cdd32d7f6c618d626bf76b534aa6af2431c6c58581a42fc2e60b7cca0e621",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3a6cdd32d7f6c618d626bf76b534aa6af2431c6c58581a42fc2e60b7cca0e621",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_quality_at_most_one": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_quality_at_most_one",
+      "reason": "The source item is the paper-facing statement/formula summarized as: True quality lies in the closed Bernoulli quality interval. The dashboard row `assumption_quality_at_most_one` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_quality_at_most_one"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: True quality lies in the closed Bernoulli quality interval. The dashboard row `assumption_quality_at_most_one` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: True quality lies in the closed Bernoulli quality interval.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_quality_at_most_one`.",
-      "statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_quality_lt_one": {
-      "coverage": "covered",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "conditional_boundary",
+      "dashboard_evidence": "assumption_quality_lt_one",
+      "reason": "Interior-quality condition added for the strict variance statement.",
       "review_rows": [
         "assumption_quality_lt_one"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Interior true quality for the corrected strict variance statement. The dashboard row `assumption_quality_lt_one` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: Interior true quality for the corrected strict variance statement.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_quality_lt_one`.",
-      "statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_quality_nonnegative": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_quality_nonnegative",
+      "reason": "The source item is the paper-facing statement/formula summarized as: True quality lies in the closed Bernoulli quality interval. The dashboard row `assumption_quality_nonnegative` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_quality_nonnegative"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: True quality lies in the closed Bernoulli quality interval. The dashboard row `assumption_quality_nonnegative` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: True quality lies in the closed Bernoulli quality interval.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_quality_nonnegative`.",
-      "statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_quality_positive": {
-      "coverage": "covered",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "conditional_boundary",
+      "dashboard_evidence": "assumption_quality_positive",
+      "reason": "Interior-quality condition added for the strict variance statement.",
       "review_rows": [
         "assumption_quality_positive"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Interior true quality for the corrected strict variance statement. The dashboard row `assumption_quality_positive` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. Source inventory item: Interior true quality for the corrected strict variance statement.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_quality_positive`.",
-      "statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_bias": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_bias",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The bias of the estimated quality. Paper Definition: $E[\\hat{q}_v] - q_v$ The dashboard row `paper_bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_bias"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The bias of the estimated quality. Paper Definition: $E[\\hat{q}_v] - q_v$ The dashboard row `paper_bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper formula. Source inventory item: The bias of the estimated quality. Paper Definition: $E[\\hat{q}_v] - q_v$",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_bias`.",
-      "statement_sha256": "c35f277d413c8df1fc7b8774f612ec0d8380139c66363b4144a7f1f121f7aa00",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "c35f277d413c8df1fc7b8774f612ec0d8380139c66363b4144a7f1f121f7aa00",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_expected_regret": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_expected_regret",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Section 4: Expected Regret (Efficiency). The total expected regret across a finite time horizon. The dashboard row `paper_facing_expected_regret` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_expected_regret"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Section 4: Expected Regret (Efficiency). The total expected regret across a finite time horizon. The dashboard row `paper_facing_expected_regret` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper definition. Source inventory item: Section 4: Expected Regret (Efficiency). The total expected regret across a finite time horizon.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_expected_regret`.",
-      "statement_sha256": "aabbf196c4bcde1795fe55c6b9f29f29ac77d3551bd2e93fb48cd542ac7a607a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "aabbf196c4bcde1795fe55c6b9f29f29ac77d3551bd2e93fb48cd542ac7a607a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_individual_producer_unfairness": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_individual_producer_unfairness",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Section 4: Individual Producer Unfairness. Defined as the standard deviation in Selection Rate (SR) among producers with the same true quality `q`. The dashboard row `paper_facing_individual_producer_unfairness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_individual_producer_unfairness"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Section 4: Individual Producer Unfairness. Defined as the standard deviation in Selection Rate (SR) among producers with the same true quality `q`. The dashboard row `paper_facing_individual_producer_unfairness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper definition. Source inventory item: Section 4: Individual Producer Unfairness. Defined as the standard deviation in Selection Rate (SR) among producers with the same true quality `q`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_individual_producer_unfairness`.",
-      "statement_sha256": "63db4a33afe09c84254afb346e46f3163a6dabf5eebfaccca6fa8bcab55957ce",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "63db4a33afe09c84254afb346e46f3163a6dabf5eebfaccca6fa8bcab55957ce",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_responsive_mse_decomposition": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_responsive_mse_decomposition",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix C: MSE Decomposition in the responsive setting. When the number of reviews $N$ is a random variable, the expected mean squared error conditional on true quality decomposes into the expected squared bias and the expected variance. The dashboard row `paper_facing_responsive_mse_decomposition` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_responsive_mse_decomposition"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix C: MSE Decomposition in the responsive setting. When the number of reviews $N$ is a random variable, the expected mean squared error conditional on true quality decomposes into the expected squared bias and the expected variance. The dashboard row `paper_facing_responsive_mse_decomposition` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper statement. Source inventory item: Appendix C: MSE Decomposition in the responsive setting. When the number of reviews $N$ is a random variable, the expected mean squared error conditional on true quality decomposes into the expected squared bias and the expected variance.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_responsive_mse_decomposition`.",
-      "statement_sha256": "eb19cfbcf3ffd9d8c68c03a899b7eb4805fa4366588aa4090967d63893ef1a3a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "eb19cfbcf3ffd9d8c68c03a899b7eb4805fa4366588aa4090967d63893ef1a3a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_theorem3_1_squared_bias_nondecreasing": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_theorem3_1_squared_bias_nondecreasing",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.1, squared posterior-mean bias is nondecreasing in prior strength. With stronger prior (`\u03b7_high \u2265 \u03b7_low`) and basic nonnegativity assumptions, the squared bias term does not decrease. The dashboard row `paper_facing_theorem3_1_squared_bias_nondecreasing` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_theorem3_1_squared_bias_nondecreasing"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.1, squared posterior-mean bias is nondecreasing in prior strength. With stronger prior (`\u03b7_high \u2265 \u03b7_low`) and basic nonnegativity assumptions, the squared bias term does not decrease. The dashboard row `paper_facing_theorem3_1_squared_bias_nondecreasing` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper statement. Source inventory item: Theorem 3.1, squared posterior-mean bias is nondecreasing in prior strength. With stronger prior (`\u03b7_high \u2265 \u03b7_low`) and basic nonnegativity assumptions, the squared bias term does not decrease.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_theorem3_1_squared_bias_nondecreasing`.",
-      "statement_sha256": "dbd5329cbde0c3fdf5db2fd8f2d6a54e60db6a03d3b08826e5184811b4b1f480",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "dbd5329cbde0c3fdf5db2fd8f2d6a54e60db6a03d3b08826e5184811b4b1f480",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Boundary caution for Theorem 3.1 strict decrease: at `q_v = 1`, posterior-mean variance is identically zero for any prior strength, so strict decrease cannot hold unconditionally. The dashboard row `paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Boundary caution for Theorem 3.1 strict decrease: at `q_v = 1`, posterior-mean variance is identically zero for any prior strength, so strict decrease cannot hold unconditionally. The dashboard row `paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. added audit row. Source inventory item: Boundary caution for Theorem 3.1 strict decrease: at `q_v = 1`, posterior-mean variance is identically zero for any prior strength, so strict decrease cannot hold unconditionally.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one`.",
-      "statement_sha256": "8f5d3289ec2f9b30b7bbb4d361843ea63c9e70994c5a18a168159b25e445e8b2",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8f5d3289ec2f9b30b7bbb4d361843ea63c9e70994c5a18a168159b25e445e8b2",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Boundary caution for Theorem 3.1 strict decrease: at `q_v = 0`, posterior-mean variance is identically zero for any prior strength, so strict decrease cannot hold unconditionally. The dashboard row `paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Boundary caution for Theorem 3.1 strict decrease: at `q_v = 0`, posterior-mean variance is identically zero for any prior strength, so strict decrease cannot hold unconditionally. The dashboard row `paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. added audit row. Source inventory item: Boundary caution for Theorem 3.1 strict decrease: at `q_v = 0`, posterior-mean variance is identically zero for any prior strength, so strict decrease cannot hold unconditionally.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero`.",
-      "statement_sha256": "8ed50675d3504052d690a11b47c6ad60057730c9272da5e073216db06a79103e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8ed50675d3504052d690a11b47c6ad60057730c9272da5e073216db06a79103e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_theorem3_1_variance_strict_decrease_interior": {
-      "coverage": "covered",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "conditional_boundary",
+      "dashboard_evidence": "paper_facing_theorem3_1_variance_strict_decrease_interior",
+      "reason": "Strict variance decrease is formalized on the documented interior-quality condition 0 < q < 1.",
       "review_rows": [
         "paper_facing_theorem3_1_variance_strict_decrease_interior"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.1, strict decrease on interior quality values. For `0 < q_v < 1`, positive prior-shape mass, positive number of prior samples, and stronger prior strength `\u03b7_high > \u03b7_low`, variance is strictly decreasing. The dashboard row `paper_facing_theorem3_1_variance_strict_decrease_interior` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. corrected source statement. Source inventory item: Theorem 3.1, strict decrease on interior quality values. For `0 < q_v < 1`, positive prior-shape mass, positive number of prior samples, and stronger prior strength `\u03b7_high > \u03b7_low`, variance is strictly decreasing.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_theorem3_1_variance_strict_decrease_interior`.",
-      "statement_sha256": "6e33f96c2e07ba1032eea32e01aff79fe91fa9f9424e09f640607b621af84b58",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6e33f96c2e07ba1032eea32e01aff79fe91fa9f9424e09f640607b621af84b58",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_theorem3_1_variance_weak_decrease": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_theorem3_1_variance_weak_decrease",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.1, variance weakly decreases in prior strength: for full quality interval `0 \u2264 q_v \u2264 1`, if prior strength increases the posterior-mean variance is nonincreasing. The dashboard row `paper_facing_theorem3_1_variance_weak_decrease` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_theorem3_1_variance_weak_decrease"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.1, variance weakly decreases in prior strength: for full quality interval `0 \u2264 q_v \u2264 1`, if prior strength increases the posterior-mean variance is nonincreasing. The dashboard row `paper_facing_theorem3_1_variance_weak_decrease` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. corrected source statement. Source inventory item: Theorem 3.1, variance weakly decreases in prior strength: for full quality interval `0 \u2264 q_v \u2264 1`, if prior strength increases the posterior-mean variance is nonincreasing.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_theorem3_1_variance_weak_decrease`.",
-      "statement_sha256": "8fdcd5d6275285696170b2a8ce842252d23edb7fae26e7842fec92b490f00672",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8fdcd5d6275285696170b2a8ce842252d23edb7fae26e7842fec92b490f00672",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_theorem3_2_squared_bias_convex_in_quality": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_theorem3_2_squared_bias_convex_in_quality",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.2, squared-bias Jensen convexity in true quality. The squared bias is Jensen-convex as a function of quality. The dashboard row `paper_facing_theorem3_2_squared_bias_convex_in_quality` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_theorem3_2_squared_bias_convex_in_quality"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.2, squared-bias Jensen convexity in true quality. The squared bias is Jensen-convex as a function of quality. The dashboard row `paper_facing_theorem3_2_squared_bias_convex_in_quality` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper statement. Source inventory item: Theorem 3.2, squared-bias Jensen convexity in true quality. The squared bias is Jensen-convex as a function of quality.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_theorem3_2_squared_bias_convex_in_quality`.",
-      "statement_sha256": "2fe88dfe9995fbb1be2fa24c30695f5b744b3d17ddd8269995fea666108e107a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2fe88dfe9995fbb1be2fa24c30695f5b744b3d17ddd8269995fea666108e107a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.2, squared-bias global minimizer. On the full quality interval, squared bias is minimized at the prior mean `alpha / (alpha + beta)` under positive shape mass and positive sample weight. The dashboard row `paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.2, squared-bias global minimizer. On the full quality interval, squared bias is minimized at the prior mean `alpha / (alpha + beta)` under positive shape mass and positive sample weight. The dashboard row `paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper statement. Source inventory item: Theorem 3.2, squared-bias global minimizer. On the full quality interval, squared bias is minimized at the prior mean `alpha / (alpha + beta)` under positive shape mass and positive sample weight.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean`.",
-      "statement_sha256": "f41cac6b1de2719b0e07dc9a28fa9f7c72bcb96a3210ed9b658c71c23c5e26a8",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f41cac6b1de2719b0e07dc9a28fa9f7c72bcb96a3210ed9b658c71c23c5e26a8",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_theorem3_2_variance_concave_in_quality": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_theorem3_2_variance_concave_in_quality",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.2, posterior-mean variance Jensen concavity in true quality. This holds when the prior-weighted sample mass is nonnegative (`t \u2265 0`). The dashboard row `paper_facing_theorem3_2_variance_concave_in_quality` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_theorem3_2_variance_concave_in_quality"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.2, posterior-mean variance Jensen concavity in true quality. This holds when the prior-weighted sample mass is nonnegative (`t \u2265 0`). The dashboard row `paper_facing_theorem3_2_variance_concave_in_quality` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper statement. Source inventory item: Theorem 3.2, posterior-mean variance Jensen concavity in true quality. This holds when the prior-weighted sample mass is nonnegative (`t \u2265 0`).",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_theorem3_2_variance_concave_in_quality`.",
-      "statement_sha256": "9ede64b9229841cd19d7df522338f63410a3b71762e9ea2a2d5b907301f866a6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9ede64b9229841cd19d7df522338f63410a3b71762e9ea2a2d5b907301f866a6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_theorem3_2_variance_global_max_at_half": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_theorem3_2_variance_global_max_at_half",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.2, posterior-mean variance global maximum at `q = 1/2`. For nonnegative prior-weighted sample mass, variance is globally maximized at `q_v = 1/2`. The dashboard row `paper_facing_theorem3_2_variance_global_max_at_half` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_theorem3_2_variance_global_max_at_half"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3.2, posterior-mean variance global maximum at `q = 1/2`. For nonnegative prior-weighted sample mass, variance is globally maximized at `q_v = 1/2`. The dashboard row `paper_facing_theorem3_2_variance_global_max_at_half` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper statement. Source inventory item: Theorem 3.2, posterior-mean variance global maximum at `q = 1/2`. For nonnegative prior-weighted sample mass, variance is globally maximized at `q_v = 1/2`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_theorem3_2_variance_global_max_at_half`.",
-      "statement_sha256": "e93c55fa90618724f5750c2b40c1f00edc82e711890e679e7ed0797ec480b09c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e93c55fa90618724f5750c2b40c1f00edc82e711890e679e7ed0797ec480b09c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_facing_thompson_sampling_mechanism": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_facing_thompson_sampling_mechanism",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Section 4: Thompson Sampling. A dynamic policy that selects an arm by drawing from a belief distribution and picking the argmax. The dashboard row `paper_facing_thompson_sampling_mechanism` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_facing_thompson_sampling_mechanism"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Section 4: Thompson Sampling. A dynamic policy that selects an arm by drawing from a belief distribution and picking the argmax. The dashboard row `paper_facing_thompson_sampling_mechanism` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper definition. Source inventory item: Section 4: Thompson Sampling. A dynamic policy that selects an arm by drawing from a belief distribution and picking the argmax.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_facing_thompson_sampling_mechanism`.",
-      "statement_sha256": "7ee56e5839aa7854f872923d8114fd7dd9ad5b7ce29c8cc9fe5298dc20184ac7",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "7ee56e5839aa7854f872923d8114fd7dd9ad5b7ce29c8cc9fe5298dc20184ac7",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_posterior_mean": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_posterior_mean",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The posterior mean estimated quality in the fixed binary rating model. Paper Definition: $\\frac{\\eta \\widetilde{\\alpha} + t q_v} {\\eta(\\widetilde{\\alpha}+\\widetilde{\\beta}) + t}$ The dashboard row `paper_posterior_mean` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_posterior_mean"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The posterior mean estimated quality in the fixed binary rating model. Paper Definition: $\\frac{\\eta \\widetilde{\\alpha} + t q_v} {\\eta(\\widetilde{\\alpha}+\\widetilde{\\beta}) + t}$ The dashboard row `paper_posterior_mean` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper formula. Source inventory item: The posterior mean estimated quality in the fixed binary rating model. Paper Definition: $\\frac{\\eta \\widetilde{\\alpha} + t q_v} {\\eta(\\widetilde{\\alpha}+\\widetilde{\\beta}) + t}$",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_posterior_mean`.",
-      "statement_sha256": "3bad7fc58bd564ef5e7fe4a2d6727ca73fd77bfb270b97aeaf8930b2c7a16154",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3bad7fc58bd564ef5e7fe4a2d6727ca73fd77bfb270b97aeaf8930b2c7a16154",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_squared_bias": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_squared_bias",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The squared bias of the estimated quality. Paper Definition: $(E[\\hat{q}_v] - q_v)^2$ The dashboard row `paper_squared_bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_squared_bias"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The squared bias of the estimated quality. Paper Definition: $(E[\\hat{q}_v] - q_v)^2$ The dashboard row `paper_squared_bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper formula. Source inventory item: The squared bias of the estimated quality. Paper Definition: $(E[\\hat{q}_v] - q_v)^2$",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_squared_bias`.",
-      "statement_sha256": "3b8a432cd8d75843dce7705257233ca316360987f2b0d7e6ea09fe57ea89ed16",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3b8a432cd8d75843dce7705257233ca316360987f2b0d7e6ea09fe57ea89ed16",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_variance": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_variance",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The variance of the estimated quality. Paper Definition: $\\frac{t q_v (1 - q_v)} {(\\eta(\\widetilde{\\alpha}+\\widetilde{\\beta}) + t)^2}$ The dashboard row `paper_variance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_variance"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The variance of the estimated quality. Paper Definition: $\\frac{t q_v (1 - q_v)} {(\\eta(\\widetilde{\\alpha}+\\widetilde{\\beta}) + t)^2}$ The dashboard row `paper_variance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/MBJG25ProducerFairness.txt, PDF cache, validation report, and human dashboard notes. direct paper formula. Source inventory item: The variance of the estimated quality. Paper Definition: $\\frac{t q_v (1 - q_v)} {(\\eta(\\widetilde{\\alpha}+\\widetilde{\\beta}) + t)^2}$",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_variance`.",
-      "statement_sha256": "1dd7c656a75ba2cfbcec78c9e161cc99ef8c163677b50cfde836050b78acfc70",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1dd7c656a75ba2cfbcec78c9e161cc99ef8c163677b50cfde836050b78acfc70",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "MBJG25ProducerFairness",
+  "paper_statement_inventory_sha256": "4d692fb1614f74581e7189dc922f89dd39286c6ad23e889202f98b5d6d2ffc26",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "18aaea21e0197dfcd9ed870355f82f817bc10b57995cc132260d6c32c4cd6c74",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

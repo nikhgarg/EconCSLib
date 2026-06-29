@@ -1,0 +1,252 @@
+{
+  "comment": "Semantic source-record provenance rejudge. Record/certificate/replay/process premises are not accepted by source-looking names alone.",
+  "items": {
+    "paper_facing_theorem3_1_squared_bias_nondecreasing.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_squared_bias_nondecreasing.heta_le : assumption_prior_strength_weak_order etaLow etaHigh": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_squared_bias_nondecreasing.hshape : assumption_positive_prior_shape alpha beta": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_squared_bias_nondecreasing.ht : assumption_positive_time t": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.heta_lt : assumption_prior_strength_strict_order etaLow etaHigh": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.hq0 : assumption_quality_positive q": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.hq1 : assumption_quality_lt_one q": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.hshape : assumption_positive_prior_shape alpha beta": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.ht : assumption_positive_time t": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_weak_decrease.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_weak_decrease.heta_le : assumption_prior_strength_weak_order etaLow etaHigh": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_weak_decrease.hq0 : assumption_quality_nonnegative q": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_weak_decrease.hq1 : assumption_quality_at_most_one q": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_weak_decrease.hshape : assumption_positive_prior_shape alpha beta": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_weak_decrease.ht : assumption_positive_time t": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_squared_bias_convex_in_quality.heta_nonneg : assumption_prior_strength_nonnegative eta": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_squared_bias_convex_in_quality.hshape : assumption_positive_prior_shape alpha beta": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_squared_bias_convex_in_quality.ht : assumption_positive_time t": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.heta_nonneg : assumption_prior_strength_nonnegative eta": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.hshape : assumption_positive_prior_shape alpha beta": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.ht : assumption_positive_time t": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_variance_concave_in_quality.ht : assumption_nonnegative_time t": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_variance_global_max_at_half.ht : assumption_nonnegative_time t": {
+      "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    }
+  },
+  "paper": "MBJG25ProducerFairness",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "schema": 1,
+  "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
+}

@@ -1,0 +1,12 @@
+{
+  "judgment": "passes",
+  "paper": "Roth82StableMatching",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: current dashboard rows are paper-facing definitions, assumptions, theorem endpoints, or explicitly documented partial/source-version boundaries; helper-only rows remain outside the compact dashboard surface.",
+  "review_rows": 29,
+  "review_surface_sha256": "8e729d5b22642eb79d020275d88a5f9f69b596cad412ecc711bcaa552e1b7ef7",
+  "schema": 1,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
+}

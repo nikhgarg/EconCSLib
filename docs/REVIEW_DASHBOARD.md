@@ -14,8 +14,12 @@ results, curate `review_surface.include_names` in `status.json` and move helper
 or certificate endpoints out of `PaperInterface.lean` before asking for review.
 The dashboard enforces two row-count prompts: more than 30 rows requires a
 current `review_surface_llm.json` audit that checks whether all rows are
-paper-facing, and 50 or more rows shows an oversized-surface warning even when
+paper-facing, and 120 or more rows shows an oversized-surface warning even when
 an audit exists.
+At public-facing closeout, the repository audit is stricter: any paper marked
+`formalized`, `formalized with caveat`, `partially formalized`, or
+`conditional` needs an explicit current `review_surface_llm.json` pass, even if
+the dashboard has 30 or fewer rows.
 
 ## Start A Review
 
@@ -64,7 +68,7 @@ The intended workflow has three independent statement passes:
    `PaperInterface.lean`.
 2. A second LLM, given only that Lean statement and no paper context, translates
    it to paper-style LaTeX/prose and saves the result in `lean_to_tex_llm.json`.
-3. A third LLM, given only the original paper statement and the translated
+3. An independent semantic LLM judge, given only the original paper statement and the translated
    LaTeX/prose, judges whether they match and saves the result in
    `statement_match_llm.json`.
 4. A separate assumption-provenance LLM, given only the paper source text for
@@ -112,7 +116,7 @@ proof-boundary premise. Internally constructed certificates are fine; hidden
 premise consumers are not. Axioms, constants, opaque declarations, and unsafe
 declarations are review blockers.
 
-If the third LLM reports a mismatch or uncertainty, edit the Lean statement, not
+If the semantic judge reports a mismatch or uncertainty, edit the Lean statement, not
 the translation, unless the translation is plainly wrong. The statement being
 iterated is the theorem that should be formalized. Re-run the Lean-to-TeX and
 judge passes after changing `PaperInterface.lean`.
@@ -161,18 +165,19 @@ list.
 {
   "schema": 1,
   "paper": "PaperFolder",
-  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
   "translator": "gpt-5-codex",
   "translator_type": "model",
   "translated_at": "2026-06-13T12:00:00Z",
   "prompt_summary": [
     "Translate from the Lean statement alone, with no paper context.",
-    "Preserve all visible binders, hypotheses, domains, directions, and conclusions."
+    "Preserve all visible binders, hypotheses, domains, named predicate/wrapper applications, directions, and conclusions.",
+    "Do not replace named premises with theorem labels, source-like phrases, or proof-route summaries."
   ],
   "items": {
     "paper_theorem_name": {
       "tex_statement": "Context-free paper-style translation of the Lean statement.",
-      "lean_statement_sha256": "optional digest"
+      "lean_statement_sha256": "required digest"
     }
   }
 }
@@ -181,20 +186,22 @@ list.
 For older papers, item values may also be plain strings containing the
 translation; the dashboard accepts both forms.
 
-`statement_match_llm.json` is optional and tracked in the paper root when used.
+`statement_match_llm.json` is tracked in the paper root when used.
 It has schema:
 
 ```json
 {
   "schema": 1,
   "paper": "PaperFolder",
-  "prompt_version": "statement-match-v2-strict-full-statement",
+  "prompt_version": "statement-match-v3-semantic-full-statement",
   "validator": "gpt-5-codex",
   "validator_type": "model",
   "validated_at": "2026-06-06T12:00:00Z",
   "prompt_summary": [
-    "Compare the complete source statement against the Lean-to-TeX translation.",
-    "Require exact agreement on hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions."
+    "Compare the complete source statement against the Lean-to-TeX translation semantically.",
+    "Require exact agreement on hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, conclusions, and visible inputs.",
+    "Do not approve by theorem label, phrase overlap, or source-looking Lean names.",
+    "Expand or otherwise inspect named predicates/wrappers enough to decide whether every Lean premise is source-backed or derived."
   ],
   "comment": "Optional sidecar-wide validator note.",
   "items": {
@@ -203,23 +210,32 @@ It has schema:
       "judgment": "matches",
       "reason": "The translated statement has the same hypotheses and conclusion.",
       "comment": "Optional validator-facing note.",
-      "lean_statement_sha256": "optional digest",
-      "paper_statement_sha256": "optional digest",
-      "tex_statement_sha256": "optional digest"
+      "lean_statement_sha256": "required digest",
+      "paper_statement_sha256": "required digest",
+      "tex_statement_sha256": "required digest"
     }
   }
 }
 ```
 
 Use `matches: false` or `"judgment": "mismatch"` for a failed check, and
-`"judgment": "uncertain"` when the judge cannot decide. If the optional digests
-are present and the current Lean, paper, or TeX statement changes, the dashboard
-marks the saved LLM judgment as stale. These LLM checks do not count as human
-dashboard reviews.
+`"judgment": "uncertain"` when the judge cannot decide. Lean, paper, and TeX
+statement digests are required for a judgment to count as current; if any
+digest is missing or no longer matches the current row, the dashboard marks the
+saved LLM judgment as stale. These LLM checks do not count as human dashboard
+reviews.
 
 Top-level `validator`, `validator_type`, `validated_at`, and `comment` fields
 are defaults; an item entry may override them when a different model or agent
 checked that specific row.
+
+Audit sidecars fail closed. A sidecar counts only if it parses, uses the current
+prompt version, carries current Lean/paper/TeX or source/dashboard digests as
+applicable, records validator/model identity and a timestamp, and gives a
+recognized success judgment for the current item. Blank template files, missing
+files, failed judge runs, stale hashes, stale prompt versions, missing metadata,
+unrecognized judgments, `uncertain`, and `mismatch` are alarms, not soft
+evidence.
 
 Status exports include a machine-readable `validators` ledger for each row.
 Human dashboard reviews enter this ledger with `validator_type: "human"` and
@@ -280,13 +296,14 @@ certificates.
 {
   "schema": 1,
   "paper": "PaperFolder",
-  "prompt_version": "assumption-provenance-v2-exact-premise-source",
+  "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
   "validator": "gpt-5-codex",
   "validator_type": "model",
   "validated_at": "2026-06-06T12:00:00Z",
   "prompt_summary": [
-    "Validate each assumption declaration and every exact audit-premise.",
-    "A premise is acceptable only when it is source text, a source model primitive, a theorem condition, or derived in Lean from source primitives."
+    "Validate each assumption declaration and every exact audit-premise semantically.",
+    "A premise is acceptable only when it is source text, a source model primitive, a theorem condition, or derived in Lean from source primitives.",
+    "Do not approve by declaration name, theorem label, phrase overlap, or source-looking Lean predicate name."
   ],
   "comment": "Optional sidecar-wide validator note.",
   "items": {
@@ -307,8 +324,8 @@ certificates.
         }
       },
       "comment": "Optional validator-facing note.",
-      "lean_statement_sha256": "optional digest",
-      "paper_statement_sha256": "optional digest"
+      "lean_statement_sha256": "required digest",
+      "paper_statement_sha256": "required digest"
     }
   }
 }
@@ -337,12 +354,13 @@ source-matched or derived; a paper with any `partial_boundary` premise must be
 reported as partial, not fully formalized.
 
 The assumption judge must not accept a formula merely because it appears in a
-source proof or because a Lean helper can consume it. Displayed equations,
-capacity identities, threshold cutoffs, normalizations, density or mass rows,
-source-row packages, certificates, and witness objects are source assumptions
-only if the source states them as assumptions or theorem hypotheses. Otherwise
-they must either be derived in Lean from source primitives or recorded as a
-partial boundary.
+source proof, because a Lean helper can consume it, or because a named Lean
+predicate sounds like source text. Displayed equations, capacity identities,
+threshold cutoffs, normalizations, density or mass rows, source-row packages,
+replay/certificate/process/bridge predicates, and witness objects are source
+assumptions only if the source states them as assumptions or theorem
+hypotheses. Otherwise they must either be derived in Lean from source
+primitives or recorded as a partial boundary.
 
 Run `python3 scripts/audit_repository.py` at the same boundary. The repository
 audit does not stop at the compact `PaperInterface.lean` declaration text: it
@@ -368,6 +386,31 @@ before declaring the paper clean. Routine push/PR CI should not run the full
 repository audit; reserve that gate for manual closeout or public-promotion
 validation.
 
+## Source-Record and Boundary-Input Audit
+
+Row-local statement matching is not enough when a theorem signature mentions a
+record, certificate, replay, process, bridge, source-row package, or broad model
+predicate. Run:
+
+```bash
+python3 skills/econcs-formalizer/scripts/source_record_audit.py --paper <PaperFolder> --out papers/<PaperFolder>/source_record_audit.json
+```
+
+The generated payload contains `prompt_version:
+"source-record-v2-semantic-boundary-inputs"`, the current audit digest,
+boundary-shaped visible theorem inputs, recursive source-record fields, and a
+judge prompt. Save the independent LLM judgments in
+`source_record_match_llm.json` with the same prompt version and current
+`source_record_audit_sha256`.
+
+Each boundary-shaped theorem input must be classified by source evidence, a
+Lean derivation, an approved external boundary, or an unresolved finding.
+`validated_source_assumption` requires a source key/location/evidence.
+`proved_from_primitives` requires a Lean constructor or derivation. A replay,
+certificate, process, bridge, or source-row package cannot be approved by a
+source-looking Lean name or final theorem label. A paper marked `formalized`
+cannot retain an `approved_external_boundary` source-record judgment.
+
 ## Review-Surface Audit
 
 For any paper whose dashboard has more than 30 rows, run a separate LLM pass
@@ -376,7 +419,7 @@ summaries, but no proof context, and ask whether every row is a paper-facing
 definition, formula, or named source statement that belongs in the human review
 surface. Save the result in paper-root `review_surface_llm.json`.
 
-At 50 or more rows, the dashboard always shows an oversized-surface warning.
+At 120 or more rows, the dashboard always shows an oversized-surface warning.
 That warning is intentional: even if the LLM audit passes, a human should first
 decide whether the paper truly has that many named paper-facing rows or whether
 implementation helpers leaked into `PaperInterface.lean`.

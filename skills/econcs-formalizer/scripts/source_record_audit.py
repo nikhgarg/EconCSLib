@@ -37,11 +37,19 @@ TOP_LEVEL_RE = re.compile(
     r"instance|namespace|section|end)\b"
 )
 FIELD_RE = re.compile(r"^\s{2,}([A-Za-z_][A-Za-z0-9_']*)\s*:\s*(.*)$")
+BINDER_RE = re.compile(r"[\(\{]([^()\{\}\[\]]+?)\s*:\s*([^()\{\}\[\]]+?)[\)\}]")
+BOUNDARY_INPUT_RE = re.compile(
+    r"(certificate|replay|process|bridge|trace|path|transfer|preservation|"
+    r"source[_ -]?(?:row|rows|table|model|family)|"
+    r"row[_ -]?package|oracle|external|boundary|assumption|hypothesis|premise|regularity|"
+    r"witness|bounds?|package)",
+    re.I,
+)
 
 STRUCTURE_NAME_RE = re.compile(
     r"(Record|Certificate|Semantics|Source|Model|Bridge|Package|Consequences|"
     r"Inputs|Carrier|Trace|Skeleton|Boundary|Witness|Data|Law|Functions|Kernel|"
-    r"Process)$"
+    r"Replay|Process)$"
 )
 NON_SOURCE_RECORD_TYPE_NAMES = {
     # Enum/base carrier names that match STRUCTURE_NAME_RE by suffix but are not
@@ -68,14 +76,18 @@ RISK_TERMS = {
     "median",
     "model",
     "optimal",
+    "process",
     "projection",
     "response",
+    "replay",
     "semantics",
     "source",
     "trace",
     "trajectory",
     "update",
 }
+
+SOURCE_RECORD_PROMPT_VERSION = "source-record-v2-semantic-boundary-inputs"
 
 
 @dataclass
@@ -142,6 +154,148 @@ def normalize_ws(text: str) -> str:
 def stable_digest(payload: object) -> str:
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def binder_names(raw_names: str) -> list[str]:
+    return [
+        name
+        for name in re.split(r"\s+", raw_names.strip())
+        if name and name not in {"_", "inst"} and not name.startswith("[") and not name.endswith("]")
+    ]
+
+
+def declaration_header(declaration: str) -> str:
+    """Return the declaration signature before the proof/body."""
+
+    body_start = top_level_token_index(declaration, ":=")
+    head = declaration[:body_start] if body_start is not None else declaration
+    where_start = top_level_word_index(head, "where")
+    if where_start is not None:
+        head = head[:where_start]
+    return head.strip()
+
+
+def top_level_token_index(text: str, token: str) -> int | None:
+    """Return the first top-level occurrence of `token`, ignoring binder interiors."""
+
+    depth = 0
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if char in "([{⦃":
+            depth += 1
+            index += 1
+            continue
+        if char in ")]}⦄" and depth > 0:
+            depth -= 1
+            index += 1
+            continue
+        if depth == 0 and text.startswith(token, index):
+            return index
+        index += 1
+    return None
+
+
+def top_level_word_index(text: str, word: str) -> int | None:
+    """Return the first top-level occurrence of a standalone Lean keyword."""
+
+    depth = 0
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if char in "([{⦃":
+            depth += 1
+            index += 1
+            continue
+        if char in ")]}⦄" and depth > 0:
+            depth -= 1
+            index += 1
+            continue
+        if depth == 0 and text.startswith(word, index):
+            before = text[index - 1] if index else " "
+            after_index = index + len(word)
+            after = text[after_index] if after_index < len(text) else " "
+            if not (before.isalnum() or before == "_") and not (
+                after.isalnum() or after == "_"
+            ):
+                return index
+        index += 1
+    return None
+
+
+def split_top_level_colon(text: str) -> tuple[str, str] | None:
+    depth = 0
+    for index, char in enumerate(text):
+        if char in "([{⦃":
+            depth += 1
+        elif char in ")]}⦄" and depth > 0:
+            depth -= 1
+        elif char == ":" and depth == 0:
+            return text[:index].strip(), text[index + 1 :].strip()
+    return None
+
+
+def balanced_binder_spans(text: str) -> list[str]:
+    """Return top-level Lean binder contents from a declaration header."""
+
+    spans: list[str] = []
+    pairs = {"(": ")", "{": "}", "[": "]"}
+    index = 0
+    while index < len(text):
+        opener = text[index]
+        closer = pairs.get(opener)
+        if closer is None:
+            index += 1
+            continue
+        depth = 1
+        cursor = index + 1
+        while cursor < len(text) and depth > 0:
+            char = text[cursor]
+            if char == opener:
+                depth += 1
+            elif char == closer:
+                depth -= 1
+            cursor += 1
+        if depth == 0:
+            spans.append(text[index + 1 : cursor - 1])
+            index = cursor
+        else:
+            index += 1
+    return spans
+
+
+def visible_inputs_from_declaration(declaration: str) -> list[dict[str, str]]:
+    """Best-effort visible binder extraction from a paper-facing declaration."""
+
+    inputs: list[dict[str, str]] = []
+    header = declaration_header(declaration)
+    type_split = split_top_level_colon(header)
+    binder_prefix = type_split[0] if type_split is not None else header
+    for span in balanced_binder_spans(binder_prefix):
+        split = split_top_level_colon(span)
+        if split is None:
+            continue
+        raw_names, raw_type = split
+        names = binder_names(raw_names)
+        type_text = normalize_ws(raw_type)
+        if not names or not type_text:
+            continue
+        inputs.append({"names": " ".join(names), "type": type_text})
+    return inputs
+
+
+def boundary_input_kind(row: str, visible_input: dict[str, str]) -> str:
+    _ = row
+    haystack = f"{visible_input.get('names', '')} {visible_input.get('type', '')}"
+    if BOUNDARY_INPUT_RE.search(haystack):
+        return "boundary_premise"
+    return ""
+
+
+def boundary_input_judgment_key(row: str, visible_input: dict[str, str]) -> str:
+    names = normalize_ws(visible_input.get("names", ""))
+    type_text = normalize_ws(visible_input.get("type", ""))
+    return f"{row}.{names} : {type_text}"
 
 
 def parse_status_rows(status_path: Path) -> list[str]:
@@ -397,6 +551,7 @@ def lean_check(
     row_namespace: str,
     row_names: list[str],
     assumption_row_names: set[str],
+    qualified_row_refs: dict[str, str],
     fields: list[FieldInfo],
     max_output_chars: int,
 ) -> dict[str, Any]:
@@ -436,8 +591,9 @@ def lean_check(
         lines.append("")
 
     def row_ref(name: str) -> str:
-        if name in assumption_row_names:
-            return name
+        qualified = qualified_row_refs.get(name)
+        if qualified:
+            return qualified
         return f"{row_namespace}.{name}" if row_namespace else name
 
     for name in row_names:
@@ -481,7 +637,18 @@ def judge_prompt(paper_id: str, items: list[dict[str, Any]]) -> str:
         "You are auditing Lean formalization provenance, not just theorem text.\n"
         f"Paper: {paper_id}\n\n"
         "For each item below, compare the original paper source statement/proof text "
-        "with the Lean-checked statement and the dependency path. Classify the item as "
+        "with the Lean-checked statement and the dependency path. Scrutinize every "
+        "visible theorem input semantically: names and source-looking type suffixes "
+        "are only routing hints, not evidence. Do not approve by theorem label, "
+        "phrase overlap, or source-looking Lean name. Each input must correspond "
+        "to a specific paper primitive/source assumption, be derived by a "
+        "Lean-checked constructor from paper primitives, be an approved external "
+        "boundary, or remain an unresolved conditional/partial boundary. In "
+        "particular, any Certificate, Replay, Process, or Bridge input needs a "
+        "specific source statement or an instantiation path from the paper's "
+        "primitive model; do not accept it merely because the final theorem name "
+        "resembles the paper claim.\n\n"
+        "Classify the item as "
         "one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, "
         "container_recursively_audited, derived_consequence_record, "
         "nonpropositional_witness_data, or unresolved_assumed_math. Use "
@@ -497,10 +664,11 @@ def judge_prompt(paper_id: str, items: list[dict[str, Any]]) -> str:
         "response/trajectory semantics. The proposition-valued fields that constrain that "
         "witness must still be classified separately. Mark "
         "unresolved_assumed_math if the Lean row merely "
-        "takes a record/certificate/source-model field that states convexity, response "
-        "semantics, trajectory generation, continuity, convergence, equilibrium, or a "
-        "displayed formula that should be derived. Do not mark a field as proved just "
-        "because Lean typechecks a projection from a structure premise.\n\n"
+        "takes a record/certificate/replay/process/bridge/source-model field that "
+        "states convexity, response semantics, trace/replay validity, transfer "
+        "preservation, trajectory generation, continuity, convergence, equilibrium, "
+        "or a displayed formula that should be derived. Do not mark a field as "
+        "proved just because Lean typechecks a projection from a structure premise.\n\n"
         + json.dumps(items, indent=2, sort_keys=True)
     )
 
@@ -526,14 +694,25 @@ def main() -> int:
     configured_rows = parse_status_rows(status_path)
     configured_row_set = set(configured_rows)
     declarations = parse_declarations(interface_path)
+    qualified_row_refs: dict[str, str] = {}
     assumptions_path = paper_dir / "Assumptions.lean"
     if assumptions_path.exists():
+        assumption_namespace = first_declaration_namespace(assumptions_path)
         for name, declaration in parse_declarations(assumptions_path).items():
             if name in configured_row_set or name.startswith(("assumption", "source_assumption")):
                 declarations[name] = declaration
+                if assumption_namespace:
+                    qualified_row_refs[name] = f"{assumption_namespace}.{name}"
     configured_present = [name for name in configured_rows if name in declarations]
     configured_set = set(configured_present)
-    row_names = configured_present + [name for name in sorted(declarations) if name not in configured_set]
+    unconfigured_rows = [name for name in sorted(declarations) if name not in configured_set]
+
+    # The enforceable source-record lane is the curated paper-facing review
+    # surface.  Keep unconfigured declarations visible in the payload so a
+    # closeout audit can notice dashboard drift, but do not require source
+    # provenance judgments for generic helper lemmas that are not presented as
+    # paper claims.
+    row_names = configured_present
     assumption_row_names: set[str] = set()
     if assumptions_path.exists():
         assumption_declarations = parse_declarations(assumptions_path)
@@ -553,6 +732,9 @@ def main() -> int:
         row: mentioned_structures(declarations[row], candidate_structures) for row in row_names
     }
     row_records = {row: records for row, records in row_records.items() if records}
+    row_inputs: dict[str, list[dict[str, str]]] = {
+        row: visible_inputs_from_declaration(declarations[row]) for row in row_names
+    }
 
     recursive_fields: list[FieldInfo] = []
     recursion_failures: list[RecursionFailure] = []
@@ -569,16 +751,38 @@ def main() -> int:
                     seen_fields.add(key)
                     recursive_fields.append(field)
 
-    judge_items = [
+    semantic_row_items = [
         {
             "row": row,
-            "record_premises": records,
+            "visible_inputs": row_inputs.get(row, []),
+            "record_premises": row_records.get(row, []),
             "lean_source_declaration": declarations[row],
-            "required_check": "Every record premise below must be recursively proved from primitives, "
-            "validated as an explicit paper source assumption, approved as an external boundary, "
-            "or marked unresolved proof debt.",
+            "required_check": "Every visible input must be semantically matched to the paper source "
+            "model, not accepted by name. Every record/certificate/replay/process/bridge premise "
+            "below must be recursively proved from primitives, validated as an explicit paper "
+            "source assumption, approved as an external boundary, or marked unresolved proof debt.",
         }
-        for row, records in row_records.items()
+        for row in row_names
+        if row_inputs.get(row) or row_records.get(row)
+    ]
+    boundary_input_items = [
+        {
+            "row": row,
+            "input": visible_input,
+            "kind": kind,
+            "judgment_key": boundary_input_judgment_key(row, visible_input),
+            "lean_source_declaration": declarations[row],
+            "required_check": "This visible theorem input is boundary-shaped. It needs a specific "
+            "source statement/primitive or a Lean-checked constructor from paper primitives; "
+            "the source-looking predicate name is not evidence.",
+        }
+        for row in row_names
+        for visible_input in row_inputs.get(row, [])
+        for kind in [boundary_input_kind(row, visible_input)]
+        if kind
+    ]
+    judge_items = [
+        item for item in semantic_row_items if item.get("record_premises")
     ]
     field_items = [
         {
@@ -593,7 +797,10 @@ def main() -> int:
         for field in recursive_fields
     ]
     audit_surface = {
+        "boundary_input_items": boundary_input_items,
         "rows_with_record_premises": judge_items,
+        "rows_with_semantic_inputs": semantic_row_items,
+        "row_visible_inputs": row_inputs,
         "recursive_field_items": field_items,
         "recursion_failures": [asdict(failure) for failure in recursion_failures],
     }
@@ -602,30 +809,37 @@ def main() -> int:
         "paper": args.paper,
         "paper_dir": str(paper_dir),
         "import_module": f"{args.paper}.PaperInterface",
+        "prompt_version": SOURCE_RECORD_PROMPT_VERSION,
         "source_record_audit_sha256": stable_digest(audit_surface),
         "source_record_judgment_file": "source_record_match_llm.json",
+        "expected_input_judgment_keys": sorted(
+            {str(item["judgment_key"]) for item in boundary_input_items}
+        ),
         "expected_field_judgment_keys": sorted(
             {str(item["judgment_key"]) for item in field_items}
         ),
         "review_row_count": len(row_names),
         "configured_review_row_count": len(configured_present),
-        "unconfigured_paper_interface_rows": [
-            name for name in row_names if name not in configured_set
-        ],
+        "unconfigured_paper_interface_rows": unconfigured_rows,
+        "boundary_input_count": len(boundary_input_items),
+        "boundary_input_items": boundary_input_items,
         "rows_with_record_premises": judge_items,
+        "rows_with_semantic_inputs": semantic_row_items,
+        "row_visible_inputs": row_inputs,
         "recursive_field_count": len(field_items),
         "recursive_field_items": field_items,
         "recursion_failure_count": len(recursion_failures),
         "recursion_failures": [asdict(failure) for failure in recursion_failures],
-        "llm_judge_prompt": judge_prompt(args.paper, field_items),
+        "llm_judge_prompt": judge_prompt(args.paper, boundary_input_items + semantic_row_items + field_items),
     }
     if not args.no_lean:
         payload["lean_check"] = lean_check(
             root=root,
             paper_id=args.paper,
             row_namespace=row_namespace,
-            row_names=list(row_records),
+            row_names=[str(item["row"]) for item in semantic_row_items],
             assumption_row_names=assumption_row_names,
+            qualified_row_refs=qualified_row_refs,
             fields=recursive_fields,
             max_output_chars=args.max_lean_output_chars,
         )

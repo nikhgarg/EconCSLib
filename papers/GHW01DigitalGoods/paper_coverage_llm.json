@@ -1,406 +1,495 @@
 {
-  "schema": 1,
-  "paper": "GHW01DigitalGoods",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "44f01f5d2c32a180db8140500715edac0d09e8604c5bc2a234dda0ed314fe1d1",
-  "review_surface_sha256": "98cc7c0cca5637e84729456366626904407a2bfa5f18c59834ea9f851affc387",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
     "assumption_bid_value_range_conditions": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_bid_value_range_conditions",
+      "reason": "The source item is the paper-facing statement/formula summarized as: High-value theorem inputs have bids in the normalized range. The dashboard row `assumption_bid_value_range_conditions` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_bid_value_range_conditions"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: High-value theorem inputs have bids in the normalized range. The dashboard row `assumption_bid_value_range_conditions` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: High-value theorem inputs have bids in the normalized range.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_bid_value_range_conditions`.",
-      "statement_sha256": "4e25e38daa7305353671369a45e736693cd53b5e97dfab25b903d2c834a17600",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "4e25e38daa7305353671369a45e736693cd53b5e97dfab25b903d2c834a17600",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_high_value_attained": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_high_value_attained",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 4.2 fixes `h` as a maximum bid. The dashboard row `assumption_high_value_attained` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_high_value_attained"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 4.2 fixes `h` as a maximum bid. The dashboard row `assumption_high_value_attained` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Corollary 4.2 fixes `h` as a maximum bid.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_high_value_attained`.",
-      "statement_sha256": "2be02d33826b6c1fd06593ded16cdcf4a0d441486d16f21083baca022269cecc",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2be02d33826b6c1fd06593ded16cdcf4a0d441486d16f21083baca022269cecc",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_high_value_scale_conditions": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_high_value_scale_conditions",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The paper normalizes the lowest/highest bid scale in the high-value theorems. The dashboard row `assumption_high_value_scale_conditions` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_high_value_scale_conditions"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The paper normalizes the lowest/highest bid scale in the high-value theorems. The dashboard row `assumption_high_value_scale_conditions` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: The paper normalizes the lowest/highest bid scale in the high-value theorems.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_high_value_scale_conditions`.",
-      "statement_sha256": "e762be1a24c212ebbbd9bfab4a50c92f96a32f9787ffc31da6e2775d5876175d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e762be1a24c212ebbbd9bfab4a50c92f96a32f9787ffc31da6e2775d5876175d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_low_bid_below_high_bid": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_low_bid_below_high_bid",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 8.1 compares a lower bid with a higher bid. The dashboard row `assumption_low_bid_below_high_bid` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_low_bid_below_high_bid"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 8.1 compares a lower bid with a higher bid. The dashboard row `assumption_low_bid_below_high_bid` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Lemma 8.1 compares a lower bid with a higher bid.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_low_bid_below_high_bid`.",
-      "statement_sha256": "03a46178d9f9bf34095f7687631739a992dbaaeca4b90ad43f6a1e765f53eadf",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "03a46178d9f9bf34095f7687631739a992dbaaeca4b90ad43f6a1e765f53eadf",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_lower_bound_positive_alpha": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_lower_bound_positive_alpha",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lower-bound theorems quantify over positive constants. The dashboard row `assumption_lower_bound_positive_alpha` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_lower_bound_positive_alpha"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lower-bound theorems quantify over positive constants. The dashboard row `assumption_lower_bound_positive_alpha` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Lower-bound theorems quantify over positive constants.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_lower_bound_positive_alpha`.",
-      "statement_sha256": "a205172e5e786d2b8823b492c67cf768ad27a2274b89a45ff6a813f7ca88b0ee",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a205172e5e786d2b8823b492c67cf768ad27a2274b89a45ff6a813f7ca88b0ee",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 8.2 is checked against the later journal version's monotone randomized offer formulation rather than the broader preliminary SODA wording. The dashboard row `assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 8.2 is checked against the later journal version's monotone randomized offer formulation rather than the broader preliminary SODA wording. The dashboard row `assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Theorem 8.2 is checked against the later journal version's monotone randomized offer formulation rather than the broader preliminary SODA wording.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model`.",
-      "statement_sha256": "e20b05ac87b6120bdb1e032f5d54f453e00b2f7690dc4e83b46964ce434eab65",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e20b05ac87b6120bdb1e032f5d54f453e00b2f7690dc4e83b46964ce434eab65",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 9.3 uses the paper's deterministic set-of-bids convention and focused slice `A_i(B_i^x)` to represent each bidder's offer from the other bids and the bidder's own reported value. The dashboard row `assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 9.3 uses the paper's deterministic set-of-bids convention and focused slice `A_i(B_i^x)` to represent each bidder's offer from the other bids and the bidder's own reported value. The dashboard row `assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Theorem 9.3 uses the paper's deterministic set-of-bids convention and focused slice `A_i(B_i^x)` to represent each bidder's offer from the other bids and the bidder's own reported value.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model`.",
-      "statement_sha256": "d1cd8a4769f005146b59f238442ed11be0862d274d1038f28ef5e6cf08a412c9",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d1cd8a4769f005146b59f238442ed11be0862d274d1038f28ef5e6cf08a412c9",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_total_value_notation": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_total_value_notation",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Weighted-pairing statements expose the paper's total-value notation. The dashboard row `assumption_total_value_notation` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_total_value_notation"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Weighted-pairing statements expose the paper's total-value notation. The dashboard row `assumption_total_value_notation` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Weighted-pairing statements expose the paper's total-value notation.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_total_value_notation`.",
-      "statement_sha256": "7a06ea3cdbe232f39ea1a60a5cc8d8beb24c149382c52bd58f6e9949e6ae04cb",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "7a06ea3cdbe232f39ea1a60a5cc8d8beb24c149382c52bd58f6e9949e6ae04cb",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_truthful_auction_condition": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_truthful_auction_condition",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 8.1 and Lemma 9.2 are stated for truthful auctions. The dashboard row `assumption_truthful_auction_condition` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_truthful_auction_condition"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 8.1 and Lemma 9.2 are stated for truthful auctions. The dashboard row `assumption_truthful_auction_condition` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Lemma 8.1 and Lemma 9.2 are stated for truthful auctions.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_truthful_auction_condition`.",
-      "statement_sha256": "ed3b535ef85799f3a9e209ddabd8818b0fe9de3b022547b257efe9c988a622ef",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ed3b535ef85799f3a9e209ddabd8818b0fe9de3b022547b257efe9c988a622ef",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_two_winner_benchmark_large_enough": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_two_winner_benchmark_large_enough",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.2 assumes the two-winner benchmark is at least twice the high bid. The dashboard row `assumption_two_winner_benchmark_large_enough` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_two_winner_benchmark_large_enough"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.2 assumes the two-winner benchmark is at least twice the high bid. The dashboard row `assumption_two_winner_benchmark_large_enough` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Theorem 7.2 assumes the two-winner benchmark is at least twice the high bid.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_two_winner_benchmark_large_enough`.",
-      "statement_sha256": "77e3ee86b2bb2548597805d2c6abffda8cc4cd041617e5a4c3010f6747a27382",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "77e3ee86b2bb2548597805d2c6abffda8cc4cd041617e5a4c3010f6747a27382",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_weighted_pairing_large_market": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_weighted_pairing_large_market",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.1 assumes the high-bid value is small relative to total value. The dashboard row `assumption_weighted_pairing_large_market` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_weighted_pairing_large_market"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.1 assumes the high-bid value is small relative to total value. The dashboard row `assumption_weighted_pairing_large_market` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Theorem 7.1 assumes the high-bid value is small relative to total value.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_weighted_pairing_large_market`.",
-      "statement_sha256": "e3300999962d5f323725d9f7360fc27e3a35fb4158de45b66a33c275fb34700d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e3300999962d5f323725d9f7360fc27e3a35fb4158de45b66a33c275fb34700d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_weighted_pairing_log_factor": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_weighted_pairing_log_factor",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.2 packages the logarithmic factor with `s`. The dashboard row `assumption_weighted_pairing_log_factor` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_weighted_pairing_log_factor"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.2 packages the logarithmic factor with `s`. The dashboard row `assumption_weighted_pairing_log_factor` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Theorem 7.2 packages the logarithmic factor with `s`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_weighted_pairing_log_factor`.",
-      "statement_sha256": "f4a1c98afc53c401db53838d95f16a4e4858cd9694e99d33c584986618fcccd1",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f4a1c98afc53c401db53838d95f16a4e4858cd9694e99d33c584986618fcccd1",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "corollary4_2_fixed_price_lower_bound": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "corollary4_2_fixed_price_lower_bound",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 4.2: truncating bids below `h / n` and applying Theorem 4.1 gives the logarithmic fixed-price lower bound. internally from the source proof. The dashboard row `corollary4_2_fixed_price_lower_bound` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "corollary4_2_fixed_price_lower_bound"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 4.2: truncating bids below `h / n` and applying Theorem 4.1 gives the logarithmic fixed-price lower bound. internally from the source proof. The dashboard row `corollary4_2_fixed_price_lower_bound` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. source corollary endpoint.. Source inventory item: Corollary 4.2: truncating bids below `h / n` and applying Theorem 4.1 gives the logarithmic fixed-price lower bound. internally from the source proof.",
-      "dashboard_evidence": "Current human-dashboard row(s): `corollary4_2_fixed_price_lower_bound`.",
-      "statement_sha256": "7e66d885f1c35b8cbe4873834808339c826cd56ddbb2afe36250ee15dfc4797f",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "7e66d885f1c35b8cbe4873834808339c826cd56ddbb2afe36250ee15dfc4797f",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "fixedPriceBenchmark": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "fixedPriceBenchmark",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Fixed-price benchmark over bidder-value candidate prices, requiring at least `minWinners` winners. The dashboard row `fixedPriceBenchmark` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "fixedPriceBenchmark"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Fixed-price benchmark over bidder-value candidate prices, requiring at least `minWinners` winners. The dashboard row `fixedPriceBenchmark` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Fixed-price benchmark over bidder-value candidate prices, requiring at least `minWinners` winners.",
-      "dashboard_evidence": "Current human-dashboard row(s): `fixedPriceBenchmark`.",
-      "statement_sha256": "30065a57835fefd51ad30ec76cd86d44bf191a1ad97d13a4e3f14aaf2521887a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "30065a57835fefd51ad30ec76cd86d44bf191a1ad97d13a4e3f14aaf2521887a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma6_1_fair_coin": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma6_1_fair_coin",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 6.1: fair-coin random sampling lower-tail estimate. The dashboard row `lemma6_1_fair_coin` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma6_1_fair_coin"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 6.1: fair-coin random sampling lower-tail estimate. The dashboard row `lemma6_1_fair_coin` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. source lemma endpoint.. Source inventory item: Lemma 6.1: fair-coin random sampling lower-tail estimate.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma6_1_fair_coin`.",
-      "statement_sha256": "5c640c657a79696f9da28f8d803b68b241ec576cffba924ecee671a5f46e8920",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5c640c657a79696f9da28f8d803b68b241ec576cffba924ecee671a5f46e8920",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma8_1_truthful_monotone": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma8_1_truthful_monotone",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 8.1: truthfulness implies monotone own-bid allocation. The dashboard row `lemma8_1_truthful_monotone` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma8_1_truthful_monotone"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 8.1: truthfulness implies monotone own-bid allocation. The dashboard row `lemma8_1_truthful_monotone` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Lemma 8.1: truthfulness implies monotone own-bid allocation.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma8_1_truthful_monotone`.",
-      "statement_sha256": "18502f7df9d12f74a515f448a8d8ff9811b81a87ea513695057dd3cf5525e99d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "18502f7df9d12f74a515f448a8d8ff9811b81a87ea513695057dd3cf5525e99d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma9_2_threshold_domination": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma9_2_threshold_domination",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 9.2: deterministic truthful binary auctions admit threshold offers. truthful deterministic auctions are bid-independent lemma. The dashboard row `lemma9_2_threshold_domination` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma9_2_threshold_domination"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 9.2: deterministic truthful binary auctions admit threshold offers. truthful deterministic auctions are bid-independent lemma. The dashboard row `lemma9_2_threshold_domination` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. source lemma endpoint.. Source inventory item: Lemma 9.2: deterministic truthful binary auctions admit threshold offers. truthful deterministic auctions are bid-independent lemma.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma9_2_threshold_domination`.",
-      "statement_sha256": "72323219d7b981a7377835a245b7593c83eb03ed4393743cbe6200ceea98e4b7",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "72323219d7b981a7377835a245b7593c83eb03ed4393743cbe6200ceea98e4b7",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "revenue": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "revenue",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Digital-goods auction revenue: total payments collected from all bidders. The dashboard row `revenue` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "revenue"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Digital-goods auction revenue: total payments collected from all bidders. The dashboard row `revenue` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Digital-goods auction revenue: total payments collected from all bidders.",
-      "dashboard_evidence": "Current human-dashboard row(s): `revenue`.",
-      "statement_sha256": "2e68748f418ba8050b42e161add8ec65dab304c6b1e19e14618d2af84726c810",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2e68748f418ba8050b42e161add8ec65dab304c6b1e19e14618d2af84726c810",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "singlePriceRevenue": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "singlePriceRevenue",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Single-price revenue at price `p`. The dashboard row `singlePriceRevenue` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "singlePriceRevenue"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Single-price revenue at price `p`. The dashboard row `singlePriceRevenue` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Single-price revenue at price `p`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `singlePriceRevenue`.",
-      "statement_sha256": "d74648fea847146f4c20c8d79f4a2f58dc1ed6e2f36d204b34ab88114e52f941",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d74648fea847146f4c20c8d79f4a2f58dc1ed6e2f36d204b34ab88114e52f941",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem4_1_high_value": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem4_1_high_value",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4.1: high-value profiles have a logarithmic fixed-price lower bound. The dashboard row `theorem4_1_high_value` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem4_1_high_value"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4.1: high-value profiles have a logarithmic fixed-price lower bound. The dashboard row `theorem4_1_high_value` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Theorem 4.1: high-value profiles have a logarithmic fixed-price lower bound.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem4_1_high_value`.",
-      "statement_sha256": "62e9fee28b420b1dda7eeb8553804a75a1466f88c615419902e5c13a0f1a293f",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "62e9fee28b420b1dda7eeb8553804a75a1466f88c615419902e5c13a0f1a293f",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem6_2_random_sampling": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem6_2_random_sampling",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 6.2: random-sampling auction revenue guarantee for finite candidate benchmark inputs satisfying `alpha * h <= F`. `alpha * h <= F` is the source theorem condition. The dashboard row `theorem6_2_random_sampling` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem6_2_random_sampling"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 6.2: random-sampling auction revenue guarantee for finite candidate benchmark inputs satisfying `alpha * h <= F`. `alpha * h <= F` is the source theorem condition. The dashboard row `theorem6_2_random_sampling` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. source theorem endpoint.. Source inventory item: Theorem 6.2: random-sampling auction revenue guarantee for finite candidate benchmark inputs satisfying `alpha * h <= F`. `alpha * h <= F` is the source theorem condition.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem6_2_random_sampling`.",
-      "statement_sha256": "59fce542da51d4b5c11eadb04200156b969242ea007fdb6b9792c2dae0d46d3e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "59fce542da51d4b5c11eadb04200156b969242ea007fdb6b9792c2dae0d46d3e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem7_1_weighted_pairing": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem7_1_weighted_pairing",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.1: weighted pairing gets a logarithmic guarantee when `4h <= T`. paper's `Omega(T / log h)` bound under the displayed side condition. The dashboard row `theorem7_1_weighted_pairing` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem7_1_weighted_pairing"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.1: weighted pairing gets a logarithmic guarantee when `4h <= T`. paper's `Omega(T / log h)` bound under the displayed side condition. The dashboard row `theorem7_1_weighted_pairing` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. source theorem endpoint.. Source inventory item: Theorem 7.1: weighted pairing gets a logarithmic guarantee when `4h <= T`. paper's `Omega(T / log h)` bound under the displayed side condition.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem7_1_weighted_pairing`.",
-      "statement_sha256": "601fbafea83ae8ff3498ee1620fcf8fcd9c95a51cb0ea85b24a78ede37bec2d6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "601fbafea83ae8ff3498ee1620fcf8fcd9c95a51cb0ea85b24a78ede37bec2d6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem7_2_weighted_pairing_benchmark": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem7_2_weighted_pairing_benchmark",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.2: weighted pairing competes with the two-winner benchmark. The dashboard row `theorem7_2_weighted_pairing_benchmark` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem7_2_weighted_pairing_benchmark"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7.2: weighted pairing competes with the two-winner benchmark. The dashboard row `theorem7_2_weighted_pairing_benchmark` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Theorem 7.2: weighted pairing competes with the two-winner benchmark.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem7_2_weighted_pairing_benchmark`.",
-      "statement_sha256": "e989bcc5e7632506b77405d571d497e12137fd68530dcf778a1844acb95e7935",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e989bcc5e7632506b77405d571d497e12137fd68530dcf778a1844acb95e7935",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem8_2_truthful_revenue_upper_bound": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem8_2_truthful_revenue_upper_bound",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 8.2 source-version endpoint. For Section 8.2, the paper-facing formalization follows the journal version's refined monotone truthful randomized offer-auction wording. Every such auction has expected revenue at most the fixed-pric... The dashboard row `theorem8_2_truthful_revenue_upper_bound` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem8_2_truthful_revenue_upper_bound"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 8.2 source-version endpoint. For Section 8.2, the paper-facing formalization follows the journal version's refined monotone truthful randomized offer-auction wording. Every such auction has expected revenue at most the fixed-pric... The dashboard row `theorem8_2_truthful_revenue_upper_bound` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. source-version endpoint.. Source inventory item: Theorem 8.2 source-version endpoint. For Section 8.2, the paper-facing formalization follows the journal version's refined monotone truthful randomized offer-auction wording. Every such auction has expected revenue at most the fixed-price benchmark `F`. Thi...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem8_2_truthful_revenue_upper_bound`.",
-      "statement_sha256": "a838594925b8c8ad97267fd7548cb99151b15871d018e2903a41760fd883e24d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a838594925b8c8ad97267fd7548cb99151b15871d018e2903a41760fd883e24d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem9_1_bid_independent_lower_bound": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem9_1_bid_independent_lower_bound",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 9.1: bid-independent auctions have a lower-bound witness. the paper's positive `alpha` large-market condition. The dashboard row `theorem9_1_bid_independent_lower_bound` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem9_1_bid_independent_lower_bound"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 9.1: bid-independent auctions have a lower-bound witness. the paper's positive `alpha` large-market condition. The dashboard row `theorem9_1_bid_independent_lower_bound` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. source theorem endpoint.. Source inventory item: Theorem 9.1: bid-independent auctions have a lower-bound witness. the paper's positive `alpha` large-market condition.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem9_1_bid_independent_lower_bound`.",
-      "statement_sha256": "8bae4113cf366b9515af131e1838ee5d542803c48ef37e4b5cfee722ce6679c2",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8bae4113cf366b9515af131e1838ee5d542803c48ef37e4b5cfee722ce6679c2",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem9_3_deterministic_truthful_lower_bound": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem9_3_deterministic_truthful_lower_bound",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 9.3: deterministic truthful auctions have a lower-bound witness. The source model supplies the paper's set-of-bids focused-outcome convention; erased-list relabeling and then Lemma 9.2's anonymous list-price representation are co... The dashboard row `theorem9_3_deterministic_truthful_lower_bound` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem9_3_deterministic_truthful_lower_bound"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 9.3: deterministic truthful auctions have a lower-bound witness. The source model supplies the paper's set-of-bids focused-outcome convention; erased-list relabeling and then Lemma 9.2's anonymous list-price representation are co... The dashboard row `theorem9_3_deterministic_truthful_lower_bound` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. source theorem endpoint.. Source inventory item: Theorem 9.3: deterministic truthful auctions have a lower-bound witness. The source model supplies the paper's set-of-bids focused-outcome convention; erased-list relabeling and then Lemma 9.2's anonymous list-price representation are constructed internally...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem9_3_deterministic_truthful_lower_bound`.",
-      "statement_sha256": "fd4d3267d3c2ddd610b511fa7c51a2574e0e528c09153368021bbcebb86c9999",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "fd4d3267d3c2ddd610b511fa7c51a2574e0e528c09153368021bbcebb86c9999",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "totalValue": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "totalValue",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Total bid value `T = sum_i v_i`. The dashboard row `totalValue` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "totalValue"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Total bid value `T = sum_i v_i`. The dashboard row `totalValue` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. direct source text.. Source inventory item: Total bid value `T = sum_i v_i`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `totalValue`.",
-      "statement_sha256": "2cd82a76307593a707fda856b53f2376152e08579771fba302a895d9a98a163e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2cd82a76307593a707fda856b53f2376152e08579771fba302a895d9a98a163e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "truthful": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "truthful",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Dominant-strategy truthfulness: truthful bidding weakly dominates replacing one agent's value report by any alternative report. The dashboard row `truthful` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "truthful"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Dominant-strategy truthfulness: truthful bidding weakly dominates replacing one agent's value report by any alternative report. The dashboard row `truthful` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Dominant-strategy truthfulness: truthful bidding weakly dominates replacing one agent's value report by any alternative report.",
-      "dashboard_evidence": "Current human-dashboard row(s): `truthful`.",
-      "statement_sha256": "ba7af04a51dde16de97f069df4dc2fa56824760a94bc73f6b22ef25900bf9aa5",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ba7af04a51dde16de97f069df4dc2fa56824760a94bc73f6b22ef25900bf9aa5",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "twoWinnerBenchmark": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "twoWinnerBenchmark",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Two-winner fixed-price benchmark `F^(2)`: the best single-price revenue selling to at least two bidders. The dashboard row `twoWinnerBenchmark` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "twoWinnerBenchmark"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Two-winner fixed-price benchmark `F^(2)`: the best single-price revenue selling to at least two bidders. The dashboard row `twoWinnerBenchmark` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Two-winner fixed-price benchmark `F^(2)`: the best single-price revenue selling to at least two bidders.",
-      "dashboard_evidence": "Current human-dashboard row(s): `twoWinnerBenchmark`.",
-      "statement_sha256": "f256bcbdbfe5580bc80b5f59b8e6f935d5096b7e03ca742d0e65fe026733c149",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f256bcbdbfe5580bc80b5f59b8e6f935d5096b7e03ca742d0e65fe026733c149",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "weightedPairingRevenue": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "weightedPairingRevenue",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Expected revenue of the weighted-pairing auction. The dashboard row `weightedPairingRevenue` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "weightedPairingRevenue"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Expected revenue of the weighted-pairing auction. The dashboard row `weightedPairingRevenue` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory from SODA paper and Goldberg-Hartline-Karlin-Saks-Wright journal version for Theorem 8.2 crosswalk. Source inventory item: Expected revenue of the weighted-pairing auction.",
-      "dashboard_evidence": "Current human-dashboard row(s): `weightedPairingRevenue`.",
-      "statement_sha256": "e8e36c5fa255e678cd1bfb75269f91df47fc8cea494d6b8095b95beb1e0eafb1",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e8e36c5fa255e678cd1bfb75269f91df47fc8cea494d6b8095b95beb1e0eafb1",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "GHW01DigitalGoods",
+  "paper_statement_inventory_sha256": "44f01f5d2c32a180db8140500715edac0d09e8604c5bc2a234dda0ed314fe1d1",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "98cc7c0cca5637e84729456366626904407a2bfa5f18c59834ea9f851affc387",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

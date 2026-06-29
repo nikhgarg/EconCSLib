@@ -1,211 +1,255 @@
 {
-  "schema": 1,
-  "paper": "GJ18InformativeRatingSystems",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "babcb06cbdd9db924f0f110be40fc344258d07570db11f610c095ab90d8db9dd",
-  "review_surface_sha256": "a7b53c34a2bb7b80187cc1e3643570bb1b8ee42ea3b9e576b337c4cedc855927",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
     "assumption_full_finite_ordinal_rating_support": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_full_finite_ordinal_rating_support",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The canonical finite ordinal source endpoint uses full rating-law support. The dashboard row `assumption_full_finite_ordinal_rating_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_full_finite_ordinal_rating_support"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The canonical finite ordinal source endpoint uses full rating-law support. The dashboard row `assumption_full_finite_ordinal_rating_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Source inventory item: The canonical finite ordinal source endpoint uses full rating-law support.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_full_finite_ordinal_rating_support`.",
-      "statement_sha256": "dbf46d5074106976ea53ac9ffaedde7ef65166c88f2af5d417b29dfc517fefdf",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "dbf46d5074106976ea53ac9ffaedde7ef65166c88f2af5d417b29dfc517fefdf",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_monotone_rating_scores": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_monotone_rating_scores",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source rating scores are monotone in the finite ordinal rating level. The dashboard row `assumption_monotone_rating_scores` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_monotone_rating_scores"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source rating scores are monotone in the finite ordinal rating level. The dashboard row `assumption_monotone_rating_scores` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Source inventory item: Source rating scores are monotone in the finite ordinal rating level.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_monotone_rating_scores`.",
-      "statement_sha256": "e445cfccb74aa4ecbb3e2e68c5054e49f6877037ee814fe473ad8b9700411188",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e445cfccb74aa4ecbb3e2e68c5054e49f6877037ee814fe473ad8b9700411188",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_nonpositive_common_dual_parameters": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_nonpositive_common_dual_parameters",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Common-dual large-deviation helper rows use nonpositive dual parameters. The dashboard row `assumption_nonpositive_common_dual_parameters` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_nonpositive_common_dual_parameters"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Common-dual large-deviation helper rows use nonpositive dual parameters. The dashboard row `assumption_nonpositive_common_dual_parameters` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Source inventory item: Common-dual large-deviation helper rows use nonpositive dual parameters.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_nonpositive_common_dual_parameters`.",
-      "statement_sha256": "5cde18fdc02d4b2d2682af3e33923e76ec07cdc8f20552116ab6322798f7e129",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5cde18fdc02d4b2d2682af3e33923e76ec07cdc8f20552116ab6322798f7e129",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_pairwise_threshold_minimizer": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_pairwise_threshold_minimizer",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Auxiliary Appendix C route exposes the source threshold minimizer condition. The dashboard row `assumption_pairwise_threshold_minimizer` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_pairwise_threshold_minimizer"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Auxiliary Appendix C route exposes the source threshold minimizer condition. The dashboard row `assumption_pairwise_threshold_minimizer` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Source inventory item: Auxiliary Appendix C route exposes the source threshold minimizer condition.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_pairwise_threshold_minimizer`.",
-      "statement_sha256": "bae1ba49499756ea4680a4fab94c77ab704e8dd423a069bf57b5e66259909ff2",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "bae1ba49499756ea4680a4fab94c77ab704e8dd423a069bf57b5e66259909ff2",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_positive_integer_sample_rates": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_positive_integer_sample_rates",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Integer-rate helper rows require positive integer sample rates. The dashboard row `assumption_positive_integer_sample_rates` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_positive_integer_sample_rates"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Integer-rate helper rows require positive integer sample rates. The dashboard row `assumption_positive_integer_sample_rates` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Source inventory item: Integer-rate helper rows require positive integer sample rates.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_positive_integer_sample_rates`.",
-      "statement_sha256": "dcee8089722e3d0f5dcdbc6d1958784ec68b87e2cee1238b25189ed3704fd27a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "dcee8089722e3d0f5dcdbc6d1958784ec68b87e2cee1238b25189ed3704fd27a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_positive_match_rates": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_positive_match_rates",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Sellers receive positive asymptotic match/sample rates. The dashboard row `assumption_positive_match_rates` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_positive_match_rates"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Sellers receive positive asymptotic match/sample rates. The dashboard row `assumption_positive_match_rates` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Source inventory item: Sellers receive positive asymptotic match/sample rates.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_positive_match_rates`.",
-      "statement_sha256": "092ef6b2c013a4cb789b4172fc2e28bb4bcc90ce1aaec1d9b3b500c7d76be475",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "092ef6b2c013a4cb789b4172fc2e28bb4bcc90ce1aaec1d9b3b500c7d76be475",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_score_range_and_strict_span": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_score_range_and_strict_span",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Compatibility real-rate wrappers expose the source score range. The dashboard row `assumption_score_range_and_strict_span` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_score_range_and_strict_span"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Compatibility real-rate wrappers expose the source score range. The dashboard row `assumption_score_range_and_strict_span` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Source inventory item: Compatibility real-rate wrappers expose the source score range.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_score_range_and_strict_span`.",
-      "statement_sha256": "0692afc1233a8681ffcb157797f18ae333f7a998552a5625d9f965ac479f8b08",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0692afc1233a8681ffcb157797f18ae333f7a998552a5625d9f965ac479f8b08",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_two_sided_score_witnesses": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_two_sided_score_witnesses",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Finite-support lower-bound helper rows use positive and negative score witnesses. The dashboard row `assumption_two_sided_score_witnesses` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_two_sided_score_witnesses"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Finite-support lower-bound helper rows use positive and negative score witnesses. The dashboard row `assumption_two_sided_score_witnesses` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Source inventory item: Finite-support lower-bound helper rows use positive and negative score witnesses.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_two_sided_score_witnesses`.",
-      "statement_sha256": "0f954909940e7d1c8760b2da3e979c203b80391d667419e452d24b3180824eee",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0f954909940e7d1c8760b2da3e979c203b80391d667419e452d24b3180824eee",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_log_mgf_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition_log_mgf_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The paper's log-MGF formula `\u039b(z | \u03b8)`. moment generating function of one rating. The dashboard row `definition_log_mgf_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition_log_mgf_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The paper's log-MGF formula `\u039b(z | \u03b8)`. moment generating function of one rating. The dashboard row `definition_log_mgf_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Direct source formula.. Source inventory item: The paper's log-MGF formula `\u039b(z | \u03b8)`. moment generating function of one rating.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition_log_mgf_formula`.",
-      "statement_sha256": "8b6ae8582be9798f8bbc68ede35cff33146269122c59987772f11305cf453d7d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8b6ae8582be9798f8bbc68ede35cff33146269122c59987772f11305cf453d7d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_rate_function_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition_rate_function_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The paper's Legendre-transform formula `I(a | \u03b8)`. Legendre transform of the source log-MGF. The dashboard row `definition_rate_function_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition_rate_function_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The paper's Legendre-transform formula `I(a | \u03b8)`. Legendre transform of the source log-MGF. The dashboard row `definition_rate_function_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Direct source formula.. Source inventory item: The paper's Legendre-transform formula `I(a | \u03b8)`. Legendre transform of the source log-MGF.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition_rate_function_formula`.",
-      "statement_sha256": "5c75460838f575561253d890d947f2e044ab61a4b0ab3b6556cbd296e91239c4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5c75460838f575561253d890d947f2e044ab61a4b0ab3b6556cbd296e91239c4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives",
+      "reason": "The source item is the paper-facing statement/formula summarized as: integer-rate source-threshold transfer for `1 - P_k`. The dashboard row `lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: integer-rate source-threshold transfer for `1 - P_k`. The dashboard row `lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Source lemma bridge.. Source inventory item: integer-rate source-threshold transfer for `1 - P_k`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives`.",
-      "statement_sha256": "c134190f0124c8ed54ce717d73dfcf1abc1101ae84e8dc0b1040e4bd20aa3ca6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "c134190f0124c8ed54ce717d73dfcf1abc1101ae84e8dc0b1040e4bd20aa3ca6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives",
+      "reason": "The source item is the paper-facing statement/formula summarized as: support-safe extended source threshold-rate minimum equals the displayed adjacent-objective minimum. The dashboard row `theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: support-safe extended source threshold-rate minimum equals the displayed adjacent-objective minimum. The dashboard row `theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Derived source-rate identification.. Source inventory item: support-safe extended source threshold-rate minimum equals the displayed adjacent-objective minimum.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives`.",
-      "statement_sha256": "0f0f85c8480e316910f65edea3812389b8086da957049825bdb2b26b95f5d9fa",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0f0f85c8480e316910f65edea3812389b8086da957049825bdb2b26b95f5d9fa",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law",
+      "reason": "The source item is the paper-facing statement/formula summarized as: finite ordered floor-count endpoint using the concrete joint floor-rating law and adjacent reduction. The dashboard row `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: finite ordered floor-count endpoint using the concrete joint floor-rating law and adjacent reduction. The dashboard row `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. direct source text. Source inventory item: finite ordered floor-count endpoint using the concrete joint floor-rating law and adjacent reduction.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law`.",
-      "statement_sha256": "917c33303bbf72d7faad3b945463840de507b0c6955835cd4ff4a2e39fc1f69c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "917c33303bbf72d7faad3b945463840de507b0c6955835cd4ff4a2e39fc1f69c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq",
+      "reason": "The source item is the paper-facing statement/formula summarized as: optional real-rate compatibility statement from the support-safe endpoint under a stronger all-real domain convention. The dashboard row `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: optional real-rate compatibility statement from the support-safe endpoint under a stronger all-real domain convention. The dashboard row `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Compatibility wrapper.. Source inventory item: optional real-rate compatibility statement from the support-safe endpoint under a stronger all-real domain convention.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq`.",
-      "statement_sha256": "5180638c1dba04d1d388e07ca9bbb79eb9200734e2e7e9ccd5d6370e3e8205ed",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5180638c1dba04d1d388e07ca9bbb79eb9200734e2e7e9ccd5d6370e3e8205ed",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support",
+      "reason": "The source item is the paper-facing statement/formula summarized as: source-facing support-safe endpoint from ordinal upper-tail dominance, monotone scores, positive match rates, and full finite ordinal rating support; bottom/top atom support is derived internally. The dashboard row `theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: source-facing support-safe endpoint from ordinal upper-tail dominance, monotone scores, positive match rates, and full finite ordinal rating support; bottom/top atom support is derived internally. The dashboard row `theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GJ18InformativeRatingSystems.txt and validation report/source audit notes. Main source theorem endpoint.. Source inventory item: source-facing support-safe endpoint from ordinal upper-tail dominance, monotone scores, positive match rates, and full finite ordinal rating support; bottom/top atom support is derived internally.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support`.",
-      "statement_sha256": "bf7318e4afad00b7926e6c188e551bfa91bdbed738722ab465b8defd19a32535",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "bf7318e4afad00b7926e6c188e551bfa91bdbed738722ab465b8defd19a32535",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "GJ18InformativeRatingSystems",
+  "paper_statement_inventory_sha256": "babcb06cbdd9db924f0f110be40fc344258d07570db11f610c095ab90d8db9dd",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "a7b53c34a2bb7b80187cc1e3643570bb1b8ee42ea3b9e576b337c4cedc855927",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

@@ -1,549 +1,671 @@
 {
-  "schema": 1,
-  "paper": "DSWG24DiscretizationBias",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "717f39ed5ea71ff27c2959b1bf4536756b5015cacfc0aa16cbae33a53a94385f",
-  "review_surface_sha256": "791c56bdff45bc79848b19d8b409080ca1582b0be44bc956f084f036bb27db98",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
     "aggregatePosterior": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "aggregatePosterior",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Aggregate posterior `p_agg^q(y) = (1/N) sum_i q(y,x_i)`. The dashboard row `aggregatePosterior` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "aggregatePosterior"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Aggregate posterior `p_agg^q(y) = (1/N) sum_i q(y,x_i)`. The dashboard row `aggregatePosterior` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct source formula. Source inventory item: Aggregate posterior `p_agg^q(y) = (1/N) sum_i q(y,x_i)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `aggregatePosterior`.",
-      "statement_sha256": "548a2bce0d378883aabad89d21a3f3721b3cc5098daa0dd7191da9a54d7385d8",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "548a2bce0d378883aabad89d21a3f3721b3cc5098daa0dd7191da9a54d7385d8",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem1_argmax_rule_measurable": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem1_argmax_rule_measurable",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The continuous Theorem 1(iii) wrapper requires a measurable argmax rule. The dashboard row `assumption_theorem1_argmax_rule_measurable` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem1_argmax_rule_measurable"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The continuous Theorem 1(iii) wrapper requires a measurable argmax rule. The dashboard row `assumption_theorem1_argmax_rule_measurable` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: The continuous Theorem 1(iii) wrapper requires a measurable argmax rule.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem1_argmax_rule_measurable`.",
-      "statement_sha256": "6f103c5a103d554a242628a1456def065016c537f209f62325827695bfea9fbc",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6f103c5a103d554a242628a1456def065016c537f209f62325827695bfea9fbc",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem1_calibrated_classifier": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem1_calibrated_classifier",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1 is stated for calibrated classifiers. The dashboard row `assumption_theorem1_calibrated_classifier` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem1_calibrated_classifier"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1 is stated for calibrated classifiers. The dashboard row `assumption_theorem1_calibrated_classifier` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Theorem 1 is stated for calibrated classifiers.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem1_calibrated_classifier`.",
-      "statement_sha256": "657a08d76ad161589c01a23481d620ee4ad3a62f296c116d76ac6004fd6b288d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "657a08d76ad161589c01a23481d620ee4ad3a62f296c116d76ac6004fd6b288d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem1_no_information_case": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem1_no_information_case",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(i) no-information regime. The dashboard row `assumption_theorem1_no_information_case` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem1_no_information_case"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(i) no-information regime. The dashboard row `assumption_theorem1_no_information_case` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Theorem 1(i) no-information regime.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem1_no_information_case`.",
-      "statement_sha256": "3d8a0ad7e1a29efde0ff7aa4872f1c0475340bee3d73a8dbb865d981b00266f7",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3d8a0ad7e1a29efde0ff7aa4872f1c0475340bee3d73a8dbb865d981b00266f7",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem1_perfect_classifier": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem1_perfect_classifier",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(ii) perfect-classifier regime. The dashboard row `assumption_theorem1_perfect_classifier` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem1_perfect_classifier"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(ii) perfect-classifier regime. The dashboard row `assumption_theorem1_perfect_classifier` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Theorem 1(ii) perfect-classifier regime.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem1_perfect_classifier`.",
-      "statement_sha256": "b8298e5d8e1254958028cbe0e785ccc7c3f78e96e21c6ff438a964f2be5421ae",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "b8298e5d8e1254958028cbe0e785ccc7c3f78e96e21c6ff438a964f2be5421ae",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem1_plurality_argmax_class": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem1_plurality_argmax_class",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(i) fixes a plurality/argmax class for the no-information regime. The dashboard row `assumption_theorem1_plurality_argmax_class` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem1_plurality_argmax_class"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(i) fixes a plurality/argmax class for the no-information regime. The dashboard row `assumption_theorem1_plurality_argmax_class` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Theorem 1(i) fixes a plurality/argmax class for the no-information regime.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem1_plurality_argmax_class`.",
-      "statement_sha256": "9961d98c45f5acc14f6e9150ea408114079f8c1b8ba77e1439f0289c3b92b098",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9961d98c45f5acc14f6e9150ea408114079f8c1b8ba77e1439f0289c3b92b098",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem2_at_least_two_classes": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem2_at_least_two_classes",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 assumes at least two classes in the finite Lean wrapper. The dashboard row `assumption_theorem2_at_least_two_classes` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem2_at_least_two_classes"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 assumes at least two classes in the finite Lean wrapper. The dashboard row `assumption_theorem2_at_least_two_classes` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Theorem 2 assumes at least two classes in the finite Lean wrapper.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem2_at_least_two_classes`.",
-      "statement_sha256": "8983e7e970c31ccc96974e5dbd673bf6a557256027ebbbc2a2fa657ca9b71228",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8983e7e970c31ccc96974e5dbd673bf6a557256027ebbbc2a2fa657ca9b71228",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem2_more_rows_than_classes": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem2_more_rows_than_classes",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 states the sample-size condition `N > K`. The dashboard row `assumption_theorem2_more_rows_than_classes` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem2_more_rows_than_classes"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 states the sample-size condition `N > K`. The dashboard row `assumption_theorem2_more_rows_than_classes` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Theorem 2 states the sample-size condition `N > K`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem2_more_rows_than_classes`.",
-      "statement_sha256": "5a9f9e91322d79450c50211f335e5320c939b731f96c6030bbc80a99176413a5",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5a9f9e91322d79450c50211f335e5320c939b731f96c6030bbc80a99176413a5",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem2_positive_sample_count": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem2_positive_sample_count",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Positive sample size is the formal consequence of the source `N > K` condition. The dashboard row `assumption_theorem2_positive_sample_count` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem2_positive_sample_count"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Positive sample size is the formal consequence of the source `N > K` condition. The dashboard row `assumption_theorem2_positive_sample_count` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Positive sample size is the formal consequence of the source `N > K` condition.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem2_positive_sample_count`.",
-      "statement_sha256": "758fbda4f2a5c5b8fcc9065b53b92ef5f02707033ca2ff2b82055811493d1b89",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "758fbda4f2a5c5b8fcc9065b53b92ef5f02707033ca2ff2b82055811493d1b89",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem2_reference_nonnegative": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem2_reference_nonnegative",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Non-trivial reference distributions are probability distributions. The dashboard row `assumption_theorem2_reference_nonnegative` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem2_reference_nonnegative"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Non-trivial reference distributions are probability distributions. The dashboard row `assumption_theorem2_reference_nonnegative` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Non-trivial reference distributions are probability distributions.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem2_reference_nonnegative`.",
-      "statement_sha256": "95779010a9eb3d437d6a92d711ce0df3b3230b9fc35eb79992b3e7d3a1d297ec",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "95779010a9eb3d437d6a92d711ce0df3b3230b9fc35eb79992b3e7d3a1d297ec",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "bias": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "bias",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Bias `bias(y, \\hat y, p_ref) = \\hat p_marg(y) - p_ref(y)`. The dashboard row `bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "bias"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Bias `bias(y, \\hat y, p_ref) = \\hat p_marg(y) - p_ref(y)`. The dashboard row `bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct source formula. Source inventory item: Bias `bias(y, \\hat y, p_ref) = \\hat p_marg(y) - p_ref(y)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `bias`.",
-      "statement_sha256": "92b19368c593c53a6455e2d7cdd15e3ed1c8cc06d8b59d37f2678485802c2922",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "92b19368c593c53a6455e2d7cdd15e3ed1c8cc06d8b59d37f2678485802c2922",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "calibrated": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "calibrated",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Calibration: for every label and every measurable score event, the true label mass on that score event equals the aggregate posterior score mass on the same event. This is the paper's `Pr(Y=y | q(y,x)=c)=c` condition in event-preimage form. The dashboard row `calibrated` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "calibrated"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Calibration: for every label and every measurable score event, the true label mass on that score event equals the aggregate posterior score mass on the same event. This is the paper's `Pr(Y=y | q(y,x)=c)=c` condition in event-preimage form. The dashboard row `calibrated` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. source model condition. Source inventory item: Calibration: for every label and every measurable score event, the true label mass on that score event equals the aggregate posterior score mass on the same event. This is the paper's `Pr(Y=y | q(y,x)=c)=c` condition in event-preimage form.",
-      "dashboard_evidence": "Current human-dashboard row(s): `calibrated`.",
-      "statement_sha256": "283b99e171e80bdda1f7d3968f2380e5a62e536c999fe0f4f7ed6a9c644ad686",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "283b99e171e80bdda1f7d3968f2380e5a62e536c999fe0f4f7ed6a9c644ad686",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "classifierMAE": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "classifierMAE",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Predictive MAE for Bayes posterior scores: `E_X sum_y q(y,x)(1-q(y,x))`. The dashboard row `classifierMAE` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "classifierMAE"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Predictive MAE for Bayes posterior scores: `E_X sum_y q(y,x)(1-q(y,x))`. The dashboard row `classifierMAE` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Predictive MAE for Bayes posterior scores: `E_X sum_y q(y,x)(1-q(y,x))`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `classifierMAE`.",
-      "statement_sha256": "66bb4872f6cedefb13037ec23fffedb10685fbcd659a5f14a412d4c7d08bbc5f",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "66bb4872f6cedefb13037ec23fffedb10685fbcd659a5f14a412d4c7d08bbc5f",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "continuousAggregateBias": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "continuousAggregateBias",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous aggregate-posterior bias. The dashboard row `continuousAggregateBias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "continuousAggregateBias"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous aggregate-posterior bias. The dashboard row `continuousAggregateBias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Continuous aggregate-posterior bias.",
-      "dashboard_evidence": "Current human-dashboard row(s): `continuousAggregateBias`.",
-      "statement_sha256": "5e71af749171eb18887df60826371e8ad27a2b9537c73c7db5f49c9c43d20f99",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5e71af749171eb18887df60826371e8ad27a2b9537c73c7db5f49c9c43d20f99",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "continuousAggregatePosterior": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "continuousAggregatePosterior",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous aggregate posterior reference: `\u222b x, q x y d\u03bc(x)`. The dashboard row `continuousAggregatePosterior` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "continuousAggregatePosterior"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous aggregate posterior reference: `\u222b x, q x y d\u03bc(x)`. The dashboard row `continuousAggregatePosterior` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Continuous aggregate posterior reference: `\u222b x, q x y d\u03bc(x)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `continuousAggregatePosterior`.",
-      "statement_sha256": "3e04149fc47439a5c58c3f14e69937ecc81c12eca0a4544036dad410bfdefeda",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3e04149fc47439a5c58c3f14e69937ecc81c12eca0a4544036dad410bfdefeda",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "continuousBias": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "continuousBias",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous bias relative to a supplied reference distribution. The dashboard row `continuousBias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "continuousBias"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous bias relative to a supplied reference distribution. The dashboard row `continuousBias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Continuous bias relative to a supplied reference distribution.",
-      "dashboard_evidence": "Current human-dashboard row(s): `continuousBias`.",
-      "statement_sha256": "8e079fa1f2430e84d547e6a9af9ab7f662b2a43ac43976f3c24536931993d8b8",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8e079fa1f2430e84d547e6a9af9ab7f662b2a43ac43976f3c24536931993d8b8",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "continuousClassifierMAE": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "continuousClassifierMAE",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous predictive MAE. The dashboard row `continuousClassifierMAE` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "continuousClassifierMAE"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous predictive MAE. The dashboard row `continuousClassifierMAE` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Continuous predictive MAE.",
-      "dashboard_evidence": "Current human-dashboard row(s): `continuousClassifierMAE`.",
-      "statement_sha256": "a41063bf1a2fb3948ad30a5587473d4a9a13b1ddaf21a0573e1d8d5ac6f07c3c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a41063bf1a2fb3948ad30a5587473d4a9a13b1ddaf21a0573e1d8d5ac6f07c3c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "continuousJointClassifierMAE": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "continuousJointClassifierMAE",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Joint predictive MAE for Theorem 1's continuous statement. The dashboard row `continuousJointClassifierMAE` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "continuousJointClassifierMAE"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Joint predictive MAE for Theorem 1's continuous statement. The dashboard row `continuousJointClassifierMAE` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Joint predictive MAE for Theorem 1's continuous statement.",
-      "dashboard_evidence": "Current human-dashboard row(s): `continuousJointClassifierMAE`.",
-      "statement_sha256": "77991f7157b389b0f137f43adc122ca043c232752d597b1472db39a4ec04972b",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "77991f7157b389b0f137f43adc122ca043c232752d597b1472db39a4ec04972b",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "continuousJointPriorBias": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "continuousJointPriorBias",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Joint prior-reference bias for Theorem 1's continuous statement. The dashboard row `continuousJointPriorBias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "continuousJointPriorBias"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Joint prior-reference bias for Theorem 1's continuous statement. The dashboard row `continuousJointPriorBias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Joint prior-reference bias for Theorem 1's continuous statement.",
-      "dashboard_evidence": "Current human-dashboard row(s): `continuousJointPriorBias`.",
-      "statement_sha256": "e581ab91e11dfec1af16577d49b5c31052c4d40fea2d31ea285e711822dedb14",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e581ab91e11dfec1af16577d49b5c31052c4d40fea2d31ea285e711822dedb14",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "continuousMarginalLabelShare": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "continuousMarginalLabelShare",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous marginal label share: `\u222b x, 1[rule x = y] d\u03bc(x)`. The dashboard row `continuousMarginalLabelShare` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "continuousMarginalLabelShare"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Continuous marginal label share: `\u222b x, 1[rule x = y] d\u03bc(x)`. The dashboard row `continuousMarginalLabelShare` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. continuous source analogue. Source inventory item: Continuous marginal label share: `\u222b x, 1[rule x = y] d\u03bc(x)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `continuousMarginalLabelShare`.",
-      "statement_sha256": "d13a5c229e69df3de49d50415463af30c2064ce91c8a54ff6d5823d462751b6c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d13a5c229e69df3de49d50415463af30c2064ce91c8a54ff6d5823d462751b6c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "expectedObjective": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "expectedObjective",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Expected paper objective using true-label accuracy plus expected fidelity. The dashboard row `expectedObjective` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "expectedObjective"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Expected paper objective using true-label accuracy plus expected fidelity. The dashboard row `expectedObjective` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Expected paper objective using true-label accuracy plus expected fidelity.",
-      "dashboard_evidence": "Current human-dashboard row(s): `expectedObjective`.",
-      "statement_sha256": "886bf2eac3272fa99bdd725f64aa7494360571c8c6e1924d786efb092dbe5f68",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "886bf2eac3272fa99bdd725f64aa7494360571c8c6e1924d786efb092dbe5f68",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "fidelity": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "fidelity",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Distributional fidelity `fid(p_ref, \\hat y) = -sum_y |bias(y,\\hat y,p_ref)|`. The dashboard row `fidelity` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "fidelity"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Distributional fidelity `fid(p_ref, \\hat y) = -sum_y |bias(y,\\hat y,p_ref)|`. The dashboard row `fidelity` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct source formula. Source inventory item: Distributional fidelity `fid(p_ref, \\hat y) = -sum_y |bias(y,\\hat y,p_ref)|`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `fidelity`.",
-      "statement_sha256": "533c3de082047780b4364bb892e8025cafdc2c5af9e9b5f5df9e4f8904624d44",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "533c3de082047780b4364bb892e8025cafdc2c5af9e9b5f5df9e4f8904624d44",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "isArgmaxRule": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "isArgmaxRule",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Tie-broken argmax rule: the selected label has maximal posterior score. The dashboard row `isArgmaxRule` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "isArgmaxRule"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Tie-broken argmax rule: the selected label has maximal posterior score. The dashboard row `isArgmaxRule` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Tie-broken argmax rule: the selected label has maximal posterior score.",
-      "dashboard_evidence": "Current human-dashboard row(s): `isArgmaxRule`.",
-      "statement_sha256": "6638367308f6da27ea0199e39d86e497126295af20c928307b3d746f228acb8a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6638367308f6da27ea0199e39d86e497126295af20c928307b3d746f228acb8a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "marginalLabelShare": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "marginalLabelShare",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Marginal label share `\\hat p_marg(y) = (1/N) sum_i 1[\\hat y_i = y]`. The dashboard row `marginalLabelShare` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "marginalLabelShare"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Marginal label share `\\hat p_marg(y) = (1/N) sum_i 1[\\hat y_i = y]`. The dashboard row `marginalLabelShare` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct source formula. Source inventory item: Marginal label share `\\hat p_marg(y) = (1/N) sum_i 1[\\hat y_i = y]`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `marginalLabelShare`.",
-      "statement_sha256": "f67a96af0e9156420703cd053352ac412a796e6a011810a8fda7596c80b038aa",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f67a96af0e9156420703cd053352ac412a796e6a011810a8fda7596c80b038aa",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "objective": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "objective",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Paper objective `O_N^gamma` for one observed dataset: `\u03b3` times average posterior score plus `(1 - \u03b3)` times the fidelity term. The dashboard row `objective` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "objective"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Paper objective `O_N^gamma` for one observed dataset: `\u03b3` times average posterior score plus `(1 - \u03b3)` times the fidelity term. The dashboard row `objective` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Paper objective `O_N^gamma` for one observed dataset: `\u03b3` times average posterior score plus `(1 - \u03b3)` times the fidelity term.",
-      "dashboard_evidence": "Current human-dashboard row(s): `objective`.",
-      "statement_sha256": "30a9732c5e4d38a0a4d873109832a54fbb94c2817c4cb4240237590d4f5f04fe",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "30a9732c5e4d38a0a4d873109832a54fbb94c2817c4cb4240237590d4f5f04fe",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "posteriorSimplex": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "posteriorSimplex",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Posterior-simplex condition: each `q(x)` is a probability vector. The dashboard row `posteriorSimplex` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "posteriorSimplex"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Posterior-simplex condition: each `q(x)` is a probability vector. The dashboard row `posteriorSimplex` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. source model condition. Source inventory item: Posterior-simplex condition: each `q(x)` is a probability vector.",
-      "dashboard_evidence": "Current human-dashboard row(s): `posteriorSimplex`.",
-      "statement_sha256": "f1f6d75eea542c330928dace76226e5ba0babf62819432a9b13e16db3f1f7dc7",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f1f6d75eea542c330928dace76226e5ba0babf62819432a9b13e16db3f1f7dc7",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "prior": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "prior",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Prior class probability `Pr(y)`. The dashboard row `prior` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "prior"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Prior class probability `Pr(y)`. The dashboard row `prior` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct source definition. Source inventory item: Prior class probability `Pr(y)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `prior`.",
-      "statement_sha256": "88b62ef37e98fd9e1235bcda622f096718c1c0b9857d1c8ca4cc4c43f3ba9742",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "88b62ef37e98fd9e1235bcda622f096718c1c0b9857d1c8ca4cc4c43f3ba9742",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "sourceSa": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "sourceSa",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_a`: focal posterior is `1`. The dashboard row `sourceSa` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "sourceSa"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_a`: focal posterior is `1`. The dashboard row `sourceSa` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Source proof region `S_a`: focal posterior is `1`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `sourceSa`.",
-      "statement_sha256": "a65d04569231d1b7ee93e5ea0e5065be650a4b872d6436808c1b11cd593c6b74",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a65d04569231d1b7ee93e5ea0e5065be650a4b872d6436808c1b11cd593c6b74",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "sourceSb": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "sourceSb",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_b`: focal posterior is in `(1/K,1)`. The dashboard row `sourceSb` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "sourceSb"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_b`: focal posterior is in `(1/K,1)`. The dashboard row `sourceSb` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Source proof region `S_b`: focal posterior is in `(1/K,1)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `sourceSb`.",
-      "statement_sha256": "3ff6917c81fc078c19a740cc40c078fa08e071436e898532c202669f4c41abce",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3ff6917c81fc078c19a740cc40c078fa08e071436e898532c202669f4c41abce",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "sourceSc": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "sourceSc",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_c`: focal posterior is exactly `1/K`. The dashboard row `sourceSc` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "sourceSc"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_c`: focal posterior is exactly `1/K`. The dashboard row `sourceSc` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Source proof region `S_c`: focal posterior is exactly `1/K`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `sourceSc`.",
-      "statement_sha256": "1fd8b6c437b41ebce2f69af5266d61335241d7c5c9c8d01b8b556b202f747493",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1fd8b6c437b41ebce2f69af5266d61335241d7c5c9c8d01b8b556b202f747493",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "sourceSd": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "sourceSd",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_d`: focal posterior is in `(0,1/K)`. The dashboard row `sourceSd` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "sourceSd"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_d`: focal posterior is in `(0,1/K)`. The dashboard row `sourceSd` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Source proof region `S_d`: focal posterior is in `(0,1/K)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `sourceSd`.",
-      "statement_sha256": "48271f3a446bb8464db016c297b5b675bf1ba13e2cc6da33c69b312cfa9029ba",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "48271f3a446bb8464db016c297b5b675bf1ba13e2cc6da33c69b312cfa9029ba",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "sourceSe": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "sourceSe",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_e`: focal posterior is `0`. The dashboard row `sourceSe` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "sourceSe"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source proof region `S_e`: focal posterior is `0`. The dashboard row `sourceSe` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. Source inventory item: Source proof region `S_e`: focal posterior is `0`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `sourceSe`.",
-      "statement_sha256": "6f4539de740d9daed211677a519ed2a1feb91258e45c89259f91922087feace0",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6f4539de740d9daed211677a519ed2a1feb91258e45c89259f91922087feace0",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1i_no_information_bias": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1i_no_information_bias",
+      "reason": "The source item is the paper-facing statement/formula summarized as: states the no-information plurality-class and non-plurality-class bias formulas for both prior and aggregate-posterior references. The dashboard row `theorem1i_no_information_bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1i_no_information_bias"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: states the no-information plurality-class and non-plurality-class bias formulas for both prior and aggregate-posterior references. The dashboard row `theorem1i_no_information_bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct theorem clause. Source inventory item: states the no-information plurality-class and non-plurality-class bias formulas for both prior and aggregate-posterior references.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1i_no_information_bias`.",
-      "statement_sha256": "903e51e3a1f394aac062b60a5eed95ae18042920d30faae10c75da82d74d9069",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "903e51e3a1f394aac062b60a5eed95ae18042920d30faae10c75da82d74d9069",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1ii_perfect_classifier_zero_bias": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1ii_perfect_classifier_zero_bias",
+      "reason": "The source item is the paper-facing statement/formula summarized as: states the perfect-classifier zero-bias claim. The dashboard row `theorem1ii_perfect_classifier_zero_bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1ii_perfect_classifier_zero_bias"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: states the perfect-classifier zero-bias claim. The dashboard row `theorem1ii_perfect_classifier_zero_bias` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct source text. Source inventory item: states the perfect-classifier zero-bias claim.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1ii_perfect_classifier_zero_bias`.",
-      "statement_sha256": "80b9d8cc9aaba24d0fd8cd9d33c682cbad7d81f6219eb2750d57dfe7c4040a25",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "80b9d8cc9aaba24d0fd8cd9d33c682cbad7d81f6219eb2750d57dfe7c4040a25",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1iii_argmax_bias_le_mae": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1iii_argmax_bias_le_mae",
+      "reason": "The source item is the paper-facing statement/formula summarized as: states the calibrated argmax bias bound by predictive MAE. The dashboard row `theorem1iii_argmax_bias_le_mae` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1iii_argmax_bias_le_mae"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: states the calibrated argmax bias bound by predictive MAE. The dashboard row `theorem1iii_argmax_bias_le_mae` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct source text. Source inventory item: states the calibrated argmax bias bound by predictive MAE.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1iii_argmax_bias_le_mae`.",
-      "statement_sha256": "772c4bfeaa0dbea9d3b06c97d5112b95c2f6502407324b2ed24626f63e700183",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "772c4bfeaa0dbea9d3b06c97d5112b95c2f6502407324b2ed24626f63e700183",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1iii_tight_binary_example": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1iii_tight_binary_example",
+      "reason": "The source item is the paper-facing statement/formula summarized as: states the tight binary example where argmax bias equals MAE. The dashboard row `theorem1iii_tight_binary_example` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1iii_tight_binary_example"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: states the tight binary example where argmax bias equals MAE. The dashboard row `theorem1iii_tight_binary_example` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct source text. Source inventory item: states the tight binary example where argmax bias equals MAE.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1iii_tight_binary_example`.",
-      "statement_sha256": "a4292cd349410c4a13fabf9d597d1701208870513118725e17cf417aea4aa4ce",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a4292cd349410c4a13fabf9d597d1701208870513118725e17cf417aea4aa4ce",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2i_joint_rule_exists": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2i_joint_rule_exists",
+      "reason": "The source item is the paper-facing statement/formula summarized as: states existence of a joint expected-objective maximizer. The dashboard row `theorem2i_joint_rule_exists` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2i_joint_rule_exists"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: states existence of a joint expected-objective maximizer. The dashboard row `theorem2i_joint_rule_exists` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct theorem clause. Source inventory item: states existence of a joint expected-objective maximizer.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2i_joint_rule_exists`.",
-      "statement_sha256": "bcb6546ee9f53b94d86e50b45b5fae679f9027ea0e7d9a9b90a0969f160293a6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "bcb6546ee9f53b94d86e50b45b5fae679f9027ea0e7d9a9b90a0969f160293a6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2ii_argmax_accuracy_maximizing": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2ii_argmax_accuracy_maximizing",
+      "reason": "The source item is the paper-facing statement/formula summarized as: states argmax expected-accuracy optimality for Bayes-optimal scores. The dashboard row `theorem2ii_argmax_accuracy_maximizing` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2ii_argmax_accuracy_maximizing"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: states argmax expected-accuracy optimality for Bayes-optimal scores. The dashboard row `theorem2ii_argmax_accuracy_maximizing` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct source text. Source inventory item: states argmax expected-accuracy optimality for Bayes-optimal scores.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2ii_argmax_accuracy_maximizing`.",
-      "statement_sha256": "c909723efab2b79d1256bb9f7e23d9b465839b5bd14dc4ed5c134df9572554a4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "c909723efab2b79d1256bb9f7e23d9b465839b5bd14dc4ed5c134df9572554a4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2iii_non_argmax_not_pareto": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2iii_non_argmax_not_pareto",
+      "reason": "The source item is the paper-facing statement/formula summarized as: states that a positively disagreeing independent rule is not Pareto optimal under a non-trivial reference distribution. The dashboard row `theorem2iii_non_argmax_not_pareto` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2iii_non_argmax_not_pareto"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: states that a positively disagreeing independent rule is not Pareto optimal under a non-trivial reference distribution. The dashboard row `theorem2iii_non_argmax_not_pareto` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct theorem clause. Source inventory item: states that a positively disagreeing independent rule is not Pareto optimal under a non-trivial reference distribution.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2iii_non_argmax_not_pareto`.",
-      "statement_sha256": "0d6be016867dfbd14fbff6603327eb92dcd40590405cf14cf4b9ee4156ab714e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0d6be016867dfbd14fbff6603327eb92dcd40590405cf14cf4b9ee4156ab714e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2iii_strict_disagreement_not_weighted_objective_maximizer": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2iii_strict_disagreement_not_weighted_objective_maximizer",
+      "reason": "The source item is the paper-facing statement/formula summarized as: states the accuracy-boundary strict-disagreement non-maximality claim. The dashboard row `theorem2iii_strict_disagreement_not_weighted_objective_maximizer` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2iii_strict_disagreement_not_weighted_objective_maximizer"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: states the accuracy-boundary strict-disagreement non-maximality claim. The dashboard row `theorem2iii_strict_disagreement_not_weighted_objective_maximizer` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. source-domain strengthening. Source inventory item: states the accuracy-boundary strict-disagreement non-maximality claim.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2iii_strict_disagreement_not_weighted_objective_maximizer`.",
-      "statement_sha256": "567a53af8dacbddb3b387acaa716e7730879b39f49eed7d800669c8321ec278f",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "567a53af8dacbddb3b387acaa716e7730879b39f49eed7d800669c8321ec278f",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2iii_weighted_objective_maximizer_agrees_argmax": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2iii_weighted_objective_maximizer_agrees_argmax",
+      "reason": "The source item is the paper-facing statement/formula summarized as: states that any `gamma < 1` weighted-objective maximizing independent rule agrees with argmax almost surely. The dashboard row `theorem2iii_weighted_objective_maximizer_agrees_argmax` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2iii_weighted_objective_maximizer_agrees_argmax"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: states that any `gamma < 1` weighted-objective maximizing independent rule agrees with argmax almost surely. The dashboard row `theorem2iii_weighted_objective_maximizer_agrees_argmax` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/DSWG24DiscretizationBias.txt, PDF cache, and validation report. direct theorem clause. Source inventory item: states that any `gamma < 1` weighted-objective maximizing independent rule agrees with argmax almost surely.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2iii_weighted_objective_maximizer_agrees_argmax`.",
-      "statement_sha256": "72702b7972543962007f18ae8e390b4bd01f40a615b174318f7ae71a700abc3a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "72702b7972543962007f18ae8e390b4bd01f40a615b174318f7ae71a700abc3a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "DSWG24DiscretizationBias",
+  "paper_statement_inventory_sha256": "717f39ed5ea71ff27c2959b1bf4536756b5015cacfc0aa16cbae33a53a94385f",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "791c56bdff45bc79848b19d8b409080ca1582b0be44bc956f084f036bb27db98",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

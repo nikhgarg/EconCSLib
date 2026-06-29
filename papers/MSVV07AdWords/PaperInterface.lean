@@ -263,6 +263,119 @@ theorem paperIsBalanceChoice_iff
           paperBalanceScore I A b q ≤ paperBalanceScore I A a q := by
   rfl
 
+/-! ## Sections 4--5: source-route factor/tradeoff LP lemmas -/
+
+/-- Section 4 Lemma 1: equal bids imply Balance pays no later than the OPT type. -/
+theorem section4_lemma1_balance_pays_no_later_slab
+    {Slab : Type*} [LinearOrder Slab]
+    (psi : Slab → ℝ) {optType optCurrentSlab chosenSlab : Slab}
+    {bid chosenBid : ℝ}
+    (hoptCurrent_le_type : optCurrentSlab ≤ optType)
+    (hchoice :
+      bid * psi optCurrentSlab ≤ chosenBid * psi chosenSlab)
+    (hequal_bids : chosenBid = bid)
+    (hbid_pos : 0 < bid)
+    (hpsi_strictAnti : StrictAnti psi) :
+    chosenSlab ≤ optType := by
+  exact
+    Proof.section4_lemma1_balance_pays_no_later_slab
+      psi hoptCurrent_le_type hchoice hequal_bids hbid_pos hpsi_strictAnti
+
+/-- Section 4 Lemma 2: Lemma 1's prefix accounting yields the LP row constraint. -/
+theorem section4_lemma2_factor_revealing_lp_constraint
+    {m : ℕ} (N : ℝ) (x beta : Fin m → ℝ) (i : Fin m)
+    (hprefix_cover :
+      (∑ j ∈ MSVV07SourceLemmas.paperRoutePrefix i, x j) ≤
+        ∑ j ∈ MSVV07SourceLemmas.paperRoutePrefix i, beta j)
+    (hbeta_prefix :
+      (∑ j ∈ MSVV07SourceLemmas.paperRoutePrefix i, beta j) =
+        MSVV07SourceLemmas.paperRouteRhs N i -
+          ∑ j ∈ MSVV07SourceLemmas.paperRoutePrefix i,
+            MSVV07SourceLemmas.paperRouteDeltaCoeff i j * x j) :
+    MSVV07SourceLemmas.paperRouteLPRow x i ≤
+      MSVV07SourceLemmas.paperRouteRhs N i := by
+  exact
+    Proof.section4_lemma2_factor_revealing_lp_constraint
+      N x beta i hprefix_cover hbeta_prefix
+
+/-- Section 4 Lemma 3: the displayed factor-revealing LP value tends to `N / e`. -/
+theorem section4_lemma3_factor_revealing_lp_optimality (N : ℝ) :
+    Sequence.SeqTendsTo
+      (fun k : ℕ => N * (1 - 1 / (k : ℝ)) ^ k)
+      (N / Real.exp 1) := by
+  exact Proof.section4_lemma3_factor_revealing_lp_value_tends N
+
+/--
+Section 5 Lemma 4: matching feasible primal and dual objective values certify
+optimality for the tradeoff-revealing LP.
+-/
+theorem section5_lemma4_dual_optimal_from_primal_dual_match
+    {Primal Dual : Type*}
+    (primalFeasible : Primal → Prop) (dualFeasible : Dual → Prop)
+    (primalObjective : Primal → ℝ) (dualObjective : Dual → ℝ)
+    (hweak :
+      ∀ primal dual,
+        primalFeasible primal → dualFeasible dual →
+          primalObjective primal ≤ dualObjective dual)
+    {a : Primal} {ystar : Dual}
+    (ha : primalFeasible a)
+    (hystar : dualFeasible ystar)
+    (hvalue : primalObjective a = dualObjective ystar) :
+    ∀ y, dualFeasible y → dualObjective ystar ≤ dualObjective y := by
+  exact
+    Proof.section5_lemma4_dual_optimal_from_primal_dual_match
+      primalFeasible dualFeasible primalObjective dualObjective hweak
+      ha hystar hvalue
+
+/-- Section 5 Lemma 5: the perturbed LP right side is the base right side plus delta. -/
+theorem section5_lemma5_tradeoff_rhs_eq_base_add_delta
+    {m : ℕ} (N : ℝ) (alpha beta : Fin m → ℝ) (i : Fin m)
+    (hbeta_prefix :
+      (∑ j ∈ MSVV07SourceLemmas.paperRoutePrefix i, beta j) =
+        MSVV07SourceLemmas.paperRouteRhs N i -
+          ∑ j ∈ MSVV07SourceLemmas.paperRoutePrefix i,
+            MSVV07SourceLemmas.paperRouteDeltaCoeff i j * alpha j) :
+    MSVV07SourceLemmas.paperRouteLPRow alpha i =
+      MSVV07SourceLemmas.paperRouteRhs N i +
+        MSVV07SourceLemmas.paperRouteDelta alpha beta i := by
+  exact
+    Proof.section5_lemma5_tradeoff_rhs_eq_base_add_delta
+      N alpha beta i hbeta_prefix
+
+/-- Section 5 Lemma 6: each query satisfies the pointwise ALG/OPT tradeoff. -/
+theorem section5_lemma6_per_query_tradeoff
+    {Slab : Type*} [Preorder Slab]
+    (psi : Slab → ℝ) {queryType optCurrentSlab algSlab : Slab}
+    {optBid algBid : ℝ}
+    (hoptCurrent_le_type : optCurrentSlab ≤ queryType)
+    (hpsi_antitone : Antitone psi)
+    (hoptBid_nonneg : 0 ≤ optBid)
+    (hchoice : optBid * psi optCurrentSlab ≤ algBid * psi algSlab) :
+    optBid * psi queryType ≤ algBid * psi algSlab := by
+  exact
+    Proof.section5_lemma6_per_query_tradeoff
+      psi hoptCurrent_le_type hpsi_antitone hoptBid_nonneg hchoice
+
+/-- Section 5 Lemma 7: summing the pointwise tradeoff yields the perturbation bound. -/
+theorem section5_lemma7_weighted_perturbation_bound
+    {m Query : Type*} [Fintype m] [Fintype Query]
+    (psi alpha beta : m → ℝ) (opt alg : Query → ℝ)
+    (queryType querySlab : Query → m) (finalSlabError : ℝ)
+    (htradeoff_sum :
+      (∑ q : Query,
+        (opt q * psi (queryType q) - alg q * psi (querySlab q))) ≤ 0)
+    (hopt_accounting :
+      (∑ q : Query, opt q * psi (queryType q)) =
+        ∑ i : m, psi i * alpha i)
+    (halg_accounting :
+      (∑ q : Query, alg q * psi (querySlab q)) ≤
+        (∑ i : m, psi i * beta i) + finalSlabError) :
+    (∑ i : m, psi i * (alpha i - beta i)) ≤ finalSlabError := by
+  exact
+    Proof.section5_lemma7_weighted_perturbation_bound
+      psi alpha beta opt alg queryType querySlab finalSlabError
+      htradeoff_sum hopt_accounting halg_accounting
+
 /-! ## Section 5 / Theorem 8: Balance/MSVV is `1 - 1/e` competitive -/
 
 /--

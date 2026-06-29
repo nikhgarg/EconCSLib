@@ -1,142 +1,148 @@
 {
-  "schema": 1,
-  "paper": "GGSG19TopThree",
-  "title": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates",
-  "generated_at": "2026-06-29T00:40:30Z",
-  "source_inventory_policy": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Curated by the 2026-06-28 source-grounded coverage pass. Dashboard-seeded keys were checked against the source inventory reports/source text when available; explicitly missing named source items are recorded as out_of_scope rather than silently omitted.",
-  "source_url": "https://arxiv.org/pdf/1906.08160",
+  "generated_at": "2026-06-29T20:39:31Z",
   "items": {
-    "paper_definition_large_deviation_rate": {
-      "statement": "-\n\nPaper definition of an exponential large-deviation rate.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "direct source definition.",
-      "aliases": [
-        "paper_definition_large_deviation_rate"
-      ]
-    },
-    "source_proposition1_thm_consistency_tiered": {
-      "statement": "tiered finite-ranking form.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "direct source text",
-      "aliases": [
-        "source_proposition1_thm_consistency_tiered"
-      ]
-    },
-    "source_proposition2_thm_pairwiselearning_finite_support": {
-      "statement": "-\nSource Proposition `thm:pairwiselearning`, finite-support form.  The ordinary\ntwo-sided case has the paper's displayed Chernoff exponent; the explicit\none-sided branches record finite-candidate boundary cases where the finite\nreal rate is a zero-gap rate or the error event is eventually empty.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "source_proposition2_thm_pairwiselearning_finite_support"
-      ]
-    },
-    "source_proposition3_lem_pairwiselearning_approval_finite_ternary": {
-      "statement": "-\nSource Proposition `lem:pairwiselearning_approval`, finite ternary form for\nK-approval score gaps.  The finite-rate branch is exactly the paper's closed\nform `approvalPairwiseRate`; the other branch is the strict boundary where the\nmistake event is eventually empty.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "source_proposition3_lem_pairwiselearning_approval_finite_ternary"
-      ]
-    },
-    "source_proposition4_thm_goal_learning_finite_support": {
-      "statement": "-\nSource Proposition `thm:goal_learning`, finite relevant-pair aggregation form.\nThe finite aggregate has an exact finite exponent unless all relevant\npairwise errors are eventually empty, represented as extended rate `\u22a4`.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "source_proposition4_thm_goal_learning_finite_support"
-      ]
-    },
-    "source_theorem1_lem_randomizebetterscoring": {
-      "statement": "-\nSource Theorem `lem:randomizebetterscoring`, finite W-selection form.  The\nconvex-combination static rule is reasonable, selects the target W-set, and\nweakly dominates the randomized scoring rule in extended finite outcome rate.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "source_theorem1_lem_randomizebetterscoring"
-      ]
-    },
-    "source_theorem2_lem_randomizenotbetterapproval_pairwise": {
-      "statement": "-\nSource Theorem `lem:randomizenotbetterapproval`, fixed-pair form.  For any\nfinite randomized K-approval rule, some static component weakly dominates the\nrandomized pairwise rate; zero-base static boundaries are treated as top\nextended rates.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "source_theorem2_lem_randomizenotbetterapproval_pairwise"
-      ]
-    },
-    "source_theorem_lem_randomizebetterapproval_w_selection_constructed": {
-      "statement": "-\n\nSource Theorem `lem:randomizebetterapproval_Wselection`, concrete finite\nconstructed-law endpoint: the six-ranking law is design-invariant for\nW-selection and 50/50 randomized approval strictly beats every static\nK-approval cutoff in the finite family.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "direct source theorem.",
-      "aliases": [
-        "source_theorem_lem_randomizebetterapproval_w_selection_constructed"
-      ]
-    },
-    "source_corollary_lem_mallowsnorando": {
-      "statement": "-\ndomain recorded in `Assumptions.lean`.\n\nSource Corollary `lem:mallowsnorando`: under a finite Mallows model with\n`q < 1`, an approval-rate-optimal static K-approval cutoff weakly dominates\nany finite randomized family of nontrivial K-approval rules.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "direct source corollary, with implicit non-uniform Mallows",
-      "aliases": [
-        "source_corollary_lem_mallowsnorando"
-      ]
-    },
-    "source_theorem_lem_mallowsnotWK_counterexample": {
-      "statement": "-\nSource Theorem `lem:mallowsnotWK`: a four-candidate high-noise Mallows\ncounterexample where W-approval is not approval-rate optimal.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "source_theorem_lem_mallowsnotWK_counterexample"
-      ]
-    },
-    "assumption_strict_cross_tier_no_ties": {
-      "statement": "- Proposition 1 assumes strict cross-tier prefix separation, so no cross-tier ties occur.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "assumption_strict_cross_tier_no_ties"
-      ]
-    },
-    "assumption_pairwise_approval_ternary_gap_domain": {
-      "statement": "- Proposition 3's K-approval pairwise row uses the ternary score-gap domain.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "assumption_pairwise_approval_ternary_gap_domain"
-      ]
-    },
-    "assumption_randomized_mechanism_probability_weights": {
-      "statement": "- Randomized scoring and randomized K-approval mechanisms use probability weights.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "assumption_randomized_mechanism_probability_weights"
-      ]
-    },
     "assumption_mallows_nontrivial_winner_and_noise": {
-      "statement": "- The Mallows no-randomization corollary uses a nontrivial winner and nondegenerate noise.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
       "aliases": [
         "assumption_mallows_nontrivial_winner_and_noise"
-      ]
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "- The Mallows no-randomization corollary uses a nontrivial winner and nondegenerate noise."
     },
     "assumption_nontrivial_k_approval_cutoffs": {
-      "statement": "- Randomized Mallows K-approval families range over nontrivial proper cutoffs.",
-      "source_url": "https://arxiv.org/pdf/1906.08160",
-      "source_location": "paper-facing review target; exact source location to be refined",
       "aliases": [
         "assumption_nontrivial_k_approval_cutoffs"
-      ]
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "- Randomized Mallows K-approval families range over nontrivial proper cutoffs."
     },
-    "source_definition1_design_invariance_out_of_scope": {
-      "statement": "Source Definition 1 defines design-invariance. It is source-visible but is not currently a separate public dashboard target.",
-      "source_location": "Definition 1 in source text; flagged by source-grounding audit as omitted from dashboard inventory.",
-      "aliases": []
+    "assumption_pairwise_approval_ternary_gap_domain": {
+      "aliases": [
+        "assumption_pairwise_approval_ternary_gap_domain"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "- Proposition 3's K-approval pairwise row uses the ternary score-gap domain."
     },
-    "source_definition3_rate_optimality_out_of_scope": {
-      "statement": "Source Definition 3 defines rate optimality. It is source-visible but is not currently a separate public dashboard target.",
-      "source_location": "Definition 3 in source text; flagged by source-grounding audit as omitted from dashboard inventory.",
-      "aliases": []
+    "assumption_randomized_mechanism_probability_weights": {
+      "aliases": [
+        "assumption_randomized_mechanism_probability_weights"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "- Randomized scoring and randomized K-approval mechanisms use probability weights."
+    },
+    "assumption_strict_cross_tier_no_ties": {
+      "aliases": [
+        "assumption_strict_cross_tier_no_ties"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "- Proposition 1 assumes strict cross-tier prefix separation, so no cross-tier ties occur."
+    },
+    "paper_definition_large_deviation_rate": {
+      "aliases": [
+        "paper_definition_large_deviation_rate"
+      ],
+      "source_location": "direct source definition.",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "-\n\nPaper definition of an exponential large-deviation rate."
+    },
+    "source_corollary_lem_mallowsnorando": {
+      "aliases": [
+        "source_corollary_lem_mallowsnorando"
+      ],
+      "source_location": "direct source corollary, with implicit non-uniform Mallows",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "-\ndomain recorded in `Assumptions.lean`.\n\nSource Corollary `lem:mallowsnorando`: under a finite Mallows model with\n`q < 1`, an approval-rate-optimal static K-approval cutoff weakly dominates\nany finite randomized family of nontrivial K-approval rules."
+    },
+    "source_definition1_design_invariance": {
+      "aliases": [
+        "paper_definition_design_invariant"
+      ],
+      "source_location": "Definition 1",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "Source Definition 1: asymptotic design invariance. A reasonable rule family is design-invariant for a goal when all reasonable rules induce the same limiting outcome."
+    },
+    "source_definition3_rate_optimality": {
+      "aliases": [
+        "paper_definition_rate_optimal"
+      ],
+      "source_location": "Definition 3",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "Source Definition 3: rate optimality. Within a feasible design class, a rule is rate-optimal when it maximizes the finite learning rate."
+    },
+    "source_proposition1_thm_consistency_tiered": {
+      "aliases": [
+        "source_proposition1_thm_consistency_tiered"
+      ],
+      "source_location": "direct source text",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "tiered finite-ranking form."
+    },
+    "source_proposition2_thm_pairwiselearning_finite_support": {
+      "aliases": [
+        "source_proposition2_thm_pairwiselearning_finite_support"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "-\nSource Proposition `thm:pairwiselearning`, finite-support form.  The ordinary\ntwo-sided case has the paper's displayed Chernoff exponent; the explicit\none-sided branches record finite-candidate boundary cases where the finite\nreal rate is a zero-gap rate or the error event is eventually empty."
+    },
+    "source_proposition3_lem_pairwiselearning_approval_finite_ternary": {
+      "aliases": [
+        "source_proposition3_lem_pairwiselearning_approval_finite_ternary"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "-\nSource Proposition `lem:pairwiselearning_approval`, finite ternary form for\nK-approval score gaps.  The finite-rate branch is exactly the paper's closed\nform `approvalPairwiseRate`; the other branch is the strict boundary where the\nmistake event is eventually empty."
+    },
+    "source_proposition4_thm_goal_learning_finite_support": {
+      "aliases": [
+        "source_proposition4_thm_goal_learning_finite_support"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "-\nSource Proposition `thm:goal_learning`, finite relevant-pair aggregation form.\nThe finite aggregate has an exact finite exponent unless all relevant\npairwise errors are eventually empty, represented as extended rate `\u22a4`."
+    },
+    "source_theorem1_lem_randomizebetterscoring": {
+      "aliases": [
+        "source_theorem1_lem_randomizebetterscoring"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "-\nSource Theorem `lem:randomizebetterscoring`, finite W-selection form.  The\nconvex-combination static rule is reasonable, selects the target W-set, and\nweakly dominates the randomized scoring rule in extended finite outcome rate."
+    },
+    "source_theorem2_lem_randomizenotbetterapproval_pairwise": {
+      "aliases": [
+        "source_theorem2_lem_randomizenotbetterapproval_pairwise"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "-\nSource Theorem `lem:randomizenotbetterapproval`, fixed-pair form.  For any\nfinite randomized K-approval rule, some static component weakly dominates the\nrandomized pairwise rate; zero-base static boundaries are treated as top\nextended rates."
+    },
+    "source_theorem_lem_mallowsnotWK_counterexample": {
+      "aliases": [
+        "source_theorem_lem_mallowsnotWK_counterexample"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "-\nSource Theorem `lem:mallowsnotWK`: a four-candidate high-noise Mallows\ncounterexample where W-approval is not approval-rate optimal."
+    },
+    "source_theorem_lem_randomizebetterapproval_w_selection_constructed": {
+      "aliases": [
+        "source_theorem_lem_randomizebetterapproval_w_selection_constructed"
+      ],
+      "source_location": "direct source theorem.",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
+      "statement": "-\n\nSource Theorem `lem:randomizebetterapproval_Wselection`, concrete finite\nconstructed-law endpoint: the six-ranking law is design-invariant for\nW-selection and 50/50 randomized approval strictly beats every static\nK-approval cutoff in the finite family."
     }
   },
+  "paper": "GGSG19TopThree",
+  "schema": 1,
+  "source_curated": true,
   "source_inventory_kind": "source_curated",
-  "source_curated": true
+  "source_inventory_policy": "Source-curated inventory refreshed for complete source-to-dashboard coverage. Main-text definitions/examples/remarks/propositions and appendix theorems are represented by dashboard rows; GCG appendix lemmas are split into review-legible lemma-family rows.",
+  "source_url": "https://arxiv.org/pdf/1906.08160",
+  "title": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates"
 }

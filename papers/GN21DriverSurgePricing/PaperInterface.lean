@@ -137,6 +137,27 @@ Source note: Paper source map uses `source.txt` lines 3050--3068.
 abbrev review_remark1_switch_probability_per_time_strictAntiOn := @remark1_switch_probability_per_time_strictAntiOn
 
 /--
+Remark 2: structured-price scaled earning algebra
+`W_i = m(T_i-1)+z(Q_i-lambda_{i,j})`.
+
+Source status: source-facing theorem summary
+Source note: Paper source map uses `source.txt` lines 3017--3036.
+-/
+abbrev review_remark2_structured_scaled_earning_algebra :=
+  @paper_remark2_structured_scaled_earning_algebra
+
+/--
+Remark 2: substituting the structured price and scaled earning formulas into
+the endpoint derivative kernel gives the displayed structured derivative
+expression.
+
+Source status: source-facing theorem summary
+Source note: Paper source map uses `source.txt` lines 3017--3036.
+-/
+abbrev review_remark2_structured_derivative_kernel_algebra :=
+  @paper_remark2_structured_derivative_kernel_algebra
+
+/--
 Remark 3: small-time switch probability per unit time tends to the switch rate.
 
 Source status: source-facing theorem summary

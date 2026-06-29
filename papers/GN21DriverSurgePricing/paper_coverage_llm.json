@@ -1,469 +1,591 @@
 {
-  "schema": 1,
-  "paper": "GN21DriverSurgePricing",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "964726949f6734f211f080d5e96e5c11605c8a7b48cea129b92ba6c509ae392f",
-  "review_surface_sha256": "892023a5c48bf0009079ece2efab73701cd6b5b0b275eaa0e289df83b0602329",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard audit refreshed after expanding the review surface for source-visible definitions, examples, remarks, propositions, and appendix theorem/lemma targets.",
   "items": {
     "assumption_affine_response_shape_domains": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_affine_response_shape_domains",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 7/8 affine additive response domains. The dashboard row `assumption_affine_response_shape_domains` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_affine_response_shape_domains"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 7/8 affine additive response domains. The dashboard row `assumption_affine_response_shape_domains` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Lemma 7/8 affine additive response domains.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_affine_response_shape_domains`.",
-      "statement_sha256": "6ef5673c7344e5fad253d0e917511f467c89fe7ea9f80bcaad98100b489302af",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6ef5673c7344e5fad253d0e917511f467c89fe7ea9f80bcaad98100b489302af",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_affine_single_state_parameter_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_affine_single_state_parameter_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Affine single-state pricing parameter domain. The dashboard row `assumption_affine_single_state_parameter_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_affine_single_state_parameter_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Affine single-state pricing parameter domain. The dashboard row `assumption_affine_single_state_parameter_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Affine single-state pricing parameter domain.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_affine_single_state_parameter_domain`.",
-      "statement_sha256": "e6cedeca7b857ca046f3d75f4ceaa1f4a5669ffda018490b851999b629edba27",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e6cedeca7b857ca046f3d75f4ceaa1f4a5669ffda018490b851999b629edba27",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_dynamic_time_fraction_denominators": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_dynamic_time_fraction_denominators",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Dynamic time-fraction denominators are nonzero. The dashboard row `assumption_dynamic_time_fraction_denominators` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_dynamic_time_fraction_denominators"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Dynamic time-fraction denominators are nonzero. The dashboard row `assumption_dynamic_time_fraction_denominators` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Dynamic time-fraction denominators are nonzero.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_dynamic_time_fraction_denominators`.",
-      "statement_sha256": "18c12b611cf638357e6e7e8636f44275f8b210593d8e38463bfd68b02fbfcfe1",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "18c12b611cf638357e6e7e8636f44275f8b210593d8e38463bfd68b02fbfcfe1",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_fixed_response_policy_form_conditions": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_fixed_response_policy_form_conditions",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 5 fixed-response policy form uses measurable responses and optimal policies. The dashboard row `assumption_fixed_response_policy_form_conditions` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_fixed_response_policy_form_conditions"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 5 fixed-response policy form uses measurable responses and optimal policies. The dashboard row `assumption_fixed_response_policy_form_conditions` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Lemma 5 fixed-response policy form uses measurable responses and optimal policies.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_fixed_response_policy_form_conditions`.",
-      "statement_sha256": "492c308a3a0f3d39007cbdb5a422fd4347c7a308a82dd2df6c3ce56f608bf851",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "492c308a3a0f3d39007cbdb5a422fd4347c7a308a82dd2df6c3ce56f608bf851",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_nonsurge_derivative_source_bounds": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_nonsurge_derivative_source_bounds",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 10 non-surge derivative source-data formulas and bounds. The dashboard row `assumption_nonsurge_derivative_source_bounds` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_nonsurge_derivative_source_bounds"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 10 non-surge derivative source-data formulas and bounds. The dashboard row `assumption_nonsurge_derivative_source_bounds` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Lemma 10 non-surge derivative source-data formulas and bounds.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_nonsurge_derivative_source_bounds`.",
-      "statement_sha256": "27a2584f556286b59984de086b39dc3d026ea7dbbc16a6ffa0973549d01c0a22",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "27a2584f556286b59984de086b39dc3d026ea7dbbc16a6ffa0973549d01c0a22",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_single_state_defined_reward_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_single_state_defined_reward_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Single-state reward/threshold domain for Theorem 1's nontrivial payout branch. The dashboard row `assumption_single_state_defined_reward_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_single_state_defined_reward_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Single-state reward/threshold domain for Theorem 1's nontrivial payout branch. The dashboard row `assumption_single_state_defined_reward_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Single-state reward/threshold domain for Theorem 1's nontrivial payout branch.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_single_state_defined_reward_domain`.",
-      "statement_sha256": "9c2499c341af0deaa7d481e4014f41a2d5f11a29b8fdab6d0b6aad3e6633d270",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9c2499c341af0deaa7d481e4014f41a2d5f11a29b8fdab6d0b6aad3e6633d270",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_surge_derivative_source_bounds": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_surge_derivative_source_bounds",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 9 surge-state derivative source-data formulas and bounds. The dashboard row `assumption_surge_derivative_source_bounds` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_surge_derivative_source_bounds"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 9 surge-state derivative source-data formulas and bounds. The dashboard row `assumption_surge_derivative_source_bounds` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Lemma 9 surge-state derivative source-data formulas and bounds.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_surge_derivative_source_bounds`.",
-      "statement_sha256": "ad527f4b923f1361623afd4f6d7e1b20bbd498255ee2054e0d64152baff1c9f2",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ad527f4b923f1361623afd4f6d7e1b20bbd498255ee2054e0d64152baff1c9f2",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_switch_rate_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_switch_rate_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Switch-rate parameters are in the positive/nonnegative CTMC domain. The dashboard row `assumption_switch_rate_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_switch_rate_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Switch-rate parameters are in the positive/nonnegative CTMC domain. The dashboard row `assumption_switch_rate_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Switch-rate parameters are in the positive/nonnegative CTMC domain.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_switch_rate_domain`.",
-      "statement_sha256": "a9ed17d5985a5654c79d6e3392967c03f856ac8fb7a2cd71d46ef6c91d2d9e05",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a9ed17d5985a5654c79d6e3392967c03f856ac8fb7a2cd71d46ef6c91d2d9e05",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem3_source_data_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem3_source_data_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 source-data domain for sequential current bounds. The dashboard row `assumption_theorem3_source_data_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem3_source_data_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 source-data domain for sequential current bounds. The dashboard row `assumption_theorem3_source_data_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Theorem 3 source-data domain for sequential current bounds.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem3_source_data_domain`.",
-      "statement_sha256": "d120c137b32b96ffac5d40205c570af14b1667ade7b8475bceb3a6e5be1ea4b5",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d120c137b32b96ffac5d40205c570af14b1667ade7b8475bceb3a6e5be1ea4b5",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_upper_endpoint_derivative_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_upper_endpoint_derivative_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 6 endpoint derivative formula domain. The dashboard row `assumption_upper_endpoint_derivative_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_upper_endpoint_derivative_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 6 endpoint derivative formula domain. The dashboard row `assumption_upper_endpoint_derivative_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Lemma 6 endpoint derivative formula domain.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_upper_endpoint_derivative_domain`.",
-      "statement_sha256": "a029667a765b37c00e197c315c57718e6601b74749e33bdd834190ee89dd7ac4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a029667a765b37c00e197c315c57718e6601b74749e33bdd834190ee89dd7ac4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_definition_dynamic_defined_reward": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_definition_dynamic_defined_reward",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Definition: dynamic reward with positive-mass denominators. The Appendix D reward formulas are formalized as a reward value defined on feasible dynamic policies where the accepted-trip mass denominators are positive. The dashboard row `review_definition_dynamic_defined_reward` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_definition_dynamic_defined_reward"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Definition: dynamic reward with positive-mass denominators. The Appendix D reward formulas are formalized as a reward value defined on feasible dynamic policies where the accepted-trip mass denominators are positive. The dashboard row `review_definition_dynamic_defined_reward` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-domain formalization. Source inventory item: Definition: dynamic reward with positive-mass denominators. The Appendix D reward formulas are formalized as a reward value defined on feasible dynamic policies where the accepted-trip mass denominators are positive.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_definition_dynamic_defined_reward`.",
-      "statement_sha256": "ab3616053bb422bfb1a26decddcc4fc0787c8eb368f95b17076f846c2ae6c5e2",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ab3616053bb422bfb1a26decddcc4fc0787c8eb368f95b17076f846c2ae6c5e2",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_definition_dynamic_ic": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_definition_dynamic_ic",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Definition: two-state dynamic incentive compatibility. Accepting all feasible trips in both CTMC states is optimal against dynamic policy deviations. The dashboard row `review_definition_dynamic_ic` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_definition_dynamic_ic"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Definition: two-state dynamic incentive compatibility. Accepting all feasible trips in both CTMC states is optimal against dynamic policy deviations. The dashboard row `review_definition_dynamic_ic` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. direct paper definition. Source inventory item: Definition: two-state dynamic incentive compatibility. Accepting all feasible trips in both CTMC states is optimal against dynamic policy deviations.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_definition_dynamic_ic`.",
-      "statement_sha256": "df24876ec7897edf33ab739e7585fc089fd33f9c6e0d1cc8cb9cd067cec96efd",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "df24876ec7897edf33ab739e7585fc089fd33f9c6e0d1cc8cb9cd067cec96efd",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_definition_single_state_ic": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_definition_single_state_ic",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Definition: single-state incentive compatibility. Accepting all feasible trips is optimal: every measurable feasible one-state trip policy earns no more than accept-all. The dashboard row `review_definition_single_state_ic` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_definition_single_state_ic"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Definition: single-state incentive compatibility. Accepting all feasible trips is optimal: every measurable feasible one-state trip policy earns no more than accept-all. The dashboard row `review_definition_single_state_ic` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. direct paper definition. Source inventory item: Definition: single-state incentive compatibility. Accepting all feasible trips is optimal: every measurable feasible one-state trip policy earns no more than accept-all.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_definition_single_state_ic`.",
-      "statement_sha256": "e8086004a07769421287824c5ea2a93abc7171926dd54da5287a1d50672d611e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e8086004a07769421287824c5ea2a93abc7171926dd54da5287a1d50672d611e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_definition_threshold_policy": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_definition_threshold_policy",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Definition: threshold policies. A trip policy accepts exactly the positive trip lengths whose payment-per-time `w \u03c4 / \u03c4` is at least the cutoff `c`. The dashboard row `review_definition_threshold_policy` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_definition_threshold_policy"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Definition: threshold policies. A trip policy accepts exactly the positive trip lengths whose payment-per-time `w \u03c4 / \u03c4` is at least the cutoff `c`. The dashboard row `review_definition_threshold_policy` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. direct paper definition. Source inventory item: Definition: threshold policies. A trip policy accepts exactly the positive trip lengths whose payment-per-time `w \u03c4 / \u03c4` is at least the cutoff `c`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_definition_threshold_policy`.",
-      "statement_sha256": "2120dacda0715d4dfc97a2c29590e802c7db482c59af6d2bc765e96b13fa1358",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2120dacda0715d4dfc97a2c29590e802c7db482c59af6d2bc765e96b13fa1358",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 10: non-surge-state derivative positivity under accept-all bounds. The dashboard row `review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 10: non-surge-state derivative positivity under accept-all bounds. The dashboard row `review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 10: non-surge-state derivative positivity under accept-all bounds.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds`.",
-      "statement_sha256": "259cbe6ab59d8e81d5699009e5a50846c4f723921c9cbd584ed6aa62bb322b40",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "259cbe6ab59d8e81d5699009e5a50846c4f723921c9cbd584ed6aa62bb322b40",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma1_measured_dynamic_reward_decomposition": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma1_measured_dynamic_reward_decomposition",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1: dynamic reward decomposition. The dashboard row `review_lemma1_measured_dynamic_reward_decomposition` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma1_measured_dynamic_reward_decomposition"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1: dynamic reward decomposition. The dashboard row `review_lemma1_measured_dynamic_reward_decomposition` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 1: dynamic reward decomposition.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma1_measured_dynamic_reward_decomposition`.",
-      "statement_sha256": "da50b36189d86961666192fc4fe90ae4b9212c8f5008b8a508e63fd58a1984e9",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "da50b36189d86961666192fc4fe90ae4b9212c8f5008b8a508e63fd58a1984e9",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma2_switch_probability_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma2_switch_probability_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 2: CTMC switch-probability formula. The dashboard row `review_lemma2_switch_probability_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma2_switch_probability_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 2: CTMC switch-probability formula. The dashboard row `review_lemma2_switch_probability_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 2: CTMC switch-probability formula.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma2_switch_probability_formula`.",
-      "statement_sha256": "0a6f94ea697169b111ee321cb1b11e7847cc6bbf1a75b48e319caded1412784c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0a6f94ea697169b111ee321cb1b11e7847cc6bbf1a75b48e319caded1412784c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma3_measured_time_fraction_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma3_measured_time_fraction_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 3: state time-fraction formula. The dashboard row `review_lemma3_measured_time_fraction_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma3_measured_time_fraction_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 3: state time-fraction formula. The dashboard row `review_lemma3_measured_time_fraction_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 3: state time-fraction formula.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma3_measured_time_fraction_formula`.",
-      "statement_sha256": "aaef48a51314977612a469fbc7cba7b9708faa44382a34ad31a96653569301f8",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "aaef48a51314977612a469fbc7cba7b9708faa44382a34ad31a96653569301f8",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma4_single_state_threshold_uniqueness": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma4_single_state_threshold_uniqueness",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 4: threshold optimizer uniqueness up to null sets. The dashboard row `review_lemma4_single_state_threshold_uniqueness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma4_single_state_threshold_uniqueness"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 4: threshold optimizer uniqueness up to null sets. The dashboard row `review_lemma4_single_state_threshold_uniqueness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 4: threshold optimizer uniqueness up to null sets.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma4_single_state_threshold_uniqueness`.",
-      "statement_sha256": "99a45dbe2134f66ca70f6fd7e495795628b3c8902a1cc58a8b1a286e9b79b024",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "99a45dbe2134f66ca70f6fd7e495795628b3c8902a1cc58a8b1a286e9b79b024",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma5_fixed_response_policy_form": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma5_fixed_response_policy_form",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 5: fixed-response feasible policy form almost everywhere. The dashboard row `review_lemma5_fixed_response_policy_form` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma5_fixed_response_policy_form"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 5: fixed-response feasible policy form almost everywhere. The dashboard row `review_lemma5_fixed_response_policy_form` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 5: fixed-response feasible policy form almost everywhere.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma5_fixed_response_policy_form`.",
-      "statement_sha256": "4f0cdaea64b099f045e1d84fe7832afa69201071a0545813b68fac8cf796dde9",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "4f0cdaea64b099f045e1d84fe7832afa69201071a0545813b68fac8cf796dde9",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma6_upper_endpoint_derivative_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma6_upper_endpoint_derivative_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 6: upper-endpoint derivative formula. proves the exact endpoint derivative formula without assuming positive endpoint density; positive density is only the conditional premise for the strict sign-transfer corollary in the conclusion. The dashboard row `review_lemma6_upper_endpoint_derivative_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma6_upper_endpoint_derivative_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 6: upper-endpoint derivative formula. proves the exact endpoint derivative formula without assuming positive endpoint density; positive density is only the conditional premise for the strict sign-transfer corollary in the conclusion. The dashboard row `review_lemma6_upper_endpoint_derivative_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 6: upper-endpoint derivative formula. proves the exact endpoint derivative formula without assuming positive endpoint density; positive density is only the conditional premise for the strict sign-transfer corollary in the conclusion.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma6_upper_endpoint_derivative_formula`.",
-      "statement_sha256": "65a4cdce0de28ff4dea3a5569919b9bfffbfadae7d4aa7a682ea96063997c29e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "65a4cdce0de28ff4dea3a5569919b9bfffbfadae7d4aa7a682ea96063997c29e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma7_affine_positive_additive_response_quasi_convex": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma7_affine_positive_additive_response_quasi_convex",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 7: positive-additive affine response is quasi-convex. The dashboard row `review_lemma7_affine_positive_additive_response_quasi_convex` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma7_affine_positive_additive_response_quasi_convex"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 7: positive-additive affine response is quasi-convex. The dashboard row `review_lemma7_affine_positive_additive_response_quasi_convex` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 7: positive-additive affine response is quasi-convex.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma7_affine_positive_additive_response_quasi_convex`.",
-      "statement_sha256": "bd51edb8415f2d5eed8cbb0d2156066c866eb5fa525ff67d157b2a2609a9feb1",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "bd51edb8415f2d5eed8cbb0d2156066c866eb5fa525ff67d157b2a2609a9feb1",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma8_affine_negative_additive_response_quasi_concave": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma8_affine_negative_additive_response_quasi_concave",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 8: negative-additive affine response is quasi-concave. The dashboard row `review_lemma8_affine_negative_additive_response_quasi_concave` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma8_affine_negative_additive_response_quasi_concave"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 8: negative-additive affine response is quasi-concave. The dashboard row `review_lemma8_affine_negative_additive_response_quasi_concave` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 8: negative-additive affine response is quasi-concave.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma8_affine_negative_additive_response_quasi_concave`.",
-      "statement_sha256": "175b93f4ae5c54aa73960a2aaddaed9a3f2c4ec3a16597f468fe2a286071965a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "175b93f4ae5c54aa73960a2aaddaed9a3f2c4ec3a16597f468fe2a286071965a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma9_surge_derivative_positive_of_acceptAll_bounds": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_lemma9_surge_derivative_positive_of_acceptAll_bounds",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 9: surge-state derivative positivity under accept-all bounds. The dashboard row `review_lemma9_surge_derivative_positive_of_acceptAll_bounds` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_lemma9_surge_derivative_positive_of_acceptAll_bounds"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 9: surge-state derivative positivity under accept-all bounds. The dashboard row `review_lemma9_surge_derivative_positive_of_acceptAll_bounds` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Lemma 9: surge-state derivative positivity under accept-all bounds.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_lemma9_surge_derivative_positive_of_acceptAll_bounds`.",
-      "statement_sha256": "8507a844d952fe7ecb87f8d57d80a161f10ffa264e39c0b6890d354380ae78c0",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8507a844d952fe7ecb87f8d57d80a161f10ffa264e39c0b6890d354380ae78c0",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_proposition3_1_affine_single_state_ic": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_proposition3_1_affine_single_state_ic",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 3.1: affine single-state pricing is incentive compatible. The dashboard row `review_proposition3_1_affine_single_state_ic` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_proposition3_1_affine_single_state_ic"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 3.1: affine single-state pricing is incentive compatible. The dashboard row `review_proposition3_1_affine_single_state_ic` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Proposition 3.1: affine single-state pricing is incentive compatible.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_proposition3_1_affine_single_state_ic`.",
-      "statement_sha256": "e3529a83405bd2817ff0e8f12e92f3409a2740d7b9e93421e1d4a430e4d17d63",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e3529a83405bd2817ff0e8f12e92f3409a2740d7b9e93421e1d4a430e4d17d63",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_remark1_switch_probability_per_time_strictAntiOn": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_remark1_switch_probability_per_time_strictAntiOn",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Remark 1: switch probability per unit time is strictly decreasing. The dashboard row `review_remark1_switch_probability_per_time_strictAntiOn` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_remark1_switch_probability_per_time_strictAntiOn"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Remark 1: switch probability per unit time is strictly decreasing. The dashboard row `review_remark1_switch_probability_per_time_strictAntiOn` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Remark 1: switch probability per unit time is strictly decreasing.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_remark1_switch_probability_per_time_strictAntiOn`.",
-      "statement_sha256": "1be9e1f83d897429201a97edce4420d69860ec8dab6db59ec4e46141420e9eac",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1be9e1f83d897429201a97edce4420d69860ec8dab6db59ec4e46141420e9eac",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_remark3_switch_probability_per_time_tendsto_at_zero": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_remark3_switch_probability_per_time_tendsto_at_zero",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Remark 3: small-time switch probability per unit time tends to the switch rate. The dashboard row `review_remark3_switch_probability_per_time_tendsto_at_zero` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_remark3_switch_probability_per_time_tendsto_at_zero"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Remark 3: small-time switch probability per unit time tends to the switch rate. The dashboard row `review_remark3_switch_probability_per_time_tendsto_at_zero` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Remark 3: small-time switch probability per unit time tends to the switch rate.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_remark3_switch_probability_per_time_tendsto_at_zero`.",
-      "statement_sha256": "96377e9d5f225b08767a28d84daf734d8e02a22e9c435a55a195cf712cfe9a02",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "96377e9d5f225b08767a28d84daf734d8e02a22e9c435a55a195cf712cfe9a02",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_remark4_switch_time_minus_switch_probability_nonneg": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_remark4_switch_time_minus_switch_probability_nonneg",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Remark 4: `lambda * t - q(t)` is nonnegative. The dashboard row `review_remark4_switch_time_minus_switch_probability_nonneg` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_remark4_switch_time_minus_switch_probability_nonneg"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Remark 4: `lambda * t - q(t)` is nonnegative. The dashboard row `review_remark4_switch_time_minus_switch_probability_nonneg` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Remark 4: `lambda * t - q(t)` is nonnegative.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_remark4_switch_time_minus_switch_probability_nonneg`.",
-      "statement_sha256": "355f96c2c71494d372ec0a6d097a1eb1d4a80240c45786b263884bd969f9aa83",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "355f96c2c71494d372ec0a6d097a1eb1d4a80240c45786b263884bd969f9aa83",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_section2_single_state_renewal_reward_iid_bridge": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_section2_single_state_renewal_reward_iid_bridge",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Section 2.2: IID renewal-reward bridge for the single-state result. The dashboard row `review_section2_single_state_renewal_reward_iid_bridge` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_section2_single_state_renewal_reward_iid_bridge"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Section 2.2: IID renewal-reward bridge for the single-state result. The dashboard row `review_section2_single_state_renewal_reward_iid_bridge` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Section 2.2: IID renewal-reward bridge for the single-state result.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_section2_single_state_renewal_reward_iid_bridge`.",
-      "statement_sha256": "d48ddc9adb1fc7723819380f680e632e757fa5b838c861c4e06ed60d37352758",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d48ddc9adb1fc7723819380f680e632e757fa5b838c861c4e06ed60d37352758",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem1_single_state_threshold_best_response": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_theorem1_single_state_threshold_best_response",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1: optimal single-state policies are threshold policies. The dashboard row `review_theorem1_single_state_threshold_best_response` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_theorem1_single_state_threshold_best_response"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1: optimal single-state policies are threshold policies. The dashboard row `review_theorem1_single_state_threshold_best_response` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Theorem 1: optimal single-state policies are threshold policies.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_theorem1_single_state_threshold_best_response`.",
-      "statement_sha256": "1ba18529607df48332ca4badeefde666ea257b94ed9e32b23fed800dcc55d06d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1ba18529607df48332ca4badeefde666ea257b94ed9e32b23fed800dcc55d06d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem2_multiplicative_policy_shape_ae": {
-      "coverage": "covered",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "conditional_boundary",
+      "dashboard_evidence": "review_theorem2_multiplicative_policy_shape_ae",
+      "reason": "The Lean row exposes Theorem 4 policy-form data/sign handoff premises instead of composing them away in the row statement.",
       "review_rows": [
         "review_theorem2_multiplicative_policy_shape_ae"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2: multiplicative-pricing optimal-policy shape handoff. Lean states the policy-shape clause separately from the explicit non-IC counterexample because the paper's theorem combines a structural statement with an existential example. The dashboard row `review_theorem2_multiplicative_policy_shape_ae` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem split. Source inventory item: Theorem 2: multiplicative-pricing optimal-policy shape handoff. Lean states the policy-shape clause separately from the explicit non-IC counterexample because the paper's theorem combines a structural statement with an existential example.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_theorem2_multiplicative_policy_shape_ae`.",
-      "statement_sha256": "f02c32bd1266f9baf2d7b3e629ee2dd99c50af5873180382401b1631ff3c3530",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f02c32bd1266f9baf2d7b3e629ee2dd99c50af5873180382401b1631ff3c3530",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2: explicit multiplicative-pricing instance with positive finite cutoff deviations in both states, and hence measured dynamic non-IC. The dashboard row `review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2: explicit multiplicative-pricing instance with positive finite cutoff deviations in both states, and hence measured dynamic non-IC. The dashboard row `review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem split. Source inventory item: Theorem 2: explicit multiplicative-pricing instance with positive finite cutoff deviations in both states, and hence measured dynamic non-IC.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states`.",
-      "statement_sha256": "1c5506ea3be828e8608dbf700943ca1c50d045c0094b9ff217dba643e74a2321",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1c5506ea3be828e8608dbf700943ca1c50d045c0094b9ff217dba643e74a2321",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem3_defined_reward_source_statement": {
-      "coverage": "covered",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "conditional_boundary",
+      "dashboard_evidence": "review_theorem3_defined_reward_source_statement",
+      "reason": "The Lean row exposes a source reward-rate data premise for arbitrary feasible policies; this should be source-derived or kept as a conditional boundary.",
       "review_rows": [
         "review_theorem3_defined_reward_source_statement"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3: denominator-valid dynamic incentive compatibility for structured surge prices. There are prices of the paper's form `m_i * tau + z_i * q_{i->j}(tau)` such that accept-all is optimal for every feasible dynamic policy whose Appe... The dashboard row `review_theorem3_defined_reward_source_statement` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-domain theorem endpoint. Source inventory item: Theorem 3: denominator-valid dynamic incentive compatibility for structured surge prices. There are prices of the paper's form `m_i * tau + z_i * q_{i->j}(tau)` such that accept-all is optimal for every feasible dynamic policy whose Appendix-D reward-rate d...",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_theorem3_defined_reward_source_statement`.",
-      "statement_sha256": "f9b1312d63c211d3f14b61e626a8251be8d4c6cde28c411e7591f9aab3aba58e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f9b1312d63c211d3f14b61e626a8251be8d4c6cde28c411e7591f9aab3aba58e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem4_structural_policy_representatives": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "review_theorem4_structural_policy_representatives",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4: structural representatives for optimal policies. The dashboard row `review_theorem4_structural_policy_representatives` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "review_theorem4_structural_policy_representatives"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4: structural representatives for optimal policies. The dashboard row `review_theorem4_structural_policy_representatives` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. source-facing theorem summary. Source inventory item: Theorem 4: structural representatives for optimal policies.",
-      "dashboard_evidence": "Current human-dashboard row(s): `review_theorem4_structural_policy_representatives`.",
+      "source_grounded": true,
       "statement_sha256": "1e6ee182bf292adac6ba7571fe7ba68f50ec58ef08b8fc71504bb83aec33bd85",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_remark2_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "Remark 2 is a source-visible remark rather than a theorem/definition target in the current formalized public review surface; it is recorded explicitly as out of scope.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/GN21DriverSurgePricing.txt and paper-local SOURCE_AUDIT.md. Remark 2 in source text; flagged by source-grounding audit as omitted from dashboard inventory.. Source Remark 2 is visible in the paper but is not currently represented as a separate dashboard target.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "870687cbd903356288e9ce7be7f22da28be2ca1bb88f1721646c2258853c8c75",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_remark2_structured_derivative_kernel_algebra": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): review_remark2_structured_derivative_kernel_algebra",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "review_remark2_structured_derivative_kernel_algebra"
+      ],
+      "source_evidence": "Source inventory entry source_remark2_structured_derivative_kernel_algebra at Remark 2: Remark 2: substituting the structured price and scaled earning formulas into the endpoint derivative kernel gives the displayed structured derivative expression.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ba19c9973c74609ee59356c47a798ac80d6241f24cde9461792777331b364eec",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_remark2_structured_scaled_earning_algebra": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): review_remark2_structured_scaled_earning_algebra",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "review_remark2_structured_scaled_earning_algebra"
+      ],
+      "source_evidence": "Source inventory entry source_remark2_structured_scaled_earning_algebra at Remark 2: Remark 2: structured-price scaled earning algebra W_i = m(T_i-1)+z(Q_i-lambda_{i,j}).",
+      "source_grounded": true,
+      "statement_sha256": "0e5ca4f66365fdf7cdbc1a20427d81b8e453db02f6b30e919b2e69f477be04cc",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "GN21DriverSurgePricing",
+  "paper_statement_inventory_sha256": "8405ab6cc2eb495b92447d832c0203aa53706d21911994857a9459d47ab3ef9a",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "429119873152daeced92beefe3a71f9a3dacd3450ad6c2d2e97cf484b6c533f1",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T20:39:31Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

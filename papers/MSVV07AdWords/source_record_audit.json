@@ -1,0 +1,1705 @@
+{
+  "boundary_input_count": 0,
+  "boundary_input_items": [],
+  "configured_review_row_count": 36,
+  "expected_field_judgment_keys": [],
+  "expected_input_judgment_keys": [],
+  "import_module": "MSVV07AdWords.PaperInterface",
+  "lean_check": {
+    "command": "lake build MSVV07AdWords.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "EconCSLib.Online.MSVV07PaperFacing.paperSlotsPerPageDistinct_iff.{u_1, u_2, u_3} {Advertiser : Type u_1}\n  {Query : Type u_2} (Slot : Query \u2192 Type u_3)\n  (A : Online.MSVV07PaperFacing.PaperAssignment Advertiser ((q : Query) \u00d7 Slot q)) :\n  Online.MSVV07PaperFacing.paperSlotsPerPageDistinct Slot A \u2194\n    \u2200 (q : Query) (s\u2081 s\u2082 : Slot q) (a : Advertiser), A \u27e8q, s\u2081\u27e9 = some a \u2192 A \u27e8q, s\u2082\u27e9 = some a \u2192 s\u2081 = s\u2082\n'EconCSLib.Online.MSVV07PaperFacing.paperSlotsPerPageDistinct_iff' does not depend on any axioms\nEconCSLib.Online.MSVV07PaperFacing.paperSpend_formula.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  [Fintype Query] [DecidableEq Advertiser] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (A : Online.MSVV07PaperFacing.PaperAssignment Advertiser Query) (a : Advertiser) :\n  Online.MSVV07PaperFacing.paperSpend I A a =\n    \u2211 q,\n      match A q with\n      | none => 0\n      | some a' => if a' = a then I.bid a q else 0\n'EconCSLib.Online.MSVV07PaperFacing.paperSpend_formula' depends on axioms: [propext, Classical.choice, Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperRevenue_formula.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  [Fintype Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (A : Online.MSVV07PaperFacing.PaperAssignment Advertiser Query) :\n  Online.MSVV07PaperFacing.paperRevenue I A =\n    \u2211 q,\n      match A q with\n      | none => 0\n      | some a => I.bid a q\n'EconCSLib.Online.MSVV07PaperFacing.paperRevenue_formula' depends on axioms: [propext, Classical.choice, Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperFeasible_iff.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  [Fintype Query] [DecidableEq Advertiser] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (A : Online.MSVV07PaperFacing.PaperAssignment Advertiser Query) :\n  Online.MSVV07PaperFacing.paperFeasible I A \u2194\n    \u2200 (a : Advertiser), Online.MSVV07PaperFacing.paperSpend I A a \u2264 I.budget a\n'EconCSLib.Online.MSVV07PaperFacing.paperFeasible_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperSmallBids_iff.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query) (epsilon : \u211d) :\n  Online.MSVV07PaperFacing.paperSmallBids I epsilon \u2194 \u2200 (a : Advertiser) (q : Query), I.bid a q \u2264 epsilon * I.budget a\n'EconCSLib.Online.MSVV07PaperFacing.paperSmallBids_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperFractionalRevenue_formula.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  [Fintype Advertiser] [Fintype Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (x : Advertiser \u2192 Query \u2192 \u211d) : Online.MSVV07PaperFacing.paperFractionalRevenue I x = \u2211 q, \u2211 a, I.bid a q * x a q\n'EconCSLib.Online.MSVV07PaperFacing.paperFractionalRevenue_formula' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperFractionalFeasible_iff.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  [Fintype Advertiser] [Fintype Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (x : Advertiser \u2192 Query \u2192 \u211d) :\n  Online.MSVV07PaperFacing.PaperFractionalFeasible I x \u2194\n    (\u2200 (a : Advertiser) (q : Query), 0 \u2264 x a q) \u2227\n      (\u2200 (q : Query), \u2211 a, x a q \u2264 1) \u2227 \u2200 (a : Advertiser), \u2211 q, I.bid a q * x a q \u2264 I.budget a\n'EconCSLib.Online.MSVV07PaperFacing.paperFractionalFeasible_iff' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperTradeoff_formula (s : \u211d) :\n  Online.MSVV07PaperFacing.paperTradeoff s = 1 - Real.exp (s - 1)\n'EconCSLib.Online.MSVV07PaperFacing.paperTradeoff_formula' depends on axioms: [propext, Classical.choice, Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperBalanceScore_formula.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  [Fintype Query] [DecidableEq Advertiser] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (A : Online.MSVV07PaperFacing.PaperAssignment Advertiser Query) (a : Advertiser) (q : Query) :\n  Online.MSVV07PaperFacing.paperBalanceScore I A a q =\n    I.bid a q * Online.MSVV07PaperFacing.paperTradeoff (Online.MSVV07PaperFacing.paperSpend I A a / I.budget a)\n'EconCSLib.Online.MSVV07PaperFacing.paperBalanceScore_formula' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperCanAssign_iff.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  [Fintype Query] [DecidableEq Advertiser] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (A : Online.MSVV07PaperFacing.PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :\n  Online.MSVV07PaperFacing.paperCanAssign I A q a \u2194 Online.MSVV07PaperFacing.paperSpend I A a + I.bid a q \u2264 I.budget a\n'EconCSLib.Online.MSVV07PaperFacing.paperCanAssign_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperIsBalanceChoice_iff.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]\n  (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (A : Online.MSVV07PaperFacing.PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :\n  Online.MSVV07PaperFacing.paperIsBalanceChoice I A q a \u2194\n    Online.MSVV07PaperFacing.paperCanAssign I A q a \u2227\n      \u2200 (b : Advertiser),\n        Online.MSVV07PaperFacing.paperCanAssign I A q b \u2192\n          Online.MSVV07PaperFacing.paperBalanceScore I A b q \u2264 Online.MSVV07PaperFacing.paperBalanceScore I A a q\n'EconCSLib.Online.MSVV07PaperFacing.paperIsBalanceChoice_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.paperSmallBidsLimitFamily_fields.{u_1} {Advertiser : Type u_1} [Fintype Advertiser]\n  [Nonempty Advertiser] [DecidableEq Advertiser] (F : Online.MSVV07PaperFacing.PaperSmallBidsLimitFamily Advertiser) :\n  (\u2200 (k : \u2115), Online.AdWordsInstance.NonnegativeBids (F.instanceAt k)) \u2227\n    (\u2200 (k : \u2115), Online.AdWordsInstance.PositiveBudgets (F.instanceAt k)) \u2227\n      (\u2200 (k : \u2115), 0 < \u2211 q, Online.AdWordsInstance.maxBidForQuery (F.instanceAt k) q) \u2227\n        (\u2200 (delta : \u211d),\n            0 < delta \u2192\n              \u2203 N,\n                \u2200 (k : \u2115),\n                  N \u2264 k \u2192\n                    Online.MSVV07PaperFacing.paperSmallBids (F.instanceAt k)\n                      (min 1\n                        (delta / ((Real.exp 1 + 1) * \u2211 q, Online.AdWordsInstance.maxBidForQuery (F.instanceAt k) q)))) \u2227\n          Sequence.SeqTendsTo (fun k => Online.AdWordsInstance.offlineOptimumValue (F.instanceAt k) \u22ef) F.optLimit \u2227\n            Sequence.SeqTendsTo\n              (fun k =>\n                Online.AdWordsInstance.revenue (F.instanceAt k)\n                  (Online.AdWordsInstance.runAssignment (F.instanceAt k)\n                    (Online.AdWordsInstance.balanceChoiceRule (F.instanceAt k)) (List.finRange (F.queryCount k))))\n              F.revenueLimit\n'EconCSLib.Online.MSVV07PaperFacing.paperSmallBidsLimitFamily_fields' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.theorem8_balance_msvv_competitive_of_small_bids_limit_family.{u_1}\n  {Advertiser : Type u_1} [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]\n  (F : Online.MSVV07PaperFacing.PaperSmallBidsLimitFamily Advertiser) :\n  Online.MSVV07PaperFacing.paperMsvvRatio * F.optLimit \u2264 F.revenueLimit\n'EconCSLib.Online.MSVV07PaperFacing.theorem8_balance_msvv_competitive_of_small_bids_limit_family' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error.{u_1,\n    u_2}\n  {Advertiser : Type u_1} {Query : Type u_2} [Fintype Advertiser] [Nonempty Advertiser] [Fintype Query]\n  [DecidableEq Advertiser] [DecidableEq Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (hbid : Online.AdWordsInstance.NonnegativeBids I) (hbudget : Online.AdWordsInstance.PositiveBudgets I)\n  (history : List Query) (hnodup : history.Nodup) (hcover : Online.AdWordsInstance.historyFinset history = Finset.univ)\n  {epsilon : \u211d} (hepsilon : 0 \u2264 epsilon) (hepsilon_le_one : epsilon \u2264 1)\n  (hsmall : Online.MSVV07PaperFacing.paperSmallBids I epsilon) :\n  Online.MSVV07PaperFacing.paperMsvvRatio * Online.AdWordsInstance.offlineOptimumValue I \u22ef \u2264\n    Online.MSVV07PaperFacing.paperRevenue I\n        (Online.AdWordsInstance.runAssignment I (Online.AdWordsInstance.balanceChoiceRule I) history) +\n      epsilon * (Real.exp 1 + 1) * \u2211 q, Online.AdWordsInstance.maxBidForQuery I q\n'EconCSLib.Online.MSVV07PaperFacing.section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.section6_next_highest_bid_all_formula.{u_1, u_2} {Advertiser : Type u_1}\n  {Query : Type u_2} [Fintype Advertiser] [DecidableEq Advertiser]\n  (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query) (a : Advertiser) (q : Query) :\n  Online.MSVV07PaperFacing.section6_next_highest_bid_all I a q =\n    have others := Finset.univ.erase a;\n    if h : others.Nonempty then max 0 (others.sup' h fun b => I.bid b q) else 0\n'EconCSLib.Online.MSVV07PaperFacing.section6_next_highest_bid_all_formula' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.section6_next_highest_bid_alive_formula.{u_1, u_2} {Advertiser : Type u_1}\n  {Query : Type u_2} [Fintype Advertiser] [DecidableEq Advertiser]\n  (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query) (alive : Advertiser \u2192 Query \u2192 Prop)\n  [(a : Advertiser) \u2192 (q : Query) \u2192 Decidable (alive a q)] (a : Advertiser) (q : Query) :\n  Online.MSVV07PaperFacing.section6_next_highest_bid_alive I alive a q =\n    have others := {b \u2208 Finset.univ.erase a | alive b q};\n    if h : others.Nonempty then max 0 (others.sup' h fun b => I.bid b q) else 0\n'EconCSLib.Online.MSVV07PaperFacing.section6_next_highest_bid_alive_formula' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.section6_next_highest_bid_all_theorem8_finite_explicit_error.{u_1, u_2}\n  {Advertiser : Type u_1} {Query : Type u_2} [Fintype Advertiser] [Nonempty Advertiser] [Fintype Query]\n  [DecidableEq Advertiser] [DecidableEq Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (hbudget : Online.AdWordsInstance.PositiveBudgets I) (history : List Query) (hnodup : history.Nodup)\n  (hcover : Online.AdWordsInstance.historyFinset history = Finset.univ) {epsilon : \u211d} (hepsilon : 0 \u2264 epsilon)\n  (hepsilon_le_one : epsilon \u2264 1)\n  (hnext_small :\n    \u2200 (a : Advertiser) (q : Query),\n      Online.MSVV07PaperFacing.section6_next_highest_bid_all I a q \u2264 epsilon * I.budget a) :\n  Online.MSVV07PaperFacing.paperMsvvRatio *\n      (Online.AdWordsInstance.withEffectiveBids I\n            (Online.MSVV07PaperFacing.section6_next_highest_bid_all I)).offlineOptimumValue\n        \u22ef \u2264\n    Online.MSVV07PaperFacing.paperRevenue\n        (Online.AdWordsInstance.withEffectiveBids I (Online.MSVV07PaperFacing.section6_next_highest_bid_all I))\n        ((Online.AdWordsInstance.withEffectiveBids I\n              (Online.MSVV07PaperFacing.section6_next_highest_bid_all I)).runAssignment\n          (Online.AdWordsInstance.withEffectiveBids I\n              (Online.MSVV07PaperFacing.section6_next_highest_bid_all I)).balanceChoiceRule\n          history) +\n      epsilon * (Real.exp 1 + 1) *\n        \u2211 q,\n          (Online.AdWordsInstance.withEffectiveBids I\n                (Online.MSVV07PaperFacing.section6_next_highest_bid_all I)).maxBidForQuery\n            q\n'EconCSLib.Online.MSVV07PaperFacing.section6_next_highest_bid_all_theorem8_finite_explicit_error' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.section6_next_highest_bid_alive_theorem8_finite_explicit_error.{u_1, u_2}\n  {Advertiser : Type u_1} {Query : Type u_2} [Fintype Advertiser] [Nonempty Advertiser] [Fintype Query]\n  [DecidableEq Advertiser] [DecidableEq Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (alive : Advertiser \u2192 Query \u2192 Prop) [(a : Advertiser) \u2192 (q : Query) \u2192 Decidable (alive a q)]\n  (hbudget : Online.AdWordsInstance.PositiveBudgets I) (history : List Query) (hnodup : history.Nodup)\n  (hcover : Online.AdWordsInstance.historyFinset history = Finset.univ) {epsilon : \u211d} (hepsilon : 0 \u2264 epsilon)\n  (hepsilon_le_one : epsilon \u2264 1)\n  (hnext_small :\n    \u2200 (a : Advertiser) (q : Query),\n      Online.MSVV07PaperFacing.section6_next_highest_bid_alive I alive a q \u2264 epsilon * I.budget a) :\n  Online.MSVV07PaperFacing.paperMsvvRatio *\n      (Online.AdWordsInstance.withEffectiveBids I\n            (Online.MSVV07PaperFacing.section6_next_highest_bid_alive I alive)).offlineOptimumValue\n        \u22ef \u2264\n    Online.MSVV07PaperFacing.paperRevenue\n        (Online.AdWordsInstance.withEffectiveBids I (Online.MSVV07PaperFacing.section6_next_highest_bid_alive I alive))\n        ((Online.AdWordsInstance.withEffectiveBids I\n              (Online.MSVV07PaperFacing.section6_next_highest_bid_alive I alive)).runAssignment\n          (Online.AdWordsInstance.withEffectiveBids I\n              (Online.MSVV07PaperFacing.section6_next_highest_bid_alive I alive)).balanceChoiceRule\n          history) +\n      epsilon * (Real.exp 1 + 1) *\n        \u2211 q,\n          (Online.AdWordsInstance.withEffectiveBids I\n                (Online.MSVV07PaperFacing.section6_next_highest_bid_alive I alive)).maxBidForQuery\n            q\n'EconCSLib.Online.MSVV07PaperFacing.section6_next_highest_bid_alive_theorem8_finite_explicit_error' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.section6_click_through_rates_theorem8_finite_explicit_error.{u_1, u_2}\n  {Advertiser : Type u_1} {Query : Type u_2} [Fintype Advertiser] [Nonempty Advertiser] [Fintype Query]\n  [DecidableEq Advertiser] [DecidableEq Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (ctr : Advertiser \u2192 Query \u2192 \u211d) (hctr_nonneg : \u2200 (a : Advertiser) (q : Query), 0 \u2264 ctr a q)\n  (hctr_le_one : \u2200 (a : Advertiser) (q : Query), ctr a q \u2264 1) (hbid : Online.AdWordsInstance.NonnegativeBids I)\n  (hbudget : Online.AdWordsInstance.PositiveBudgets I) (history : List Query) (hnodup : history.Nodup)\n  (hcover : Online.AdWordsInstance.historyFinset history = Finset.univ) {epsilon : \u211d} (hepsilon : 0 \u2264 epsilon)\n  (hepsilon_le_one : epsilon \u2264 1) (hsmall : Online.MSVV07PaperFacing.paperSmallBids I epsilon) :\n  Online.MSVV07PaperFacing.paperMsvvRatio * (Online.AdWordsInstance.withClickThroughRates I ctr).offlineOptimumValue \u22ef \u2264\n    (Online.AdWordsInstance.withClickThroughRates I ctr).revenue\n        ((Online.AdWordsInstance.withClickThroughRates I ctr).runAssignment\n          (Online.AdWordsInstance.withClickThroughRates I ctr).balanceChoiceRule history) +\n      epsilon * (Real.exp 1 + 1) * \u2211 q, (Online.AdWordsInstance.withClickThroughRates I ctr).maxBidForQuery q\n'EconCSLib.Online.MSVV07PaperFacing.section6_click_through_rates_theorem8_finite_explicit_error' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.section6_availability_theorem8_finite_explicit_error.{u_1, u_2}\n  {Advertiser : Type u_1} {Query : Type u_2} [Fintype Advertiser] [Nonempty Advertiser] [Fintype Query]\n  [DecidableEq Advertiser] [DecidableEq Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (available : Advertiser \u2192 Query \u2192 Prop) [(a : Advertiser) \u2192 (q : Query) \u2192 Decidable (available a q)]\n  (hbid : Online.AdWordsInstance.NonnegativeBids I) (hbudget : Online.AdWordsInstance.PositiveBudgets I)\n  (history : List Query) (hnodup : history.Nodup) (hcover : Online.AdWordsInstance.historyFinset history = Finset.univ)\n  {epsilon : \u211d} (hepsilon : 0 \u2264 epsilon) (hepsilon_le_one : epsilon \u2264 1)\n  (hsmall : Online.MSVV07PaperFacing.paperSmallBids I epsilon) :\n  Online.MSVV07PaperFacing.paperMsvvRatio *\n      (Online.AdWordsInstance.withAvailability I available).offlineOptimumValue \u22ef \u2264\n    (Online.AdWordsInstance.withAvailability I available).revenue\n        ((Online.AdWordsInstance.withAvailability I available).runAssignment\n          (Online.AdWordsInstance.withAvailability I available).balanceChoiceRule history) +\n      epsilon * (Real.exp 1 + 1) * \u2211 q, (Online.AdWordsInstance.withAvailability I available).maxBidForQuery q\n'EconCSLib.Online.MSVV07PaperFacing.section6_availability_theorem8_finite_explicit_error' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.section6_page_top_balance_theorem8_finite_explicit_error.{u_1, u_2}\n  {Advertiser : Type u_1} {Query : Type u_2} [Fintype Advertiser] [Nonempty Advertiser] [Fintype Query]\n  [DecidableEq Advertiser] [DecidableEq Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (slots : Query \u2192 \u2115) (hbid : Online.AdWordsInstance.NonnegativeBids I)\n  (hbudget : Online.AdWordsInstance.PositiveBudgets I) (history : List Query) (hnodup : history.Nodup)\n  (hcover : Online.AdWordsInstance.historyFinset history = Finset.univ) {epsilon : \u211d} (hepsilon : 0 \u2264 epsilon)\n  (hepsilon_le_one : epsilon \u2264 1) (hsmall : Online.MSVV07PaperFacing.paperSmallBids I epsilon) :\n  Online.MSVV07PaperFacing.paperMsvvRatio * Online.AdWordsInstance.pageOfflineOptimumValue I slots \u22ef \u2264\n    Online.AdWordsInstance.pageRevenue I\n        (Online.AdWordsInstance.runPageAssignment I slots (Online.AdWordsInstance.pageTopBalanceRule I slots) history) +\n      epsilon * (Real.exp 1 + 1) * Online.AdWordsInstance.pageHistoryMaxBidSum I slots history\n'EconCSLib.Online.MSVV07PaperFacing.section6_page_top_balance_theorem8_finite_explicit_error' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids.{u_1,\n    u_2}\n  {Advertiser : Type u_1} {Query : Type u_2} [Fintype Advertiser] [Nonempty Advertiser] [Fintype Query]\n  [DecidableEq Advertiser] [DecidableEq Query] (I : Online.MSVV07PaperFacing.PaperInstance Advertiser Query)\n  (weight : Advertiser \u2192 \u211d) (hweight_nonneg : \u2200 (a : Advertiser), 0 \u2264 weight a)\n  (hbid : Online.AdWordsInstance.NonnegativeBids I) (hbudget : Online.AdWordsInstance.PositiveBudgets I)\n  (history : List Query) (hnodup : history.Nodup) (hcover : Online.AdWordsInstance.historyFinset history = Finset.univ)\n  {epsilon : \u211d} (hepsilon : 0 \u2264 epsilon) (hepsilon_le_one : epsilon \u2264 1)\n  (hweighted_small : \u2200 (a : Advertiser) (q : Query), weight a * I.bid a q \u2264 epsilon * I.budget a) :\n  Online.MSVV07PaperFacing.paperMsvvRatio *\n      (Online.AdWordsInstance.withAdvertiserWeights I weight).offlineOptimumValue \u22ef \u2264\n    (Online.AdWordsInstance.withAdvertiserWeights I weight).revenue\n        ((Online.AdWordsInstance.withAdvertiserWeights I weight).runAssignment\n          (Online.AdWordsInstance.withAdvertiserWeights I weight).balanceChoiceRule history) +\n      epsilon * (Real.exp 1 + 1) * \u2211 q, (Online.AdWordsInstance.withAdvertiserWeights I weight).maxBidForQuery q\n'EconCSLib.Online.MSVV07PaperFacing.section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.theorem9HardDistribution_uniform (N : \u2115) :\n  Online.MSVV07PaperFacing.theorem9HardDistribution N = Online.uniformPermutationDistribution N\n'EconCSLib.Online.MSVV07PaperFacing.theorem9HardDistribution_uniform' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.theorem9CappedNormalizedRevenue_formula (N : \u2115)\n  (algorithm : Online.MSVV07PaperFacing.theorem9IntegralPrefixAlgorithm N) (permutation : Equiv.Perm (Fin N)) :\n  Online.MSVV07PaperFacing.theorem9CappedNormalizedRevenue N algorithm permutation =\n    (\u2211 bidder,\n        min 1\n          (\u2211 round,\n            Online.BMatchingIntegralPrefixAlgorithm.prefixAllocation algorithm\n              (Online.theorem9ObservedPrefix N permutation round) round (permutation bidder))) /\n      \u2191N\n'EconCSLib.Online.MSVV07PaperFacing.theorem9CappedNormalizedRevenue_formula' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.assumption_nonnegative_bids.{u_1, u_2} {Advertiser : Type u_1} {Query : Type u_2}\n  (I : Online.MSVV07PaperFacing.Proof.PaperInstance Advertiser Query) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_nonnegative_bids' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.assumption_full_distinct_query_history.{u_1} {Query : Type u_1} [Fintype Query]\n  [DecidableEq Query] (history : List Query) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_full_distinct_query_history' depends on axioms: [propext, Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.assumption_epsilon_range (epsilon : \u211d) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_epsilon_range' depends on axioms: [propext, Classical.choice, Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.assumption_alive_bidder_predicate.{u_1, u_2} {Advertiser : Type u_1}\n  {Query : Type u_2} (_alive : Advertiser \u2192 Query \u2192 Prop) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_alive_bidder_predicate' does not depend on any axioms\nEconCSLib.Online.MSVV07PaperFacing.assumption_next_highest_all_small_bids.{u_1, u_2} {Advertiser : Type u_1}\n  {Query : Type u_2} [Fintype Advertiser] [DecidableEq Advertiser]\n  (I : Online.MSVV07PaperFacing.Proof.PaperInstance Advertiser Query) (epsilon : \u211d) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_next_highest_all_small_bids' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.assumption_next_highest_alive_small_bids.{u_1, u_2} {Advertiser : Type u_1}\n  {Query : Type u_2} [Fintype Advertiser] [DecidableEq Advertiser]\n  (I : Online.MSVV07PaperFacing.Proof.PaperInstance Advertiser Query) (alive : Advertiser \u2192 Query \u2192 Prop)\n  [(a : Advertiser) \u2192 (q : Query) \u2192 Decidable (alive a q)] (epsilon : \u211d) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_next_highest_alive_small_bids' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.assumption_click_through_rates_probability_bounds.{u_1, u_2} {Advertiser : Type u_1}\n  {Query : Type u_2} (ctr : Advertiser \u2192 Query \u2192 \u211d) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_click_through_rates_probability_bounds' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.assumption_availability_predicate.{u_1, u_2} {Advertiser : Type u_1}\n  {Query : Type u_2} (_available : Advertiser \u2192 Query \u2192 Prop) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_availability_predicate' does not depend on any axioms\nEconCSLib.Online.MSVV07PaperFacing.assumption_weighted_bids_nonnegative_weights.{u_1} {Advertiser : Type u_1}\n  (weight : Advertiser \u2192 \u211d) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_weighted_bids_nonnegative_weights' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nEconCSLib.Online.MSVV07PaperFacing.assumption_weighted_effective_small_bids.{u_1, u_2} {Advertiser : Type u_1}\n  {Query : Type u_2} (I : Online.MSVV07PaperFacing.Proof.PaperInstance Advertiser Query) (weight : Advertiser \u2192 \u211d)\n  (epsilon : \u211d) : Prop\n'EconCSLib.Online.MSVV07PaperFacing.assumption_weighted_effective_small_bids' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: MSVV07AdWords\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"lean_source_declaration\": \"theorem paperSlotsPerPageDistinct_iff\\n    {Advertiser Query : Type*} (Slot : Query \\u2192 Type*)\\n    (A : PaperAssignment Advertiser (\\u03a3 q : Query, Slot q)) :\\n    paperSlotsPerPageDistinct Slot A \\u2194\\n      \\u2200 q s\\u2081 s\\u2082 a,\\n        A \\u27e8q, s\\u2081\\u27e9 = some a \\u2192\\n        A \\u27e8q, s\\u2082\\u27e9 = some a \\u2192\\n        s\\u2081 = s\\u2082 := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperSlotsPerPageDistinct_iff\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"Slot\",\n        \"type\": \"Query \\u2192 Type*\"\n      },\n      {\n        \"names\": \"A\",\n        \"type\": \"PaperAssignment Advertiser (\\u03a3 q : Query, Slot q)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperSpend_formula\\n    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]\\n    (I : PaperInstance Advertiser Query)\\n    (A : PaperAssignment Advertiser Query) (a : Advertiser) :\\n    paperSpend I A a =\\n      \\u2211 q : Query,\\n        match A q with\\n        | none => 0\\n        | some a' => if a' = a then I.bid a q else 0 := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperSpend_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"A\",\n        \"type\": \"PaperAssignment Advertiser Query\"\n      },\n      {\n        \"names\": \"a\",\n        \"type\": \"Advertiser\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperRevenue_formula\\n    {Advertiser Query : Type*} [Fintype Query]\\n    (I : PaperInstance Advertiser Query)\\n    (A : PaperAssignment Advertiser Query) :\\n    paperRevenue I A =\\n      \\u2211 q : Query,\\n        match A q with\\n        | none => 0\\n        | some a => I.bid a q := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperRevenue_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"A\",\n        \"type\": \"PaperAssignment Advertiser Query\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperFeasible_iff\\n    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]\\n    (I : PaperInstance Advertiser Query)\\n    (A : PaperAssignment Advertiser Query) :\\n    paperFeasible I A \\u2194 \\u2200 a, paperSpend I A a \\u2264 I.budget a := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperFeasible_iff\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"A\",\n        \"type\": \"PaperAssignment Advertiser Query\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperSmallBids_iff\\n    {Advertiser Query : Type*}\\n    (I : PaperInstance Advertiser Query) (epsilon : \\u211d) :\\n    paperSmallBids I epsilon \\u2194 \\u2200 a q, I.bid a q \\u2264 epsilon * I.budget a := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperSmallBids_iff\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperFractionalRevenue_formula\\n    {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]\\n    (I : PaperInstance Advertiser Query)\\n    (x : Advertiser \\u2192 Query \\u2192 \\u211d) :\\n    paperFractionalRevenue I x =\\n      \\u2211 q : Query, \\u2211 a : Advertiser, I.bid a q * x a q := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperFractionalRevenue_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"x\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperFractionalFeasible_iff\\n    {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]\\n    (I : PaperInstance Advertiser Query)\\n    (x : Advertiser \\u2192 Query \\u2192 \\u211d) :\\n    PaperFractionalFeasible I x \\u2194\\n      (\\u2200 a q, 0 \\u2264 x a q) \\u2227\\n        (\\u2200 q, (\\u2211 a : Advertiser, x a q) \\u2264 1) \\u2227\\n          \\u2200 a, (\\u2211 q : Query, I.bid a q * x a q) \\u2264 I.budget a := by\\n  constructor\\n  \\u00b7 intro h\\n    exact \\u27e8h.nonneg, h.query, h.budget\\u27e9\\n  \\u00b7 rintro \\u27e8hnonneg, hquery, hbudget\\u27e9\\n    exact \\u27e8hnonneg, hquery, hbudget\\u27e9\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperFractionalFeasible_iff\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"x\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperTradeoff_formula (s : \\u211d) :\\n    paperTradeoff s = 1 - Real.exp (s - 1) := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperTradeoff_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"s\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperBalanceScore_formula\\n    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]\\n    (I : PaperInstance Advertiser Query)\\n    (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query) :\\n    paperBalanceScore I A a q =\\n      I.bid a q * paperTradeoff (paperSpend I A a / I.budget a) := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperBalanceScore_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"A\",\n        \"type\": \"PaperAssignment Advertiser Query\"\n      },\n      {\n        \"names\": \"a\",\n        \"type\": \"Advertiser\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"Query\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperCanAssign_iff\\n    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]\\n    (I : PaperInstance Advertiser Query)\\n    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :\\n    paperCanAssign I A q a \\u2194\\n      paperSpend I A a + I.bid a q \\u2264 I.budget a := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperCanAssign_iff\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"A\",\n        \"type\": \"PaperAssignment Advertiser Query\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"Query\"\n      },\n      {\n        \"names\": \"a\",\n        \"type\": \"Advertiser\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperIsBalanceChoice_iff\\n    {Advertiser Query : Type*}\\n    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]\\n    (I : PaperInstance Advertiser Query)\\n    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :\\n    paperIsBalanceChoice I A q a \\u2194\\n      paperCanAssign I A q a \\u2227\\n        \\u2200 b, paperCanAssign I A q b \\u2192\\n          paperBalanceScore I A b q \\u2264 paperBalanceScore I A a q := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperIsBalanceChoice_iff\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"A\",\n        \"type\": \"PaperAssignment Advertiser Query\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"Query\"\n      },\n      {\n        \"names\": \"a\",\n        \"type\": \"Advertiser\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paperSmallBidsLimitFamily_fields\\n    {Advertiser : Type*}\\n    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]\\n    (F : PaperSmallBidsLimitFamily Advertiser) :\\n    (\\u2200 k, (F.instanceAt k).NonnegativeBids) \\u2227\\n      (\\u2200 k, (F.instanceAt k).PositiveBudgets) \\u2227\\n        (\\u2200 k, 0 <\\n          \\u2211 q : Fin (F.queryCount k), (F.instanceAt k).maxBidForQuery q) \\u2227\\n          (\\u2200 delta : \\u211d, 0 < delta \\u2192\\n            \\u2203 N : \\u2115, \\u2200 k : \\u2115, N \\u2264 k \\u2192\\n              paperSmallBids (F.instanceAt k)\\n                (min 1\\n                  (delta / ((Real.exp 1 + 1) *\\n                    (\\u2211 q : Fin (F.queryCount k),\\n                      (F.instanceAt k).maxBidForQuery q))))) \\u2227\\n            Sequence.SeqTendsTo\\n              (fun k =>\\n                (F.instanceAt k).offlineOptimumValue\\n                  (fun a => (F.positive_budgets k a).le))\\n              F.optLimit \\u2227\\n            Sequence.SeqTendsTo\\n              (fun k =>\\n                (F.instanceAt k).revenue\\n                  ((F.instanceAt k).runAssignment\\n                    (F.instanceAt k).balanceChoiceRule\\n                    (List.finRange (F.queryCount k))))\\n              F.revenueLimit := by\\n  exact\\n    \\u27e8F.nonnegative_bids, F.positive_budgets, F.maxBidSum_pos,\\n      F.small_bids_eventually, F.offlineOptimum_tendsTo, F.revenue_tendsTo\\u27e9\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paperSmallBidsLimitFamily_fields\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"F\",\n        \"type\": \"PaperSmallBidsLimitFamily Advertiser\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem8_balance_msvv_competitive_of_small_bids_limit_family\\n    {Advertiser : Type*}\\n    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]\\n    (F : PaperSmallBidsLimitFamily Advertiser) :\\n    paperMsvvRatio * F.optLimit \\u2264 F.revenueLimit := by\\n  exact Proof.theorem8_balance_msvv_competitive_of_small_bids_limit_family F\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem8_balance_msvv_competitive_of_small_bids_limit_family\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"F\",\n        \"type\": \"PaperSmallBidsLimitFamily Advertiser\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error\\n    {Advertiser Query : Type*}\\n    [Fintype Advertiser] [Nonempty Advertiser]\\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\\n    (I : PaperInstance Advertiser Query)\\n    (hbid : I.NonnegativeBids)\\n    (hbudget : I.PositiveBudgets)\\n    (history : List Query)\\n    (hnodup : history.Nodup)\\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\\n    {epsilon : \\u211d}\\n    (hepsilon : 0 \\u2264 epsilon)\\n    (hepsilon_le_one : epsilon \\u2264 1)\\n    (hsmall : paperSmallBids I epsilon) :\\n    paperMsvvRatio *\\n        I.offlineOptimumValue (fun a => (hbudget a).le) \\u2264\\n      paperRevenue I (I.runAssignment I.balanceChoiceRule history) +\\n        epsilon * (Real.exp 1 + 1) *\\n          (\\u2211 q : Query, I.maxBidForQuery q) := by\\n  exact\\n    Proof.section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error\\n      I hbid hbudget history hnodup hcover hepsilon hepsilon_le_one hsmall\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"hbid\",\n        \"type\": \"I.NonnegativeBids\"\n      },\n      {\n        \"names\": \"hbudget\",\n        \"type\": \"I.PositiveBudgets\"\n      },\n      {\n        \"names\": \"history\",\n        \"type\": \"List Query\"\n      },\n      {\n        \"names\": \"hnodup\",\n        \"type\": \"history.Nodup\"\n      },\n      {\n        \"names\": \"hcover\",\n        \"type\": \"AdWordsInstance.historyFinset history = Finset.univ\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hepsilon\",\n        \"type\": \"0 \\u2264 epsilon\"\n      },\n      {\n        \"names\": \"hepsilon_le_one\",\n        \"type\": \"epsilon \\u2264 1\"\n      },\n      {\n        \"names\": \"hsmall\",\n        \"type\": \"paperSmallBids I epsilon\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem section6_next_highest_bid_all_formula\\n    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]\\n    (I : PaperInstance Advertiser Query) (a : Advertiser) (q : Query) :\\n    section6_next_highest_bid_all I a q =\\n      let others : Finset Advertiser := (Finset.univ : Finset Advertiser).erase a\\n      if h : others.Nonempty then\\n        max 0 (others.sup' h fun b => I.bid b q)\\n      else\\n        0 := by\\n  classical\\n  unfold section6_next_highest_bid_all Proof.section6_next_highest_bid_all\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"section6_next_highest_bid_all_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"a\",\n        \"type\": \"Advertiser\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"Query\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem section6_next_highest_bid_alive_formula\\n    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]\\n    (I : PaperInstance Advertiser Query)\\n    (alive : Advertiser \\u2192 Query \\u2192 Prop) [\\u2200 a q, Decidable (alive a q)]\\n    (a : Advertiser) (q : Query) :\\n    section6_next_highest_bid_alive I alive a q =\\n      let others : Finset Advertiser :=\\n        ((Finset.univ : Finset Advertiser).erase a).filter fun b => alive b q\\n      if h : others.Nonempty then\\n        max 0 (others.sup' h fun b => I.bid b q)\\n      else\\n        0 := by\\n  classical\\n  unfold section6_next_highest_bid_alive Proof.section6_next_highest_bid_alive\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"section6_next_highest_bid_alive_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"alive\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 Prop\"\n      },\n      {\n        \"names\": \"a\",\n        \"type\": \"Advertiser\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"Query\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem section6_next_highest_bid_all_theorem8_finite_explicit_error\\n    {Advertiser Query : Type*}\\n    [Fintype Advertiser] [Nonempty Advertiser]\\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\\n    (I : PaperInstance Advertiser Query)\\n    (hbudget : I.PositiveBudgets)\\n    (history : List Query)\\n    (hnodup : history.Nodup)\\n    (hcover :\\n      AdWordsInstance.historyFinset history = Finset.univ)\\n    {epsilon : \\u211d}\\n    (hepsilon : 0 \\u2264 epsilon)\\n    (hepsilon_le_one : epsilon \\u2264 1)\\n    (hnext_small :\\n      \\u2200 a q, section6_next_highest_bid_all I a q \\u2264 epsilon * I.budget a) :\\n    paperMsvvRatio *\\n        (I.withEffectiveBids (section6_next_highest_bid_all I)).offlineOptimumValue\\n          (fun a => (hbudget a).le) \\u2264\\n      paperRevenue (I.withEffectiveBids (section6_next_highest_bid_all I))\\n        ((I.withEffectiveBids (section6_next_highest_bid_all I)).runAssignment\\n          (I.withEffectiveBids\\n            (section6_next_highest_bid_all I)).balanceChoiceRule history) +\\n        epsilon * (Real.exp 1 + 1) *\\n          (\\u2211 q : Query,\\n            (I.withEffectiveBids\\n              (section6_next_highest_bid_all I)).maxBidForQuery q) := by\\n  exact\\n    Proof.section6_next_highest_bid_all_theorem8_finite_explicit_error\\n      I hbudget history hnodup hcover hepsilon hepsilon_le_one hnext_small\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"section6_next_highest_bid_all_theorem8_finite_explicit_error\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"hbudget\",\n        \"type\": \"I.PositiveBudgets\"\n      },\n      {\n        \"names\": \"history\",\n        \"type\": \"List Query\"\n      },\n      {\n        \"names\": \"hnodup\",\n        \"type\": \"history.Nodup\"\n      },\n      {\n        \"names\": \"hcover\",\n        \"type\": \"AdWordsInstance.historyFinset history = Finset.univ\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hepsilon\",\n        \"type\": \"0 \\u2264 epsilon\"\n      },\n      {\n        \"names\": \"hepsilon_le_one\",\n        \"type\": \"epsilon \\u2264 1\"\n      },\n      {\n        \"names\": \"hnext_small\",\n        \"type\": \"\\u2200 a q, section6_next_highest_bid_all I a q \\u2264 epsilon * I.budget a\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem section6_next_highest_bid_alive_theorem8_finite_explicit_error\\n    {Advertiser Query : Type*}\\n    [Fintype Advertiser] [Nonempty Advertiser]\\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\\n    (I : PaperInstance Advertiser Query)\\n    (alive : Advertiser \\u2192 Query \\u2192 Prop) [\\u2200 a q, Decidable (alive a q)]\\n    (hbudget : I.PositiveBudgets)\\n    (history : List Query)\\n    (hnodup : history.Nodup)\\n    (hcover :\\n      AdWordsInstance.historyFinset history = Finset.univ)\\n    {epsilon : \\u211d}\\n    (hepsilon : 0 \\u2264 epsilon)\\n    (hepsilon_le_one : epsilon \\u2264 1)\\n    (hnext_small :\\n      \\u2200 a q, section6_next_highest_bid_alive I alive a q \\u2264\\n        epsilon * I.budget a) :\\n    paperMsvvRatio *\\n        (I.withEffectiveBids\\n          (section6_next_highest_bid_alive I alive)).offlineOptimumValue\\n          (fun a => (hbudget a).le) \\u2264\\n      paperRevenue\\n        (I.withEffectiveBids (section6_next_highest_bid_alive I alive))\\n        ((I.withEffectiveBids\\n          (section6_next_highest_bid_alive I alive)).runAssignment\\n          (I.withEffectiveBids\\n            (section6_next_highest_bid_alive I alive)).balanceChoiceRule history) +\\n        epsilon * (Real.exp 1 + 1) *\\n          (\\u2211 q : Query,\\n            (I.withEffectiveBids\\n              (section6_next_highest_bid_alive I alive)).maxBidForQuery q) := by\\n  exact\\n    Proof.section6_next_highest_bid_alive_theorem8_finite_explicit_error\\n      I alive hbudget history hnodup hcover hepsilon hepsilon_le_one hnext_small\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"section6_next_highest_bid_alive_theorem8_finite_explicit_error\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"alive\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 Prop\"\n      },\n      {\n        \"names\": \"hbudget\",\n        \"type\": \"I.PositiveBudgets\"\n      },\n      {\n        \"names\": \"history\",\n        \"type\": \"List Query\"\n      },\n      {\n        \"names\": \"hnodup\",\n        \"type\": \"history.Nodup\"\n      },\n      {\n        \"names\": \"hcover\",\n        \"type\": \"AdWordsInstance.historyFinset history = Finset.univ\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hepsilon\",\n        \"type\": \"0 \\u2264 epsilon\"\n      },\n      {\n        \"names\": \"hepsilon_le_one\",\n        \"type\": \"epsilon \\u2264 1\"\n      },\n      {\n        \"names\": \"hnext_small\",\n        \"type\": \"\\u2200 a q, section6_next_highest_bid_alive I alive a q \\u2264 epsilon * I.budget a\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem section6_click_through_rates_theorem8_finite_explicit_error\\n    {Advertiser Query : Type*}\\n    [Fintype Advertiser] [Nonempty Advertiser]\\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\\n    (I : PaperInstance Advertiser Query)\\n    (ctr : Advertiser \\u2192 Query \\u2192 \\u211d)\\n    (hctr_nonneg : \\u2200 a q, 0 \\u2264 ctr a q)\\n    (hctr_le_one : \\u2200 a q, ctr a q \\u2264 1)\\n    (hbid : I.NonnegativeBids)\\n    (hbudget : I.PositiveBudgets)\\n    (history : List Query)\\n    (hnodup : history.Nodup)\\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\\n    {epsilon : \\u211d}\\n    (hepsilon : 0 \\u2264 epsilon)\\n    (hepsilon_le_one : epsilon \\u2264 1)\\n    (hsmall : paperSmallBids I epsilon) :\\n    paperMsvvRatio *\\n        (I.withClickThroughRates ctr).offlineOptimumValue\\n          (fun a => (hbudget a).le) \\u2264\\n      (I.withClickThroughRates ctr).revenue\\n        ((I.withClickThroughRates ctr).runAssignment\\n          (I.withClickThroughRates ctr).balanceChoiceRule history) +\\n        epsilon * (Real.exp 1 + 1) *\\n          (\\u2211 q : Query, (I.withClickThroughRates ctr).maxBidForQuery q) := by\\n  exact\\n    Proof.section6_click_through_rates_theorem8_finite_explicit_error\\n      I ctr hctr_nonneg hctr_le_one hbid hbudget history hnodup hcover\\n      hepsilon hepsilon_le_one hsmall\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"section6_click_through_rates_theorem8_finite_explicit_error\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"ctr\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hctr_nonneg\",\n        \"type\": \"\\u2200 a q, 0 \\u2264 ctr a q\"\n      },\n      {\n        \"names\": \"hctr_le_one\",\n        \"type\": \"\\u2200 a q, ctr a q \\u2264 1\"\n      },\n      {\n        \"names\": \"hbid\",\n        \"type\": \"I.NonnegativeBids\"\n      },\n      {\n        \"names\": \"hbudget\",\n        \"type\": \"I.PositiveBudgets\"\n      },\n      {\n        \"names\": \"history\",\n        \"type\": \"List Query\"\n      },\n      {\n        \"names\": \"hnodup\",\n        \"type\": \"history.Nodup\"\n      },\n      {\n        \"names\": \"hcover\",\n        \"type\": \"AdWordsInstance.historyFinset history = Finset.univ\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hepsilon\",\n        \"type\": \"0 \\u2264 epsilon\"\n      },\n      {\n        \"names\": \"hepsilon_le_one\",\n        \"type\": \"epsilon \\u2264 1\"\n      },\n      {\n        \"names\": \"hsmall\",\n        \"type\": \"paperSmallBids I epsilon\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem section6_availability_theorem8_finite_explicit_error\\n    {Advertiser Query : Type*}\\n    [Fintype Advertiser] [Nonempty Advertiser]\\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\\n    (I : PaperInstance Advertiser Query)\\n    (available : Advertiser \\u2192 Query \\u2192 Prop)\\n    [\\u2200 a q, Decidable (available a q)]\\n    (hbid : I.NonnegativeBids)\\n    (hbudget : I.PositiveBudgets)\\n    (history : List Query)\\n    (hnodup : history.Nodup)\\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\\n    {epsilon : \\u211d}\\n    (hepsilon : 0 \\u2264 epsilon)\\n    (hepsilon_le_one : epsilon \\u2264 1)\\n    (hsmall : paperSmallBids I epsilon) :\\n    paperMsvvRatio *\\n        (I.withAvailability available).offlineOptimumValue\\n          (fun a => (hbudget a).le) \\u2264\\n      (I.withAvailability available).revenue\\n        ((I.withAvailability available).runAssignment\\n          (I.withAvailability available).balanceChoiceRule history) +\\n        epsilon * (Real.exp 1 + 1) *\\n          (\\u2211 q : Query, (I.withAvailability available).maxBidForQuery q) := by\\n  exact\\n    Proof.section6_availability_theorem8_finite_explicit_error\\n      I available hbid hbudget history hnodup hcover hepsilon hepsilon_le_one hsmall\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"section6_availability_theorem8_finite_explicit_error\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"available\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 Prop\"\n      },\n      {\n        \"names\": \"hbid\",\n        \"type\": \"I.NonnegativeBids\"\n      },\n      {\n        \"names\": \"hbudget\",\n        \"type\": \"I.PositiveBudgets\"\n      },\n      {\n        \"names\": \"history\",\n        \"type\": \"List Query\"\n      },\n      {\n        \"names\": \"hnodup\",\n        \"type\": \"history.Nodup\"\n      },\n      {\n        \"names\": \"hcover\",\n        \"type\": \"AdWordsInstance.historyFinset history = Finset.univ\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hepsilon\",\n        \"type\": \"0 \\u2264 epsilon\"\n      },\n      {\n        \"names\": \"hepsilon_le_one\",\n        \"type\": \"epsilon \\u2264 1\"\n      },\n      {\n        \"names\": \"hsmall\",\n        \"type\": \"paperSmallBids I epsilon\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem section6_page_top_balance_theorem8_finite_explicit_error\\n    {Advertiser Query : Type*}\\n    [Fintype Advertiser] [Nonempty Advertiser]\\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\\n    (I : PaperInstance Advertiser Query)\\n    (slots : Query \\u2192 \\u2115)\\n    (hbid : I.NonnegativeBids)\\n    (hbudget : I.PositiveBudgets)\\n    (history : List Query)\\n    (hnodup : history.Nodup)\\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\\n    {epsilon : \\u211d}\\n    (hepsilon : 0 \\u2264 epsilon)\\n    (hepsilon_le_one : epsilon \\u2264 1)\\n    (hsmall : paperSmallBids I epsilon) :\\n    paperMsvvRatio *\\n        I.pageOfflineOptimumValue slots (fun a => (hbudget a).le) \\u2264\\n      I.pageRevenue\\n        (I.runPageAssignment slots (I.pageTopBalanceRule slots) history) +\\n        epsilon * (Real.exp 1 + 1) *\\n          I.pageHistoryMaxBidSum slots history := by\\n  exact\\n    Proof.section6_page_top_balance_theorem8_finite_explicit_error\\n      I slots hbid hbudget history hnodup hcover\\n      hepsilon hepsilon_le_one hsmall\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"section6_page_top_balance_theorem8_finite_explicit_error\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"slots\",\n        \"type\": \"Query \\u2192 \\u2115\"\n      },\n      {\n        \"names\": \"hbid\",\n        \"type\": \"I.NonnegativeBids\"\n      },\n      {\n        \"names\": \"hbudget\",\n        \"type\": \"I.PositiveBudgets\"\n      },\n      {\n        \"names\": \"history\",\n        \"type\": \"List Query\"\n      },\n      {\n        \"names\": \"hnodup\",\n        \"type\": \"history.Nodup\"\n      },\n      {\n        \"names\": \"hcover\",\n        \"type\": \"AdWordsInstance.historyFinset history = Finset.univ\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hepsilon\",\n        \"type\": \"0 \\u2264 epsilon\"\n      },\n      {\n        \"names\": \"hepsilon_le_one\",\n        \"type\": \"epsilon \\u2264 1\"\n      },\n      {\n        \"names\": \"hsmall\",\n        \"type\": \"paperSmallBids I epsilon\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids\\n    {Advertiser Query : Type*}\\n    [Fintype Advertiser] [Nonempty Advertiser]\\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\\n    (I : PaperInstance Advertiser Query)\\n    (weight : Advertiser \\u2192 \\u211d)\\n    (hweight_nonneg : \\u2200 a, 0 \\u2264 weight a)\\n    (hbid : I.NonnegativeBids)\\n    (hbudget : I.PositiveBudgets)\\n    (history : List Query)\\n    (hnodup : history.Nodup)\\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\\n    {epsilon : \\u211d}\\n    (hepsilon : 0 \\u2264 epsilon)\\n    (hepsilon_le_one : epsilon \\u2264 1)\\n    (hweighted_small :\\n      \\u2200 a q, weight a * I.bid a q \\u2264 epsilon * I.budget a) :\\n    paperMsvvRatio *\\n        (I.withAdvertiserWeights weight).offlineOptimumValue\\n          (fun a => (hbudget a).le) \\u2264\\n      (I.withAdvertiserWeights weight).revenue\\n        ((I.withAdvertiserWeights weight).runAssignment\\n          (I.withAdvertiserWeights weight).balanceChoiceRule history) +\\n        epsilon * (Real.exp 1 + 1) *\\n          (\\u2211 q : Query, (I.withAdvertiserWeights weight).maxBidForQuery q) := by\\n  exact\\n    Proof.section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids\\n      I weight hweight_nonneg hbid hbudget history hnodup hcover\\n      hepsilon hepsilon_le_one hweighted_small\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"weight\",\n        \"type\": \"Advertiser \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hweight_nonneg\",\n        \"type\": \"\\u2200 a, 0 \\u2264 weight a\"\n      },\n      {\n        \"names\": \"hbid\",\n        \"type\": \"I.NonnegativeBids\"\n      },\n      {\n        \"names\": \"hbudget\",\n        \"type\": \"I.PositiveBudgets\"\n      },\n      {\n        \"names\": \"history\",\n        \"type\": \"List Query\"\n      },\n      {\n        \"names\": \"hnodup\",\n        \"type\": \"history.Nodup\"\n      },\n      {\n        \"names\": \"hcover\",\n        \"type\": \"AdWordsInstance.historyFinset history = Finset.univ\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hepsilon\",\n        \"type\": \"0 \\u2264 epsilon\"\n      },\n      {\n        \"names\": \"hepsilon_le_one\",\n        \"type\": \"epsilon \\u2264 1\"\n      },\n      {\n        \"names\": \"hweighted_small\",\n        \"type\": \"\\u2200 a q, weight a * I.bid a q \\u2264 epsilon * I.budget a\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem9HardDistribution_uniform (N : \\u2115) :\\n    theorem9HardDistribution N = uniformPermutationDistribution N := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem9HardDistribution_uniform\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"N\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem9CappedNormalizedRevenue_formula\\n    (N : \\u2115) (algorithm : theorem9IntegralPrefixAlgorithm N)\\n    (permutation : Equiv.Perm (Fin N)) :\\n    theorem9CappedNormalizedRevenue N algorithm permutation =\\n      (\\u2211 bidder : Fin N,\\n        min 1\\n          (\\u2211 round : Fin N,\\n            BMatchingIntegralPrefixAlgorithm.prefixAllocation algorithm\\n              (theorem9ObservedPrefix N permutation round)\\n              round (permutation bidder))) /\\n        (N : \\u211d) := by\\n  exact theorem9_capped_normalized_revenue_eq_prefix_spend N algorithm permutation\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem9CappedNormalizedRevenue_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"N\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"algorithm\",\n        \"type\": \"theorem9IntegralPrefixAlgorithm N\"\n      },\n      {\n        \"names\": \"permutation\",\n        \"type\": \"Equiv.Perm (Fin N)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_nonnegative_bids\\n    {Advertiser Query : Type*} (I : Proof.PaperInstance Advertiser Query) : Prop :=\\n  I.NonnegativeBids\\n\\n                                                                             \\n-- audit-premise: hnodup : history.Nodup\\n-- audit-premise: hcover : AdWordsInstance.historyFinset history = Finset.univ\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_nonnegative_bids\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"Proof.PaperInstance Advertiser Query\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_full_distinct_query_history\\n    {Query : Type*} [Fintype Query] [DecidableEq Query]\\n    (history : List Query) : Prop :=\\n  history.Nodup \\u2227 AdWordsInstance.historyFinset history = Finset.univ\\n\\n                                                                    \\n-- audit-premise: hepsilon : 0 \\u2264 epsilon\\n-- audit-premise: hepsilon_le_one : epsilon \\u2264 1\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_full_distinct_query_history\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"history\",\n        \"type\": \"List Query\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_epsilon_range (epsilon : \\u211d) : Prop :=\\n  0 \\u2264 epsilon \\u2227 epsilon \\u2264 1\\n\\n                                                                                     \\n-- audit-premise: alive : Advertiser \\u2192 Query \\u2192 Prop\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_epsilon_range\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_alive_bidder_predicate\\n    {Advertiser Query : Type*} (_alive : Advertiser \\u2192 Query \\u2192 Prop) : Prop :=\\n  True\\n\\n                                                                                           \\n-- audit-premise: hnext_small : \\u2200 a q, section6_next_highest_bid_all I a q \\u2264 epsilon * I.budget a\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_alive_bidder_predicate\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"_alive\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 Prop\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_next_highest_all_small_bids\\n    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]\\n    (I : Proof.PaperInstance Advertiser Query) (epsilon : \\u211d) : Prop :=\\n  \\u2200 a q, Proof.section6_next_highest_bid_all I a q \\u2264 epsilon * I.budget a\\n\\n                                                                                             \\n-- audit-premise: hnext_small : \\u2200 a q, section6_next_highest_bid_alive I alive a q \\u2264 epsilon * I.budget a\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_next_highest_all_small_bids\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"Proof.PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_next_highest_alive_small_bids\\n    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]\\n    (I : Proof.PaperInstance Advertiser Query)\\n    (alive : Advertiser \\u2192 Query \\u2192 Prop) [\\u2200 a q, Decidable (alive a q)]\\n    (epsilon : \\u211d) : Prop :=\\n  \\u2200 a q, Proof.section6_next_highest_bid_alive I alive a q \\u2264 epsilon * I.budget a\\n\\n                                                       \\n-- audit-premise: hctr_nonneg : \\u2200 a q, 0 \\u2264 ctr a q\\n-- audit-premise: hctr_le_one : \\u2200 a q, ctr a q \\u2264 1\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_next_highest_alive_small_bids\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"Proof.PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"alive\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 Prop\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_click_through_rates_probability_bounds\\n    {Advertiser Query : Type*} (ctr : Advertiser \\u2192 Query \\u2192 \\u211d) : Prop :=\\n  (\\u2200 a q, 0 \\u2264 ctr a q) \\u2227 (\\u2200 a q, ctr a q \\u2264 1)\\n\\n                                                                                       \\n-- audit-premise: available : Advertiser \\u2192 Query \\u2192 Prop\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_click_through_rates_probability_bounds\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"ctr\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_availability_predicate\\n    {Advertiser Query : Type*} (_available : Advertiser \\u2192 Query \\u2192 Prop) : Prop :=\\n  True\\n\\n                                                    \\n-- audit-premise: hweight_nonneg : \\u2200 a, 0 \\u2264 weight a\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_availability_predicate\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"_available\",\n        \"type\": \"Advertiser \\u2192 Query \\u2192 Prop\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_weighted_bids_nonnegative_weights\\n    {Advertiser : Type*} (weight : Advertiser \\u2192 \\u211d) : Prop :=\\n  \\u2200 a, 0 \\u2264 weight a\\n\\n                                                                          \\n-- audit-premise: hweighted_small : \\u2200 a q, weight a * I.bid a q \\u2264 epsilon * I.budget a\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_weighted_bids_nonnegative_weights\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"weight\",\n        \"type\": \"Advertiser \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_weighted_effective_small_bids\\n    {Advertiser Query : Type*}\\n    (I : Proof.PaperInstance Advertiser Query) (weight : Advertiser \\u2192 \\u211d)\\n    (epsilon : \\u211d) : Prop :=\\n  \\u2200 a q, weight a * I.bid a q \\u2264 epsilon * I.budget a\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_weighted_effective_small_bids\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Advertiser Query\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"I\",\n        \"type\": \"Proof.PaperInstance Advertiser Query\"\n      },\n      {\n        \"names\": \"weight\",\n        \"type\": \"Advertiser \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"epsilon\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  }\n]",
+  "paper": "MSVV07AdWords",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/MSVV07AdWords",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 0,
+  "recursive_field_items": [],
+  "review_row_count": 36,
+  "row_visible_inputs": {
+    "assumption_alive_bidder_predicate": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "_alive",
+        "type": "Advertiser \u2192 Query \u2192 Prop"
+      }
+    ],
+    "assumption_availability_predicate": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "_available",
+        "type": "Advertiser \u2192 Query \u2192 Prop"
+      }
+    ],
+    "assumption_click_through_rates_probability_bounds": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "ctr",
+        "type": "Advertiser \u2192 Query \u2192 \u211d"
+      }
+    ],
+    "assumption_epsilon_range": [
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_full_distinct_query_history": [
+      {
+        "names": "Query",
+        "type": "Type*"
+      },
+      {
+        "names": "history",
+        "type": "List Query"
+      }
+    ],
+    "assumption_next_highest_alive_small_bids": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "Proof.PaperInstance Advertiser Query"
+      },
+      {
+        "names": "alive",
+        "type": "Advertiser \u2192 Query \u2192 Prop"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_next_highest_all_small_bids": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "Proof.PaperInstance Advertiser Query"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_nonnegative_bids": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "Proof.PaperInstance Advertiser Query"
+      }
+    ],
+    "assumption_weighted_bids_nonnegative_weights": [
+      {
+        "names": "Advertiser",
+        "type": "Type*"
+      },
+      {
+        "names": "weight",
+        "type": "Advertiser \u2192 \u211d"
+      }
+    ],
+    "assumption_weighted_effective_small_bids": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "Proof.PaperInstance Advertiser Query"
+      },
+      {
+        "names": "weight",
+        "type": "Advertiser \u2192 \u211d"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      }
+    ],
+    "paperBalanceScore_formula": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "A",
+        "type": "PaperAssignment Advertiser Query"
+      },
+      {
+        "names": "a",
+        "type": "Advertiser"
+      },
+      {
+        "names": "q",
+        "type": "Query"
+      }
+    ],
+    "paperCanAssign_iff": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "A",
+        "type": "PaperAssignment Advertiser Query"
+      },
+      {
+        "names": "q",
+        "type": "Query"
+      },
+      {
+        "names": "a",
+        "type": "Advertiser"
+      }
+    ],
+    "paperFeasible_iff": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "A",
+        "type": "PaperAssignment Advertiser Query"
+      }
+    ],
+    "paperFractionalFeasible_iff": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "x",
+        "type": "Advertiser \u2192 Query \u2192 \u211d"
+      }
+    ],
+    "paperFractionalRevenue_formula": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "x",
+        "type": "Advertiser \u2192 Query \u2192 \u211d"
+      }
+    ],
+    "paperIsBalanceChoice_iff": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "A",
+        "type": "PaperAssignment Advertiser Query"
+      },
+      {
+        "names": "q",
+        "type": "Query"
+      },
+      {
+        "names": "a",
+        "type": "Advertiser"
+      }
+    ],
+    "paperMsvvRatio_formula": [],
+    "paperRevenue_formula": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "A",
+        "type": "PaperAssignment Advertiser Query"
+      }
+    ],
+    "paperSlotsPerPageDistinct_iff": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "Slot",
+        "type": "Query \u2192 Type*"
+      },
+      {
+        "names": "A",
+        "type": "PaperAssignment Advertiser (\u03a3 q : Query, Slot q)"
+      }
+    ],
+    "paperSmallBidsLimitFamily_fields": [
+      {
+        "names": "Advertiser",
+        "type": "Type*"
+      },
+      {
+        "names": "F",
+        "type": "PaperSmallBidsLimitFamily Advertiser"
+      }
+    ],
+    "paperSmallBids_iff": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      }
+    ],
+    "paperSpend_formula": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "A",
+        "type": "PaperAssignment Advertiser Query"
+      },
+      {
+        "names": "a",
+        "type": "Advertiser"
+      }
+    ],
+    "paperTradeoff_formula": [
+      {
+        "names": "s",
+        "type": "\u211d"
+      }
+    ],
+    "section6_availability_theorem8_finite_explicit_error": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "available",
+        "type": "Advertiser \u2192 Query \u2192 Prop"
+      },
+      {
+        "names": "hbid",
+        "type": "I.NonnegativeBids"
+      },
+      {
+        "names": "hbudget",
+        "type": "I.PositiveBudgets"
+      },
+      {
+        "names": "history",
+        "type": "List Query"
+      },
+      {
+        "names": "hnodup",
+        "type": "history.Nodup"
+      },
+      {
+        "names": "hcover",
+        "type": "AdWordsInstance.historyFinset history = Finset.univ"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      },
+      {
+        "names": "hepsilon",
+        "type": "0 \u2264 epsilon"
+      },
+      {
+        "names": "hepsilon_le_one",
+        "type": "epsilon \u2264 1"
+      },
+      {
+        "names": "hsmall",
+        "type": "paperSmallBids I epsilon"
+      }
+    ],
+    "section6_click_through_rates_theorem8_finite_explicit_error": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "ctr",
+        "type": "Advertiser \u2192 Query \u2192 \u211d"
+      },
+      {
+        "names": "hctr_nonneg",
+        "type": "\u2200 a q, 0 \u2264 ctr a q"
+      },
+      {
+        "names": "hctr_le_one",
+        "type": "\u2200 a q, ctr a q \u2264 1"
+      },
+      {
+        "names": "hbid",
+        "type": "I.NonnegativeBids"
+      },
+      {
+        "names": "hbudget",
+        "type": "I.PositiveBudgets"
+      },
+      {
+        "names": "history",
+        "type": "List Query"
+      },
+      {
+        "names": "hnodup",
+        "type": "history.Nodup"
+      },
+      {
+        "names": "hcover",
+        "type": "AdWordsInstance.historyFinset history = Finset.univ"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      },
+      {
+        "names": "hepsilon",
+        "type": "0 \u2264 epsilon"
+      },
+      {
+        "names": "hepsilon_le_one",
+        "type": "epsilon \u2264 1"
+      },
+      {
+        "names": "hsmall",
+        "type": "paperSmallBids I epsilon"
+      }
+    ],
+    "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "hbid",
+        "type": "I.NonnegativeBids"
+      },
+      {
+        "names": "hbudget",
+        "type": "I.PositiveBudgets"
+      },
+      {
+        "names": "history",
+        "type": "List Query"
+      },
+      {
+        "names": "hnodup",
+        "type": "history.Nodup"
+      },
+      {
+        "names": "hcover",
+        "type": "AdWordsInstance.historyFinset history = Finset.univ"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      },
+      {
+        "names": "hepsilon",
+        "type": "0 \u2264 epsilon"
+      },
+      {
+        "names": "hepsilon_le_one",
+        "type": "epsilon \u2264 1"
+      },
+      {
+        "names": "hsmall",
+        "type": "paperSmallBids I epsilon"
+      }
+    ],
+    "section6_next_highest_bid_alive_formula": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "alive",
+        "type": "Advertiser \u2192 Query \u2192 Prop"
+      },
+      {
+        "names": "a",
+        "type": "Advertiser"
+      },
+      {
+        "names": "q",
+        "type": "Query"
+      }
+    ],
+    "section6_next_highest_bid_alive_theorem8_finite_explicit_error": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "alive",
+        "type": "Advertiser \u2192 Query \u2192 Prop"
+      },
+      {
+        "names": "hbudget",
+        "type": "I.PositiveBudgets"
+      },
+      {
+        "names": "history",
+        "type": "List Query"
+      },
+      {
+        "names": "hnodup",
+        "type": "history.Nodup"
+      },
+      {
+        "names": "hcover",
+        "type": "AdWordsInstance.historyFinset history = Finset.univ"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      },
+      {
+        "names": "hepsilon",
+        "type": "0 \u2264 epsilon"
+      },
+      {
+        "names": "hepsilon_le_one",
+        "type": "epsilon \u2264 1"
+      },
+      {
+        "names": "hnext_small",
+        "type": "\u2200 a q, section6_next_highest_bid_alive I alive a q \u2264 epsilon * I.budget a"
+      }
+    ],
+    "section6_next_highest_bid_all_formula": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "a",
+        "type": "Advertiser"
+      },
+      {
+        "names": "q",
+        "type": "Query"
+      }
+    ],
+    "section6_next_highest_bid_all_theorem8_finite_explicit_error": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "hbudget",
+        "type": "I.PositiveBudgets"
+      },
+      {
+        "names": "history",
+        "type": "List Query"
+      },
+      {
+        "names": "hnodup",
+        "type": "history.Nodup"
+      },
+      {
+        "names": "hcover",
+        "type": "AdWordsInstance.historyFinset history = Finset.univ"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      },
+      {
+        "names": "hepsilon",
+        "type": "0 \u2264 epsilon"
+      },
+      {
+        "names": "hepsilon_le_one",
+        "type": "epsilon \u2264 1"
+      },
+      {
+        "names": "hnext_small",
+        "type": "\u2200 a q, section6_next_highest_bid_all I a q \u2264 epsilon * I.budget a"
+      }
+    ],
+    "section6_page_top_balance_theorem8_finite_explicit_error": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "slots",
+        "type": "Query \u2192 \u2115"
+      },
+      {
+        "names": "hbid",
+        "type": "I.NonnegativeBids"
+      },
+      {
+        "names": "hbudget",
+        "type": "I.PositiveBudgets"
+      },
+      {
+        "names": "history",
+        "type": "List Query"
+      },
+      {
+        "names": "hnodup",
+        "type": "history.Nodup"
+      },
+      {
+        "names": "hcover",
+        "type": "AdWordsInstance.historyFinset history = Finset.univ"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      },
+      {
+        "names": "hepsilon",
+        "type": "0 \u2264 epsilon"
+      },
+      {
+        "names": "hepsilon_le_one",
+        "type": "epsilon \u2264 1"
+      },
+      {
+        "names": "hsmall",
+        "type": "paperSmallBids I epsilon"
+      }
+    ],
+    "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids": [
+      {
+        "names": "Advertiser Query",
+        "type": "Type*"
+      },
+      {
+        "names": "I",
+        "type": "PaperInstance Advertiser Query"
+      },
+      {
+        "names": "weight",
+        "type": "Advertiser \u2192 \u211d"
+      },
+      {
+        "names": "hweight_nonneg",
+        "type": "\u2200 a, 0 \u2264 weight a"
+      },
+      {
+        "names": "hbid",
+        "type": "I.NonnegativeBids"
+      },
+      {
+        "names": "hbudget",
+        "type": "I.PositiveBudgets"
+      },
+      {
+        "names": "history",
+        "type": "List Query"
+      },
+      {
+        "names": "hnodup",
+        "type": "history.Nodup"
+      },
+      {
+        "names": "hcover",
+        "type": "AdWordsInstance.historyFinset history = Finset.univ"
+      },
+      {
+        "names": "epsilon",
+        "type": "\u211d"
+      },
+      {
+        "names": "hepsilon",
+        "type": "0 \u2264 epsilon"
+      },
+      {
+        "names": "hepsilon_le_one",
+        "type": "epsilon \u2264 1"
+      },
+      {
+        "names": "hweighted_small",
+        "type": "\u2200 a q, weight a * I.bid a q \u2264 epsilon * I.budget a"
+      }
+    ],
+    "theorem8_balance_msvv_competitive_of_small_bids_limit_family": [
+      {
+        "names": "Advertiser",
+        "type": "Type*"
+      },
+      {
+        "names": "F",
+        "type": "PaperSmallBidsLimitFamily Advertiser"
+      }
+    ],
+    "theorem9CappedNormalizedRevenue_formula": [
+      {
+        "names": "N",
+        "type": "\u2115"
+      },
+      {
+        "names": "algorithm",
+        "type": "theorem9IntegralPrefixAlgorithm N"
+      },
+      {
+        "names": "permutation",
+        "type": "Equiv.Perm (Fin N)"
+      }
+    ],
+    "theorem9HardDistribution_uniform": [
+      {
+        "names": "N",
+        "type": "\u2115"
+      }
+    ],
+    "theorem9_no_randomized_online_algorithm_beats_msvv_ratio": []
+  },
+  "rows_with_record_premises": [],
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "theorem paperSlotsPerPageDistinct_iff\n    {Advertiser Query : Type*} (Slot : Query \u2192 Type*)\n    (A : PaperAssignment Advertiser (\u03a3 q : Query, Slot q)) :\n    paperSlotsPerPageDistinct Slot A \u2194\n      \u2200 q s\u2081 s\u2082 a,\n        A \u27e8q, s\u2081\u27e9 = some a \u2192\n        A \u27e8q, s\u2082\u27e9 = some a \u2192\n        s\u2081 = s\u2082 := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperSlotsPerPageDistinct_iff",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "Slot",
+          "type": "Query \u2192 Type*"
+        },
+        {
+          "names": "A",
+          "type": "PaperAssignment Advertiser (\u03a3 q : Query, Slot q)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperSpend_formula\n    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]\n    (I : PaperInstance Advertiser Query)\n    (A : PaperAssignment Advertiser Query) (a : Advertiser) :\n    paperSpend I A a =\n      \u2211 q : Query,\n        match A q with\n        | none => 0\n        | some a' => if a' = a then I.bid a q else 0 := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperSpend_formula",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "A",
+          "type": "PaperAssignment Advertiser Query"
+        },
+        {
+          "names": "a",
+          "type": "Advertiser"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperRevenue_formula\n    {Advertiser Query : Type*} [Fintype Query]\n    (I : PaperInstance Advertiser Query)\n    (A : PaperAssignment Advertiser Query) :\n    paperRevenue I A =\n      \u2211 q : Query,\n        match A q with\n        | none => 0\n        | some a => I.bid a q := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperRevenue_formula",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "A",
+          "type": "PaperAssignment Advertiser Query"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperFeasible_iff\n    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]\n    (I : PaperInstance Advertiser Query)\n    (A : PaperAssignment Advertiser Query) :\n    paperFeasible I A \u2194 \u2200 a, paperSpend I A a \u2264 I.budget a := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperFeasible_iff",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "A",
+          "type": "PaperAssignment Advertiser Query"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperSmallBids_iff\n    {Advertiser Query : Type*}\n    (I : PaperInstance Advertiser Query) (epsilon : \u211d) :\n    paperSmallBids I epsilon \u2194 \u2200 a q, I.bid a q \u2264 epsilon * I.budget a := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperSmallBids_iff",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperFractionalRevenue_formula\n    {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]\n    (I : PaperInstance Advertiser Query)\n    (x : Advertiser \u2192 Query \u2192 \u211d) :\n    paperFractionalRevenue I x =\n      \u2211 q : Query, \u2211 a : Advertiser, I.bid a q * x a q := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperFractionalRevenue_formula",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "x",
+          "type": "Advertiser \u2192 Query \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperFractionalFeasible_iff\n    {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]\n    (I : PaperInstance Advertiser Query)\n    (x : Advertiser \u2192 Query \u2192 \u211d) :\n    PaperFractionalFeasible I x \u2194\n      (\u2200 a q, 0 \u2264 x a q) \u2227\n        (\u2200 q, (\u2211 a : Advertiser, x a q) \u2264 1) \u2227\n          \u2200 a, (\u2211 q : Query, I.bid a q * x a q) \u2264 I.budget a := by\n  constructor\n  \u00b7 intro h\n    exact \u27e8h.nonneg, h.query, h.budget\u27e9\n  \u00b7 rintro \u27e8hnonneg, hquery, hbudget\u27e9\n    exact \u27e8hnonneg, hquery, hbudget\u27e9",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperFractionalFeasible_iff",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "x",
+          "type": "Advertiser \u2192 Query \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperTradeoff_formula (s : \u211d) :\n    paperTradeoff s = 1 - Real.exp (s - 1) := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperTradeoff_formula",
+      "visible_inputs": [
+        {
+          "names": "s",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperBalanceScore_formula\n    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]\n    (I : PaperInstance Advertiser Query)\n    (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query) :\n    paperBalanceScore I A a q =\n      I.bid a q * paperTradeoff (paperSpend I A a / I.budget a) := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperBalanceScore_formula",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "A",
+          "type": "PaperAssignment Advertiser Query"
+        },
+        {
+          "names": "a",
+          "type": "Advertiser"
+        },
+        {
+          "names": "q",
+          "type": "Query"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperCanAssign_iff\n    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]\n    (I : PaperInstance Advertiser Query)\n    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :\n    paperCanAssign I A q a \u2194\n      paperSpend I A a + I.bid a q \u2264 I.budget a := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperCanAssign_iff",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "A",
+          "type": "PaperAssignment Advertiser Query"
+        },
+        {
+          "names": "q",
+          "type": "Query"
+        },
+        {
+          "names": "a",
+          "type": "Advertiser"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperIsBalanceChoice_iff\n    {Advertiser Query : Type*}\n    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]\n    (I : PaperInstance Advertiser Query)\n    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :\n    paperIsBalanceChoice I A q a \u2194\n      paperCanAssign I A q a \u2227\n        \u2200 b, paperCanAssign I A q b \u2192\n          paperBalanceScore I A b q \u2264 paperBalanceScore I A a q := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperIsBalanceChoice_iff",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "A",
+          "type": "PaperAssignment Advertiser Query"
+        },
+        {
+          "names": "q",
+          "type": "Query"
+        },
+        {
+          "names": "a",
+          "type": "Advertiser"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paperSmallBidsLimitFamily_fields\n    {Advertiser : Type*}\n    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]\n    (F : PaperSmallBidsLimitFamily Advertiser) :\n    (\u2200 k, (F.instanceAt k).NonnegativeBids) \u2227\n      (\u2200 k, (F.instanceAt k).PositiveBudgets) \u2227\n        (\u2200 k, 0 <\n          \u2211 q : Fin (F.queryCount k), (F.instanceAt k).maxBidForQuery q) \u2227\n          (\u2200 delta : \u211d, 0 < delta \u2192\n            \u2203 N : \u2115, \u2200 k : \u2115, N \u2264 k \u2192\n              paperSmallBids (F.instanceAt k)\n                (min 1\n                  (delta / ((Real.exp 1 + 1) *\n                    (\u2211 q : Fin (F.queryCount k),\n                      (F.instanceAt k).maxBidForQuery q))))) \u2227\n            Sequence.SeqTendsTo\n              (fun k =>\n                (F.instanceAt k).offlineOptimumValue\n                  (fun a => (F.positive_budgets k a).le))\n              F.optLimit \u2227\n            Sequence.SeqTendsTo\n              (fun k =>\n                (F.instanceAt k).revenue\n                  ((F.instanceAt k).runAssignment\n                    (F.instanceAt k).balanceChoiceRule\n                    (List.finRange (F.queryCount k))))\n              F.revenueLimit := by\n  exact\n    \u27e8F.nonnegative_bids, F.positive_budgets, F.maxBidSum_pos,\n      F.small_bids_eventually, F.offlineOptimum_tendsTo, F.revenue_tendsTo\u27e9",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paperSmallBidsLimitFamily_fields",
+      "visible_inputs": [
+        {
+          "names": "Advertiser",
+          "type": "Type*"
+        },
+        {
+          "names": "F",
+          "type": "PaperSmallBidsLimitFamily Advertiser"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem8_balance_msvv_competitive_of_small_bids_limit_family\n    {Advertiser : Type*}\n    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]\n    (F : PaperSmallBidsLimitFamily Advertiser) :\n    paperMsvvRatio * F.optLimit \u2264 F.revenueLimit := by\n  exact Proof.theorem8_balance_msvv_competitive_of_small_bids_limit_family F",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem8_balance_msvv_competitive_of_small_bids_limit_family",
+      "visible_inputs": [
+        {
+          "names": "Advertiser",
+          "type": "Type*"
+        },
+        {
+          "names": "F",
+          "type": "PaperSmallBidsLimitFamily Advertiser"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error\n    {Advertiser Query : Type*}\n    [Fintype Advertiser] [Nonempty Advertiser]\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\n    (I : PaperInstance Advertiser Query)\n    (hbid : I.NonnegativeBids)\n    (hbudget : I.PositiveBudgets)\n    (history : List Query)\n    (hnodup : history.Nodup)\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\n    {epsilon : \u211d}\n    (hepsilon : 0 \u2264 epsilon)\n    (hepsilon_le_one : epsilon \u2264 1)\n    (hsmall : paperSmallBids I epsilon) :\n    paperMsvvRatio *\n        I.offlineOptimumValue (fun a => (hbudget a).le) \u2264\n      paperRevenue I (I.runAssignment I.balanceChoiceRule history) +\n        epsilon * (Real.exp 1 + 1) *\n          (\u2211 q : Query, I.maxBidForQuery q) := by\n  exact\n    Proof.section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error\n      I hbid hbudget history hnodup hcover hepsilon hepsilon_le_one hsmall",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "hbid",
+          "type": "I.NonnegativeBids"
+        },
+        {
+          "names": "hbudget",
+          "type": "I.PositiveBudgets"
+        },
+        {
+          "names": "history",
+          "type": "List Query"
+        },
+        {
+          "names": "hnodup",
+          "type": "history.Nodup"
+        },
+        {
+          "names": "hcover",
+          "type": "AdWordsInstance.historyFinset history = Finset.univ"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        },
+        {
+          "names": "hepsilon",
+          "type": "0 \u2264 epsilon"
+        },
+        {
+          "names": "hepsilon_le_one",
+          "type": "epsilon \u2264 1"
+        },
+        {
+          "names": "hsmall",
+          "type": "paperSmallBids I epsilon"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem section6_next_highest_bid_all_formula\n    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]\n    (I : PaperInstance Advertiser Query) (a : Advertiser) (q : Query) :\n    section6_next_highest_bid_all I a q =\n      let others : Finset Advertiser := (Finset.univ : Finset Advertiser).erase a\n      if h : others.Nonempty then\n        max 0 (others.sup' h fun b => I.bid b q)\n      else\n        0 := by\n  classical\n  unfold section6_next_highest_bid_all Proof.section6_next_highest_bid_all\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "section6_next_highest_bid_all_formula",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "a",
+          "type": "Advertiser"
+        },
+        {
+          "names": "q",
+          "type": "Query"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem section6_next_highest_bid_alive_formula\n    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]\n    (I : PaperInstance Advertiser Query)\n    (alive : Advertiser \u2192 Query \u2192 Prop) [\u2200 a q, Decidable (alive a q)]\n    (a : Advertiser) (q : Query) :\n    section6_next_highest_bid_alive I alive a q =\n      let others : Finset Advertiser :=\n        ((Finset.univ : Finset Advertiser).erase a).filter fun b => alive b q\n      if h : others.Nonempty then\n        max 0 (others.sup' h fun b => I.bid b q)\n      else\n        0 := by\n  classical\n  unfold section6_next_highest_bid_alive Proof.section6_next_highest_bid_alive\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "section6_next_highest_bid_alive_formula",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "alive",
+          "type": "Advertiser \u2192 Query \u2192 Prop"
+        },
+        {
+          "names": "a",
+          "type": "Advertiser"
+        },
+        {
+          "names": "q",
+          "type": "Query"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem section6_next_highest_bid_all_theorem8_finite_explicit_error\n    {Advertiser Query : Type*}\n    [Fintype Advertiser] [Nonempty Advertiser]\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\n    (I : PaperInstance Advertiser Query)\n    (hbudget : I.PositiveBudgets)\n    (history : List Query)\n    (hnodup : history.Nodup)\n    (hcover :\n      AdWordsInstance.historyFinset history = Finset.univ)\n    {epsilon : \u211d}\n    (hepsilon : 0 \u2264 epsilon)\n    (hepsilon_le_one : epsilon \u2264 1)\n    (hnext_small :\n      \u2200 a q, section6_next_highest_bid_all I a q \u2264 epsilon * I.budget a) :\n    paperMsvvRatio *\n        (I.withEffectiveBids (section6_next_highest_bid_all I)).offlineOptimumValue\n          (fun a => (hbudget a).le) \u2264\n      paperRevenue (I.withEffectiveBids (section6_next_highest_bid_all I))\n        ((I.withEffectiveBids (section6_next_highest_bid_all I)).runAssignment\n          (I.withEffectiveBids\n            (section6_next_highest_bid_all I)).balanceChoiceRule history) +\n        epsilon * (Real.exp 1 + 1) *\n          (\u2211 q : Query,\n            (I.withEffectiveBids\n              (section6_next_highest_bid_all I)).maxBidForQuery q) := by\n  exact\n    Proof.section6_next_highest_bid_all_theorem8_finite_explicit_error\n      I hbudget history hnodup hcover hepsilon hepsilon_le_one hnext_small",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "section6_next_highest_bid_all_theorem8_finite_explicit_error",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "hbudget",
+          "type": "I.PositiveBudgets"
+        },
+        {
+          "names": "history",
+          "type": "List Query"
+        },
+        {
+          "names": "hnodup",
+          "type": "history.Nodup"
+        },
+        {
+          "names": "hcover",
+          "type": "AdWordsInstance.historyFinset history = Finset.univ"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        },
+        {
+          "names": "hepsilon",
+          "type": "0 \u2264 epsilon"
+        },
+        {
+          "names": "hepsilon_le_one",
+          "type": "epsilon \u2264 1"
+        },
+        {
+          "names": "hnext_small",
+          "type": "\u2200 a q, section6_next_highest_bid_all I a q \u2264 epsilon * I.budget a"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem section6_next_highest_bid_alive_theorem8_finite_explicit_error\n    {Advertiser Query : Type*}\n    [Fintype Advertiser] [Nonempty Advertiser]\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\n    (I : PaperInstance Advertiser Query)\n    (alive : Advertiser \u2192 Query \u2192 Prop) [\u2200 a q, Decidable (alive a q)]\n    (hbudget : I.PositiveBudgets)\n    (history : List Query)\n    (hnodup : history.Nodup)\n    (hcover :\n      AdWordsInstance.historyFinset history = Finset.univ)\n    {epsilon : \u211d}\n    (hepsilon : 0 \u2264 epsilon)\n    (hepsilon_le_one : epsilon \u2264 1)\n    (hnext_small :\n      \u2200 a q, section6_next_highest_bid_alive I alive a q \u2264\n        epsilon * I.budget a) :\n    paperMsvvRatio *\n        (I.withEffectiveBids\n          (section6_next_highest_bid_alive I alive)).offlineOptimumValue\n          (fun a => (hbudget a).le) \u2264\n      paperRevenue\n        (I.withEffectiveBids (section6_next_highest_bid_alive I alive))\n        ((I.withEffectiveBids\n          (section6_next_highest_bid_alive I alive)).runAssignment\n          (I.withEffectiveBids\n            (section6_next_highest_bid_alive I alive)).balanceChoiceRule history) +\n        epsilon * (Real.exp 1 + 1) *\n          (\u2211 q : Query,\n            (I.withEffectiveBids\n              (section6_next_highest_bid_alive I alive)).maxBidForQuery q) := by\n  exact\n    Proof.section6_next_highest_bid_alive_theorem8_finite_explicit_error\n      I alive hbudget history hnodup hcover hepsilon hepsilon_le_one hnext_small",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "section6_next_highest_bid_alive_theorem8_finite_explicit_error",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "alive",
+          "type": "Advertiser \u2192 Query \u2192 Prop"
+        },
+        {
+          "names": "hbudget",
+          "type": "I.PositiveBudgets"
+        },
+        {
+          "names": "history",
+          "type": "List Query"
+        },
+        {
+          "names": "hnodup",
+          "type": "history.Nodup"
+        },
+        {
+          "names": "hcover",
+          "type": "AdWordsInstance.historyFinset history = Finset.univ"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        },
+        {
+          "names": "hepsilon",
+          "type": "0 \u2264 epsilon"
+        },
+        {
+          "names": "hepsilon_le_one",
+          "type": "epsilon \u2264 1"
+        },
+        {
+          "names": "hnext_small",
+          "type": "\u2200 a q, section6_next_highest_bid_alive I alive a q \u2264 epsilon * I.budget a"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem section6_click_through_rates_theorem8_finite_explicit_error\n    {Advertiser Query : Type*}\n    [Fintype Advertiser] [Nonempty Advertiser]\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\n    (I : PaperInstance Advertiser Query)\n    (ctr : Advertiser \u2192 Query \u2192 \u211d)\n    (hctr_nonneg : \u2200 a q, 0 \u2264 ctr a q)\n    (hctr_le_one : \u2200 a q, ctr a q \u2264 1)\n    (hbid : I.NonnegativeBids)\n    (hbudget : I.PositiveBudgets)\n    (history : List Query)\n    (hnodup : history.Nodup)\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\n    {epsilon : \u211d}\n    (hepsilon : 0 \u2264 epsilon)\n    (hepsilon_le_one : epsilon \u2264 1)\n    (hsmall : paperSmallBids I epsilon) :\n    paperMsvvRatio *\n        (I.withClickThroughRates ctr).offlineOptimumValue\n          (fun a => (hbudget a).le) \u2264\n      (I.withClickThroughRates ctr).revenue\n        ((I.withClickThroughRates ctr).runAssignment\n          (I.withClickThroughRates ctr).balanceChoiceRule history) +\n        epsilon * (Real.exp 1 + 1) *\n          (\u2211 q : Query, (I.withClickThroughRates ctr).maxBidForQuery q) := by\n  exact\n    Proof.section6_click_through_rates_theorem8_finite_explicit_error\n      I ctr hctr_nonneg hctr_le_one hbid hbudget history hnodup hcover\n      hepsilon hepsilon_le_one hsmall",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "section6_click_through_rates_theorem8_finite_explicit_error",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "ctr",
+          "type": "Advertiser \u2192 Query \u2192 \u211d"
+        },
+        {
+          "names": "hctr_nonneg",
+          "type": "\u2200 a q, 0 \u2264 ctr a q"
+        },
+        {
+          "names": "hctr_le_one",
+          "type": "\u2200 a q, ctr a q \u2264 1"
+        },
+        {
+          "names": "hbid",
+          "type": "I.NonnegativeBids"
+        },
+        {
+          "names": "hbudget",
+          "type": "I.PositiveBudgets"
+        },
+        {
+          "names": "history",
+          "type": "List Query"
+        },
+        {
+          "names": "hnodup",
+          "type": "history.Nodup"
+        },
+        {
+          "names": "hcover",
+          "type": "AdWordsInstance.historyFinset history = Finset.univ"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        },
+        {
+          "names": "hepsilon",
+          "type": "0 \u2264 epsilon"
+        },
+        {
+          "names": "hepsilon_le_one",
+          "type": "epsilon \u2264 1"
+        },
+        {
+          "names": "hsmall",
+          "type": "paperSmallBids I epsilon"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem section6_availability_theorem8_finite_explicit_error\n    {Advertiser Query : Type*}\n    [Fintype Advertiser] [Nonempty Advertiser]\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\n    (I : PaperInstance Advertiser Query)\n    (available : Advertiser \u2192 Query \u2192 Prop)\n    [\u2200 a q, Decidable (available a q)]\n    (hbid : I.NonnegativeBids)\n    (hbudget : I.PositiveBudgets)\n    (history : List Query)\n    (hnodup : history.Nodup)\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\n    {epsilon : \u211d}\n    (hepsilon : 0 \u2264 epsilon)\n    (hepsilon_le_one : epsilon \u2264 1)\n    (hsmall : paperSmallBids I epsilon) :\n    paperMsvvRatio *\n        (I.withAvailability available).offlineOptimumValue\n          (fun a => (hbudget a).le) \u2264\n      (I.withAvailability available).revenue\n        ((I.withAvailability available).runAssignment\n          (I.withAvailability available).balanceChoiceRule history) +\n        epsilon * (Real.exp 1 + 1) *\n          (\u2211 q : Query, (I.withAvailability available).maxBidForQuery q) := by\n  exact\n    Proof.section6_availability_theorem8_finite_explicit_error\n      I available hbid hbudget history hnodup hcover hepsilon hepsilon_le_one hsmall",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "section6_availability_theorem8_finite_explicit_error",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "available",
+          "type": "Advertiser \u2192 Query \u2192 Prop"
+        },
+        {
+          "names": "hbid",
+          "type": "I.NonnegativeBids"
+        },
+        {
+          "names": "hbudget",
+          "type": "I.PositiveBudgets"
+        },
+        {
+          "names": "history",
+          "type": "List Query"
+        },
+        {
+          "names": "hnodup",
+          "type": "history.Nodup"
+        },
+        {
+          "names": "hcover",
+          "type": "AdWordsInstance.historyFinset history = Finset.univ"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        },
+        {
+          "names": "hepsilon",
+          "type": "0 \u2264 epsilon"
+        },
+        {
+          "names": "hepsilon_le_one",
+          "type": "epsilon \u2264 1"
+        },
+        {
+          "names": "hsmall",
+          "type": "paperSmallBids I epsilon"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem section6_page_top_balance_theorem8_finite_explicit_error\n    {Advertiser Query : Type*}\n    [Fintype Advertiser] [Nonempty Advertiser]\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\n    (I : PaperInstance Advertiser Query)\n    (slots : Query \u2192 \u2115)\n    (hbid : I.NonnegativeBids)\n    (hbudget : I.PositiveBudgets)\n    (history : List Query)\n    (hnodup : history.Nodup)\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\n    {epsilon : \u211d}\n    (hepsilon : 0 \u2264 epsilon)\n    (hepsilon_le_one : epsilon \u2264 1)\n    (hsmall : paperSmallBids I epsilon) :\n    paperMsvvRatio *\n        I.pageOfflineOptimumValue slots (fun a => (hbudget a).le) \u2264\n      I.pageRevenue\n        (I.runPageAssignment slots (I.pageTopBalanceRule slots) history) +\n        epsilon * (Real.exp 1 + 1) *\n          I.pageHistoryMaxBidSum slots history := by\n  exact\n    Proof.section6_page_top_balance_theorem8_finite_explicit_error\n      I slots hbid hbudget history hnodup hcover\n      hepsilon hepsilon_le_one hsmall",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "section6_page_top_balance_theorem8_finite_explicit_error",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "slots",
+          "type": "Query \u2192 \u2115"
+        },
+        {
+          "names": "hbid",
+          "type": "I.NonnegativeBids"
+        },
+        {
+          "names": "hbudget",
+          "type": "I.PositiveBudgets"
+        },
+        {
+          "names": "history",
+          "type": "List Query"
+        },
+        {
+          "names": "hnodup",
+          "type": "history.Nodup"
+        },
+        {
+          "names": "hcover",
+          "type": "AdWordsInstance.historyFinset history = Finset.univ"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        },
+        {
+          "names": "hepsilon",
+          "type": "0 \u2264 epsilon"
+        },
+        {
+          "names": "hepsilon_le_one",
+          "type": "epsilon \u2264 1"
+        },
+        {
+          "names": "hsmall",
+          "type": "paperSmallBids I epsilon"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids\n    {Advertiser Query : Type*}\n    [Fintype Advertiser] [Nonempty Advertiser]\n    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]\n    (I : PaperInstance Advertiser Query)\n    (weight : Advertiser \u2192 \u211d)\n    (hweight_nonneg : \u2200 a, 0 \u2264 weight a)\n    (hbid : I.NonnegativeBids)\n    (hbudget : I.PositiveBudgets)\n    (history : List Query)\n    (hnodup : history.Nodup)\n    (hcover : AdWordsInstance.historyFinset history = Finset.univ)\n    {epsilon : \u211d}\n    (hepsilon : 0 \u2264 epsilon)\n    (hepsilon_le_one : epsilon \u2264 1)\n    (hweighted_small :\n      \u2200 a q, weight a * I.bid a q \u2264 epsilon * I.budget a) :\n    paperMsvvRatio *\n        (I.withAdvertiserWeights weight).offlineOptimumValue\n          (fun a => (hbudget a).le) \u2264\n      (I.withAdvertiserWeights weight).revenue\n        ((I.withAdvertiserWeights weight).runAssignment\n          (I.withAdvertiserWeights weight).balanceChoiceRule history) +\n        epsilon * (Real.exp 1 + 1) *\n          (\u2211 q : Query, (I.withAdvertiserWeights weight).maxBidForQuery q) := by\n  exact\n    Proof.section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids\n      I weight hweight_nonneg hbid hbudget history hnodup hcover\n      hepsilon hepsilon_le_one hweighted_small",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "PaperInstance Advertiser Query"
+        },
+        {
+          "names": "weight",
+          "type": "Advertiser \u2192 \u211d"
+        },
+        {
+          "names": "hweight_nonneg",
+          "type": "\u2200 a, 0 \u2264 weight a"
+        },
+        {
+          "names": "hbid",
+          "type": "I.NonnegativeBids"
+        },
+        {
+          "names": "hbudget",
+          "type": "I.PositiveBudgets"
+        },
+        {
+          "names": "history",
+          "type": "List Query"
+        },
+        {
+          "names": "hnodup",
+          "type": "history.Nodup"
+        },
+        {
+          "names": "hcover",
+          "type": "AdWordsInstance.historyFinset history = Finset.univ"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        },
+        {
+          "names": "hepsilon",
+          "type": "0 \u2264 epsilon"
+        },
+        {
+          "names": "hepsilon_le_one",
+          "type": "epsilon \u2264 1"
+        },
+        {
+          "names": "hweighted_small",
+          "type": "\u2200 a q, weight a * I.bid a q \u2264 epsilon * I.budget a"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem9HardDistribution_uniform (N : \u2115) :\n    theorem9HardDistribution N = uniformPermutationDistribution N := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem9HardDistribution_uniform",
+      "visible_inputs": [
+        {
+          "names": "N",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem9CappedNormalizedRevenue_formula\n    (N : \u2115) (algorithm : theorem9IntegralPrefixAlgorithm N)\n    (permutation : Equiv.Perm (Fin N)) :\n    theorem9CappedNormalizedRevenue N algorithm permutation =\n      (\u2211 bidder : Fin N,\n        min 1\n          (\u2211 round : Fin N,\n            BMatchingIntegralPrefixAlgorithm.prefixAllocation algorithm\n              (theorem9ObservedPrefix N permutation round)\n              round (permutation bidder))) /\n        (N : \u211d) := by\n  exact theorem9_capped_normalized_revenue_eq_prefix_spend N algorithm permutation",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem9CappedNormalizedRevenue_formula",
+      "visible_inputs": [
+        {
+          "names": "N",
+          "type": "\u2115"
+        },
+        {
+          "names": "algorithm",
+          "type": "theorem9IntegralPrefixAlgorithm N"
+        },
+        {
+          "names": "permutation",
+          "type": "Equiv.Perm (Fin N)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_nonnegative_bids\n    {Advertiser Query : Type*} (I : Proof.PaperInstance Advertiser Query) : Prop :=\n  I.NonnegativeBids\n\n                                                                             \n-- audit-premise: hnodup : history.Nodup\n-- audit-premise: hcover : AdWordsInstance.historyFinset history = Finset.univ",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_nonnegative_bids",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "Proof.PaperInstance Advertiser Query"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_full_distinct_query_history\n    {Query : Type*} [Fintype Query] [DecidableEq Query]\n    (history : List Query) : Prop :=\n  history.Nodup \u2227 AdWordsInstance.historyFinset history = Finset.univ\n\n                                                                    \n-- audit-premise: hepsilon : 0 \u2264 epsilon\n-- audit-premise: hepsilon_le_one : epsilon \u2264 1",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_full_distinct_query_history",
+      "visible_inputs": [
+        {
+          "names": "Query",
+          "type": "Type*"
+        },
+        {
+          "names": "history",
+          "type": "List Query"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_epsilon_range (epsilon : \u211d) : Prop :=\n  0 \u2264 epsilon \u2227 epsilon \u2264 1\n\n                                                                                     \n-- audit-premise: alive : Advertiser \u2192 Query \u2192 Prop",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_epsilon_range",
+      "visible_inputs": [
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_alive_bidder_predicate\n    {Advertiser Query : Type*} (_alive : Advertiser \u2192 Query \u2192 Prop) : Prop :=\n  True\n\n                                                                                           \n-- audit-premise: hnext_small : \u2200 a q, section6_next_highest_bid_all I a q \u2264 epsilon * I.budget a",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_alive_bidder_predicate",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "_alive",
+          "type": "Advertiser \u2192 Query \u2192 Prop"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_next_highest_all_small_bids\n    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]\n    (I : Proof.PaperInstance Advertiser Query) (epsilon : \u211d) : Prop :=\n  \u2200 a q, Proof.section6_next_highest_bid_all I a q \u2264 epsilon * I.budget a\n\n                                                                                             \n-- audit-premise: hnext_small : \u2200 a q, section6_next_highest_bid_alive I alive a q \u2264 epsilon * I.budget a",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_next_highest_all_small_bids",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "Proof.PaperInstance Advertiser Query"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_next_highest_alive_small_bids\n    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]\n    (I : Proof.PaperInstance Advertiser Query)\n    (alive : Advertiser \u2192 Query \u2192 Prop) [\u2200 a q, Decidable (alive a q)]\n    (epsilon : \u211d) : Prop :=\n  \u2200 a q, Proof.section6_next_highest_bid_alive I alive a q \u2264 epsilon * I.budget a\n\n                                                       \n-- audit-premise: hctr_nonneg : \u2200 a q, 0 \u2264 ctr a q\n-- audit-premise: hctr_le_one : \u2200 a q, ctr a q \u2264 1",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_next_highest_alive_small_bids",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "Proof.PaperInstance Advertiser Query"
+        },
+        {
+          "names": "alive",
+          "type": "Advertiser \u2192 Query \u2192 Prop"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_click_through_rates_probability_bounds\n    {Advertiser Query : Type*} (ctr : Advertiser \u2192 Query \u2192 \u211d) : Prop :=\n  (\u2200 a q, 0 \u2264 ctr a q) \u2227 (\u2200 a q, ctr a q \u2264 1)\n\n                                                                                       \n-- audit-premise: available : Advertiser \u2192 Query \u2192 Prop",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_click_through_rates_probability_bounds",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "ctr",
+          "type": "Advertiser \u2192 Query \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_availability_predicate\n    {Advertiser Query : Type*} (_available : Advertiser \u2192 Query \u2192 Prop) : Prop :=\n  True\n\n                                                    \n-- audit-premise: hweight_nonneg : \u2200 a, 0 \u2264 weight a",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_availability_predicate",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "_available",
+          "type": "Advertiser \u2192 Query \u2192 Prop"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_weighted_bids_nonnegative_weights\n    {Advertiser : Type*} (weight : Advertiser \u2192 \u211d) : Prop :=\n  \u2200 a, 0 \u2264 weight a\n\n                                                                          \n-- audit-premise: hweighted_small : \u2200 a q, weight a * I.bid a q \u2264 epsilon * I.budget a",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_weighted_bids_nonnegative_weights",
+      "visible_inputs": [
+        {
+          "names": "Advertiser",
+          "type": "Type*"
+        },
+        {
+          "names": "weight",
+          "type": "Advertiser \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_weighted_effective_small_bids\n    {Advertiser Query : Type*}\n    (I : Proof.PaperInstance Advertiser Query) (weight : Advertiser \u2192 \u211d)\n    (epsilon : \u211d) : Prop :=\n  \u2200 a q, weight a * I.bid a q \u2264 epsilon * I.budget a",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_weighted_effective_small_bids",
+      "visible_inputs": [
+        {
+          "names": "Advertiser Query",
+          "type": "Type*"
+        },
+        {
+          "names": "I",
+          "type": "Proof.PaperInstance Advertiser Query"
+        },
+        {
+          "names": "weight",
+          "type": "Advertiser \u2192 \u211d"
+        },
+        {
+          "names": "epsilon",
+          "type": "\u211d"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "0fbe008601f63ac8bfc1d5e817ad917d3d8865882469e8560ba7af52889a6eb7",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": [
+    "PaperAssignment",
+    "PaperFractionalFeasible",
+    "PaperInstance",
+    "PaperSmallBidsLimitFamily",
+    "paperAssignment_query_choice",
+    "paperBalanceScore",
+    "paperCanAssign",
+    "paperFeasible",
+    "paperFractionalRevenue",
+    "paperInstance_has_budget_and_bid",
+    "paperIsBalanceChoice",
+    "paperMsvvRatio",
+    "paperRevenue",
+    "paperSlotsPerPageDistinct",
+    "paperSmallBids",
+    "paperSpend",
+    "paperTradeoff",
+    "section6_effective_bids_theorem8_finite_explicit_error",
+    "section6_multiple_slots_distinct_choice_run_assignment_per_page_distinct",
+    "section6_multiple_slots_theorem8_finite_explicit_error",
+    "section6_next_highest_bid_alive",
+    "section6_next_highest_bid_all",
+    "section8_weighted_bids_theorem8_finite_explicit_error",
+    "theorem8_finite_explicit_error",
+    "theorem9CappedNormalizedRevenue",
+    "theorem9FeasiblePrefixRuleFamily",
+    "theorem9FeasiblePrefixRuleFamily_fields",
+    "theorem9HardDistribution",
+    "theorem9IntegralPrefixAlgorithm",
+    "theorem9IntegralPrefixAlgorithm_choice_feasible",
+    "theorem9RandomizedOnlineAlgorithm",
+    "theorem9RandomizedOnlineAlgorithm_pmf",
+    "theorem9_capped_normalized_revenue_eq_prefix_spend",
+    "theorem9_no_randomized_feasible_prefix_rule_family_beats_msvv_ratio",
+    "theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio"
+  ]
+}

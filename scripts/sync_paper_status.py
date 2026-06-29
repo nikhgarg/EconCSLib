@@ -374,7 +374,9 @@ def paper_coverage_label_from_counts(
     covered: int,
     conditional_boundary: int = 0,
     support_only: int = 0,
+    support_only_required: int = 0,
     out_of_scope: int = 0,
+    required_out_of_scope: int = 0,
     partial: int = 0,
     missing: int = 0,
     uncertain: int = 0,
@@ -392,8 +394,12 @@ def paper_coverage_label_from_counts(
         parts.append(f"{conditional_boundary} conditional boundaries")
     if support_only:
         parts.append(f"{support_only} support-only")
+    if support_only_required:
+        parts.append(f"{support_only_required} required support-only")
     if out_of_scope:
         parts.append(f"{out_of_scope} out of scope")
+    if required_out_of_scope:
+        parts.append(f"{required_out_of_scope} required scoped out")
     if partial:
         parts.append(f"{partial} partial")
     if missing:
@@ -516,7 +522,9 @@ def llm_paper_coverage_label(
                 covered=covered,
                 conditional_boundary=int(summary.get("conditional_boundary_count", 0)),
                 support_only=int(summary.get("support_only_count", 0)),
+                support_only_required=int(summary.get("support_only_required_source_item_count", 0)),
                 out_of_scope=int(summary.get("out_of_scope_count", 0)),
+                required_out_of_scope=int(summary.get("required_out_of_scope_count", 0)),
                 partial=int(summary.get("partial_count", 0))
                 + int(summary.get("missing_coverage_count", 0)),
                 missing=int(summary.get("missing_count", 0)),

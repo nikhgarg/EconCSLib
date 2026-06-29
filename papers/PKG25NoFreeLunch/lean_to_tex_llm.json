@@ -1,64 +1,131 @@
 {
-  "schema": 1,
-  "paper": "PKG25NoFreeLunch",
-  "generator": "gpt-5-codex-subagent",
-  "generator_type": "model",
-  "generated_at": "2026-06-14T04:17:03Z",
-  "comment": "Context-free Lean-to-TeX drafts generated from the current PaperInterface statement surface; definition abbrevs use PaperInterface source comments to expand the source-facing meaning.",
+  "comment": "Regenerated context-free Lean-to-TeX drafts for semantic statement rejudge; every visible binder/hypothesis remains part of the translated surface.",
   "items": {
-    "definition_rounding_convention": {
-      "tex_statement": "\\(\\operatorname{roundProb}(p)\\) is the binary rounding rule for probabilities with the convention \\(\\operatorname{roundProb}(1/2)=1\\).",
-      "lean_statement_sha256": "93f147c5678bd296936333b1b9d3de405918c1a6d109e8f28eaabbde986b9ace",
-      "paper_statement_sha256": "1bec226d6885d186f46931d80ca90571066d2f81eec2880f7c8efcd13a85c84e",
-      "generator": "gpt-5-codex-subagent",
-      "generator_type": "model",
-      "generated_at": "2026-06-14T04:17:03Z",
-      "comment": "Defines the paper's probability-to-label rounding convention."
+    "definition_agree_on": {
+      "lean_statement_sha256": "b25af93198a962886566e00946b36082eace962d0c9e892afeaef45242390933",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "(prediction1 prediction2 : Label) = prediction1 = prediction2",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "definition_collaboration_setting": {
+      "lean_statement_sha256": "fc47bb4649ee367dd7be2ed665e1c94456d18776d20fa5b92f98ffadbd81a91a",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\u2115 \\to Type 1",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_collaboration_strategy": {
-      "tex_statement": "For \\(n\\in\\mathbb{N}\\), a collaboration strategy is \\(C : [0,1]^n \\to \\{0,1\\}\\).",
       "lean_statement_sha256": "b3b2404f1169a4daacfab8c0444f1f8f14f09ef7db096165d8002bc973a0d613",
-      "paper_statement_sha256": "b31041d74b0061aaed5241d1d95ffd103e3f0c3d871eccdb77639510ec9c0436",
-      "generator": "gpt-5-codex-subagent",
-      "generator_type": "model",
-      "generated_at": "2026-06-14T04:17:03Z",
-      "comment": "A deterministic map from an \\(n\\)-agent prediction profile to a binary label."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For \\(n\\in\\mathbb{N}\\), a collaboration strategy is \\(C : [0,1]^n \\to \\{0,1\\}\\).",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "definition_correct_on": {
+      "lean_statement_sha256": "b90fde685be90a1ef0a03056d7f29871ba733cd44be3aa5d86d9f6446a957de4",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "(prediction : Label) (eta : \u211d) = prediction = roundProb eta",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "definition_disagree_on": {
+      "lean_statement_sha256": "07cd451550b52b88bfda7231ff32592702eaad9c453947ff1eb1c4b00a7fe535",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "(prediction1 prediction2 : Label) = prediction1 \\ne prediction2",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "definition_incorrect_on": {
+      "lean_statement_sha256": "d88f6c065d01938379804315f5e18fca545b9c0a6c45896ed73a5b7c2d2eba8a",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "(prediction : Label) (eta : \u211d) = prediction \\ne roundProb eta",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_interior_prediction_profile": {
-      "tex_statement": "For a prediction profile \\(p\\), \\(\\operatorname{Interior}(p)\\) means \\(0 < p_i < 1\\) for every coordinate \\(i\\).",
       "lean_statement_sha256": "9b1b61f3f6894698a9766c2f287e448a705dfd94fead3d266047af7f8d45a500",
-      "paper_statement_sha256": "6f60ea03913ea9ab4e8f605348f450f2c62448bae0961dec84bd3139760ca861",
-      "generator": "gpt-5-codex-subagent",
-      "generator_type": "model",
-      "generated_at": "2026-06-14T04:17:03Z",
-      "comment": "All agent predictions lie strictly inside the unit interval."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For a prediction profile \\(p\\), \\(\\operatorname{Interior}(p)\\) means \\(0 < p_i < 1\\) for every coordinate \\(i\\).",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_non_collaborative": {
-      "tex_statement": "\\(\\operatorname{NonCollaborative}(C)\\) means that there exist an agent \\(k\\) and a tie label \\(\\alpha\\in\\{0,1\\}\\) such that for every interior profile \\(p\\), if \\(p_k\\ne 1/2\\) then \\(C(p)=\\operatorname{roundProb}(p_k)\\), and if \\(p_k=1/2\\) then \\(C(p)=\\alpha\\).",
       "lean_statement_sha256": "a75595ae4dc829201575e38b3b163a5d0de7475cf0f68c6b445023b040669af6",
-      "paper_statement_sha256": "1894edd6dd6458fda6b5434a67d5ecfe103716876aaba8483613088feea0d55b",
-      "generator": "gpt-5-codex-subagent",
-      "generator_type": "model",
-      "generated_at": "2026-06-14T04:17:03Z",
-      "comment": "The strategy follows a single agent's rounded prediction, with a fixed label at that agent's tie."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\(\\operatorname{NonCollaborative}(C)\\) means that there exist an agent \\(k\\) and a tie label \\(\\alpha\\in\\{0,1\\}\\) such that for every interior profile \\(p\\), if \\(p_k\\ne 1/2\\) then \\(C(p)=\\operatorname{roundProb}(p_k)\\), and if \\(p_k=1/2\\) then \\(C(p)=\\alpha\\).",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_reliable": {
-      "tex_statement": "For \\(n\\in\\mathbb{N}\\), \\(\\mathrm{Reliable}(C)\\) means that for every collaboration setting \\(S\\), the accuracy of \\(C\\) on \\(S\\) is at least the least individual agent accuracy on \\(S\\): \\(\\operatorname{Acc}(C,S) \\ge \\min_i \\operatorname{Acc}(i,S)\\).",
       "lean_statement_sha256": "eaf39547e8450e414b24c89df4bb721e59c0b6a6f0a35c65a641ff2d2a23b464",
-      "paper_statement_sha256": "21567e3a21a2aae7840fd4c39a5420d027a81520182c49865668e274881430d6",
-      "generator": "gpt-5-codex-subagent",
-      "generator_type": "model",
-      "generated_at": "2026-06-14T04:17:03Z",
-      "comment": "This is the source reliability predicate over collaboration-setting accuracy surfaces."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For \\(n\\in\\mathbb{N}\\), \\(\\mathrm{Reliable}(C)\\) means that for every collaboration setting \\(S\\), the accuracy of \\(C\\) on \\(S\\) is at least the least individual agent accuracy on \\(S\\): \\(\\operatorname{Acc}(C,S) \\ge \\min_i \\operatorname{Acc}(i,S)\\).",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "definition_rounding_convention": {
+      "lean_statement_sha256": "93f147c5678bd296936333b1b9d3de405918c1a6d109e8f28eaabbde986b9ace",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\(\\operatorname{roundProb}(p)\\) is the binary rounding rule for probabilities with the convention \\(\\operatorname{roundProb}(1/2)=1\\).",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemma8_bad_tuple_counterexample_setting": {
+      "lean_statement_sha256": "031a62211edf9c52d99b117a7368f3145876f99ab97b63b4fa7b0fde2200ed3f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {n : \u2115} {C : CollaborationStrategy n} {p : Fin n \\to \u211d} (hp : Interior p) {k : Fin n}, p k \\ne 1 / 2 \\to C p \\ne roundProb (p k) \\to WeakCounterexampleFor (toAccuracySurface C (part1Setting (C p) p hp)) k",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "proposition6_linear_combination_settings": {
+      "lean_statement_sha256": "e47a00a7760406193a5cd8953d985506490abda4d3c59d42a082f149060dfa3f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {n ell : \u2115} (S : Fin ell \\to FiniteCollaborationSetting n) (w : Fin ell \\to \u211d), (\\forall (r : Fin ell), 0 \\le w r) \\to \\sum r, w r = 1 \\to \\exists Smix, (\\forall (i : Fin n), agentAccuracy i = \\sum r, w r * (S r).agentAccuracy i) \\land \\forall (C : CollaborationStrategy n), strategyAccuracy C Smix = \\sum r, w r * strategyAccuracy C (S r)",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "proposition7_reliability_forces_fixed_deferral": {
+      "lean_statement_sha256": "30f6211e29f451cd7048ac4a12bec96929c72c0e698023c47b270cfe45916914",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {n : \u2115} [Nonempty (Fin n)] (C : CollaborationStrategy n), Reliable C \\to \\exists k, DefersAwayFromHalf C k",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "proposition9_reliability_forces_fixed_tie_label": {
+      "lean_statement_sha256": "10e863631a56913d5b5a689d475bcd8908cae2d6632bd0594d611cfa1f99c644",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {n : \u2115} [Nonempty (Fin n)] (C : CollaborationStrategy n) (k : Fin n), Reliable C \\to DefersAwayFromHalf C k \\to \\exists \\alpha, ConstantOnHalfSlice C k \\alpha",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem_main_no_free_lunch": {
-      "tex_statement": "For every \\(n\\in\\mathbb{N}\\) with \\(\\operatorname{Fin}(n)\\) nonempty and every collaboration strategy \\(C\\), if \\(C\\) is reliable, then \\(C\\) is non-collaborative.",
       "lean_statement_sha256": "2db5b4971d414464322a595dfff953ec560c4fba1da24b000d27800e0f9eb073",
-      "paper_statement_sha256": "974f37c7d9435bb8e0b3bfb83ee10b33d5885b0b88a34521f240d930633c72d7",
-      "generator": "gpt-5-codex-subagent",
-      "generator_type": "model",
-      "generated_at": "2026-06-14T04:17:03Z",
-      "comment": "Equivalently, reliability forces the strategy to follow one fixed agent away from that agent's tie point, with one fixed tie label."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For every \\(n\\in\\mathbb{N}\\) with \\(\\operatorname{Fin}(n)\\) nonempty and every collaboration strategy \\(C\\), if \\(C\\) is reliable, then \\(C\\) is non-collaborative.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "PKG25NoFreeLunch",
+  "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+  "schema": 1,
+  "translated_at": "2026-06-29T20:39:31Z",
+  "translator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

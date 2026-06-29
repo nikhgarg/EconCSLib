@@ -1,4 +1,84 @@
 {
+  "boundary_input_count": 7,
+  "boundary_input_items": [
+    {
+      "input": {
+        "names": "hvalue_bound",
+        "type": "\u2200 i, values i \u2264 highValue"
+      },
+      "judgment_key": "theorem6_2_random_sampling.hvalue_bound : \u2200 i, values i \u2264 highValue",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem theorem6_2_random_sampling\n    {n : \u2115} [NeZero n]\n    (values : Fin n \u2192 \u211d) (keep : Bool) {alpha : \u2115} {highValue : \u211d}\n    (hhigh_pos : 0 < highValue)\n    (hvalue_bound : \u2200 i, values i \u2264 highValue)\n    (halpha_highValue :\n      (alpha : \u211d) * highValue \u2264 fixedPriceBenchmark values 1) :\n    1 - Real.exp (-(alpha : \u211d) / 36) -\n        40 * Real.exp (-(alpha : \u211d) / 72) \u2264\n      (EconCSLib.FairCoin.productMeasure (Fin n)).real\n        {side |\n          fixedPriceBenchmark values 1 \u2264\n            6 *\n              (thresholdPriceAuction\n                (crossSampleCandidateOfferThreshold\n                  side 1)).revenue values} := by\n  change\n    1 - Real.exp (-(alpha : \u211d) / 36) -\n        40 * Real.exp (-(alpha : \u211d) / 72) \u2264\n      (EconCSLib.FairCoin.productMeasure (Fin n)).real\n        {side |\n          finiteCandidateFixedPriceBenchmark values 1 \u2264\n            6 *\n              (thresholdPriceAuction\n                (crossSampleCandidateOfferThreshold\n                  side 1)).revenue values}\n  change\n    (alpha : \u211d) * highValue \u2264\n      finiteCandidateFixedPriceBenchmark values 1 at halpha_highValue\n  exact\n    paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_all_alpha\n      values keep hhigh_pos hvalue_bound halpha_highValue",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "theorem6_2_random_sampling"
+    },
+    {
+      "input": {
+        "names": "model",
+        "type": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price"
+      },
+      "judgment_key": "theorem8_2_truthful_revenue_upper_bound.model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem theorem8_2_truthful_revenue_upper_bound\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]\n    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n    [LinearOrder Agent]\n    (model :\n      PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n    paper_theorem8_2_raw_cdf_expected_revenue\n        model.values model.price model.offerLaw \u2264\n      fixedPriceBenchmark model.values 1 := by\n  change\n    paper_theorem8_2_raw_cdf_expected_revenue\n        model.values model.price model.offerLaw \u2264\n      finiteCandidateFixedPriceBenchmark model.values 1\n  exact\n    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model\n      model",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "theorem8_2_truthful_revenue_upper_bound"
+    },
+    {
+      "input": {
+        "names": "hNPT",
+        "type": "M.NoPositiveTransfers"
+      },
+      "judgment_key": "lemma9_2_threshold_domination.hNPT : M.NoPositiveTransfers",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem lemma9_2_threshold_domination\n    {Agent : Type*} [DecidableEq Agent]\n    (M : DigitalGoodsAuction Agent)\n    (htruth : truthful M)\n    (hIR : M.IndividuallyRational)\n    (hNPT : M.NoPositiveTransfers)\n    (hbinary : M.BinaryAllocation)\n    (bids : Agent \u2192 \u211d) (i : Agent) :\n    \u2203 threshold,\n      0 \u2264 threshold \u2227\n        DeterministicOfferThresholdDominates\n          (deterministicAuctionOffer M bids i) threshold := by\n  simpa [truthful, paper_digital_goods_truthful] using\n    paper_lemma9_2_deterministic_truthful_auction_exists_nonnegative_threshold_dominates\n      M htruth hIR hNPT hbinary bids i",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "lemma9_2_threshold_domination"
+    },
+    {
+      "input": {
+        "names": "model",
+        "type": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue"
+      },
+      "judgment_key": "theorem9_3_deterministic_truthful_lower_bound.model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem theorem9_3_deterministic_truthful_lower_bound\n    {highValue alpha : \u2115}\n    (model :\n      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue)\n    (hhigh_ge_two : 2 \u2264 highValue) (halpha_pos : 0 < alpha) :\n    \u2203 highCount lowCount : \u2115,\n      (model.auctionFamily highCount lowCount).revenue\n          (twoValueBidProfile highValue highCount lowCount) /\n          twoValueFixedPriceBenchmark highValue highCount lowCount \u2264\n        1 / (highValue : \u211d) \u2227\n      (highValue : \u211d) * (alpha : \u211d) \u2264\n        twoValueFixedPriceBenchmark highValue highCount lowCount := by\n  exact\n    paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_set_of_bids_source_model\n      model hhigh_ge_two halpha_pos",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "theorem9_3_deterministic_truthful_lower_bound"
+    },
+    {
+      "input": {
+        "names": "lowerBoundHighValue",
+        "type": "\u2115"
+      },
+      "judgment_key": "assumption_high_value_scale_conditions.lowerBoundHighValue : \u2115",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "abbrev assumption_high_value_scale_conditions\n    (h sampleHighValue : \u211d) (lowerBoundHighValue : \u2115) : Prop :=\n  1 \u2264 h \u2227 0 < sampleHighValue \u2227 0 < h \u2227 2 \u2264 lowerBoundHighValue\n\n                                                                   \n-- audit-premise: hvalue_ge_one : \u2200 i : Agent, 1 \u2264 values i\n-- audit-premise: hvalue_le_h : \u2200 i : Agent, values i \u2264 h\n-- audit-premise: hvalues_nonneg : \u2200 i : Agent, 0 \u2264 values i\n-- audit-premise: hvalue_bound : \u2200 i, values i \u2264 highValue",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "assumption_high_value_scale_conditions"
+    },
+    {
+      "input": {
+        "names": "_model",
+        "type": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price"
+      },
+      "judgment_key": "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model._model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "abbrev assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\n    [Fintype Price] [DecidableEq Price]\n    (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n    Prop :=\n  True\n\n   \n                                                                             \n                                                                               \n                            \n  \n-- audit-premise: model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model"
+    },
+    {
+      "input": {
+        "names": "_model",
+        "type": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue"
+      },
+      "judgment_key": "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model._model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "abbrev assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model\n    {highValue : \u2115}\n    (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) :\n    Prop :=\n  True",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model"
+    }
+  ],
   "configured_review_row_count": 30,
   "expected_field_judgment_keys": [
     "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone",
@@ -15,16 +95,26 @@
     "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers",
     "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful"
   ],
+  "expected_input_judgment_keys": [
+    "assumption_high_value_scale_conditions.lowerBoundHighValue : \u2115",
+    "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model._model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price",
+    "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model._model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue",
+    "lemma9_2_threshold_domination.hNPT : M.NoPositiveTransfers",
+    "theorem6_2_random_sampling.hvalue_bound : \u2200 i, values i \u2264 highValue",
+    "theorem8_2_truthful_revenue_upper_bound.model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price",
+    "theorem9_3_deterministic_truthful_lower_bound.model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue"
+  ],
   "import_module": "GHW01DigitalGoods.PaperInterface",
   "lean_check": {
     "command": "lake build GHW01DigitalGoods.PaperInterface && lake env lean <generated-source-record-audit-script>",
-    "output": "GHW01DigitalGoods.PaperInterface.theorem8_2_truthful_revenue_upper_bound.{u_1, u_2} {Agent : Type u_1}\n  {Price : Type u_2} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n  [LinearOrder Agent] (model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n  paper_theorem8_2_raw_cdf_expected_revenue model.values model.price model.offerLaw \u2264\n    PaperInterface.fixedPriceBenchmark model.values 1\n'GHW01DigitalGoods.PaperInterface.theorem8_2_truthful_revenue_upper_bound' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.PaperInterface.theorem9_3_deterministic_truthful_lower_bound {highValue alpha : \u2115}\n  (model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) (hhigh_ge_two : 2 \u2264 highValue)\n  (halpha_pos : 0 < alpha) :\n  \u2203 highCount lowCount,\n    (model.auctionFamily highCount lowCount).revenue (twoValueBidProfile highValue highCount lowCount) /\n          twoValueFixedPriceBenchmark highValue highCount lowCount \u2264\n        1 / \u2191highValue \u2227\n      \u2191highValue * \u2191alpha \u2264 twoValueFixedPriceBenchmark highValue highCount lowCount\n'GHW01DigitalGoods.PaperInterface.theorem9_3_deterministic_truthful_lower_bound' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.assumption_lower_bound_positive_alpha (alpha : \u2115) : Prop\n'GHW01DigitalGoods.assumption_lower_bound_positive_alpha' does not depend on any axioms\nGHW01DigitalGoods.assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model.{u_1, u_2} {Agent : Type u_1}\n  {Price : Type u_2} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n  (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) : Prop\n'GHW01DigitalGoods.assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model {highValue : \u2115}\n  (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) : Prop\n'GHW01DigitalGoods.assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "output": "GHW01DigitalGoods.PaperInterface.revenue.{u_1} {Agent : Type u_1} [Fintype Agent]\n  (M : EconCSLib.Auction.DigitalGoodsAuction Agent) (values : Agent \u2192 \u211d) : \u211d\n'GHW01DigitalGoods.PaperInterface.revenue' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.truthful.{u_1} {Agent : Type u_1} [DecidableEq Agent]\n  (M : EconCSLib.Auction.DigitalGoodsAuction Agent) : Prop\n'GHW01DigitalGoods.PaperInterface.truthful' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.singlePriceRevenue.{u_1} {Agent : Type u_1} [Fintype Agent] (values : Agent \u2192 \u211d)\n  (p : \u211d) : \u211d\n'GHW01DigitalGoods.PaperInterface.singlePriceRevenue' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.fixedPriceBenchmark.{u_1} {Agent : Type u_1} [Fintype Agent] [Nonempty Agent]\n  (values : Agent \u2192 \u211d) (minWinners : \u2115) : \u211d\n'GHW01DigitalGoods.PaperInterface.fixedPriceBenchmark' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.twoWinnerBenchmark.{u_1} {Agent : Type u_1} [Fintype Agent] [Nonempty Agent]\n  [DecidableEq Agent] (values : Agent \u2192 \u211d) : \u211d\n'GHW01DigitalGoods.PaperInterface.twoWinnerBenchmark' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.totalValue.{u_1} {Agent : Type u_1} [Fintype Agent] (values : Agent \u2192 \u211d) : \u211d\n'GHW01DigitalGoods.PaperInterface.totalValue' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.weightedPairingRevenue.{u_1} {Agent : Type u_1} [Fintype Agent] [DecidableEq Agent]\n  [LinearOrder Agent] (values : Agent \u2192 \u211d) : \u211d\n'GHW01DigitalGoods.PaperInterface.weightedPairingRevenue' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.theorem4_1_high_value.{u_1} {Agent : Type u_1} [Fintype Agent] [Nonempty Agent]\n  [DecidableEq Agent] (values : Agent \u2192 \u211d) {h : \u211d} (hh_ge_one : 1 \u2264 h) (hvalue_ge_one : \u2200 (i : Agent), 1 \u2264 values i)\n  (hvalue_le_h : \u2200 (i : Agent), values i \u2264 h) :\n  PaperInterface.totalValue values \u2264 2 * (Real.logb 2 h + 2) * PaperInterface.fixedPriceBenchmark values 1\n'GHW01DigitalGoods.PaperInterface.theorem4_1_high_value' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.corollary4_2_fixed_price_lower_bound.{u_1} {Agent : Type u_1} [Fintype Agent]\n  [Nonempty Agent] [DecidableEq Agent] (values : Agent \u2192 \u211d) {h binCount : \u211d}\n  (hvalues_nonneg : \u2200 (i : Agent), 0 \u2264 values i) (hh_pos : 0 < h) (hmax : \u2203 i, values i = h)\n  (hvalue_le_h : \u2200 (i : Agent), values i \u2264 h) (hbinCount : Real.logb 2 \u2191(Fintype.card Agent) + 2 \u2264 binCount) :\n  PaperInterface.totalValue values \u2264 4 * binCount * PaperInterface.fixedPriceBenchmark values 1\n'GHW01DigitalGoods.PaperInterface.corollary4_2_fixed_price_lower_bound' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.PaperInterface.lemma6_1_fair_coin.{u_1} {Index : Type u_1} (s : Finset Index) (keep : Bool) :\n  (EconCSLib.FairCoin.productMeasure Index).real {side | (\u2211 i \u2208 s, if side i = keep then 1 else 0) \u2264 \u2191s.card / 3} \u2264\n    Real.exp (-\u2191s.card / 36)\n'GHW01DigitalGoods.PaperInterface.lemma6_1_fair_coin' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.theorem6_2_random_sampling {n : \u2115} [NeZero n] (values : Fin n \u2192 \u211d) (keep : Bool)\n  {alpha : \u2115} {highValue : \u211d} (hhigh_pos : 0 < highValue) (hvalue_bound : \u2200 (i : Fin n), values i \u2264 highValue)\n  (halpha_highValue : \u2191alpha * highValue \u2264 PaperInterface.fixedPriceBenchmark values 1) :\n  1 - Real.exp (-\u2191alpha / 36) - 40 * Real.exp (-\u2191alpha / 72) \u2264\n    (EconCSLib.FairCoin.productMeasure (Fin n)).real\n      {side |\n        PaperInterface.fixedPriceBenchmark values 1 \u2264\n          6 *\n            (EconCSLib.Auction.thresholdPriceAuction\n                  (EconCSLib.Auction.crossSampleCandidateOfferThreshold side 1)).revenue\n              values}\n'GHW01DigitalGoods.PaperInterface.theorem6_2_random_sampling' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.theorem7_1_weighted_pairing.{u_1} {Agent : Type u_1} [Fintype Agent]\n  [DecidableEq Agent] [LinearOrder Agent] (values : Agent \u2192 \u211d) {h total : \u211d}\n  (htotal : total = PaperInterface.totalValue values) (hh_ge_one : 1 \u2264 h) (hvalue_ge_one : \u2200 (i : Agent), 1 \u2264 values i)\n  (hvalue_le_h : \u2200 (i : Agent), values i \u2264 h) (hlarge : 4 * h \u2264 total) :\n  total \u2264 192 * (Real.logb 2 h + 2) * PaperInterface.weightedPairingRevenue values\n'GHW01DigitalGoods.PaperInterface.theorem7_1_weighted_pairing' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.PaperInterface.theorem7_2_weighted_pairing_benchmark.{u_1} {Agent : Type u_1} [Fintype Agent]\n  [Nonempty Agent] [DecidableEq Agent] [LinearOrder Agent] (values : Agent \u2192 \u211d) {h total s : \u211d}\n  (htotal : total = PaperInterface.totalValue values) (hh_ge_one : 1 \u2264 h) (hvalue_ge_one : \u2200 (i : Agent), 1 \u2264 values i)\n  (hvalue_le_h : \u2200 (i : Agent), values i \u2264 h) (hF_ge_two_h : 2 * h \u2264 PaperInterface.twoWinnerBenchmark values)\n  (hs_ge_two : 2 \u2264 s) (hlog_le_s_sq : Real.logb 2 h + 2 \u2264 s ^ 2) :\n  PaperInterface.twoWinnerBenchmark values \u2264 576 * s * PaperInterface.weightedPairingRevenue values\n'GHW01DigitalGoods.PaperInterface.theorem7_2_weighted_pairing_benchmark' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.PaperInterface.lemma8_1_truthful_monotone.{u_1} {Agent : Type u_1} [DecidableEq Agent]\n  (M : EconCSLib.Auction.DigitalGoodsAuction Agent) (hM : PaperInterface.truthful M) (bids : Agent \u2192 \u211d) (i : Agent)\n  {low high : \u211d} (hlt : low < high) :\n  M.allocation (Function.update bids i low) i \u2264 M.allocation (Function.update bids i high) i\n'GHW01DigitalGoods.PaperInterface.lemma8_1_truthful_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.PaperInterface.theorem8_2_truthful_revenue_upper_bound.{u_1, u_2} {Agent : Type u_1}\n  {Price : Type u_2} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n  [LinearOrder Agent] (model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n  paper_theorem8_2_raw_cdf_expected_revenue model.values model.price model.offerLaw \u2264\n    PaperInterface.fixedPriceBenchmark model.values 1\n'GHW01DigitalGoods.PaperInterface.theorem8_2_truthful_revenue_upper_bound' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.PaperInterface.theorem9_1_bid_independent_lower_bound (priceRule : List \u211d \u2192 \u211d) {highValue alpha : \u2115}\n  (hhigh_ge_two : 2 \u2264 highValue) (halpha_pos : 0 < alpha) :\n  \u2203 highCount lowCount,\n    \u2191highValue *\n          twoValueBidIndependentPriceRevenue (twoValueListBidIndependentThresholdPrice priceRule highValue) highValue\n            highCount lowCount \u2264\n        twoValueFixedPriceBenchmark highValue highCount lowCount \u2227\n      \u2191highValue * \u2191alpha \u2264 twoValueFixedPriceBenchmark highValue highCount lowCount\n'GHW01DigitalGoods.PaperInterface.theorem9_1_bid_independent_lower_bound' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.PaperInterface.lemma9_2_threshold_domination.{u_1} {Agent : Type u_1} [DecidableEq Agent]\n  (M : EconCSLib.Auction.DigitalGoodsAuction Agent) (htruth : PaperInterface.truthful M) (hIR : M.IndividuallyRational)\n  (hNPT : M.NoPositiveTransfers) (hbinary : M.BinaryAllocation) (bids : Agent \u2192 \u211d) (i : Agent) :\n  \u2203 threshold, 0 \u2264 threshold \u2227 DeterministicOfferThresholdDominates (deterministicAuctionOffer M bids i) threshold\n'GHW01DigitalGoods.PaperInterface.lemma9_2_threshold_domination' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.PaperInterface.theorem9_3_deterministic_truthful_lower_bound {highValue alpha : \u2115}\n  (model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) (hhigh_ge_two : 2 \u2264 highValue)\n  (halpha_pos : 0 < alpha) :\n  \u2203 highCount lowCount,\n    (model.auctionFamily highCount lowCount).revenue (twoValueBidProfile highValue highCount lowCount) /\n          twoValueFixedPriceBenchmark highValue highCount lowCount \u2264\n        1 / \u2191highValue \u2227\n      \u2191highValue * \u2191alpha \u2264 twoValueFixedPriceBenchmark highValue highCount lowCount\n'GHW01DigitalGoods.PaperInterface.theorem9_3_deterministic_truthful_lower_bound' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.assumption_high_value_scale_conditions (h sampleHighValue : \u211d) (lowerBoundHighValue : \u2115) : Prop\n'GHW01DigitalGoods.assumption_high_value_scale_conditions' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.assumption_bid_value_range_conditions.{u_1} {Agent : Type u_1} (values : Agent \u2192 \u211d)\n  (h highValue : \u211d) : Prop\n'GHW01DigitalGoods.assumption_bid_value_range_conditions' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.assumption_high_value_attained.{u_1} {Agent : Type u_1} (values : Agent \u2192 \u211d) (h : \u211d) : Prop\n'GHW01DigitalGoods.assumption_high_value_attained' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.assumption_total_value_notation.{u_1} {Agent : Type u_1} [Fintype Agent] (values : Agent \u2192 \u211d)\n  (total : \u211d) : Prop\n'GHW01DigitalGoods.assumption_total_value_notation' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.assumption_weighted_pairing_large_market (h total : \u211d) : Prop\n'GHW01DigitalGoods.assumption_weighted_pairing_large_market' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.assumption_two_winner_benchmark_large_enough.{u_1} {Agent : Type u_1} [Fintype Agent] [Nonempty Agent]\n  [DecidableEq Agent] (values : Agent \u2192 \u211d) (h : \u211d) : Prop\n'GHW01DigitalGoods.assumption_two_winner_benchmark_large_enough' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.assumption_weighted_pairing_log_factor (h s : \u211d) : Prop\n'GHW01DigitalGoods.assumption_weighted_pairing_log_factor' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.assumption_truthful_auction_condition.{u_1} {Agent : Type u_1} [DecidableEq Agent]\n  (M : EconCSLib.Auction.DigitalGoodsAuction Agent) : Prop\n'GHW01DigitalGoods.assumption_truthful_auction_condition' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.assumption_low_bid_below_high_bid (low high : \u211d) : Prop\n'GHW01DigitalGoods.assumption_low_bid_below_high_bid' depends on axioms: [propext, Classical.choice, Quot.sound]\nGHW01DigitalGoods.assumption_lower_bound_positive_alpha (alpha : \u2115) : Prop\n'GHW01DigitalGoods.assumption_lower_bound_positive_alpha' does not depend on any axioms\nGHW01DigitalGoods.assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model.{u_1, u_2} {Agent : Type u_1}\n  {Price : Type u_2} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n  (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) : Prop\n'GHW01DigitalGoods.assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model {highValue : \u2115}\n  (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) : Prop\n'GHW01DigitalGoods.assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
     "returncode": 0,
     "truncated": false
   },
-  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GHW01DigitalGoods\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Classify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/source-model field that states convexity, response semantics, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"field\": \"values\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values\",\n    \"line\": 10803,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"Agent \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"price\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price\",\n    \"line\": 10804,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"Price \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"offerLaw\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw\",\n    \"line\": 10805,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"Agent \\u2192 PMF Price\"\n  },\n  {\n    \"field\": \"value_nonneg\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg\",\n    \"line\": 10806,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"\\u2200 i, 0 \\u2264 values i\"\n  },\n  {\n    \"field\": \"price_nonneg\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg\",\n    \"line\": 10807,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"\\u2200 p, 0 \\u2264 price p\"\n  },\n  {\n    \"field\": \"cdf_monotone\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone\",\n    \"line\": 10808,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"\\u2200 i j, values i \\u2264 values j \\u2192 \\u2200 t, t \\u2264 values i \\u2192 pmfProb (offerLaw i) (fun p => price p \\u2264 t) \\u2264 pmfProb (offerLaw j) (fun p => price p \\u2264 t)\"\n  },\n  {\n    \"field\": \"auctionFamily\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily\",\n    \"line\": 12971,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, DigitalGoodsAuction (TwoValueAgent highCount lowCount)\"\n  },\n  {\n    \"field\": \"truthful\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful\",\n    \"line\": 12974,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, paper_digital_goods_truthful (auctionFamily highCount lowCount)\"\n  },\n  {\n    \"field\": \"binary\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary\",\n    \"line\": 12977,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, (auctionFamily highCount lowCount).BinaryAllocation\"\n  },\n  {\n    \"field\": \"individuallyRational\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational\",\n    \"line\": 12980,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, (auctionFamily highCount lowCount).IndividuallyRational\"\n  },\n  {\n    \"field\": \"noPositiveTransfers\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers\",\n    \"line\": 12983,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, (auctionFamily highCount lowCount).NoPositiveTransfers\"\n  },\n  {\n    \"field\": \"focusedOutcome\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome\",\n    \"line\": 12986,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"List \\u211d \\u2192 \\u211d \\u2192 Option \\u211d\"\n  },\n  {\n    \"field\": \"focusedOutcome_represents\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents\",\n    \"line\": 12987,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 {highCount lowCount : \\u2115} (bids : TwoValueAgent highCount lowCount \\u2192 \\u211d) (i : TwoValueAgent highCount lowCount), deterministicAuctionOffer (auctionFamily highCount lowCount) bids i = focusedOutcome (paper_theorem9_3_erased_report_list bids i)\"\n  }\n]",
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GHW01DigitalGoods\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"input\": {\n      \"names\": \"hvalue_bound\",\n      \"type\": \"\\u2200 i, values i \\u2264 highValue\"\n    },\n    \"judgment_key\": \"theorem6_2_random_sampling.hvalue_bound : \\u2200 i, values i \\u2264 highValue\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem theorem6_2_random_sampling\\n    {n : \\u2115} [NeZero n]\\n    (values : Fin n \\u2192 \\u211d) (keep : Bool) {alpha : \\u2115} {highValue : \\u211d}\\n    (hhigh_pos : 0 < highValue)\\n    (hvalue_bound : \\u2200 i, values i \\u2264 highValue)\\n    (halpha_highValue :\\n      (alpha : \\u211d) * highValue \\u2264 fixedPriceBenchmark values 1) :\\n    1 - Real.exp (-(alpha : \\u211d) / 36) -\\n        40 * Real.exp (-(alpha : \\u211d) / 72) \\u2264\\n      (EconCSLib.FairCoin.productMeasure (Fin n)).real\\n        {side |\\n          fixedPriceBenchmark values 1 \\u2264\\n            6 *\\n              (thresholdPriceAuction\\n                (crossSampleCandidateOfferThreshold\\n                  side 1)).revenue values} := by\\n  change\\n    1 - Real.exp (-(alpha : \\u211d) / 36) -\\n        40 * Real.exp (-(alpha : \\u211d) / 72) \\u2264\\n      (EconCSLib.FairCoin.productMeasure (Fin n)).real\\n        {side |\\n          finiteCandidateFixedPriceBenchmark values 1 \\u2264\\n            6 *\\n              (thresholdPriceAuction\\n                (crossSampleCandidateOfferThreshold\\n                  side 1)).revenue values}\\n  change\\n    (alpha : \\u211d) * highValue \\u2264\\n      finiteCandidateFixedPriceBenchmark values 1 at halpha_highValue\\n  exact\\n    paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_all_alpha\\n      values keep hhigh_pos hvalue_bound halpha_highValue\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"theorem6_2_random_sampling\"\n  },\n  {\n    \"input\": {\n      \"names\": \"model\",\n      \"type\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price\"\n    },\n    \"judgment_key\": \"theorem8_2_truthful_revenue_upper_bound.model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem theorem8_2_truthful_revenue_upper_bound\\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]\\n    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\\n    [LinearOrder Agent]\\n    (model :\\n      PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\\n    paper_theorem8_2_raw_cdf_expected_revenue\\n        model.values model.price model.offerLaw \\u2264\\n      fixedPriceBenchmark model.values 1 := by\\n  change\\n    paper_theorem8_2_raw_cdf_expected_revenue\\n        model.values model.price model.offerLaw \\u2264\\n      finiteCandidateFixedPriceBenchmark model.values 1\\n  exact\\n    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model\\n      model\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"theorem8_2_truthful_revenue_upper_bound\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hNPT\",\n      \"type\": \"M.NoPositiveTransfers\"\n    },\n    \"judgment_key\": \"lemma9_2_threshold_domination.hNPT : M.NoPositiveTransfers\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem lemma9_2_threshold_domination\\n    {Agent : Type*} [DecidableEq Agent]\\n    (M : DigitalGoodsAuction Agent)\\n    (htruth : truthful M)\\n    (hIR : M.IndividuallyRational)\\n    (hNPT : M.NoPositiveTransfers)\\n    (hbinary : M.BinaryAllocation)\\n    (bids : Agent \\u2192 \\u211d) (i : Agent) :\\n    \\u2203 threshold,\\n      0 \\u2264 threshold \\u2227\\n        DeterministicOfferThresholdDominates\\n          (deterministicAuctionOffer M bids i) threshold := by\\n  simpa [truthful, paper_digital_goods_truthful] using\\n    paper_lemma9_2_deterministic_truthful_auction_exists_nonnegative_threshold_dominates\\n      M htruth hIR hNPT hbinary bids i\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"lemma9_2_threshold_domination\"\n  },\n  {\n    \"input\": {\n      \"names\": \"model\",\n      \"type\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue\"\n    },\n    \"judgment_key\": \"theorem9_3_deterministic_truthful_lower_bound.model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem theorem9_3_deterministic_truthful_lower_bound\\n    {highValue alpha : \\u2115}\\n    (model :\\n      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue)\\n    (hhigh_ge_two : 2 \\u2264 highValue) (halpha_pos : 0 < alpha) :\\n    \\u2203 highCount lowCount : \\u2115,\\n      (model.auctionFamily highCount lowCount).revenue\\n          (twoValueBidProfile highValue highCount lowCount) /\\n          twoValueFixedPriceBenchmark highValue highCount lowCount \\u2264\\n        1 / (highValue : \\u211d) \\u2227\\n      (highValue : \\u211d) * (alpha : \\u211d) \\u2264\\n        twoValueFixedPriceBenchmark highValue highCount lowCount := by\\n  exact\\n    paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_set_of_bids_source_model\\n      model hhigh_ge_two halpha_pos\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"theorem9_3_deterministic_truthful_lower_bound\"\n  },\n  {\n    \"input\": {\n      \"names\": \"lowerBoundHighValue\",\n      \"type\": \"\\u2115\"\n    },\n    \"judgment_key\": \"assumption_high_value_scale_conditions.lowerBoundHighValue : \\u2115\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"abbrev assumption_high_value_scale_conditions\\n    (h sampleHighValue : \\u211d) (lowerBoundHighValue : \\u2115) : Prop :=\\n  1 \\u2264 h \\u2227 0 < sampleHighValue \\u2227 0 < h \\u2227 2 \\u2264 lowerBoundHighValue\\n\\n                                                                   \\n-- audit-premise: hvalue_ge_one : \\u2200 i : Agent, 1 \\u2264 values i\\n-- audit-premise: hvalue_le_h : \\u2200 i : Agent, values i \\u2264 h\\n-- audit-premise: hvalues_nonneg : \\u2200 i : Agent, 0 \\u2264 values i\\n-- audit-premise: hvalue_bound : \\u2200 i, values i \\u2264 highValue\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"assumption_high_value_scale_conditions\"\n  },\n  {\n    \"input\": {\n      \"names\": \"_model\",\n      \"type\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price\"\n    },\n    \"judgment_key\": \"assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model._model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"abbrev assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model\\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\\n    [Fintype Price] [DecidableEq Price]\\n    (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\\n    Prop :=\\n  True\\n\\n   \\n                                                                             \\n                                                                               \\n                            \\n  \\n-- audit-premise: model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model\"\n  },\n  {\n    \"input\": {\n      \"names\": \"_model\",\n      \"type\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue\"\n    },\n    \"judgment_key\": \"assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model._model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"abbrev assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model\\n    {highValue : \\u2115}\\n    (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) :\\n    Prop :=\\n  True\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model\"\n  },\n  {\n    \"lean_source_declaration\": \"def revenue {Agent : Type*} [Fintype Agent]\\n    (M : DigitalGoodsAuction Agent) (values : Agent \\u2192 \\u211d) : \\u211d :=\\n  \\u2211 i : Agent, M.payment values i\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"revenue\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"DigitalGoodsAuction Agent\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def truthful {Agent : Type*} [DecidableEq Agent]\\n    (M : DigitalGoodsAuction Agent) : Prop :=\\n  \\u2200 (values : Agent \\u2192 \\u211d) (i : Agent) (report : \\u211d),\\n    M.utility values i (Function.update values i report) \\u2264\\n      M.utility values i values\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"truthful\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"DigitalGoodsAuction Agent\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def singlePriceRevenue {Agent : Type*} [Fintype Agent]\\n    (values : Agent \\u2192 \\u211d) (p : \\u211d) : \\u211d :=\\n  \\u2211 i : Agent, if p \\u2264 values i then p else 0\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"singlePriceRevenue\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"p\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def fixedPriceBenchmark {Agent : Type*} [Fintype Agent] [Nonempty Agent]\\n    (values : Agent \\u2192 \\u211d) (minWinners : \\u2115) : \\u211d :=\\n  (Finset.univ : Finset Agent).sup'\\n    (by\\n      obtain \\u27e8i\\u27e9 := (inferInstance : Nonempty Agent)\\n      exact \\u27e8i, by simp\\u27e9)\\n    (candidateFixedPriceRevenue values minWinners)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"fixedPriceBenchmark\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"minWinners\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def twoWinnerBenchmark {Agent : Type*}\\n    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\\n    (values : Agent \\u2192 \\u211d) : \\u211d :=\\n  twoWinnerFixedPriceBenchmarkValue values\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"twoWinnerBenchmark\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def totalValue {Agent : Type*} [Fintype Agent] (values : Agent \\u2192 \\u211d) : \\u211d :=\\n  \\u2211 i : Agent, values i\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"totalValue\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def weightedPairingRevenue {Agent : Type*}\\n    [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent]\\n    (values : Agent \\u2192 \\u211d) : \\u211d :=\\n  weightedPairingExpectedRevenue values\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"weightedPairingRevenue\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem4_1_high_value\\n    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\\n    (values : Agent \\u2192 \\u211d) {h : \\u211d}\\n    (hh_ge_one : 1 \\u2264 h)\\n    (hvalue_ge_one : \\u2200 i : Agent, 1 \\u2264 values i)\\n    (hvalue_le_h : \\u2200 i : Agent, values i \\u2264 h) :\\n    totalValue values \\u2264\\n      (2 * (Real.logb 2 h + 2)) * fixedPriceBenchmark values 1 := by\\n  simpa [totalValue, fixedPriceBenchmark] using\\n    paper_theorem4_1_finite_candidate_benchmark_from_logb_high_value\\n      values hh_ge_one hvalue_ge_one hvalue_le_h\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem4_1_high_value\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"h\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hh_ge_one\",\n        \"type\": \"1 \\u2264 h\"\n      },\n      {\n        \"names\": \"hvalue_ge_one\",\n        \"type\": \"\\u2200 i : Agent, 1 \\u2264 values i\"\n      },\n      {\n        \"names\": \"hvalue_le_h\",\n        \"type\": \"\\u2200 i : Agent, values i \\u2264 h\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem corollary4_2_fixed_price_lower_bound\\n    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\\n    (values : Agent \\u2192 \\u211d) {h binCount : \\u211d}\\n    (hvalues_nonneg : \\u2200 i : Agent, 0 \\u2264 values i)\\n    (hh_pos : 0 < h)\\n    (hmax : \\u2203 i : Agent, values i = h)\\n    (hvalue_le_h : \\u2200 i : Agent, values i \\u2264 h)\\n    (hbinCount : Real.logb 2 (Fintype.card Agent : \\u211d) + 2 \\u2264 binCount) :\\n    totalValue values \\u2264\\n      (4 * binCount) * fixedPriceBenchmark values 1 := by\\n  simpa [totalValue, fixedPriceBenchmark] using\\n    paper_corollary4_2_fixed_price_lower_bound_of_card_truncation\\n      values hvalues_nonneg hh_pos hmax hvalue_le_h hbinCount\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"corollary4_2_fixed_price_lower_bound\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"h binCount\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hvalues_nonneg\",\n        \"type\": \"\\u2200 i : Agent, 0 \\u2264 values i\"\n      },\n      {\n        \"names\": \"hh_pos\",\n        \"type\": \"0 < h\"\n      },\n      {\n        \"names\": \"hmax\",\n        \"type\": \"\\u2203 i : Agent, values i = h\"\n      },\n      {\n        \"names\": \"hvalue_le_h\",\n        \"type\": \"\\u2200 i : Agent, values i \\u2264 h\"\n      },\n      {\n        \"names\": \"hbinCount\",\n        \"type\": \"Real.logb 2 (Fintype.card Agent : \\u211d) + 2 \\u2264 binCount\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem lemma6_1_fair_coin\\n    {Index : Type*} (s : Finset Index) (keep : Bool) :\\n    (EconCSLib.FairCoin.productMeasure Index).real\\n        {side | (\\u2211 i \\u2208 s, if side i = keep then (1 : \\u211d) else 0) \\u2264\\n          (s.card : \\u211d) / 3} \\u2264\\n      Real.exp (-(s.card : \\u211d) / 36) := by\\n  exact paper_aux_theorem6_2_fair_coin_lower_tail_relaxed s keep\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"lemma6_1_fair_coin\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Index\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"s\",\n        \"type\": \"Finset Index\"\n      },\n      {\n        \"names\": \"keep\",\n        \"type\": \"Bool\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem6_2_random_sampling\\n    {n : \\u2115} [NeZero n]\\n    (values : Fin n \\u2192 \\u211d) (keep : Bool) {alpha : \\u2115} {highValue : \\u211d}\\n    (hhigh_pos : 0 < highValue)\\n    (hvalue_bound : \\u2200 i, values i \\u2264 highValue)\\n    (halpha_highValue :\\n      (alpha : \\u211d) * highValue \\u2264 fixedPriceBenchmark values 1) :\\n    1 - Real.exp (-(alpha : \\u211d) / 36) -\\n        40 * Real.exp (-(alpha : \\u211d) / 72) \\u2264\\n      (EconCSLib.FairCoin.productMeasure (Fin n)).real\\n        {side |\\n          fixedPriceBenchmark values 1 \\u2264\\n            6 *\\n              (thresholdPriceAuction\\n                (crossSampleCandidateOfferThreshold\\n                  side 1)).revenue values} := by\\n  change\\n    1 - Real.exp (-(alpha : \\u211d) / 36) -\\n        40 * Real.exp (-(alpha : \\u211d) / 72) \\u2264\\n      (EconCSLib.FairCoin.productMeasure (Fin n)).real\\n        {side |\\n          finiteCandidateFixedPriceBenchmark values 1 \\u2264\\n            6 *\\n              (thresholdPriceAuction\\n                (crossSampleCandidateOfferThreshold\\n                  side 1)).revenue values}\\n  change\\n    (alpha : \\u211d) * highValue \\u2264\\n      finiteCandidateFixedPriceBenchmark values 1 at halpha_highValue\\n  exact\\n    paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_all_alpha\\n      values keep hhigh_pos hvalue_bound halpha_highValue\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem6_2_random_sampling\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Fin n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"keep\",\n        \"type\": \"Bool\"\n      },\n      {\n        \"names\": \"alpha\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"highValue\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hhigh_pos\",\n        \"type\": \"0 < highValue\"\n      },\n      {\n        \"names\": \"hvalue_bound\",\n        \"type\": \"\\u2200 i, values i \\u2264 highValue\"\n      },\n      {\n        \"names\": \"halpha_highValue\",\n        \"type\": \"(alpha : \\u211d) * highValue \\u2264 fixedPriceBenchmark values 1\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem7_1_weighted_pairing\\n    {Agent : Type*} [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent]\\n    (values : Agent \\u2192 \\u211d) {h total : \\u211d}\\n    (htotal : total = totalValue values)\\n    (hh_ge_one : 1 \\u2264 h)\\n    (hvalue_ge_one : \\u2200 i : Agent, 1 \\u2264 values i)\\n    (hvalue_le_h : \\u2200 i : Agent, values i \\u2264 h)\\n    (hlarge : 4 * h \\u2264 total) :\\n    total \\u2264 192 * (Real.logb 2 h + 2) * weightedPairingRevenue values := by\\n  simpa [totalValue, weightedPairingRevenue] using\\n    paper_theorem7_1_weighted_pairing_log_bound_from_logb_high_value\\n      values htotal hh_ge_one hvalue_ge_one hvalue_le_h hlarge\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem7_1_weighted_pairing\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"h total\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"htotal\",\n        \"type\": \"total = totalValue values\"\n      },\n      {\n        \"names\": \"hh_ge_one\",\n        \"type\": \"1 \\u2264 h\"\n      },\n      {\n        \"names\": \"hvalue_ge_one\",\n        \"type\": \"\\u2200 i : Agent, 1 \\u2264 values i\"\n      },\n      {\n        \"names\": \"hvalue_le_h\",\n        \"type\": \"\\u2200 i : Agent, values i \\u2264 h\"\n      },\n      {\n        \"names\": \"hlarge\",\n        \"type\": \"4 * h \\u2264 total\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem7_2_weighted_pairing_benchmark\\n    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\\n    [LinearOrder Agent]\\n    (values : Agent \\u2192 \\u211d) {h total s : \\u211d}\\n    (htotal : total = totalValue values)\\n    (hh_ge_one : 1 \\u2264 h)\\n    (hvalue_ge_one : \\u2200 i : Agent, 1 \\u2264 values i)\\n    (hvalue_le_h : \\u2200 i : Agent, values i \\u2264 h)\\n    (hF_ge_two_h : 2 * h \\u2264 twoWinnerBenchmark values)\\n    (hs_ge_two : 2 \\u2264 s)\\n    (hlog_le_s_sq : Real.logb 2 h + 2 \\u2264 s ^ 2) :\\n    twoWinnerBenchmark values \\u2264 576 * s * weightedPairingRevenue values := by\\n  simpa [totalValue, twoWinnerBenchmark, weightedPairingRevenue] using\\n    paper_theorem7_2_weighted_pairing_bound_for_two_winner_benchmark_from_logb_high_value\\n      values htotal hh_ge_one hvalue_ge_one hvalue_le_h hF_ge_two_h\\n      hs_ge_two hlog_le_s_sq\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem7_2_weighted_pairing_benchmark\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"h total s\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"htotal\",\n        \"type\": \"total = totalValue values\"\n      },\n      {\n        \"names\": \"hh_ge_one\",\n        \"type\": \"1 \\u2264 h\"\n      },\n      {\n        \"names\": \"hvalue_ge_one\",\n        \"type\": \"\\u2200 i : Agent, 1 \\u2264 values i\"\n      },\n      {\n        \"names\": \"hvalue_le_h\",\n        \"type\": \"\\u2200 i : Agent, values i \\u2264 h\"\n      },\n      {\n        \"names\": \"hF_ge_two_h\",\n        \"type\": \"2 * h \\u2264 twoWinnerBenchmark values\"\n      },\n      {\n        \"names\": \"hs_ge_two\",\n        \"type\": \"2 \\u2264 s\"\n      },\n      {\n        \"names\": \"hlog_le_s_sq\",\n        \"type\": \"Real.logb 2 h + 2 \\u2264 s ^ 2\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem lemma8_1_truthful_monotone\\n    {Agent : Type*} [DecidableEq Agent]\\n    (M : DigitalGoodsAuction Agent)\\n    (hM : truthful M)\\n    (bids : Agent \\u2192 \\u211d) (i : Agent) {low high : \\u211d} (hlt : low < high) :\\n    M.allocation (Function.update bids i low) i \\u2264\\n      M.allocation (Function.update bids i high) i := by\\n  simpa [truthful, paper_digital_goods_truthful] using\\n    paper_lemma8_1_allocation_mono_own_bid_of_truthful M hM bids i hlt\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"lemma8_1_truthful_monotone\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"DigitalGoodsAuction Agent\"\n      },\n      {\n        \"names\": \"hM\",\n        \"type\": \"truthful M\"\n      },\n      {\n        \"names\": \"bids\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"i\",\n        \"type\": \"Agent\"\n      },\n      {\n        \"names\": \"low high\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hlt\",\n        \"type\": \"low < high\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem8_2_truthful_revenue_upper_bound\\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]\\n    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\\n    [LinearOrder Agent]\\n    (model :\\n      PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\\n    paper_theorem8_2_raw_cdf_expected_revenue\\n        model.values model.price model.offerLaw \\u2264\\n      fixedPriceBenchmark model.values 1 := by\\n  change\\n    paper_theorem8_2_raw_cdf_expected_revenue\\n        model.values model.price model.offerLaw \\u2264\\n      finiteCandidateFixedPriceBenchmark model.values 1\\n  exact\\n    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model\\n      model\",\n    \"record_premises\": [\n      \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\"\n    ],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem8_2_truthful_revenue_upper_bound\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent Price\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"model\",\n        \"type\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem9_1_bid_independent_lower_bound\\n    (priceRule : List \\u211d \\u2192 \\u211d) {highValue alpha : \\u2115}\\n    (hhigh_ge_two : 2 \\u2264 highValue) (halpha_pos : 0 < alpha) :\\n    \\u2203 highCount lowCount : \\u2115,\\n      (highValue : \\u211d) *\\n          twoValueBidIndependentPriceRevenue\\n            (twoValueListBidIndependentThresholdPrice priceRule highValue)\\n            highValue highCount lowCount \\u2264\\n        twoValueFixedPriceBenchmark highValue highCount lowCount \\u2227\\n      (highValue : \\u211d) * (alpha : \\u211d) \\u2264\\n        twoValueFixedPriceBenchmark highValue highCount lowCount := by\\n  exact\\n    paper_theorem9_1_bid_independent_list_rule_scaled_lower_bound_fixed_price_benchmark\\n      priceRule hhigh_ge_two halpha_pos\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem9_1_bid_independent_lower_bound\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"priceRule\",\n        \"type\": \"List \\u211d \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"highValue alpha\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"hhigh_ge_two\",\n        \"type\": \"2 \\u2264 highValue\"\n      },\n      {\n        \"names\": \"halpha_pos\",\n        \"type\": \"0 < alpha\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem lemma9_2_threshold_domination\\n    {Agent : Type*} [DecidableEq Agent]\\n    (M : DigitalGoodsAuction Agent)\\n    (htruth : truthful M)\\n    (hIR : M.IndividuallyRational)\\n    (hNPT : M.NoPositiveTransfers)\\n    (hbinary : M.BinaryAllocation)\\n    (bids : Agent \\u2192 \\u211d) (i : Agent) :\\n    \\u2203 threshold,\\n      0 \\u2264 threshold \\u2227\\n        DeterministicOfferThresholdDominates\\n          (deterministicAuctionOffer M bids i) threshold := by\\n  simpa [truthful, paper_digital_goods_truthful] using\\n    paper_lemma9_2_deterministic_truthful_auction_exists_nonnegative_threshold_dominates\\n      M htruth hIR hNPT hbinary bids i\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"lemma9_2_threshold_domination\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"DigitalGoodsAuction Agent\"\n      },\n      {\n        \"names\": \"htruth\",\n        \"type\": \"truthful M\"\n      },\n      {\n        \"names\": \"hIR\",\n        \"type\": \"M.IndividuallyRational\"\n      },\n      {\n        \"names\": \"hNPT\",\n        \"type\": \"M.NoPositiveTransfers\"\n      },\n      {\n        \"names\": \"hbinary\",\n        \"type\": \"M.BinaryAllocation\"\n      },\n      {\n        \"names\": \"bids\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"i\",\n        \"type\": \"Agent\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem9_3_deterministic_truthful_lower_bound\\n    {highValue alpha : \\u2115}\\n    (model :\\n      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue)\\n    (hhigh_ge_two : 2 \\u2264 highValue) (halpha_pos : 0 < alpha) :\\n    \\u2203 highCount lowCount : \\u2115,\\n      (model.auctionFamily highCount lowCount).revenue\\n          (twoValueBidProfile highValue highCount lowCount) /\\n          twoValueFixedPriceBenchmark highValue highCount lowCount \\u2264\\n        1 / (highValue : \\u211d) \\u2227\\n      (highValue : \\u211d) * (alpha : \\u211d) \\u2264\\n        twoValueFixedPriceBenchmark highValue highCount lowCount := by\\n  exact\\n    paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_set_of_bids_source_model\\n      model hhigh_ge_two halpha_pos\",\n    \"record_premises\": [\n      \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\"\n    ],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem9_3_deterministic_truthful_lower_bound\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"highValue alpha\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"model\",\n        \"type\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue\"\n      },\n      {\n        \"names\": \"hhigh_ge_two\",\n        \"type\": \"2 \\u2264 highValue\"\n      },\n      {\n        \"names\": \"halpha_pos\",\n        \"type\": \"0 < alpha\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_high_value_scale_conditions\\n    (h sampleHighValue : \\u211d) (lowerBoundHighValue : \\u2115) : Prop :=\\n  1 \\u2264 h \\u2227 0 < sampleHighValue \\u2227 0 < h \\u2227 2 \\u2264 lowerBoundHighValue\\n\\n                                                                   \\n-- audit-premise: hvalue_ge_one : \\u2200 i : Agent, 1 \\u2264 values i\\n-- audit-premise: hvalue_le_h : \\u2200 i : Agent, values i \\u2264 h\\n-- audit-premise: hvalues_nonneg : \\u2200 i : Agent, 0 \\u2264 values i\\n-- audit-premise: hvalue_bound : \\u2200 i, values i \\u2264 highValue\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_high_value_scale_conditions\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"h sampleHighValue\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"lowerBoundHighValue\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_bid_value_range_conditions {Agent : Type*}\\n    (values : Agent \\u2192 \\u211d) (h highValue : \\u211d) : Prop :=\\n  (\\u2200 i : Agent, 1 \\u2264 values i) \\u2227\\n    (\\u2200 i : Agent, values i \\u2264 h) \\u2227\\n      (\\u2200 i : Agent, 0 \\u2264 values i) \\u2227\\n        (\\u2200 i : Agent, values i \\u2264 highValue)\\n\\n                                                \\n-- audit-premise: hmax : \\u2203 i : Agent, values i = h\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_bid_value_range_conditions\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"h highValue\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_high_value_attained {Agent : Type*}\\n    (values : Agent \\u2192 \\u211d) (h : \\u211d) : Prop :=\\n  \\u2203 i : Agent, values i = h\\n\\n                                                                           \\n-- audit-premise: htotal : total = totalValue values\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_high_value_attained\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"h\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_total_value_notation {Agent : Type*} [Fintype Agent]\\n    (values : Agent \\u2192 \\u211d) (total : \\u211d) : Prop :=\\n  total = \\u2211 i : Agent, values i\\n\\n                                                                               \\n-- audit-premise: hlarge : 4 * h \\u2264 total\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_total_value_notation\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"total\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_weighted_pairing_large_market (h total : \\u211d) : Prop :=\\n  4 * h \\u2264 total\\n\\n                                                                                   \\n-- audit-premise: hF_ge_two_h : 2 * h \\u2264 twoWinnerBenchmark values\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_weighted_pairing_large_market\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"h total\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_two_winner_benchmark_large_enough\\n    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\\n    (values : Agent \\u2192 \\u211d) (h : \\u211d) : Prop :=\\n  2 * h \\u2264 twoWinnerFixedPriceBenchmarkValue values\\n\\n                                                            \\n-- audit-premise: hs_ge_two : 2 \\u2264 s\\n-- audit-premise: hlog_le_s_sq : Real.logb 2 h + 2 \\u2264 s ^ 2\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_two_winner_benchmark_large_enough\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"values\",\n        \"type\": \"Agent \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"h\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_weighted_pairing_log_factor (h s : \\u211d) : Prop :=\\n  2 \\u2264 s \\u2227 Real.logb 2 h + 2 \\u2264 s ^ 2\\n\\n                                                                \\n-- audit-premise: hM : truthful M\\n-- audit-premise: htruth : truthful M\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_weighted_pairing_log_factor\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"h s\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_truthful_auction_condition\\n    {Agent : Type*} [DecidableEq Agent]\\n    (M : DigitalGoodsAuction Agent) : Prop :=\\n  paper_digital_goods_truthful M\\n\\n                                                        \\n-- audit-premise: hlt : low < high\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_truthful_auction_condition\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"DigitalGoodsAuction Agent\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_low_bid_below_high_bid (low high : \\u211d) : Prop :=\\n  low < high\\n\\n                                                             \\n-- audit-premise: halpha_pos : 0 < alpha\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_low_bid_below_high_bid\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"low high\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_lower_bound_positive_alpha (alpha : \\u2115) : Prop :=\\n  0 < alpha\\n\\n   \\n                                                                              \\n                                                                   \\n  \\n-- audit-premise: model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price\",\n    \"record_premises\": [\n      \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\"\n    ],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_lower_bound_positive_alpha\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model\\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\\n    [Fintype Price] [DecidableEq Price]\\n    (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\\n    Prop :=\\n  True\\n\\n   \\n                                                                             \\n                                                                               \\n                            \\n  \\n-- audit-premise: model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue\",\n    \"record_premises\": [\n      \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n      \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\"\n    ],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Agent Price\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"_model\",\n        \"type\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model\\n    {highValue : \\u2115}\\n    (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) :\\n    Prop :=\\n  True\",\n    \"record_premises\": [\n      \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\"\n    ],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"highValue\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"_model\",\n        \"type\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue\"\n      }\n    ]\n  },\n  {\n    \"field\": \"values\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values\",\n    \"line\": 10803,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"Agent \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"price\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price\",\n    \"line\": 10804,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"Price \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"offerLaw\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw\",\n    \"line\": 10805,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"Agent \\u2192 PMF Price\"\n  },\n  {\n    \"field\": \"value_nonneg\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg\",\n    \"line\": 10806,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"\\u2200 i, 0 \\u2264 values i\"\n  },\n  {\n    \"field\": \"price_nonneg\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg\",\n    \"line\": 10807,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"\\u2200 p, 0 \\u2264 price p\"\n  },\n  {\n    \"field\": \"cdf_monotone\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone\",\n    \"line\": 10808,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"\\u2200 i j, values i \\u2264 values j \\u2192 \\u2200 t, t \\u2264 values i \\u2192 pmfProb (offerLaw i) (fun p => price p \\u2264 t) \\u2264 pmfProb (offerLaw j) (fun p => price p \\u2264 t)\"\n  },\n  {\n    \"field\": \"auctionFamily\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily\",\n    \"line\": 12971,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, DigitalGoodsAuction (TwoValueAgent highCount lowCount)\"\n  },\n  {\n    \"field\": \"truthful\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful\",\n    \"line\": 12974,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, paper_digital_goods_truthful (auctionFamily highCount lowCount)\"\n  },\n  {\n    \"field\": \"binary\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary\",\n    \"line\": 12977,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, (auctionFamily highCount lowCount).BinaryAllocation\"\n  },\n  {\n    \"field\": \"individuallyRational\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational\",\n    \"line\": 12980,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, (auctionFamily highCount lowCount).IndividuallyRational\"\n  },\n  {\n    \"field\": \"noPositiveTransfers\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers\",\n    \"line\": 12983,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, (auctionFamily highCount lowCount).NoPositiveTransfers\"\n  },\n  {\n    \"field\": \"focusedOutcome\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome\",\n    \"line\": 12986,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"List \\u211d \\u2192 \\u211d \\u2192 Option \\u211d\"\n  },\n  {\n    \"field\": \"focusedOutcome_represents\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents\",\n    \"line\": 12987,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 {highCount lowCount : \\u2115} (bids : TwoValueAgent highCount lowCount \\u2192 \\u211d) (i : TwoValueAgent highCount lowCount), deterministicAuctionOffer (auctionFamily highCount lowCount) bids i = focusedOutcome (paper_theorem9_3_erased_report_list bids i)\"\n  }\n]",
   "paper": "GHW01DigitalGoods",
   "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/GHW01DigitalGoods",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
   "recursion_failure_count": 0,
   "recursion_failures": [],
   "recursive_field_count": 13,
@@ -187,30 +277,562 @@
     }
   ],
   "review_row_count": 30,
+  "row_visible_inputs": {
+    "assumption_bid_value_range_conditions": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "h highValue",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_high_value_attained": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "h",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_high_value_scale_conditions": [
+      {
+        "names": "h sampleHighValue",
+        "type": "\u211d"
+      },
+      {
+        "names": "lowerBoundHighValue",
+        "type": "\u2115"
+      }
+    ],
+    "assumption_low_bid_below_high_bid": [
+      {
+        "names": "low high",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_lower_bound_positive_alpha": [
+      {
+        "names": "alpha",
+        "type": "\u2115"
+      }
+    ],
+    "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model": [
+      {
+        "names": "Agent Price",
+        "type": "Type*"
+      },
+      {
+        "names": "_model",
+        "type": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price"
+      }
+    ],
+    "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model": [
+      {
+        "names": "highValue",
+        "type": "\u2115"
+      },
+      {
+        "names": "_model",
+        "type": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue"
+      }
+    ],
+    "assumption_total_value_notation": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "total",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_truthful_auction_condition": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "DigitalGoodsAuction Agent"
+      }
+    ],
+    "assumption_two_winner_benchmark_large_enough": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "h",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_weighted_pairing_large_market": [
+      {
+        "names": "h total",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_weighted_pairing_log_factor": [
+      {
+        "names": "h s",
+        "type": "\u211d"
+      }
+    ],
+    "corollary4_2_fixed_price_lower_bound": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "h binCount",
+        "type": "\u211d"
+      },
+      {
+        "names": "hvalues_nonneg",
+        "type": "\u2200 i : Agent, 0 \u2264 values i"
+      },
+      {
+        "names": "hh_pos",
+        "type": "0 < h"
+      },
+      {
+        "names": "hmax",
+        "type": "\u2203 i : Agent, values i = h"
+      },
+      {
+        "names": "hvalue_le_h",
+        "type": "\u2200 i : Agent, values i \u2264 h"
+      },
+      {
+        "names": "hbinCount",
+        "type": "Real.logb 2 (Fintype.card Agent : \u211d) + 2 \u2264 binCount"
+      }
+    ],
+    "fixedPriceBenchmark": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "minWinners",
+        "type": "\u2115"
+      }
+    ],
+    "lemma6_1_fair_coin": [
+      {
+        "names": "Index",
+        "type": "Type*"
+      },
+      {
+        "names": "s",
+        "type": "Finset Index"
+      },
+      {
+        "names": "keep",
+        "type": "Bool"
+      }
+    ],
+    "lemma8_1_truthful_monotone": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "DigitalGoodsAuction Agent"
+      },
+      {
+        "names": "hM",
+        "type": "truthful M"
+      },
+      {
+        "names": "bids",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "i",
+        "type": "Agent"
+      },
+      {
+        "names": "low high",
+        "type": "\u211d"
+      },
+      {
+        "names": "hlt",
+        "type": "low < high"
+      }
+    ],
+    "lemma9_2_threshold_domination": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "DigitalGoodsAuction Agent"
+      },
+      {
+        "names": "htruth",
+        "type": "truthful M"
+      },
+      {
+        "names": "hIR",
+        "type": "M.IndividuallyRational"
+      },
+      {
+        "names": "hNPT",
+        "type": "M.NoPositiveTransfers"
+      },
+      {
+        "names": "hbinary",
+        "type": "M.BinaryAllocation"
+      },
+      {
+        "names": "bids",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "i",
+        "type": "Agent"
+      }
+    ],
+    "revenue": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "DigitalGoodsAuction Agent"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      }
+    ],
+    "singlePriceRevenue": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "p",
+        "type": "\u211d"
+      }
+    ],
+    "theorem4_1_high_value": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "h",
+        "type": "\u211d"
+      },
+      {
+        "names": "hh_ge_one",
+        "type": "1 \u2264 h"
+      },
+      {
+        "names": "hvalue_ge_one",
+        "type": "\u2200 i : Agent, 1 \u2264 values i"
+      },
+      {
+        "names": "hvalue_le_h",
+        "type": "\u2200 i : Agent, values i \u2264 h"
+      }
+    ],
+    "theorem6_2_random_sampling": [
+      {
+        "names": "n",
+        "type": "\u2115"
+      },
+      {
+        "names": "values",
+        "type": "Fin n \u2192 \u211d"
+      },
+      {
+        "names": "keep",
+        "type": "Bool"
+      },
+      {
+        "names": "alpha",
+        "type": "\u2115"
+      },
+      {
+        "names": "highValue",
+        "type": "\u211d"
+      },
+      {
+        "names": "hhigh_pos",
+        "type": "0 < highValue"
+      },
+      {
+        "names": "hvalue_bound",
+        "type": "\u2200 i, values i \u2264 highValue"
+      },
+      {
+        "names": "halpha_highValue",
+        "type": "(alpha : \u211d) * highValue \u2264 fixedPriceBenchmark values 1"
+      }
+    ],
+    "theorem7_1_weighted_pairing": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "h total",
+        "type": "\u211d"
+      },
+      {
+        "names": "htotal",
+        "type": "total = totalValue values"
+      },
+      {
+        "names": "hh_ge_one",
+        "type": "1 \u2264 h"
+      },
+      {
+        "names": "hvalue_ge_one",
+        "type": "\u2200 i : Agent, 1 \u2264 values i"
+      },
+      {
+        "names": "hvalue_le_h",
+        "type": "\u2200 i : Agent, values i \u2264 h"
+      },
+      {
+        "names": "hlarge",
+        "type": "4 * h \u2264 total"
+      }
+    ],
+    "theorem7_2_weighted_pairing_benchmark": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      },
+      {
+        "names": "h total s",
+        "type": "\u211d"
+      },
+      {
+        "names": "htotal",
+        "type": "total = totalValue values"
+      },
+      {
+        "names": "hh_ge_one",
+        "type": "1 \u2264 h"
+      },
+      {
+        "names": "hvalue_ge_one",
+        "type": "\u2200 i : Agent, 1 \u2264 values i"
+      },
+      {
+        "names": "hvalue_le_h",
+        "type": "\u2200 i : Agent, values i \u2264 h"
+      },
+      {
+        "names": "hF_ge_two_h",
+        "type": "2 * h \u2264 twoWinnerBenchmark values"
+      },
+      {
+        "names": "hs_ge_two",
+        "type": "2 \u2264 s"
+      },
+      {
+        "names": "hlog_le_s_sq",
+        "type": "Real.logb 2 h + 2 \u2264 s ^ 2"
+      }
+    ],
+    "theorem8_2_truthful_revenue_upper_bound": [
+      {
+        "names": "Agent Price",
+        "type": "Type*"
+      },
+      {
+        "names": "model",
+        "type": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price"
+      }
+    ],
+    "theorem9_1_bid_independent_lower_bound": [
+      {
+        "names": "priceRule",
+        "type": "List \u211d \u2192 \u211d"
+      },
+      {
+        "names": "highValue alpha",
+        "type": "\u2115"
+      },
+      {
+        "names": "hhigh_ge_two",
+        "type": "2 \u2264 highValue"
+      },
+      {
+        "names": "halpha_pos",
+        "type": "0 < alpha"
+      }
+    ],
+    "theorem9_3_deterministic_truthful_lower_bound": [
+      {
+        "names": "highValue alpha",
+        "type": "\u2115"
+      },
+      {
+        "names": "model",
+        "type": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue"
+      },
+      {
+        "names": "hhigh_ge_two",
+        "type": "2 \u2264 highValue"
+      },
+      {
+        "names": "halpha_pos",
+        "type": "0 < alpha"
+      }
+    ],
+    "totalValue": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      }
+    ],
+    "truthful": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "DigitalGoodsAuction Agent"
+      }
+    ],
+    "twoWinnerBenchmark": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      }
+    ],
+    "weightedPairingRevenue": [
+      {
+        "names": "Agent",
+        "type": "Type*"
+      },
+      {
+        "names": "values",
+        "type": "Agent \u2192 \u211d"
+      }
+    ]
+  },
   "rows_with_record_premises": [
     {
       "lean_source_declaration": "theorem theorem8_2_truthful_revenue_upper_bound\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]\n    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n    [LinearOrder Agent]\n    (model :\n      PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n    paper_theorem8_2_raw_cdf_expected_revenue\n        model.values model.price model.offerLaw \u2264\n      fixedPriceBenchmark model.values 1 := by\n  change\n    paper_theorem8_2_raw_cdf_expected_revenue\n        model.values model.price model.offerLaw \u2264\n      finiteCandidateFixedPriceBenchmark model.values 1\n  exact\n    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model\n      model",
       "record_premises": [
         "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel"
       ],
-      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
-      "row": "theorem8_2_truthful_revenue_upper_bound"
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem8_2_truthful_revenue_upper_bound",
+      "visible_inputs": [
+        {
+          "names": "Agent Price",
+          "type": "Type*"
+        },
+        {
+          "names": "model",
+          "type": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price"
+        }
+      ]
     },
     {
       "lean_source_declaration": "theorem theorem9_3_deterministic_truthful_lower_bound\n    {highValue alpha : \u2115}\n    (model :\n      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue)\n    (hhigh_ge_two : 2 \u2264 highValue) (halpha_pos : 0 < alpha) :\n    \u2203 highCount lowCount : \u2115,\n      (model.auctionFamily highCount lowCount).revenue\n          (twoValueBidProfile highValue highCount lowCount) /\n          twoValueFixedPriceBenchmark highValue highCount lowCount \u2264\n        1 / (highValue : \u211d) \u2227\n      (highValue : \u211d) * (alpha : \u211d) \u2264\n        twoValueFixedPriceBenchmark highValue highCount lowCount := by\n  exact\n    paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_set_of_bids_source_model\n      model hhigh_ge_two halpha_pos",
       "record_premises": [
         "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel"
       ],
-      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
-      "row": "theorem9_3_deterministic_truthful_lower_bound"
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem9_3_deterministic_truthful_lower_bound",
+      "visible_inputs": [
+        {
+          "names": "highValue alpha",
+          "type": "\u2115"
+        },
+        {
+          "names": "model",
+          "type": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue"
+        },
+        {
+          "names": "hhigh_ge_two",
+          "type": "2 \u2264 highValue"
+        },
+        {
+          "names": "halpha_pos",
+          "type": "0 < alpha"
+        }
+      ]
     },
     {
       "lean_source_declaration": "abbrev assumption_lower_bound_positive_alpha (alpha : \u2115) : Prop :=\n  0 < alpha\n\n   \n                                                                              \n                                                                   \n  \n-- audit-premise: model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price",
       "record_premises": [
         "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel"
       ],
-      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
-      "row": "assumption_lower_bound_positive_alpha"
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_lower_bound_positive_alpha",
+      "visible_inputs": [
+        {
+          "names": "alpha",
+          "type": "\u2115"
+        }
+      ]
     },
     {
       "lean_source_declaration": "abbrev assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\n    [Fintype Price] [DecidableEq Price]\n    (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n    Prop :=\n  True\n\n   \n                                                                             \n                                                                               \n                            \n  \n-- audit-premise: model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue",
@@ -218,19 +840,728 @@
         "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
         "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel"
       ],
-      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
-      "row": "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model"
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model",
+      "visible_inputs": [
+        {
+          "names": "Agent Price",
+          "type": "Type*"
+        },
+        {
+          "names": "_model",
+          "type": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price"
+        }
+      ]
     },
     {
       "lean_source_declaration": "abbrev assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model\n    {highValue : \u2115}\n    (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) :\n    Prop :=\n  True",
       "record_premises": [
         "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel"
       ],
-      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
-      "row": "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model"
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model",
+      "visible_inputs": [
+        {
+          "names": "highValue",
+          "type": "\u2115"
+        },
+        {
+          "names": "_model",
+          "type": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue"
+        }
+      ]
     }
   ],
-  "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "def revenue {Agent : Type*} [Fintype Agent]\n    (M : DigitalGoodsAuction Agent) (values : Agent \u2192 \u211d) : \u211d :=\n  \u2211 i : Agent, M.payment values i",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "revenue",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "DigitalGoodsAuction Agent"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def truthful {Agent : Type*} [DecidableEq Agent]\n    (M : DigitalGoodsAuction Agent) : Prop :=\n  \u2200 (values : Agent \u2192 \u211d) (i : Agent) (report : \u211d),\n    M.utility values i (Function.update values i report) \u2264\n      M.utility values i values",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "truthful",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "DigitalGoodsAuction Agent"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def singlePriceRevenue {Agent : Type*} [Fintype Agent]\n    (values : Agent \u2192 \u211d) (p : \u211d) : \u211d :=\n  \u2211 i : Agent, if p \u2264 values i then p else 0",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "singlePriceRevenue",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "p",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def fixedPriceBenchmark {Agent : Type*} [Fintype Agent] [Nonempty Agent]\n    (values : Agent \u2192 \u211d) (minWinners : \u2115) : \u211d :=\n  (Finset.univ : Finset Agent).sup'\n    (by\n      obtain \u27e8i\u27e9 := (inferInstance : Nonempty Agent)\n      exact \u27e8i, by simp\u27e9)\n    (candidateFixedPriceRevenue values minWinners)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "fixedPriceBenchmark",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "minWinners",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def twoWinnerBenchmark {Agent : Type*}\n    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\n    (values : Agent \u2192 \u211d) : \u211d :=\n  twoWinnerFixedPriceBenchmarkValue values",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "twoWinnerBenchmark",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def totalValue {Agent : Type*} [Fintype Agent] (values : Agent \u2192 \u211d) : \u211d :=\n  \u2211 i : Agent, values i",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "totalValue",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def weightedPairingRevenue {Agent : Type*}\n    [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent]\n    (values : Agent \u2192 \u211d) : \u211d :=\n  weightedPairingExpectedRevenue values",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "weightedPairingRevenue",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem4_1_high_value\n    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\n    (values : Agent \u2192 \u211d) {h : \u211d}\n    (hh_ge_one : 1 \u2264 h)\n    (hvalue_ge_one : \u2200 i : Agent, 1 \u2264 values i)\n    (hvalue_le_h : \u2200 i : Agent, values i \u2264 h) :\n    totalValue values \u2264\n      (2 * (Real.logb 2 h + 2)) * fixedPriceBenchmark values 1 := by\n  simpa [totalValue, fixedPriceBenchmark] using\n    paper_theorem4_1_finite_candidate_benchmark_from_logb_high_value\n      values hh_ge_one hvalue_ge_one hvalue_le_h",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem4_1_high_value",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "h",
+          "type": "\u211d"
+        },
+        {
+          "names": "hh_ge_one",
+          "type": "1 \u2264 h"
+        },
+        {
+          "names": "hvalue_ge_one",
+          "type": "\u2200 i : Agent, 1 \u2264 values i"
+        },
+        {
+          "names": "hvalue_le_h",
+          "type": "\u2200 i : Agent, values i \u2264 h"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem corollary4_2_fixed_price_lower_bound\n    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\n    (values : Agent \u2192 \u211d) {h binCount : \u211d}\n    (hvalues_nonneg : \u2200 i : Agent, 0 \u2264 values i)\n    (hh_pos : 0 < h)\n    (hmax : \u2203 i : Agent, values i = h)\n    (hvalue_le_h : \u2200 i : Agent, values i \u2264 h)\n    (hbinCount : Real.logb 2 (Fintype.card Agent : \u211d) + 2 \u2264 binCount) :\n    totalValue values \u2264\n      (4 * binCount) * fixedPriceBenchmark values 1 := by\n  simpa [totalValue, fixedPriceBenchmark] using\n    paper_corollary4_2_fixed_price_lower_bound_of_card_truncation\n      values hvalues_nonneg hh_pos hmax hvalue_le_h hbinCount",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "corollary4_2_fixed_price_lower_bound",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "h binCount",
+          "type": "\u211d"
+        },
+        {
+          "names": "hvalues_nonneg",
+          "type": "\u2200 i : Agent, 0 \u2264 values i"
+        },
+        {
+          "names": "hh_pos",
+          "type": "0 < h"
+        },
+        {
+          "names": "hmax",
+          "type": "\u2203 i : Agent, values i = h"
+        },
+        {
+          "names": "hvalue_le_h",
+          "type": "\u2200 i : Agent, values i \u2264 h"
+        },
+        {
+          "names": "hbinCount",
+          "type": "Real.logb 2 (Fintype.card Agent : \u211d) + 2 \u2264 binCount"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem lemma6_1_fair_coin\n    {Index : Type*} (s : Finset Index) (keep : Bool) :\n    (EconCSLib.FairCoin.productMeasure Index).real\n        {side | (\u2211 i \u2208 s, if side i = keep then (1 : \u211d) else 0) \u2264\n          (s.card : \u211d) / 3} \u2264\n      Real.exp (-(s.card : \u211d) / 36) := by\n  exact paper_aux_theorem6_2_fair_coin_lower_tail_relaxed s keep",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "lemma6_1_fair_coin",
+      "visible_inputs": [
+        {
+          "names": "Index",
+          "type": "Type*"
+        },
+        {
+          "names": "s",
+          "type": "Finset Index"
+        },
+        {
+          "names": "keep",
+          "type": "Bool"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem6_2_random_sampling\n    {n : \u2115} [NeZero n]\n    (values : Fin n \u2192 \u211d) (keep : Bool) {alpha : \u2115} {highValue : \u211d}\n    (hhigh_pos : 0 < highValue)\n    (hvalue_bound : \u2200 i, values i \u2264 highValue)\n    (halpha_highValue :\n      (alpha : \u211d) * highValue \u2264 fixedPriceBenchmark values 1) :\n    1 - Real.exp (-(alpha : \u211d) / 36) -\n        40 * Real.exp (-(alpha : \u211d) / 72) \u2264\n      (EconCSLib.FairCoin.productMeasure (Fin n)).real\n        {side |\n          fixedPriceBenchmark values 1 \u2264\n            6 *\n              (thresholdPriceAuction\n                (crossSampleCandidateOfferThreshold\n                  side 1)).revenue values} := by\n  change\n    1 - Real.exp (-(alpha : \u211d) / 36) -\n        40 * Real.exp (-(alpha : \u211d) / 72) \u2264\n      (EconCSLib.FairCoin.productMeasure (Fin n)).real\n        {side |\n          finiteCandidateFixedPriceBenchmark values 1 \u2264\n            6 *\n              (thresholdPriceAuction\n                (crossSampleCandidateOfferThreshold\n                  side 1)).revenue values}\n  change\n    (alpha : \u211d) * highValue \u2264\n      finiteCandidateFixedPriceBenchmark values 1 at halpha_highValue\n  exact\n    paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_all_alpha\n      values keep hhigh_pos hvalue_bound halpha_highValue",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem6_2_random_sampling",
+      "visible_inputs": [
+        {
+          "names": "n",
+          "type": "\u2115"
+        },
+        {
+          "names": "values",
+          "type": "Fin n \u2192 \u211d"
+        },
+        {
+          "names": "keep",
+          "type": "Bool"
+        },
+        {
+          "names": "alpha",
+          "type": "\u2115"
+        },
+        {
+          "names": "highValue",
+          "type": "\u211d"
+        },
+        {
+          "names": "hhigh_pos",
+          "type": "0 < highValue"
+        },
+        {
+          "names": "hvalue_bound",
+          "type": "\u2200 i, values i \u2264 highValue"
+        },
+        {
+          "names": "halpha_highValue",
+          "type": "(alpha : \u211d) * highValue \u2264 fixedPriceBenchmark values 1"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem7_1_weighted_pairing\n    {Agent : Type*} [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent]\n    (values : Agent \u2192 \u211d) {h total : \u211d}\n    (htotal : total = totalValue values)\n    (hh_ge_one : 1 \u2264 h)\n    (hvalue_ge_one : \u2200 i : Agent, 1 \u2264 values i)\n    (hvalue_le_h : \u2200 i : Agent, values i \u2264 h)\n    (hlarge : 4 * h \u2264 total) :\n    total \u2264 192 * (Real.logb 2 h + 2) * weightedPairingRevenue values := by\n  simpa [totalValue, weightedPairingRevenue] using\n    paper_theorem7_1_weighted_pairing_log_bound_from_logb_high_value\n      values htotal hh_ge_one hvalue_ge_one hvalue_le_h hlarge",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem7_1_weighted_pairing",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "h total",
+          "type": "\u211d"
+        },
+        {
+          "names": "htotal",
+          "type": "total = totalValue values"
+        },
+        {
+          "names": "hh_ge_one",
+          "type": "1 \u2264 h"
+        },
+        {
+          "names": "hvalue_ge_one",
+          "type": "\u2200 i : Agent, 1 \u2264 values i"
+        },
+        {
+          "names": "hvalue_le_h",
+          "type": "\u2200 i : Agent, values i \u2264 h"
+        },
+        {
+          "names": "hlarge",
+          "type": "4 * h \u2264 total"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem7_2_weighted_pairing_benchmark\n    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\n    [LinearOrder Agent]\n    (values : Agent \u2192 \u211d) {h total s : \u211d}\n    (htotal : total = totalValue values)\n    (hh_ge_one : 1 \u2264 h)\n    (hvalue_ge_one : \u2200 i : Agent, 1 \u2264 values i)\n    (hvalue_le_h : \u2200 i : Agent, values i \u2264 h)\n    (hF_ge_two_h : 2 * h \u2264 twoWinnerBenchmark values)\n    (hs_ge_two : 2 \u2264 s)\n    (hlog_le_s_sq : Real.logb 2 h + 2 \u2264 s ^ 2) :\n    twoWinnerBenchmark values \u2264 576 * s * weightedPairingRevenue values := by\n  simpa [totalValue, twoWinnerBenchmark, weightedPairingRevenue] using\n    paper_theorem7_2_weighted_pairing_bound_for_two_winner_benchmark_from_logb_high_value\n      values htotal hh_ge_one hvalue_ge_one hvalue_le_h hF_ge_two_h\n      hs_ge_two hlog_le_s_sq",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem7_2_weighted_pairing_benchmark",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "h total s",
+          "type": "\u211d"
+        },
+        {
+          "names": "htotal",
+          "type": "total = totalValue values"
+        },
+        {
+          "names": "hh_ge_one",
+          "type": "1 \u2264 h"
+        },
+        {
+          "names": "hvalue_ge_one",
+          "type": "\u2200 i : Agent, 1 \u2264 values i"
+        },
+        {
+          "names": "hvalue_le_h",
+          "type": "\u2200 i : Agent, values i \u2264 h"
+        },
+        {
+          "names": "hF_ge_two_h",
+          "type": "2 * h \u2264 twoWinnerBenchmark values"
+        },
+        {
+          "names": "hs_ge_two",
+          "type": "2 \u2264 s"
+        },
+        {
+          "names": "hlog_le_s_sq",
+          "type": "Real.logb 2 h + 2 \u2264 s ^ 2"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem lemma8_1_truthful_monotone\n    {Agent : Type*} [DecidableEq Agent]\n    (M : DigitalGoodsAuction Agent)\n    (hM : truthful M)\n    (bids : Agent \u2192 \u211d) (i : Agent) {low high : \u211d} (hlt : low < high) :\n    M.allocation (Function.update bids i low) i \u2264\n      M.allocation (Function.update bids i high) i := by\n  simpa [truthful, paper_digital_goods_truthful] using\n    paper_lemma8_1_allocation_mono_own_bid_of_truthful M hM bids i hlt",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "lemma8_1_truthful_monotone",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "DigitalGoodsAuction Agent"
+        },
+        {
+          "names": "hM",
+          "type": "truthful M"
+        },
+        {
+          "names": "bids",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "i",
+          "type": "Agent"
+        },
+        {
+          "names": "low high",
+          "type": "\u211d"
+        },
+        {
+          "names": "hlt",
+          "type": "low < high"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem8_2_truthful_revenue_upper_bound\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]\n    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n    [LinearOrder Agent]\n    (model :\n      PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n    paper_theorem8_2_raw_cdf_expected_revenue\n        model.values model.price model.offerLaw \u2264\n      fixedPriceBenchmark model.values 1 := by\n  change\n    paper_theorem8_2_raw_cdf_expected_revenue\n        model.values model.price model.offerLaw \u2264\n      finiteCandidateFixedPriceBenchmark model.values 1\n  exact\n    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model\n      model",
+      "record_premises": [
+        "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel"
+      ],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem8_2_truthful_revenue_upper_bound",
+      "visible_inputs": [
+        {
+          "names": "Agent Price",
+          "type": "Type*"
+        },
+        {
+          "names": "model",
+          "type": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem9_1_bid_independent_lower_bound\n    (priceRule : List \u211d \u2192 \u211d) {highValue alpha : \u2115}\n    (hhigh_ge_two : 2 \u2264 highValue) (halpha_pos : 0 < alpha) :\n    \u2203 highCount lowCount : \u2115,\n      (highValue : \u211d) *\n          twoValueBidIndependentPriceRevenue\n            (twoValueListBidIndependentThresholdPrice priceRule highValue)\n            highValue highCount lowCount \u2264\n        twoValueFixedPriceBenchmark highValue highCount lowCount \u2227\n      (highValue : \u211d) * (alpha : \u211d) \u2264\n        twoValueFixedPriceBenchmark highValue highCount lowCount := by\n  exact\n    paper_theorem9_1_bid_independent_list_rule_scaled_lower_bound_fixed_price_benchmark\n      priceRule hhigh_ge_two halpha_pos",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem9_1_bid_independent_lower_bound",
+      "visible_inputs": [
+        {
+          "names": "priceRule",
+          "type": "List \u211d \u2192 \u211d"
+        },
+        {
+          "names": "highValue alpha",
+          "type": "\u2115"
+        },
+        {
+          "names": "hhigh_ge_two",
+          "type": "2 \u2264 highValue"
+        },
+        {
+          "names": "halpha_pos",
+          "type": "0 < alpha"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem lemma9_2_threshold_domination\n    {Agent : Type*} [DecidableEq Agent]\n    (M : DigitalGoodsAuction Agent)\n    (htruth : truthful M)\n    (hIR : M.IndividuallyRational)\n    (hNPT : M.NoPositiveTransfers)\n    (hbinary : M.BinaryAllocation)\n    (bids : Agent \u2192 \u211d) (i : Agent) :\n    \u2203 threshold,\n      0 \u2264 threshold \u2227\n        DeterministicOfferThresholdDominates\n          (deterministicAuctionOffer M bids i) threshold := by\n  simpa [truthful, paper_digital_goods_truthful] using\n    paper_lemma9_2_deterministic_truthful_auction_exists_nonnegative_threshold_dominates\n      M htruth hIR hNPT hbinary bids i",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "lemma9_2_threshold_domination",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "DigitalGoodsAuction Agent"
+        },
+        {
+          "names": "htruth",
+          "type": "truthful M"
+        },
+        {
+          "names": "hIR",
+          "type": "M.IndividuallyRational"
+        },
+        {
+          "names": "hNPT",
+          "type": "M.NoPositiveTransfers"
+        },
+        {
+          "names": "hbinary",
+          "type": "M.BinaryAllocation"
+        },
+        {
+          "names": "bids",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "i",
+          "type": "Agent"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem9_3_deterministic_truthful_lower_bound\n    {highValue alpha : \u2115}\n    (model :\n      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue)\n    (hhigh_ge_two : 2 \u2264 highValue) (halpha_pos : 0 < alpha) :\n    \u2203 highCount lowCount : \u2115,\n      (model.auctionFamily highCount lowCount).revenue\n          (twoValueBidProfile highValue highCount lowCount) /\n          twoValueFixedPriceBenchmark highValue highCount lowCount \u2264\n        1 / (highValue : \u211d) \u2227\n      (highValue : \u211d) * (alpha : \u211d) \u2264\n        twoValueFixedPriceBenchmark highValue highCount lowCount := by\n  exact\n    paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_set_of_bids_source_model\n      model hhigh_ge_two halpha_pos",
+      "record_premises": [
+        "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel"
+      ],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem9_3_deterministic_truthful_lower_bound",
+      "visible_inputs": [
+        {
+          "names": "highValue alpha",
+          "type": "\u2115"
+        },
+        {
+          "names": "model",
+          "type": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue"
+        },
+        {
+          "names": "hhigh_ge_two",
+          "type": "2 \u2264 highValue"
+        },
+        {
+          "names": "halpha_pos",
+          "type": "0 < alpha"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_high_value_scale_conditions\n    (h sampleHighValue : \u211d) (lowerBoundHighValue : \u2115) : Prop :=\n  1 \u2264 h \u2227 0 < sampleHighValue \u2227 0 < h \u2227 2 \u2264 lowerBoundHighValue\n\n                                                                   \n-- audit-premise: hvalue_ge_one : \u2200 i : Agent, 1 \u2264 values i\n-- audit-premise: hvalue_le_h : \u2200 i : Agent, values i \u2264 h\n-- audit-premise: hvalues_nonneg : \u2200 i : Agent, 0 \u2264 values i\n-- audit-premise: hvalue_bound : \u2200 i, values i \u2264 highValue",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_high_value_scale_conditions",
+      "visible_inputs": [
+        {
+          "names": "h sampleHighValue",
+          "type": "\u211d"
+        },
+        {
+          "names": "lowerBoundHighValue",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_bid_value_range_conditions {Agent : Type*}\n    (values : Agent \u2192 \u211d) (h highValue : \u211d) : Prop :=\n  (\u2200 i : Agent, 1 \u2264 values i) \u2227\n    (\u2200 i : Agent, values i \u2264 h) \u2227\n      (\u2200 i : Agent, 0 \u2264 values i) \u2227\n        (\u2200 i : Agent, values i \u2264 highValue)\n\n                                                \n-- audit-premise: hmax : \u2203 i : Agent, values i = h",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_bid_value_range_conditions",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "h highValue",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_high_value_attained {Agent : Type*}\n    (values : Agent \u2192 \u211d) (h : \u211d) : Prop :=\n  \u2203 i : Agent, values i = h\n\n                                                                           \n-- audit-premise: htotal : total = totalValue values",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_high_value_attained",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "h",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_total_value_notation {Agent : Type*} [Fintype Agent]\n    (values : Agent \u2192 \u211d) (total : \u211d) : Prop :=\n  total = \u2211 i : Agent, values i\n\n                                                                               \n-- audit-premise: hlarge : 4 * h \u2264 total",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_total_value_notation",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "total",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_weighted_pairing_large_market (h total : \u211d) : Prop :=\n  4 * h \u2264 total\n\n                                                                                   \n-- audit-premise: hF_ge_two_h : 2 * h \u2264 twoWinnerBenchmark values",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_weighted_pairing_large_market",
+      "visible_inputs": [
+        {
+          "names": "h total",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_two_winner_benchmark_large_enough\n    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\n    (values : Agent \u2192 \u211d) (h : \u211d) : Prop :=\n  2 * h \u2264 twoWinnerFixedPriceBenchmarkValue values\n\n                                                            \n-- audit-premise: hs_ge_two : 2 \u2264 s\n-- audit-premise: hlog_le_s_sq : Real.logb 2 h + 2 \u2264 s ^ 2",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_two_winner_benchmark_large_enough",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "values",
+          "type": "Agent \u2192 \u211d"
+        },
+        {
+          "names": "h",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_weighted_pairing_log_factor (h s : \u211d) : Prop :=\n  2 \u2264 s \u2227 Real.logb 2 h + 2 \u2264 s ^ 2\n\n                                                                \n-- audit-premise: hM : truthful M\n-- audit-premise: htruth : truthful M",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_weighted_pairing_log_factor",
+      "visible_inputs": [
+        {
+          "names": "h s",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_truthful_auction_condition\n    {Agent : Type*} [DecidableEq Agent]\n    (M : DigitalGoodsAuction Agent) : Prop :=\n  paper_digital_goods_truthful M\n\n                                                        \n-- audit-premise: hlt : low < high",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_truthful_auction_condition",
+      "visible_inputs": [
+        {
+          "names": "Agent",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "DigitalGoodsAuction Agent"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_low_bid_below_high_bid (low high : \u211d) : Prop :=\n  low < high\n\n                                                             \n-- audit-premise: halpha_pos : 0 < alpha",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_low_bid_below_high_bid",
+      "visible_inputs": [
+        {
+          "names": "low high",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_lower_bound_positive_alpha (alpha : \u2115) : Prop :=\n  0 < alpha\n\n   \n                                                                              \n                                                                   \n  \n-- audit-premise: model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price",
+      "record_premises": [
+        "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel"
+      ],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_lower_bound_positive_alpha",
+      "visible_inputs": [
+        {
+          "names": "alpha",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\n    [Fintype Price] [DecidableEq Price]\n    (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n    Prop :=\n  True\n\n   \n                                                                             \n                                                                               \n                            \n  \n-- audit-premise: model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue",
+      "record_premises": [
+        "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
+        "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel"
+      ],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model",
+      "visible_inputs": [
+        {
+          "names": "Agent Price",
+          "type": "Type*"
+        },
+        {
+          "names": "_model",
+          "type": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model\n    {highValue : \u2115}\n    (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) :\n    Prop :=\n  True",
+      "record_premises": [
+        "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel"
+      ],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model",
+      "visible_inputs": [
+        {
+          "names": "highValue",
+          "type": "\u2115"
+        },
+        {
+          "names": "_model",
+          "type": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "da40922c26fec8ebcd5350ca4f683304ca408d91a4e242e0fdb9fb6071c6e70b",
   "source_record_judgment_file": "source_record_match_llm.json",
   "unconfigured_paper_interface_rows": []
 }

@@ -1,322 +1,219 @@
 {
-  "comment": "Digest metadata refreshed against the current public dashboard statement surface; existing context-free TeX translations preserved.",
-  "generated_at": "2026-06-29T05:52:06Z",
-  "generator": "gpt-5-codex",
-  "generator_type": "model",
+  "comment": "Regenerated context-free Lean-to-TeX drafts for semantic statement rejudge; every visible binder/hypothesis remains part of the translated surface.",
   "items": {
-    "assumption_affine_response_shape_domains": {
-      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "1061ce9147e013d3ed2b9a9bd399a7e27ce19527d1dc9663d93bb72a40942377",
-      "paper_statement_sha256": "6ef5673c7344e5fad253d0e917511f467c89fe7ea9f80bcaad98100b489302af",
-      "tex_statement": "ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to Prop"
-    },
-    "assumption_affine_single_state_parameter_domain": {
-      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "af33dd634e705b4280b8c8f12c45ecdba111409e8fa2b7520f29bfbe19632a9d",
-      "paper_statement_sha256": "e6cedeca7b857ca046f3d75f4ceaa1f4a5669ffda018490b851999b629edba27",
-      "tex_statement": "ℝ \\to ℝ \\to ℝ \\to Prop"
-    },
-    "assumption_dynamic_time_fraction_denominators": {
-      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "b7f4835c226b2e09eb991530a52e273208a4001ff5f1760201d9d045e332fe45",
-      "paper_statement_sha256": "18c12b611cf638357e6e7e8636f44275f8b210593d8e38463bfd68b02fbfcfe1",
-      "tex_statement": "Measure TripLength \\to Measure TripLength \\to TripPolicy \\to TripPolicy \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to Prop"
-    },
-    "assumption_fixed_response_policy_form_conditions": {
-      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "6df9cdbb2c1fa6745ece120749315f946d3db7f05719264024a6534a9f0c8df9",
-      "paper_statement_sha256": "492c308a3a0f3d39007cbdb5a422fd4347c7a308a82dd2df6c3ce56f608bf851",
-      "tex_statement": "Measure TripLength \\to (TripLength \\to ℝ) \\to TripPolicy \\to Prop"
-    },
-    "assumption_nonsurge_derivative_source_bounds": {
-      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "123aa05583f03345dbab2831f06e9604914978a99cc84c1672f484a45a395b15",
-      "paper_statement_sha256": "27a2584f556286b59984de086b39dc3d026ea7dbbc16a6ffa0973549d01c0a22",
-      "tex_statement": "ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to Prop"
-    },
-    "assumption_single_state_defined_reward_domain": {
-      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "842e4804af18cccd2b4be2bbdec766d7af2a7977ce7c1437ff559154e24aee45",
-      "paper_statement_sha256": "9c2499c341af0deaa7d481e4014f41a2d5f11a29b8fdab6d0b6aad3e6633d270",
-      "tex_statement": "Measure TripLength \\to Measure TripLength \\to PricingFunction \\to Prop"
-    },
-    "assumption_surge_derivative_source_bounds": {
-      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "561b3b61b4354155598d98136a9dbebb712530468477cda99ec1d0c632467ea2",
-      "paper_statement_sha256": "ad527f4b923f1361623afd4f6d7e1b20bbd498255ee2054e0d64152baff1c9f2",
-      "tex_statement": "ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to Prop"
-    },
-    "assumption_switch_rate_domain": {
-      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "585711268b56265ebdb58f8b3ca7ee708c1d9b3f1b99dd1a38bd659c95e47a70",
-      "paper_statement_sha256": "a9ed17d5985a5654c79d6e3392967c03f856ac8fb7a2cd71d46ef6c91d2d9e05",
-      "tex_statement": "ℝ \\to ℝ \\to Prop"
-    },
-    "assumption_theorem3_source_data_domain": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "05acd69b9e9452bb8fc09e389e1afb977c9ed13358791f04f154631690c4b31c",
-      "paper_statement_sha256": "d120c137b32b96ffac5d40205c570af14b1667ade7b8475bceb3a6e5be1ea4b5",
-      "tex_statement": "(Fin 2 \\to Measure TripLength) \\to (Fin 2 \\to ℝ) \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to Prop"
-    },
-    "assumption_upper_endpoint_derivative_domain": {
-      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "9716bf4f51cf1214ac8f8b9ad35c9cf582b4febce4c1fd4b1e56a03026e21e49",
-      "paper_statement_sha256": "a029667a765b37c00e197c315c57718e6601b74749e33bdd834190ee89dd7ac4",
-      "tex_statement": "ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to (ℝ \\to ℝ) \\to (ℝ \\to ℝ) \\to (ℝ \\to ℝ) \\to Prop"
-    },
     "review_definition_dynamic_defined_reward": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "7bc86bbb3277081b12f8fa50a8ac692a8c041aef7f3273fc6f92883db31d7570",
-      "paper_statement_sha256": "ab3616053bb422bfb1a26decddcc4fc0787c8eb368f95b17076f846c2ae6c5e2",
-      "tex_statement": "For two trip-length measures $\\mu$, a denominator-valid dynamic reward is a real-valued function on two-state policies $\\sigma$ that are feasible, measurable, and have positive accepted-trip mass in every state."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For two trip-length measures $\\mu$, a denominator-valid dynamic reward is a real-valued function on two-state policies $\\sigma$ that are feasible, measurable, and have positive accepted-trip mass in every state.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_definition_dynamic_ic": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "756281a880370f6515e4118edd1785225852ec0dea8003138c890f0442bb82cc",
-      "paper_statement_sha256": "df24876ec7897edf33ab739e7585fc089fd33f9c6e0d1cc8cb9cd067cec96efd",
-      "tex_statement": "A dynamic reward functional $R$ is incentive compatible when accept-all is feasible and measurable in both states, and every feasible measurable two-state policy $\\sigma$ has reward at most the accept-all dynamic policy: $R(\\sigma) \\le R(\\mathrm{acceptAllDynamicPolicy})$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "A dynamic reward functional $R$ is incentive compatible when accept-all is feasible and measurable in both states, and every feasible measurable two-state policy $\\sigma$ has reward at most the accept-all dynamic policy: $R(\\sigma) \\le R(\\mathrm{acceptAllDynamicPolicy})$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_definition_single_state_ic": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "bd2305d3e2c2051e2b2ff84dac8f5a6a006085c8a9b69100d5bcb2db3258f41e",
-      "paper_statement_sha256": "e8086004a07769421287824c5ea2a93abc7171926dd54da5287a1d50672d611e",
-      "tex_statement": "A single-state reward functional $R$ is incentive compatible when every measurable feasible trip policy $\\sigma \\subseteq \\mathrm{acceptAllPolicy}$ has reward at most the accept-all policy: $R(\\sigma) \\le R(\\mathrm{acceptAllPolicy})$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "A single-state reward functional $R$ is incentive compatible when every measurable feasible trip policy $\\sigma \\subseteq \\mathrm{acceptAllPolicy}$ has reward at most the accept-all policy: $R(\\sigma) \\le R(\\mathrm{acceptAllPolicy})$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_definition_threshold_policy": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "cd0c5aa2d8507b74b6ebd56c4a2c055f0c4d05b862e275766885ea06e5126cfb",
-      "paper_statement_sha256": "2120dacda0715d4dfc97a2c29590e802c7db482c59af6d2bc765e96b13fa1358",
-      "tex_statement": "For a pricing function $w$, cutoff $c$, and policy $\\sigma$, the threshold-policy condition is: for every positive trip length $\\tau$, $\\tau \\in \\sigma$ if and only if $c \\le w(\\tau)/\\tau$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For a pricing function $w$, cutoff $c$, and policy $\\sigma$, the threshold-policy condition is: for every positive trip length $\\tau$, $\\tau \\in \\sigma$ if and only if $c \\le w(\\tau)/\\tau$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "159d3cd2c0767f3b55319161a2eb865f80348d58216397d1315eeb43d1f925a3",
-      "paper_statement_sha256": "259cbe6ab59d8e81d5699009e5a50846c4f723921c9cbd584ed6aa62bb322b40",
-      "tex_statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the non-surge switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 10 accept-all ratio bounds, $z=\\mathrm{ratio}\\,R_2$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the non-surge switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 10 accept-all ratio bounds, $z=\\mathrm{ratio}\\,R_2$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma1_measured_dynamic_reward_decomposition": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "140dd4e3a2d7713097562c2c8025e94fa4a2d0b76a65457a0fca5d499be27926",
-      "paper_statement_sha256": "da50b36189d86961666192fc4fe90ae4b9212c8f5008b8a508e63fd58a1984e9",
-      "tex_statement": "For any two state measures, arrival rates, switching rates, pricing functions, and policies, the measured dynamic reward equals the time fraction in state $I$ times its measured state reward rate plus the corresponding time fraction in state $J$ times its measured state reward rate."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For any two state measures, arrival rates, switching rates, pricing functions, and policies, the measured dynamic reward equals the time fraction in state $I$ times its measured state reward rate plus the corresponding time fraction in state $J$ times its measured state reward rate.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma2_switch_probability_formula": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "724af68509d66fe57d03965ef305f3617768a1c41fda7e7898491815f6a0390a",
-      "paper_statement_sha256": "0a6f94ea697169b111ee321cb1b11e7847cc6bbf1a75b48e319caded1412784c",
-      "tex_statement": "For all $\\lambda_{IJ},\\lambda_{JI},s\\in\\mathbb R$, $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},s)=\\frac{\\lambda_{IJ}}{\\lambda_{IJ}+\\lambda_{JI}}\\left(1-e^{-(\\lambda_{IJ}+\\lambda_{JI})s}\\right)$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For all $\\lambda_{IJ},\\lambda_{JI},s\\in\\mathbb R$, $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},s)=\\frac{\\lambda_{IJ}}{\\lambda_{IJ}+\\lambda_{JI}}\\left(1-e^{-(\\lambda_{IJ}+\\lambda_{JI})s}\\right)$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma3_measured_time_fraction_formula": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "30895e3f53597cd9beaabe0f10c8fd5c38f9264e5a06dc9b83ede0823de0d3b8",
-      "paper_statement_sha256": "aaef48a51314977612a469fbc7cba7b9708faa44382a34ad31a96653569301f8",
-      "tex_statement": "If both state cycle denominators $\\lambda_I\\,\\mathrm{mass}_{\\mu_I}(\\sigma_I)+q_{IJ}$ and $\\lambda_J\\,\\mathrm{mass}_{\\mu_J}(\\sigma_J)+q_{JI}$ are nonzero, then the cycle-based time-fraction expression built from cross-subcycle probabilities and subcycle lengths equals $\\mathrm{gn21MeasuredTimeFraction}(\\mu_I,\\mu_J,\\lambda_I,\\lambda_J,q_{IJ},q_{JI},\\sigma_I,\\sigma_J)$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "If both state cycle denominators $\\lambda_I\\,\\mathrm{mass}_{\\mu_I}(\\sigma_I)+q_{IJ}$ and $\\lambda_J\\,\\mathrm{mass}_{\\mu_J}(\\sigma_J)+q_{JI}$ are nonzero, then the cycle-based time-fraction expression built from cross-subcycle probabilities and subcycle lengths equals $\\mathrm{gn21MeasuredTimeFraction}(\\mu_I,\\mu_J,\\lambda_I,\\lambda_J,q_{IJ},q_{JI},\\sigma_I,\\sigma_J)$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma4_single_state_threshold_uniqueness": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "ba31dfb8545be94720ba6a2a58d0013f728c77bd016c7cd9c4b8a36d2bf1b621",
-      "paper_statement_sha256": "99a45dbe2134f66ca70f6fd7e495795628b3c8902a1cc58a8b1a286e9b79b024",
-      "tex_statement": "Under the same single-state measurability, integrability, nonnegative-rate, finite-mass, positive-arrival, and positive-payout-mass assumptions, there are $c^\\ast\\ge0$ and $\\sigma^\\ast$ such that $\\sigma^\\ast$ is a threshold-rate policy, has renewal reward $c^\\ast$, and is optimal; moreover every measurable optimal $\\rho\\subseteq\\mathrm{acceptAllPolicy}$ differs from the strict/complete threshold bands at $c^\\ast$ only on sets of zero single-state trip mass."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "Under the same single-state measurability, integrability, nonnegative-rate, finite-mass, positive-arrival, and positive-payout-mass assumptions, there are $c^\\ast\\ge0$ and $\\sigma^\\ast$ such that $\\sigma^\\ast$ is a threshold-rate policy, has renewal reward $c^\\ast$, and is optimal; moreover every measurable optimal $\\rho\\subseteq\\mathrm{acceptAllPolicy}$ differs from the strict/complete threshold bands at $c^\\ast$ only on sets of zero single-state trip mass.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma5_fixed_response_policy_form": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "77bbfe41dfcfe7c61fdc8b0bac2b6d1352691439b815cb5530bacc27cb4e609c",
-      "paper_statement_sha256": "4f0cdaea64b099f045e1d84fe7832afa69201071a0545813b68fac8cf796dde9",
-      "tex_statement": "Let $\\mu$ be nonatomic, let a measurable integrable response function satisfy the Lemma 5 positive-response shape data, and let a measurable policy $\\sigma\\subseteq\\mathrm{acceptAllPolicy}$ maximize the Lemma 5 marginal set reward among measurable subsets of accept-all. Then $\\sigma$ has the corresponding Lemma 5 policy form almost everywhere with respect to $\\mu$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "Let $\\mu$ be nonatomic, let a measurable integrable response function satisfy the Lemma 5 positive-response shape data, and let a measurable policy $\\sigma\\subseteq\\mathrm{acceptAllPolicy}$ maximize the Lemma 5 marginal set reward among measurable subsets of accept-all. Then $\\sigma$ has the corresponding Lemma 5 policy form almost everywhere with respect to $\\mu$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma6_upper_endpoint_derivative_formula": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "7a48c9121a9f359342b28dfd01688bb29aea8ab5412a4d5f7f300a9662fef8f3",
-      "paper_statement_sha256": "65a4cdce0de28ff4dea3a5569919b9bfffbfadae7d4aa7a682ea96063997c29e",
-      "tex_statement": "Under the stated arrival-rate, positive-trip, positive-time, algebraic identification, nonzero-denominator, interval-integrability, strong-measurability, and continuity assumptions, the endpoint aggregate dynamic reward has the displayed derivative at $u$. If the endpoint density is positive, that derivative has the same strict sign as the Lemma 6 response evaluated at the endpoint data."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "Under the stated arrival-rate, positive-trip, positive-time, algebraic identification, nonzero-denominator, interval-integrability, strong-measurability, and continuity assumptions, the endpoint aggregate dynamic reward has the displayed derivative at $u$. If the endpoint density is positive, that derivative has the same strict sign as the Lemma 6 response evaluated at the endpoint data.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma7_affine_positive_additive_response_quasi_convex": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "8b5fd72757c075b15bbdf0a2d54358b15445164ffdc3c0a3c83f0969fdcb0d46",
-      "paper_statement_sha256": "bd51edb8415f2d5eed8cbb0d2156066c866eb5fa525ff67d157b2a2609a9feb1",
-      "tex_statement": "If $m>0$, $a>0$, $R_j-R_i\\le0$, $Q_i/T_i+Q_j/T_j>0$, $\\lambda_{IJ}>0$, $\\lambda_{IJ}+\\lambda_{JI}>0$, and $T_i,T_j\\ne0$, then the Lemma 6 response with switch probability $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)$ and payment argument $m\\,u+a$ is strictly quasi-convex on positive $u$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "If $m>0$, $a>0$, $R_j-R_i\\le0$, $Q_i/T_i+Q_j/T_j>0$, $\\lambda_{IJ}>0$, $\\lambda_{IJ}+\\lambda_{JI}>0$, and $T_i,T_j\\ne0$, then the Lemma 6 response with switch probability $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)$ and payment argument $m\\,u+a$ is strictly quasi-convex on positive $u$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma8_affine_negative_additive_response_quasi_concave": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "f8b45b841a3b543c03c5aa27948798268d22582e7aed4729376b35a1cd59f30b",
-      "paper_statement_sha256": "175b93f4ae5c54aa73960a2aaddaed9a3f2c4ec3a16597f468fe2a286071965a",
-      "tex_statement": "If $m>0$, $a<0$, $R_j-R_i\\ge0$, $Q_i/T_i+Q_j/T_j>0$, $\\lambda_{IJ}>0$, $\\lambda_{IJ}+\\lambda_{JI}>0$, and $T_i,T_j\\ne0$, then the Lemma 6 response with switch probability $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)$ and payment argument $m\\,u+a$ is strictly quasi-concave on positive $u$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "If $m>0$, $a<0$, $R_j-R_i\\ge0$, $Q_i/T_i+Q_j/T_j>0$, $\\lambda_{IJ}>0$, $\\lambda_{IJ}+\\lambda_{JI}>0$, and $T_i,T_j\\ne0$, then the Lemma 6 response with switch probability $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)$ and payment argument $m\\,u+a$ is strictly quasi-concave on positive $u$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_lemma9_surge_derivative_positive_of_acceptAll_bounds": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "09f1939b7c066d0ee066ccb5147b21421db06086b5be61941c3af41bb5a5962d",
-      "paper_statement_sha256": "8507a844d952fe7ecb87f8d57d80a161f10ffa264e39c0b6890d354380ae78c0",
-      "tex_statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the surge-state switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 9 accept-all ratio bounds, $z=\\mathrm{ratio}(m-R_1)$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the surge-state switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 9 accept-all ratio bounds, $z=\\mathrm{ratio}(m-R_1)$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_proposition3_1_affine_single_state_ic": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "b6344aba22b95b7badbeeb8fed1c5993d93552de2160e29b96f434e45e226aa9",
-      "paper_statement_sha256": "e3529a83405bd2817ff0e8f12e92f3409a2740d7b9e93421e1d4a430e4d17d63",
-      "tex_statement": "For every trip-length measure $\\mu$ satisfying the single-state assumptions, arrival rate $\\lambda>0$, and parameters $m,a$ with $0\\le a\\le m/\\lambda$, the affine single-state renewal reward $\\mathrm{affineSingleStateRenewalReward}(\\mu,\\lambda,m,a)$ is single-state measurable incentive compatible."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For every trip-length measure $\\mu$ satisfying the single-state assumptions, arrival rate $\\lambda>0$, and parameters $m,a$ with $0\\le a\\le m/\\lambda$, the affine single-state renewal reward $\\mathrm{affineSingleStateRenewalReward}(\\mu,\\lambda,m,a)$ is single-state measurable incentive compatible.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_remark1_switch_probability_per_time_strictAntiOn": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "03b2b45c01a1f2e46c61a8e1ea8cd7b593a57a4f168dc02a01f8ea5f9d06d81c",
-      "paper_statement_sha256": "1be9e1f83d897429201a97edce4420d69860ec8dab6db59ec4e46141420e9eac",
-      "tex_statement": "If $\\lambda_{IJ}>0$ and $\\lambda_{IJ}+\\lambda_{JI}>0$, then $u\\mapsto \\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)/u$ is strictly decreasing on $(0,\\infty)$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "If $\\lambda_{IJ}>0$ and $\\lambda_{IJ}+\\lambda_{JI}>0$, then $u\\mapsto \\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)/u$ is strictly decreasing on $(0,\\infty)$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "review_remark2_structured_derivative_kernel_algebra": {
+      "lean_statement_sha256": "4163025eda02ec77cf00ec901a88659dd04eface848b1e0ef55dd086550567f5",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (q u m z switchIJ Qi Qj Ti Tj Rj : \u211d), gn21DerivativeSignKernel q u (m * u + z * q) Qi Qj Ti Tj (m * (Ti - 1) + z * (Qi - switchIJ)) (Rj * Tj) = gn21StructuredDerivativeSignKernel q u m z switchIJ Qi Qj Ti Tj Rj",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "review_remark2_structured_scaled_earning_algebra": {
+      "lean_statement_sha256": "3158eb42b34e7fbb1a555f9064d16bc621741ce10cbd91572c83d36d2a54ea6f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (\\mu : Measure TripLength) (arrivalRate m z switchIJ switchJI : \u211d) (\\sigma : TripPolicy), IntegrableOn (fun \\tau  =>  \\tau) \\sigma \\mu \\to IntegrableOn (fun \\tau  =>  gn21SwitchProb switchIJ switchJI \\tau) \\sigma \\mu \\to gn21ScaledStateEarning \\mu arrivalRate (ctmcStructuredSurgePrice m z switchIJ switchJI) \\sigma = m * (gn21ScaledStateTime \\mu arrivalRate \\sigma - 1) + z * (gn21ExitWeightIntegral \\mu arrivalRate switchIJ switchJI \\sigma - switchIJ)",
+      "translated_at": "2026-06-29T20:39:31Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_remark3_switch_probability_per_time_tendsto_at_zero": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "4b5c9c93e299181663da3d5f790eddc5b39a2037d6a92d147b302f952ff2767f",
-      "paper_statement_sha256": "96377e9d5f225b08767a28d84daf734d8e02a22e9c435a55a195cf712cfe9a02",
-      "tex_statement": "If $\\lambda_{IJ}+\\lambda_{JI}\\ne0$, then $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)/u \\to \\lambda_{IJ}$ as $u\\to0$ through $u\\ne0$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "If $\\lambda_{IJ}+\\lambda_{JI}\\ne0$, then $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)/u \\to \\lambda_{IJ}$ as $u\\to0$ through $u\\ne0$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_remark4_switch_time_minus_switch_probability_nonneg": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "1088228ff9dfe43a128338d6a7d24f614f6fe6fa6e23d628bcf1056e86bc9175",
-      "paper_statement_sha256": "355f96c2c71494d372ec0a6d097a1eb1d4a80240c45786b263884bd969f9aa83",
-      "tex_statement": "If $\\lambda_{IJ}\\ge0$, $\\lambda_{IJ}+\\lambda_{JI}>0$, and $\\tau\\ge0$, then $\\lambda_{IJ}\\tau-\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},\\tau)\\ge0$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "If $\\lambda_{IJ}\\ge0$, $\\lambda_{IJ}+\\lambda_{JI}>0$, and $\\tau\\ge0$, then $\\lambda_{IJ}\\tau-\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},\\tau)\\ge0$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_section2_single_state_renewal_reward_iid_bridge": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "1cfcf7a25744a60a8aa3ed0bbb65c6121235f83a0f2e665e3b679f005ccbf313",
-      "paper_statement_sha256": "d48ddc9adb1fc7723819380f680e632e757fa5b838c861c4e06ed60d37352758",
-      "tex_statement": "In any measurable IID single-state renewal-cycle model $C$, the empirical average payment per empirical average cycle time converges almost surely, as $n\\to\\infty$, to $\\mathrm{singleStateRenewalReward}(\\mu,\\mathrm{arrivalRate},w,\\sigma)$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "In any measurable IID single-state renewal-cycle model $C$, the empirical average payment per empirical average cycle time converges almost surely, as $n\\to\\infty$, to $\\mathrm{singleStateRenewalReward}(\\mu,\\mathrm{arrivalRate},w,\\sigma)$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem1_single_state_threshold_best_response": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "7a68caa1a75b37824692db3143d55c044c7d74dd8ae8c8950a65cc9cdb023d0a",
-      "paper_statement_sha256": "1ba18529607df48332ca4badeefde666ea257b94ed9e32b23fed800dcc55d06d",
-      "tex_statement": "If $w(\\tau)/\\tau$ is measurable and nonnegative on positive trip lengths, the accept-all policy has finite mass and integrable payment/time, the arrival rate is positive, and the feasible positive-payout set has positive measure, then there are $c\\ge0$ and a policy $\\sigma$ such that $\\sigma$ is a threshold-rate policy for $(w,c)$ and is optimal for $\\mathrm{singleStateRenewalReward}(\\mu,\\lambda,w)$."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "If $w(\\tau)/\\tau$ is measurable and nonnegative on positive trip lengths, the accept-all policy has finite mass and integrable payment/time, the arrival rate is positive, and the feasible positive-payout set has positive measure, then there are $c\\ge0$ and a policy $\\sigma$ such that $\\sigma$ is a threshold-rate policy for $(w,c)$ and is optimal for $\\mathrm{singleStateRenewalReward}(\\mu,\\lambda,w)$.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem2_multiplicative_policy_shape_ae": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "2a187f1d7f87e846d0a9531ac2b6c999b245d3e6de9ca7d4a2cfd5785d5f13a5",
-      "paper_statement_sha256": "f02c32bd1266f9baf2d7b3e629ee2dd99c50af5873180382401b1631ff3c3530",
-      "tex_statement": "Given two state measures, a dynamic reward $R$, and all-measurable feasible almost-everywhere policy-form data, assume every optimal policy has non-surge derivative shape positive or strictly decreasing and surge derivative shape positive or strictly increasing. Then some optimal policy rejects long trips in state $0$ up to a finite-or-infinite cutoff almost everywhere and rejects short trips in state $1$ almost everywhere, and every optimal policy has those same two almost-everywhere shape properties."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "Given two state measures, a dynamic reward $R$, and all-measurable feasible almost-everywhere policy-form data, assume every optimal policy has non-surge derivative shape positive or strictly decreasing and surge derivative shape positive or strictly increasing. Then some optimal policy rejects long trips in state $0$ up to a finite-or-infinite cutoff almost everywhere and rejects short trips in state $1$ almost everywhere, and every optimal policy has those same two almost-everywhere shape properties.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "bd213c45aeb2e16f885a9468bffe2660734cbe97e76a1d6423ed1f87e3227cda",
-      "paper_statement_sha256": "1c5506ea3be828e8608dbf700943ca1c50d045c0094b9ff217dba643e74a2321",
-      "tex_statement": "For the explicit atomic multiplicative-pricing instance with switch rates $1/4$ and $1/4$, there is a positive cutoff $2$ nonsurge deviation rejecting long trips that is profitable, there is a positive cutoff $2$ surge deviation rejecting short trips that is profitable, and the resulting measured dynamic reward functional is not dynamically incentive compatible."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For the explicit atomic multiplicative-pricing instance with switch rates $1/4$ and $1/4$, there is a positive cutoff $2$ nonsurge deviation rejecting long trips that is profitable, there is a positive cutoff $2$ surge deviation rejecting short trips that is profitable, and the resulting measured dynamic reward functional is not dynamically incentive compatible.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem3_defined_reward_source_statement": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "b9df4de374b1fafeca62745e4413b649acfec8abf26bd84b0c68895f90f2e86d",
-      "paper_statement_sha256": "f9b1312d63c211d3f14b61e626a8251be8d4c6cde28c411e7591f9aab3aba58e",
-      "tex_statement": "Under the Theorem 3 source-domain assumptions R1 = rho * R2, 0 < R1 < R2, C < rho < 1, positive arrival and switch rates, integrability of trip lengths and CTMC switch probabilities, positive accept-all trip masses, and the paper positive-mass surge reward-rate data for every feasible policy, there exist structured prices w_i(tau) = m_i tau + z_i q_{i->j}(tau) with m_1, m_2, z_2 >= 0 (Lean indices 0/1) such that accept-all is dynamically incentive compatible for the defined reward, every defined-reward optimum agrees with accept-all almost everywhere, and the Theorem 3 structured parameter evidence holds."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "Under the Theorem 3 source-domain assumptions R1 = rho * R2, 0 < R1 < R2, C < rho < 1, positive arrival and switch rates, integrability of trip lengths and CTMC switch probabilities, positive accept-all trip masses, and the paper positive-mass surge reward-rate data for every feasible policy, there exist structured prices w_i(tau) = m_i tau + z_i q_{i->j}(tau) with m_1, m_2, z_2 >= 0 (Lean indices 0/1) such that accept-all is dynamically incentive compatible for the defined reward, every defined-reward optimum agrees with accept-all almost everywhere, and the Theorem 3 structured parameter evidence holds.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "review_theorem4_structural_policy_representatives": {
-      "comment": "Digest refreshed against the current public dashboard statement surface; TeX text preserved.",
-      "generated_at": "2026-06-28T02:28:31Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "acd4f074efeff770ea115ec9ac15d1267739ddb752888ae960ff60cd12e83dbc",
-      "paper_statement_sha256": "1e6ee182bf292adac6ba7571fe7ba68f50ec58ef08b8fc71504bb83aec33bd85",
-      "tex_statement": "For nonatomic two-state measures, arrival rates, affine price parameters, switch rates, and Theorem 4 bracket source data, there exists an optimal policy $\\rho^\\ast$ for the structured dynamic surge-price reward whose state-$0$ component is almost-everywhere equal to a nonsurge structural representative and whose state-$1$ component is almost-everywhere equal to a surge structural representative; every optimal policy admits such representatives in both states."
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "For nonatomic two-state measures, arrival rates, affine price parameters, switch rates, and Theorem 4 bracket source data, there exists an optimal policy $\\rho^\\ast$ for the structured dynamic surge-price reward whose state-$0$ component is almost-everywhere equal to a nonsurge structural representative and whose state-$1$ component is almost-everywhere equal to a surge structural representative; every optimal policy admits such representatives in both states.",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
   },
   "paper": "GN21DriverSurgePricing",
-  "prompt_summary": [
-    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
-    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
-    "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
-  ],
-  "prompt_version": "lean-to-tex-v2-strict-context-free",
-  "schema": 1
+  "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+  "schema": 1,
+  "translated_at": "2026-06-29T20:39:31Z",
+  "translator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

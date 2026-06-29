@@ -1,233 +1,287 @@
 {
-  "schema": 1,
-  "paper": "GGSG19TopThree",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "07c65c299dd11350099dd2944deacedc06aa4d22f0e70d966c87355c18b28033",
-  "review_surface_sha256": "378725682dfcef70b6e7b3c857655ac27bea9c7188a6cdc2934c549334293c39",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard audit refreshed after expanding the review surface for source-visible definitions, examples, remarks, propositions, and appendix theorem/lemma targets.",
   "items": {
     "assumption_mallows_nontrivial_winner_and_noise": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_mallows_nontrivial_winner_and_noise",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The Mallows no-randomization corollary uses a nontrivial winner and nondegenerate noise. The dashboard row `assumption_mallows_nontrivial_winner_and_noise` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_mallows_nontrivial_winner_and_noise"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The Mallows no-randomization corollary uses a nontrivial winner and nondegenerate noise. The dashboard row `assumption_mallows_nontrivial_winner_and_noise` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: The Mallows no-randomization corollary uses a nontrivial winner and nondegenerate noise.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_mallows_nontrivial_winner_and_noise`.",
-      "statement_sha256": "8a964ecbd60b59f8789b06eff4134768e0df0516aa9c0fda1783abff8efb80db",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8a964ecbd60b59f8789b06eff4134768e0df0516aa9c0fda1783abff8efb80db",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_nontrivial_k_approval_cutoffs": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_nontrivial_k_approval_cutoffs",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Randomized Mallows K-approval families range over nontrivial proper cutoffs. The dashboard row `assumption_nontrivial_k_approval_cutoffs` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_nontrivial_k_approval_cutoffs"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Randomized Mallows K-approval families range over nontrivial proper cutoffs. The dashboard row `assumption_nontrivial_k_approval_cutoffs` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Randomized Mallows K-approval families range over nontrivial proper cutoffs.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_nontrivial_k_approval_cutoffs`.",
-      "statement_sha256": "3998841e1d0354d2fa4d6697c0d0c7efbe4a83759c32fff2fa285ce837917a56",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3998841e1d0354d2fa4d6697c0d0c7efbe4a83759c32fff2fa285ce837917a56",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_pairwise_approval_ternary_gap_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_pairwise_approval_ternary_gap_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 3's K-approval pairwise row uses the ternary score-gap domain. The dashboard row `assumption_pairwise_approval_ternary_gap_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_pairwise_approval_ternary_gap_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 3's K-approval pairwise row uses the ternary score-gap domain. The dashboard row `assumption_pairwise_approval_ternary_gap_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Proposition 3's K-approval pairwise row uses the ternary score-gap domain.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_pairwise_approval_ternary_gap_domain`.",
-      "statement_sha256": "2b198efdd2e44cd58ac0e50cee946df60bdcf04e1631f918d42e2c4de79fa52e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2b198efdd2e44cd58ac0e50cee946df60bdcf04e1631f918d42e2c4de79fa52e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_randomized_mechanism_probability_weights": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_randomized_mechanism_probability_weights",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Randomized scoring and randomized K-approval mechanisms use probability weights. The dashboard row `assumption_randomized_mechanism_probability_weights` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_randomized_mechanism_probability_weights"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Randomized scoring and randomized K-approval mechanisms use probability weights. The dashboard row `assumption_randomized_mechanism_probability_weights` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Randomized scoring and randomized K-approval mechanisms use probability weights.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_randomized_mechanism_probability_weights`.",
-      "statement_sha256": "652cce3fee59a3829a255835f273d964c0ff5e7ee7a1ebdc3e3d69bc815d6bc3",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "652cce3fee59a3829a255835f273d964c0ff5e7ee7a1ebdc3e3d69bc815d6bc3",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_strict_cross_tier_no_ties": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_strict_cross_tier_no_ties",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 1 assumes strict cross-tier prefix separation, so no cross-tier ties occur. The dashboard row `assumption_strict_cross_tier_no_ties` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_strict_cross_tier_no_ties"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 1 assumes strict cross-tier prefix separation, so no cross-tier ties occur. The dashboard row `assumption_strict_cross_tier_no_ties` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Proposition 1 assumes strict cross-tier prefix separation, so no cross-tier ties occur.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_strict_cross_tier_no_ties`.",
-      "statement_sha256": "14738df3047384c164f33095d5bb750d194c554f7970f5b5a6e3671640f76923",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "14738df3047384c164f33095d5bb750d194c554f7970f5b5a6e3671640f76923",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_definition_large_deviation_rate": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_definition_large_deviation_rate",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Paper definition of an exponential large-deviation rate. The dashboard row `paper_definition_large_deviation_rate` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paper_definition_large_deviation_rate"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Paper definition of an exponential large-deviation rate. The dashboard row `paper_definition_large_deviation_rate` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. direct source definition.. Source inventory item: Paper definition of an exponential large-deviation rate.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_definition_large_deviation_rate`.",
-      "statement_sha256": "55f8f598fa3ad4d4fd4f37854b64934d764d44d904c22059e75ec38e8a70dd68",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "55f8f598fa3ad4d4fd4f37854b64934d764d44d904c22059e75ec38e8a70dd68",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_corollary_lem_mallowsnorando": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "source_corollary_lem_mallowsnorando",
+      "reason": "The source item is the paper-facing statement/formula summarized as: domain recorded in `Assumptions.lean`. Source Corollary `lem:mallowsnorando`: under a finite Mallows model with `q < 1`, an approval-rate-optimal static K-approval cutoff weakly dominates any finite randomized family of nontrivial K-appr... The dashboard row `source_corollary_lem_mallowsnorando` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "source_corollary_lem_mallowsnorando"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: domain recorded in `Assumptions.lean`. Source Corollary `lem:mallowsnorando`: under a finite Mallows model with `q < 1`, an approval-rate-optimal static K-approval cutoff weakly dominates any finite randomized family of nontrivial K-appr... The dashboard row `source_corollary_lem_mallowsnorando` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. direct source corollary, with implicit non-uniform Mallows. Source inventory item: domain recorded in `Assumptions.lean`. Source Corollary `lem:mallowsnorando`: under a finite Mallows model with `q < 1`, an approval-rate-optimal static K-approval cutoff weakly dominates any finite randomized family of nontrivial K-approval rules.",
-      "dashboard_evidence": "Current human-dashboard row(s): `source_corollary_lem_mallowsnorando`.",
+      "source_grounded": true,
       "statement_sha256": "7fb12609a98130586cad7c72dcbfe75ed3aa142550b831c8454b5e1a28cd8c0b",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_definition1_design_invariance_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "Definition 1 is a source-visible definition, but the current public review surface focuses on the main propositions/theorems and the large-deviation rate definition. Record it explicitly as out of scope rather than silently omitting it.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Definition 1 in source text; flagged by source-grounding audit as omitted from dashboard inventory.. Source Definition 1 defines design-invariance. It is source-visible but is not currently a separate public dashboard target.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "3fb70494a6337fbac2b7a0f21dc75b5dc0a40f8319a57946ca4d8b7f40bec63c",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_definition1_design_invariance": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): paper_definition_design_invariant",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "paper_definition_design_invariant"
+      ],
+      "source_evidence": "Source inventory entry source_definition1_design_invariance at Definition 1: Source Definition 1: asymptotic design invariance. A reasonable rule family is design-invariant for a goal when all reasonable rules induce the same limiting outcome.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3b6b37bde07a1d7eb3ab1f86c2ad4d97f50c4a7465d1ddd9d8e5f7514b1baf02",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_definition3_rate_optimality_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "Definition 3 is a source-visible definition, but the public dashboard inventory currently tracks the resulting propositions/theorems rather than this definition as a standalone row.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Definition 3 in source text; flagged by source-grounding audit as omitted from dashboard inventory.. Source Definition 3 defines rate optimality. It is source-visible but is not currently a separate public dashboard target.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "da0df2c922d1a4355bd90696ec2838288a5b39fcf8d4565a3b3db12280c3f582",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_definition3_rate_optimality": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): paper_definition_rate_optimal",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "paper_definition_rate_optimal"
+      ],
+      "source_evidence": "Source inventory entry source_definition3_rate_optimality at Definition 3: Source Definition 3: rate optimality. Within a feasible design class, a rule is rate-optimal when it maximizes the finite learning rate.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0c36765fcca9d1c2e0450f594b031c5555b87250e035e42cb2126de16cee8525",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_proposition1_thm_consistency_tiered": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "source_proposition1_thm_consistency_tiered",
+      "reason": "The source item is the paper-facing statement/formula summarized as: tiered finite-ranking form. The dashboard row `source_proposition1_thm_consistency_tiered` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "source_proposition1_thm_consistency_tiered"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: tiered finite-ranking form. The dashboard row `source_proposition1_thm_consistency_tiered` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. direct source text. Source inventory item: tiered finite-ranking form.",
-      "dashboard_evidence": "Current human-dashboard row(s): `source_proposition1_thm_consistency_tiered`.",
-      "statement_sha256": "e67fafd5c22525c5f7265196a7ae82be80067fbf8ad0aa2af6c817d1bb3ca7cf",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e67fafd5c22525c5f7265196a7ae82be80067fbf8ad0aa2af6c817d1bb3ca7cf",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_proposition2_thm_pairwiselearning_finite_support": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "source_proposition2_thm_pairwiselearning_finite_support",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source Proposition `thm:pairwiselearning`, finite-support form. The ordinary two-sided case has the paper's displayed Chernoff exponent; the explicit one-sided branches record finite-candidate boundary cases where the finite real rate is... The dashboard row `source_proposition2_thm_pairwiselearning_finite_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "source_proposition2_thm_pairwiselearning_finite_support"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source Proposition `thm:pairwiselearning`, finite-support form. The ordinary two-sided case has the paper's displayed Chernoff exponent; the explicit one-sided branches record finite-candidate boundary cases where the finite real rate is... The dashboard row `source_proposition2_thm_pairwiselearning_finite_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Source Proposition `thm:pairwiselearning`, finite-support form. The ordinary two-sided case has the paper's displayed Chernoff exponent; the explicit one-sided branches record finite-candidate boundary cases where the finite real rate is a zero-gap rate or...",
-      "dashboard_evidence": "Current human-dashboard row(s): `source_proposition2_thm_pairwiselearning_finite_support`.",
-      "statement_sha256": "6b8c2a16a415fbadd8518dbbc79f9208c1740f57664108d67c6b2aae6adb09d2",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6b8c2a16a415fbadd8518dbbc79f9208c1740f57664108d67c6b2aae6adb09d2",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_proposition3_lem_pairwiselearning_approval_finite_ternary": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "source_proposition3_lem_pairwiselearning_approval_finite_ternary",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source Proposition `lem:pairwiselearning_approval`, finite ternary form for K-approval score gaps. The finite-rate branch is exactly the paper's closed form `approvalPairwiseRate`; the other branch is the strict boundary where the mistak... The dashboard row `source_proposition3_lem_pairwiselearning_approval_finite_ternary` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "source_proposition3_lem_pairwiselearning_approval_finite_ternary"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source Proposition `lem:pairwiselearning_approval`, finite ternary form for K-approval score gaps. The finite-rate branch is exactly the paper's closed form `approvalPairwiseRate`; the other branch is the strict boundary where the mistak... The dashboard row `source_proposition3_lem_pairwiselearning_approval_finite_ternary` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Source Proposition `lem:pairwiselearning_approval`, finite ternary form for K-approval score gaps. The finite-rate branch is exactly the paper's closed form `approvalPairwiseRate`; the other branch is the strict boundary where the mistake event is eventuall...",
-      "dashboard_evidence": "Current human-dashboard row(s): `source_proposition3_lem_pairwiselearning_approval_finite_ternary`.",
-      "statement_sha256": "d7232c3fd2da45ef75b48e304c696947bfe9b52af53155f71d5b69ece2304c19",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d7232c3fd2da45ef75b48e304c696947bfe9b52af53155f71d5b69ece2304c19",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_proposition4_thm_goal_learning_finite_support": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "source_proposition4_thm_goal_learning_finite_support",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source Proposition `thm:goal_learning`, finite relevant-pair aggregation form. The finite aggregate has an exact finite exponent unless all relevant pairwise errors are eventually empty, represented as extended rate `\u22a4`. The dashboard row `source_proposition4_thm_goal_learning_finite_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "source_proposition4_thm_goal_learning_finite_support"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source Proposition `thm:goal_learning`, finite relevant-pair aggregation form. The finite aggregate has an exact finite exponent unless all relevant pairwise errors are eventually empty, represented as extended rate `\u22a4`. The dashboard row `source_proposition4_thm_goal_learning_finite_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Source Proposition `thm:goal_learning`, finite relevant-pair aggregation form. The finite aggregate has an exact finite exponent unless all relevant pairwise errors are eventually empty, represented as extended rate `\u22a4`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `source_proposition4_thm_goal_learning_finite_support`.",
-      "statement_sha256": "1a17ea4a9bdab1e2b50f6f551bb91151cdf997bfea1375b3c461ca055b5243b2",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1a17ea4a9bdab1e2b50f6f551bb91151cdf997bfea1375b3c461ca055b5243b2",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_theorem1_lem_randomizebetterscoring": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "source_theorem1_lem_randomizebetterscoring",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source Theorem `lem:randomizebetterscoring`, finite W-selection form. The convex-combination static rule is reasonable, selects the target W-set, and weakly dominates the randomized scoring rule in extended finite outcome rate. The dashboard row `source_theorem1_lem_randomizebetterscoring` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "source_theorem1_lem_randomizebetterscoring"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source Theorem `lem:randomizebetterscoring`, finite W-selection form. The convex-combination static rule is reasonable, selects the target W-set, and weakly dominates the randomized scoring rule in extended finite outcome rate. The dashboard row `source_theorem1_lem_randomizebetterscoring` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Source Theorem `lem:randomizebetterscoring`, finite W-selection form. The convex-combination static rule is reasonable, selects the target W-set, and weakly dominates the randomized scoring rule in extended finite outcome rate.",
-      "dashboard_evidence": "Current human-dashboard row(s): `source_theorem1_lem_randomizebetterscoring`.",
-      "statement_sha256": "fe5440e9a614f024eb99f548d8064d099ca86bf1a7476b860bf63f5fc181d351",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "fe5440e9a614f024eb99f548d8064d099ca86bf1a7476b860bf63f5fc181d351",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_theorem2_lem_randomizenotbetterapproval_pairwise": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "source_theorem2_lem_randomizenotbetterapproval_pairwise",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source Theorem `lem:randomizenotbetterapproval`, fixed-pair form. For any finite randomized K-approval rule, some static component weakly dominates the randomized pairwise rate; zero-base static boundaries are treated as top extended rates. The dashboard row `source_theorem2_lem_randomizenotbetterapproval_pairwise` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "source_theorem2_lem_randomizenotbetterapproval_pairwise"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source Theorem `lem:randomizenotbetterapproval`, fixed-pair form. For any finite randomized K-approval rule, some static component weakly dominates the randomized pairwise rate; zero-base static boundaries are treated as top extended rates. The dashboard row `source_theorem2_lem_randomizenotbetterapproval_pairwise` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Source Theorem `lem:randomizenotbetterapproval`, fixed-pair form. For any finite randomized K-approval rule, some static component weakly dominates the randomized pairwise rate; zero-base static boundaries are treated as top extended rates.",
-      "dashboard_evidence": "Current human-dashboard row(s): `source_theorem2_lem_randomizenotbetterapproval_pairwise`.",
-      "statement_sha256": "67eea6b1e1e77f54c462c6978f1c24cab48fc679ae482b073268dec63f6e1d7e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "67eea6b1e1e77f54c462c6978f1c24cab48fc679ae482b073268dec63f6e1d7e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_theorem_lem_mallowsnotWK_counterexample": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "source_theorem_lem_mallowsnotWK_counterexample",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source Theorem `lem:mallowsnotWK`: a four-candidate high-noise Mallows counterexample where W-approval is not approval-rate optimal. The dashboard row `source_theorem_lem_mallowsnotWK_counterexample` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "source_theorem_lem_mallowsnotWK_counterexample"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source Theorem `lem:mallowsnotWK`: a four-candidate high-noise Mallows counterexample where W-approval is not approval-rate optimal. The dashboard row `source_theorem_lem_mallowsnotWK_counterexample` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. Source inventory item: Source Theorem `lem:mallowsnotWK`: a four-candidate high-noise Mallows counterexample where W-approval is not approval-rate optimal.",
-      "dashboard_evidence": "Current human-dashboard row(s): `source_theorem_lem_mallowsnotWK_counterexample`.",
-      "statement_sha256": "4451ab20640966f9c8d01596e28dfc82050b10eb575d997fca5f0157edacc8c5",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "4451ab20640966f9c8d01596e28dfc82050b10eb575d997fca5f0157edacc8c5",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_theorem_lem_randomizebetterapproval_w_selection_constructed": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "source_theorem_lem_randomizebetterapproval_w_selection_constructed",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source Theorem `lem:randomizebetterapproval_Wselection`, concrete finite constructed-law endpoint: the six-ranking law is design-invariant for W-selection and 50/50 randomized approval strictly beats every static K-approval cutoff in the... The dashboard row `source_theorem_lem_randomizebetterapproval_w_selection_constructed` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "source_theorem_lem_randomizebetterapproval_w_selection_constructed"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source Theorem `lem:randomizebetterapproval_Wselection`, concrete finite constructed-law endpoint: the six-ranking law is design-invariant for W-selection and 50/50 randomized approval strictly beats every static K-approval cutoff in the... The dashboard row `source_theorem_lem_randomizebetterapproval_w_selection_constructed` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GGSG19TopThree.txt and validation report/source audit notes. direct source theorem.. Source inventory item: Source Theorem `lem:randomizebetterapproval_Wselection`, concrete finite constructed-law endpoint: the six-ranking law is design-invariant for W-selection and 50/50 randomized approval strictly beats every static K-approval cutoff in the finite family.",
-      "dashboard_evidence": "Current human-dashboard row(s): `source_theorem_lem_randomizebetterapproval_w_selection_constructed`.",
-      "statement_sha256": "e2c398d7405e9da007c11b62a9ef18771737fbb0bb2ce4307f86955ea5c224e3",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e2c398d7405e9da007c11b62a9ef18771737fbb0bb2ce4307f86955ea5c224e3",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "GGSG19TopThree",
+  "paper_statement_inventory_sha256": "fcdc0cf68f608b0583c1aecd81ab30fe478767da7e7a47834cf3178d8f725538",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "9a948d310778cb1503658e0edd31613212bc9fb2f65f5990cef88bfbacff4d4e",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T20:39:31Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

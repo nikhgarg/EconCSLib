@@ -25,6 +25,29 @@ abbrev paper_definition_large_deviation_rate (A : ℕ → ℝ) (r : ℝ) : Prop 
   definition_large_deviation_rate A r
 
 /--
+Source Definition 1: asymptotic design invariance.
+
+A reasonable rule family is design-invariant for a goal when all reasonable
+rules induce the same limiting outcome.
+-/
+def paper_definition_design_invariant
+    {Rule Outcome : Type*} [TopologicalSpace Outcome]
+    (reasonable : Rule → Prop) (outcome : Rule → ℕ → Outcome) : Prop :=
+  ∃ Ostar : Outcome,
+    ∀ β : Rule, reasonable β →
+      Filter.Tendsto (outcome β) Filter.atTop (nhds Ostar)
+
+/--
+Source Definition 3: rate optimality.
+
+Within a feasible design class, a rule is rate-optimal when it maximizes the
+finite learning rate.
+-/
+def paper_definition_rate_optimal
+    {Rule : Type*} (feasible : Set Rule) (rate : Rule → ℝ) (βstar : Rule) : Prop :=
+  βstar ∈ feasible ∧ ∀ β : Rule, β ∈ feasible → rate β ≤ rate βstar
+
+/--
 Source Proposition `thm:consistency`, tiered finite-ranking form.  The
 no-cross-tier-equality premise is the Lean form of staying in the paper's
 strict cross-tier top-prefix regime; within-tier equal expected scores are not

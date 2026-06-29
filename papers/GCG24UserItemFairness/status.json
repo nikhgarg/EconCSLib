@@ -1,45 +1,34 @@
 {
-  "schema": 1,
-  "id": "GCG24UserItemFairness",
-  "title": "User-item fairness tradeoffs in recommendations",
-  "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
-  "source_version": "NeurIPS 2024 / arXiv:2412.04466",
-  "build_target": "lake build GCG24UserItemFairness",
-  "status": "formalized",
-  "main_caveat": "",
-  "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
-  "human_review": {
-    "reviewed_rows": 0,
-    "total_rows": 18,
-    "stale_rows": 0,
-    "mismatch_rows": 0,
-    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
-  },
-  "paper_interface": {
-    "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
-    "line_count": 286,
-    "declaration_rows": 18,
-    "review_rows": 18,
-    "oversized": false,
-    "maintainability_issue": null
-  },
   "artifacts": {
-    "readme": "papers/GCG24UserItemFairness/README.md",
-    "source_text": "papers/GCG24UserItemFairness/GCG24UserItemFairness.txt",
-    "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
     "assumptions": "papers/GCG24UserItemFairness/Assumptions.lean",
-    "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf",
     "dependency_dag_tex": "papers/GCG24UserItemFairness/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf"
+    "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+    "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
+    "readme": "papers/GCG24UserItemFairness/README.md",
+    "source_text": "papers/GCG24UserItemFairness/GCG24UserItemFairness.txt"
   },
+  "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
+  "build_target": "lake build GCG24UserItemFairness",
+  "human_review": {
+    "mismatch_rows": 0,
+    "reviewed_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs",
+    "stale_rows": 0,
+    "total_rows": 18
+  },
+  "id": "GCG24UserItemFairness",
+  "main_caveat": "",
+  "paper_interface": {
+    "declaration_rows": 18,
+    "line_count": 286,
+    "maintainability_issue": null,
+    "oversized": false,
+    "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
+    "review_rows": 18
+  },
+  "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
   "review_surface": {
-    "source_file": "papers/GCG24UserItemFairness/PaperInterface.lean",
-    "assumption_source_file": "papers/GCG24UserItemFairness/Assumptions.lean",
-    "llm_assumption_review": {
-      "assumption_judgment_file": "papers/GCG24UserItemFairness/assumption_match_llm.json",
-      "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption or paper-statement condition rather than a proof assumption."
-    },
-    "assumption_policy": "strict",
     "assumption_names": [
       "assumption_positive_recommendation_utilities",
       "assumption_theorem3_opposing_type_model",
@@ -52,6 +41,8 @@
       "assumption_theorem4_cold_start_type_wiring",
       "assumption_theorem4_parameter_domain"
     ],
+    "assumption_policy": "strict",
+    "assumption_source_file": "papers/GCG24UserItemFairness/Assumptions.lean",
     "include_names": [
       "recommendationUtility",
       "rawUserUtility",
@@ -65,6 +56,26 @@
       "priceOfFairnessAt",
       "priceOfFairness",
       "priceOfMisestimation",
+      "example1_diverse_favorite_policy_user_fairness",
+      "example1_diverse_favorite_policy_item_fairness",
+      "example1_homogeneous_tradeoff_bound",
+      "appendix_c_lemma1_item_fairness_positive",
+      "appendix_c_lemma2_item_fairness_lp_value",
+      "appendix_d_lemma3_unconstrained_baseline",
+      "appendix_d_lemma4_problem6_structure",
+      "appendix_d_lemma5_problem6_closed_form",
+      "appendix_d_lemma6_mirror_inverse_gap",
+      "appendix_d_lemma7_pivot_monotonicity",
+      "appendix_d_lemma8_selected_pivot_stitching",
+      "appendix_d_lemma9_pair_share_algebra",
+      "appendix_d_lemma10_midpoint_candidate",
+      "appendix_d_lemma11_denominator_monotonicity",
+      "appendix_e_lemma12_symmetrized_policy",
+      "appendix_e_lemma13_pivot_support",
+      "appendix_e_lemma14_uniqueness",
+      "appendix_e_lemma15_closed_formula",
+      "appendix_e_lemma16_midpoint_order_algebra",
+      "appendix_e_lemma17_no_right_half_support",
       "proposition1_symmetric_lp_reduction",
       "proposition2_symmetric_optimum_exists",
       "theorem3_price_decreases_first_half",
@@ -72,10 +83,13 @@
       "theorem4_misestimation_tradeoff_typeZero",
       "theorem4_misestimation_tradeoff_typeOne"
     ],
+    "llm_assumption_review": {
+      "assumption_judgment_file": "papers/GCG24UserItemFairness/assumption_match_llm.json",
+      "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption or paper-statement condition rather than a proof assumption."
+    },
     "slices": [
       {
         "id": "all",
-        "title": "All source-facing review rows",
         "names": [
           "recommendationUtility",
           "rawUserUtility",
@@ -95,8 +109,14 @@
           "theorem3_price_increases_second_half",
           "theorem4_misestimation_tradeoff_typeZero",
           "theorem4_misestimation_tradeoff_typeOne"
-        ]
+        ],
+        "title": "All source-facing review rows"
       }
-    ]
-  }
+    ],
+    "source_file": "papers/GCG24UserItemFairness/PaperInterface.lean"
+  },
+  "schema": 1,
+  "source_version": "NeurIPS 2024 / arXiv:2412.04466",
+  "status": "formalized",
+  "title": "User-item fairness tradeoffs in recommendations"
 }

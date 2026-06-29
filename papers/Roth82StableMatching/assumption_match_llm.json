@@ -1,60 +1,31 @@
 {
-  "schema": 1,
-  "paper": "Roth82StableMatching",
-  "prompt_version": "assumption-provenance-v2-exact-premise-source",
-  "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "validated_at": "2026-06-13T00:00:00Z",
-  "comment": "Refreshed under the exact premise-source provenance prompt. Every audit-premise is judged independently where present.",
-  "prompt_summary": [
-    "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
-    "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
-    "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
-    "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
-    "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption."
-  ],
+  "comment": "Semantic premise provenance rejudge. Certificate/replay/process premises are not accepted by name and must be paper conditions, documented caveats, partial boundaries, or derived from primitives.",
   "items": {
     "assumption_equal_cardinality": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "dd6cd6c61b5d8e71d5aecc5380f8a68b3364222634f42e2cfd5c72e42abd6073",
+      "paper_statement_sha256": "9a4f3f9d23be486ca37b1374b2111ee77954e40547e192edc00199fd3ba0c0dc",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "Roth explicitly defines the marriage problem as the representative strict matching model, with equal numbers of men and women and one-to-one outcomes.",
-      "source_location": "Roth82StableMatching.txt, lines 110-142 and 176-189",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hcard : Fintype.card M = Fintype.card W": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "Roth82StableMatching.txt, lines 110-142: the marriage problem has sets M and W indexed by the same n, and an outcome is an invertible function M -> W; lines 176-180: Roth says the marriage problem was defined as having equal numbers of men and women.",
-          "reason": "The Lean cardinality premise is the finite-type rendering of the paper's equal-size one-to-one marriage-problem domain.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_simple_report_ranks_partner_first": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "47e9ed7e19b7417f1e9c62b3760b8152e98949d317dd77830a6282697ca87a9a",
+      "paper_statement_sha256": "49b60764ab51ffad9a595994d5ed762573c9551e9972464940221ead2f7da861",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "Roth defines the equivalent simple misrepresentation by placing the obtained partner first in the reported preference order before Lemma 1.",
-      "source_location": "Roth82StableMatching.txt, lines 522-539",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hfirst : ∀ w, w ≠ wstar → simple_report_m w < simple_report_m wstar": {
-          "judgment": "source_text",
-          "source_location": "Roth82StableMatching.txt, lines 522-539: the simple misrepresentation P'' has y(mi) as mi's most preferred match, i.e. y(mi) P''(mi) wj for all wj != y(mi).",
-          "reason": "The Lean premise states exactly that the simplified report ranks the obtained partner `wstar` strictly above every other woman, using lower numeric rank for higher preference.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "Roth82StableMatching",
+  "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+  "schema": 1,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

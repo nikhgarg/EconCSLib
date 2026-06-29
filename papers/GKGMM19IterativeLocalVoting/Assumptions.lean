@@ -24,6 +24,9 @@ binder string.
   and the deterministic global projected trace source carried by
   `FiniteCoordinateILVFullConcreteSourceModel`, rather than being hidden in the
   SSGM boundary or in an abstract environment drift field.
+- `assumption_expected_subgradient_theorem`: the external Appendix Theorem 4
+  interchange theorem identifying an expected selected subgradient as a
+  subgradient of the expected objective.
 -/
 
 namespace GKGMM19IterativeLocalVoting
@@ -39,6 +42,39 @@ abbrev assumption_conditions_c123 {Voter Point : Type*}
   E.solutionSpace_nonempty_bounded_closed_convex ∧
     E.uniqueIdealSolutions ∧
       E.idealDistribution_bounded_measurable_density
+
+/--
+Abstract theorem statement for Appendix Theorem 4.
+
+The source theorem is an external convex-analysis/subgradient interchange
+result: if each sampled voter supplies a subgradient at `x`, then the expected
+selected subgradient is a subgradient of the expected objective at `x`.
+This paper-local predicate keeps that imported theorem's mathematical shape
+visible without committing to a reusable measure-theoretic API here.
+-/
+def ExpectedSubgradientTheoremStatement
+    {Point Theta Grad : Type*}
+    (isSampleSubgradient : Point → Theta → Grad → Prop)
+    (expected : (Theta → Grad) → Grad)
+    (isExpectedSubgradient : Point → Grad → Prop) : Prop :=
+  ∀ x sampleGradient,
+    (∀ θ, isSampleSubgradient x θ (sampleGradient θ)) →
+      isExpectedSubgradient x (expected sampleGradient)
+
+/--
+Appendix Theorem 4 imported theorem boundary.
+
+This records the external theorem quoted in the paper; deterministic ILV
+source-model bridges are still formalized separately.
+-/
+-- audit-premise: hExpectedSubgradient : assumption_expected_subgradient_theorem
+axiom assumption_expected_subgradient_theorem
+    {Point Theta Grad : Type*}
+    (isSampleSubgradient : Point → Theta → Grad → Prop)
+    (expected : (Theta → Grad) → Grad)
+    (isExpectedSubgradient : Point → Grad → Prop) :
+    ExpectedSubgradientTheoremStatement
+      isSampleSubgradient expected isExpectedSubgradient
 
 /--
 Single theorem-shaped boundary for the analytic convergence layer.

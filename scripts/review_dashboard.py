@@ -43,10 +43,15 @@ DEFAULT_LLM_REVIEW_SURFACE_FILE = "review_surface_llm.json"
 DEFAULT_LLM_PAPER_COVERAGE_FILE = "paper_coverage_llm.json"
 DEFAULT_LLM_ASSUMPTION_JUDGE_FILE = "assumption_match_llm.json"
 DEFAULT_ASSUMPTION_SOURCE_FILE = "Assumptions.lean"
+REQUIRED_LLM_LEAN_TO_TEX_PROMPT_VERSION = "lean-to-tex-v3-strict-context-free-semantic-inputs"
+REQUIRED_LLM_STATEMENT_PROMPT_VERSION = "statement-match-v3-semantic-full-statement"
+REQUIRED_LLM_PAPER_COVERAGE_PROMPT_VERSION = "paper-coverage-v2-source-grounded-source-to-dashboard"
+REQUIRED_LLM_REVIEW_SURFACE_PROMPT_VERSION = "review-surface-v2-semantic-paper-facing"
+REQUIRED_LLM_ASSUMPTION_PROMPT_VERSION = "assumption-provenance-v3-semantic-exact-premise-source"
 PAPER_STATEMENT_MAP_FILE = "paper_statement_map.json"
 REVIEW_SURFACE_LLM_AUDIT_THRESHOLD = 30
 REVIEW_SURFACE_WARN_THRESHOLD = 120
-PAPER_INTERFACE_CACHE_SCHEMA = 15
+PAPER_INTERFACE_CACHE_SCHEMA = 16
 REVIEW_SURFACE_SCHEMA = 1
 REVIEW_SOURCE_FILENAME = "PaperInterface.lean"
 REVIEW_DECL_KINDS = {
@@ -65,6 +70,7 @@ ASSUMPTION_DECL_NAME_RE = re.compile(
 APPROVED_ASSUMPTION_JUDGMENTS = {
     "paper_assumption",
     "paper_condition",
+    "documented_additional_assumption",
     "documented_caveat",
     "partial_boundary",
 }
@@ -84,6 +90,7 @@ APPROVED_ASSUMPTION_PREMISE_JUDGMENTS = {
     "source_text",
     "source_text_model_primitive",
     "derived_from_source_primitives",
+    "documented_additional_assumption",
     "documented_caveat",
     "partial_boundary",
     "human_verified_source_implicit",
@@ -102,8 +109,6 @@ APPROVED_PAPER_COVERAGE_JUDGMENTS = {
 APPROVED_PAPER_COVERAGE_AUDIT_KINDS = {
     "source_to_dashboard_llm",
     "source_to_dashboard_agent",
-    "source_to_review_surface_llm",
-    "source_to_review_surface_agent",
 }
 PAPER_COVERAGE_SCAFFOLD_KINDS = {
     "exact_key_scaffold",
@@ -1207,6 +1212,23 @@ def load_llm_lean_to_tex_draft_entries(folder: Path) -> dict[str, dict[str, str]
         return {}
     out: dict[str, dict[str, Any]] = {}
     source = path.name
+    payload_translator = str(
+        payload.get("translator")
+        or payload.get("validator")
+        or payload.get("model")
+        or payload.get("agent")
+        or payload.get("generator")
+        or ""
+    ).strip()
+    payload_translated_at = str(
+        payload.get("translated_at")
+        or payload.get("validated_at")
+        or payload.get("timestamp")
+        or payload.get("generated_at")
+        or ""
+    ).strip()
+    payload_prompt_version = str(payload.get("prompt_version") or "").strip()
+    payload_prompt_version_stale = payload_prompt_version != REQUIRED_LLM_LEAN_TO_TEX_PROMPT_VERSION
     for raw_name, raw_value in items.items():
         name = str(raw_name).strip()
         if isinstance(raw_value, dict):
@@ -1219,14 +1241,36 @@ def load_llm_lean_to_tex_draft_entries(folder: Path) -> dict[str, dict[str, str]
                 or ""
             ).strip()
             lean_digest = str(raw_value.get("lean_statement_sha256") or "").strip()
+            translator = str(
+                raw_value.get("translator")
+                or raw_value.get("validator")
+                or raw_value.get("model")
+                or raw_value.get("agent")
+                or raw_value.get("generator")
+                or payload_translator
+            ).strip()
+            translated_at = str(
+                raw_value.get("translated_at")
+                or raw_value.get("validated_at")
+                or raw_value.get("timestamp")
+                or raw_value.get("generated_at")
+                or payload_translated_at
+            ).strip()
         else:
             value = str(raw_value).strip()
             lean_digest = ""
+            translator = payload_translator
+            translated_at = payload_translated_at
         if name and value:
             out[name] = {
                 "statement": value,
                 "lean_statement_sha256": lean_digest,
                 "source": source,
+                "translator": translator,
+                "translated_at": translated_at,
+                "metadata_missing": not bool(translator and translated_at),
+                "prompt_version": payload_prompt_version,
+                "prompt_version_stale": payload_prompt_version_stale,
             }
     return out
 
@@ -1348,7 +1392,7 @@ def _is_conditional_boundary_judgment(judgment: dict[str, Any]) -> bool:
 
 
 def load_llm_statement_judgments(folder: Path) -> dict[str, dict[str, Any]]:
-    """Load optional third-LLM judgments comparing paper text and Lean-to-TeX drafts."""
+    """Load independent semantic judgments comparing paper text and Lean-to-TeX drafts."""
 
     path = llm_statement_judgments_file(folder)
     if not path.exists() or not path.is_file():
@@ -1371,10 +1415,19 @@ def load_llm_statement_judgments(folder: Path) -> dict[str, dict[str, Any]]:
         or payload.get("model")
         or payload.get("judge")
         or payload.get("agent")
+        or payload.get("generator")
         or source
     ).strip()
+    payload_has_validator = bool(
+        payload.get("validator")
+        or payload.get("model")
+        or payload.get("judge")
+        or payload.get("agent")
+        or payload.get("generator")
+    )
     payload_validator_type = str(
         payload.get("validator_type")
+        or payload.get("generator_type")
         or ("model" if payload.get("model") else "agent" if payload.get("judge") else "")
     ).strip()
     payload_validated_at = str(
@@ -1383,6 +1436,9 @@ def load_llm_statement_judgments(folder: Path) -> dict[str, dict[str, Any]]:
         or payload.get("generated_at")
         or ""
     ).strip()
+    payload_has_validated_at = bool(payload_validated_at)
+    payload_prompt_version = str(payload.get("prompt_version") or "").strip()
+    payload_prompt_version_stale = payload_prompt_version != REQUIRED_LLM_STATEMENT_PROMPT_VERSION
     payload_comment = str(
         payload.get("comment")
         or payload.get("notes")
@@ -1413,10 +1469,20 @@ def load_llm_statement_judgments(folder: Path) -> dict[str, dict[str, Any]]:
                 or raw_value.get("model")
                 or raw_value.get("judge")
                 or raw_value.get("agent")
+                or raw_value.get("generator")
                 or payload_validator
             ).strip()
+            has_validator = bool(
+                raw_value.get("validator")
+                or raw_value.get("model")
+                or raw_value.get("judge")
+                or raw_value.get("agent")
+                or raw_value.get("generator")
+                or payload_has_validator
+            )
             validator_type = str(
                 raw_value.get("validator_type")
+                or raw_value.get("generator_type")
                 or ("model" if raw_value.get("model") else "agent" if raw_value.get("judge") else "")
                 or payload_validator_type
             ).strip()
@@ -1426,6 +1492,12 @@ def load_llm_statement_judgments(folder: Path) -> dict[str, dict[str, Any]]:
                 or raw_value.get("generated_at")
                 or payload_validated_at
             ).strip()
+            has_validated_at = bool(
+                raw_value.get("validated_at")
+                or raw_value.get("timestamp")
+                or raw_value.get("generated_at")
+                or payload_has_validated_at
+            )
             comment = str(
                 raw_value.get("comment")
                 or raw_value.get("notes")
@@ -1468,12 +1540,15 @@ def load_llm_statement_judgments(folder: Path) -> dict[str, dict[str, Any]]:
                 "validator": validator,
                 "validator_type": validator_type,
                 "validated_at": validated_at,
+                "metadata_missing": not bool(has_validator and has_validated_at),
                 "comment": comment,
                 "resolution": resolution,
                 "boundary_type": boundary_type,
                 "boundary_names": boundary_names,
                 "conditional_premises": conditional_premises,
                 "resolution_reason": resolution_reason,
+                "prompt_version": payload_prompt_version,
+                "prompt_version_stale": payload_prompt_version_stale,
                 "lean_statement_sha256": str(raw_value.get("lean_statement_sha256") or "").strip(),
                 "paper_statement_sha256": str(raw_value.get("paper_statement_sha256") or "").strip(),
                 "tex_statement_sha256": str(raw_value.get("tex_statement_sha256") or "").strip(),
@@ -1488,12 +1563,15 @@ def load_llm_statement_judgments(folder: Path) -> dict[str, dict[str, Any]]:
                     "validator": payload_validator,
                     "validator_type": payload_validator_type,
                     "validated_at": payload_validated_at,
+                    "metadata_missing": not bool(payload_has_validator and payload_has_validated_at),
                     "comment": payload_comment,
                     "resolution": "",
                     "boundary_type": "",
                     "boundary_names": [],
                     "conditional_premises": [],
                     "resolution_reason": "",
+                    "prompt_version": payload_prompt_version,
+                    "prompt_version_stale": payload_prompt_version_stale,
                 }
     return out
 
@@ -1521,10 +1599,19 @@ def load_llm_paper_coverage_audit(folder: Path) -> dict[str, Any]:
         or payload.get("model")
         or payload.get("judge")
         or payload.get("agent")
+        or payload.get("generator")
         or path.name
     ).strip()
+    payload_has_validator = bool(
+        payload.get("validator")
+        or payload.get("model")
+        or payload.get("judge")
+        or payload.get("agent")
+        or payload.get("generator")
+    )
     payload_validator_type = str(
         payload.get("validator_type")
+        or payload.get("generator_type")
         or ("model" if payload.get("model") else "agent" if payload.get("judge") else "")
     ).strip()
     payload_validated_at = str(
@@ -1533,12 +1620,17 @@ def load_llm_paper_coverage_audit(folder: Path) -> dict[str, Any]:
         or payload.get("generated_at")
         or ""
     ).strip()
+    payload_has_validated_at = bool(payload_validated_at)
     payload_audit_kind = str(
         payload.get("audit_kind")
         or payload.get("coverage_audit_kind")
         or payload.get("kind")
         or ""
     ).strip()
+    payload_prompt_version = str(payload.get("prompt_version") or "").strip()
+    payload_prompt_version_stale = (
+        payload_prompt_version != REQUIRED_LLM_PAPER_COVERAGE_PROMPT_VERSION
+    )
     payload_source_grounded = bool(payload.get("source_grounded") is True)
     payload_seed_scaffold = bool(payload.get("seed_scaffold") is True) or (
         payload_audit_kind in PAPER_COVERAGE_SCAFFOLD_KINDS
@@ -1587,10 +1679,28 @@ def load_llm_paper_coverage_audit(folder: Path) -> dict[str, Any]:
                     or raw_value.get("model")
                     or raw_value.get("judge")
                     or raw_value.get("agent")
+                    or raw_value.get("generator")
                     or payload_validator
                 ).strip(),
+                "metadata_missing": not bool(
+                    (
+                        raw_value.get("validator")
+                        or raw_value.get("model")
+                        or raw_value.get("judge")
+                        or raw_value.get("agent")
+                        or raw_value.get("generator")
+                        or payload_has_validator
+                    )
+                    and (
+                        raw_value.get("validated_at")
+                        or raw_value.get("timestamp")
+                        or raw_value.get("generated_at")
+                        or payload_has_validated_at
+                    )
+                ),
                 "validator_type": str(
                     raw_value.get("validator_type")
+                    or raw_value.get("generator_type")
                     or (
                         "model"
                         if raw_value.get("model")
@@ -1607,6 +1717,8 @@ def load_llm_paper_coverage_audit(folder: Path) -> dict[str, Any]:
                     or payload_validated_at
                 ).strip(),
                 "audit_kind": str(raw_value.get("audit_kind") or payload_audit_kind).strip(),
+                "prompt_version": payload_prompt_version,
+                "prompt_version_stale": payload_prompt_version_stale,
                 "source_grounded": bool(
                     raw_value.get("source_grounded") is True or payload_source_grounded
                 ),
@@ -1624,7 +1736,10 @@ def load_llm_paper_coverage_audit(folder: Path) -> dict[str, Any]:
                 "validator": payload_validator,
                 "validator_type": payload_validator_type,
                 "validated_at": payload_validated_at,
+                "metadata_missing": not bool(payload_has_validator and payload_has_validated_at),
                 "audit_kind": payload_audit_kind,
+                "prompt_version": payload_prompt_version,
+                "prompt_version_stale": payload_prompt_version_stale,
                 "source_grounded": payload_source_grounded,
                 "seed_scaffold": payload_seed_scaffold,
             }
@@ -1633,7 +1748,10 @@ def load_llm_paper_coverage_audit(folder: Path) -> dict[str, Any]:
         "validator": payload_validator,
         "validator_type": payload_validator_type,
         "validated_at": payload_validated_at,
+        "metadata_missing": not bool(payload_has_validator and payload_has_validated_at),
         "audit_kind": payload_audit_kind,
+        "prompt_version": payload_prompt_version,
+        "prompt_version_stale": payload_prompt_version_stale,
         "source_grounded": payload_source_grounded,
         "seed_scaffold": payload_seed_scaffold,
         "comment": str(payload.get("comment") or payload.get("notes") or "").strip(),
@@ -1710,12 +1828,33 @@ def load_llm_review_surface_audit(folder: Path) -> dict[str, Any]:
         or payload.get("status")
         or payload.get("paper_facing")
     )
+    payload_prompt_version = str(payload.get("prompt_version") or "").strip()
+    payload_validator = str(
+        payload.get("validator")
+        or payload.get("model")
+        or payload.get("judge")
+        or payload.get("agent")
+        or payload.get("generator")
+        or ""
+    ).strip()
+    payload_validated_at = str(
+        payload.get("validated_at")
+        or payload.get("timestamp")
+        or payload.get("generated_at")
+        or ""
+    ).strip()
     return {
         "judgment": _normalize_surface_audit_judgment(raw_judgment),
         "reason": str(payload.get("reason") or payload.get("notes") or "").strip(),
         "source": path.name,
+        "validator": payload_validator,
+        "validated_at": payload_validated_at,
+        "metadata_missing": not bool(payload_validator and payload_validated_at),
         "review_rows": payload.get("review_rows"),
         "review_surface_sha256": str(payload.get("review_surface_sha256") or "").strip(),
+        "prompt_version": payload_prompt_version,
+        "prompt_version_stale": payload_prompt_version
+        != REQUIRED_LLM_REVIEW_SURFACE_PROMPT_VERSION,
     }
 
 
@@ -1760,6 +1899,15 @@ def _normalize_assumption_judgment(raw: Any) -> str:
         "paper statement condition",
     }:
         return "paper_condition"
+    if value in {
+        "documented_additional_assumption",
+        "documented additional assumption",
+        "additional_assumption",
+        "additional assumption",
+        "human_approved_additional_assumption",
+        "human approved additional assumption",
+    }:
+        return "documented_additional_assumption"
     if value in {
         "documented_caveat",
         "documented caveat",
@@ -1881,10 +2029,19 @@ def load_llm_assumption_judgments(folder: Path) -> dict[str, dict[str, Any]]:
         or payload.get("model")
         or payload.get("judge")
         or payload.get("agent")
+        or payload.get("generator")
         or source
     ).strip()
+    payload_has_validator = bool(
+        payload.get("validator")
+        or payload.get("model")
+        or payload.get("judge")
+        or payload.get("agent")
+        or payload.get("generator")
+    )
     payload_validator_type = str(
         payload.get("validator_type")
+        or payload.get("generator_type")
         or ("model" if payload.get("model") else "agent" if payload.get("judge") else "")
     ).strip()
     payload_validated_at = str(
@@ -1893,6 +2050,7 @@ def load_llm_assumption_judgments(folder: Path) -> dict[str, dict[str, Any]]:
         or payload.get("generated_at")
         or ""
     ).strip()
+    payload_has_validated_at = bool(payload_validated_at)
     payload_comment = str(
         payload.get("comment")
         or payload.get("notes")
@@ -1900,6 +2058,8 @@ def load_llm_assumption_judgments(folder: Path) -> dict[str, dict[str, Any]]:
         or payload.get("explanation")
         or ""
     ).strip()
+    payload_prompt_version = str(payload.get("prompt_version") or "").strip()
+    payload_prompt_version_stale = payload_prompt_version != REQUIRED_LLM_ASSUMPTION_PROMPT_VERSION
     out: dict[str, dict[str, str]] = {}
     for raw_name, raw_value in items.items():
         name = str(raw_name).strip()
@@ -1923,10 +2083,20 @@ def load_llm_assumption_judgments(folder: Path) -> dict[str, dict[str, Any]]:
                 or raw_value.get("model")
                 or raw_value.get("judge")
                 or raw_value.get("agent")
+                or raw_value.get("generator")
                 or payload_validator
             ).strip()
+            has_validator = bool(
+                raw_value.get("validator")
+                or raw_value.get("model")
+                or raw_value.get("judge")
+                or raw_value.get("agent")
+                or raw_value.get("generator")
+                or payload_has_validator
+            )
             validator_type = str(
                 raw_value.get("validator_type")
+                or raw_value.get("generator_type")
                 or ("model" if raw_value.get("model") else "agent" if raw_value.get("judge") else "")
                 or payload_validator_type
             ).strip()
@@ -1936,6 +2106,12 @@ def load_llm_assumption_judgments(folder: Path) -> dict[str, dict[str, Any]]:
                 or raw_value.get("generated_at")
                 or payload_validated_at
             ).strip()
+            has_validated_at = bool(
+                raw_value.get("validated_at")
+                or raw_value.get("timestamp")
+                or raw_value.get("generated_at")
+                or payload_has_validated_at
+            )
             comment = str(
                 raw_value.get("comment")
                 or raw_value.get("notes")
@@ -1952,6 +2128,9 @@ def load_llm_assumption_judgments(folder: Path) -> dict[str, dict[str, Any]]:
                 "validator_type": validator_type,
                 "validated_at": validated_at,
                 "comment": comment,
+                "prompt_version": payload_prompt_version,
+                "prompt_version_stale": payload_prompt_version_stale,
+                "metadata_missing": not bool(has_validator and has_validated_at),
                 "lean_statement_sha256": str(raw_value.get("lean_statement_sha256") or "").strip(),
                 "paper_statement_sha256": str(raw_value.get("paper_statement_sha256") or "").strip(),
                 "premise_judgments": _assumption_premise_judgments(raw_value),
@@ -1967,6 +2146,9 @@ def load_llm_assumption_judgments(folder: Path) -> dict[str, dict[str, Any]]:
                     "validator_type": payload_validator_type,
                     "validated_at": payload_validated_at,
                     "comment": payload_comment,
+                    "prompt_version": payload_prompt_version,
+                    "prompt_version_stale": payload_prompt_version_stale,
+                    "metadata_missing": not bool(payload_has_validator and payload_has_validated_at),
                     "premise_judgments": {},
                 }
     return out
@@ -2753,16 +2935,17 @@ def parse_interface_items(
             recorded_paper = judgment.get("paper_statement_sha256", "")
             recorded_tex = judgment.get("tex_statement_sha256", "")
             llm_match_stale = (
+                not recorded_lean
+                or not recorded_paper
+                or not recorded_tex
+                or
                 (
-                    bool(recorded_lean)
-                    and recorded_lean
-                    not in lean_statement_digest_candidates(lean_statement, raw_sig)
+                    recorded_lean not in lean_statement_digest_candidates(lean_statement, raw_sig)
                 )
-                or (
-                    bool(recorded_paper)
-                    and recorded_paper != statement_digest(displayed_paper_statement)
-                )
-                or (bool(recorded_tex) and recorded_tex != statement_digest(agent_statement))
+                or (recorded_paper != statement_digest(displayed_paper_statement))
+                or (recorded_tex != statement_digest(agent_statement))
+                or bool(judgment.get("prompt_version_stale"))
+                or bool(judgment.get("metadata_missing"))
             )
         is_assumption = name in assumption_names or full_name in assumption_names or is_assumption_item_name(name)
         assumption_judgment = (
@@ -2775,15 +2958,15 @@ def parse_interface_items(
             recorded_lean = assumption_judgment.get("lean_statement_sha256", "")
             recorded_paper = assumption_judgment.get("paper_statement_sha256", "")
             llm_assumption_stale = (
+                not recorded_lean
+                or not recorded_paper
+                or
                 (
-                    bool(recorded_lean)
-                    and recorded_lean
-                    not in lean_statement_digest_candidates(lean_statement, raw_sig)
+                    recorded_lean not in lean_statement_digest_candidates(lean_statement, raw_sig)
                 )
-                or (
-                    bool(recorded_paper)
-                    and recorded_paper != statement_digest(displayed_paper_statement)
-                )
+                or (recorded_paper != statement_digest(displayed_paper_statement))
+                or bool(assumption_judgment.get("prompt_version_stale"))
+                or bool(assumption_judgment.get("metadata_missing"))
             )
         out.append(
             ReviewItem(
@@ -2988,6 +3171,15 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         llm_match_validator = str(raw_row.get("llm_match_validator") or "").strip()
         llm_match_validator_type = str(raw_row.get("llm_match_validator_type") or "").strip()
         llm_match_validated_at = str(raw_row.get("llm_match_validated_at") or "").strip()
+        llm_match_lean_statement_sha256 = str(
+            raw_row.get("llm_match_lean_statement_sha256") or ""
+        ).strip()
+        llm_match_paper_statement_sha256 = str(
+            raw_row.get("llm_match_paper_statement_sha256") or ""
+        ).strip()
+        llm_match_tex_statement_sha256 = str(
+            raw_row.get("llm_match_tex_statement_sha256") or ""
+        ).strip()
         llm_match_resolution = _normalize_llm_match_resolution(
             raw_row.get("llm_match_resolution")
         )
@@ -3009,6 +3201,12 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         llm_assumption_validator = str(raw_row.get("llm_assumption_validator") or "").strip()
         llm_assumption_validator_type = str(raw_row.get("llm_assumption_validator_type") or "").strip()
         llm_assumption_validated_at = str(raw_row.get("llm_assumption_validated_at") or "").strip()
+        llm_assumption_lean_statement_sha256 = str(
+            raw_row.get("llm_assumption_lean_statement_sha256") or ""
+        ).strip()
+        llm_assumption_paper_statement_sha256 = str(
+            raw_row.get("llm_assumption_paper_statement_sha256") or ""
+        ).strip()
         raw_premise_judgments = raw_row.get("llm_assumption_premise_judgments")
         llm_assumption_premise_judgments = (
             raw_premise_judgments if isinstance(raw_premise_judgments, dict) else {}
@@ -3036,6 +3234,9 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
                 llm_match_validator=llm_match_validator,
                 llm_match_validator_type=llm_match_validator_type,
                 llm_match_validated_at=llm_match_validated_at,
+                llm_match_lean_statement_sha256=llm_match_lean_statement_sha256,
+                llm_match_paper_statement_sha256=llm_match_paper_statement_sha256,
+                llm_match_tex_statement_sha256=llm_match_tex_statement_sha256,
                 llm_match_resolution=llm_match_resolution,
                 llm_match_boundary_type=llm_match_boundary_type,
                 llm_match_boundary_names=llm_match_boundary_names,
@@ -3049,6 +3250,8 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
                 llm_assumption_validator=llm_assumption_validator,
                 llm_assumption_validator_type=llm_assumption_validator_type,
                 llm_assumption_validated_at=llm_assumption_validated_at,
+                llm_assumption_lean_statement_sha256=llm_assumption_lean_statement_sha256,
+                llm_assumption_paper_statement_sha256=llm_assumption_paper_statement_sha256,
                 llm_assumption_premise_judgments=llm_assumption_premise_judgments,
                 paper_statement_image_url=paper_statement_image_url,
                 line_number=line_number,
@@ -3131,10 +3334,7 @@ def review_surface_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
     recorded_hash = str(audit.get("review_surface_sha256") or "").strip()
     judgment = str(audit.get("judgment") or "").strip()
     has_completed_audit = bool(
-        judgment
-        or audit.get("reason")
-        or recorded_hash
-        or (isinstance(recorded_rows, int) and recorded_rows > 0)
+        judgment or audit.get("reason") or recorded_hash or (isinstance(recorded_rows, int) and recorded_rows > 0)
     )
     stale = False
     if audit and has_completed_audit:
@@ -3142,12 +3342,17 @@ def review_surface_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
             stale = True
         if recorded_hash and recorded_hash != surface_hash:
             stale = True
+        if audit.get("prompt_version_stale"):
+            stale = True
+        if audit.get("metadata_missing"):
+            stale = True
     audit_required = row_count > REVIEW_SURFACE_LLM_AUDIT_THRESHOLD
     missing_required = audit_required and not has_completed_audit
     needs_curation = judgment == "needs_curation"
     uncertain = judgment == "uncertain"
+    unknown = bool(has_completed_audit and judgment not in {"passes", "needs_curation", "uncertain"})
     oversize = row_count >= REVIEW_SURFACE_WARN_THRESHOLD
-    needs_attention = missing_required or stale or needs_curation or uncertain
+    needs_attention = missing_required or stale or needs_curation or uncertain or unknown
     return {
         "row_count": row_count,
         "llm_threshold": REVIEW_SURFACE_LLM_AUDIT_THRESHOLD,
@@ -3157,19 +3362,23 @@ def review_surface_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
         "missing_required": missing_required,
         "stale": stale,
         "judgment": judgment,
+        "unknown_judgment": unknown,
         "reason": str(audit.get("reason") or "").strip(),
         "source": str(audit.get("source") or "").strip() if has_completed_audit else "",
         "has_completed_audit": has_completed_audit,
         "review_surface_sha256": surface_hash,
         "recorded_review_surface_sha256": recorded_hash,
         "recorded_review_rows": recorded_rows if isinstance(recorded_rows, int) else None,
+        "prompt_version": str(audit.get("prompt_version") or "").strip(),
+        "prompt_version_stale": bool(audit.get("prompt_version_stale")),
+        "metadata_missing": bool(audit.get("metadata_missing")),
         "needs_attention": needs_attention,
         "has_warning": needs_attention or oversize,
     }
 
 
 def statement_translation_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[str, Any]:
-    """Summarize context-free Lean-to-TeX and third-LLM statement-match coverage."""
+    """Summarize context-free Lean-to-TeX and semantic statement-match coverage."""
 
     statement_items = [
         item
@@ -3195,8 +3404,15 @@ def statement_translation_audit_summary(folder: Path, items: list[ReviewItem]) -
             missing_draft.append(item.name)
         else:
             recorded_lean = str(draft.get("lean_statement_sha256") or "").strip()
-            if recorded_lean and recorded_lean not in lean_statement_digest_candidates(
-                item.lean_statement, item.interface_source
+            if (
+                (
+                    recorded_lean
+                    and recorded_lean
+                    not in lean_statement_digest_candidates(item.lean_statement, item.interface_source)
+                )
+                or not recorded_lean
+                or bool(draft.get("prompt_version_stale"))
+                or bool(draft.get("metadata_missing"))
             ):
                 stale_draft.append(item.name)
 
@@ -3281,8 +3497,10 @@ def paper_coverage_audit_required(folder: Path, inventory: dict[str, dict[str, A
             status_payload = {}
         if isinstance(status_payload, dict):
             status_value = str(status_payload.get("status") or "").strip().lower()
-    public_facing_status = status_value.startswith("formalized") or status_value.startswith(
-        "partially formalized"
+    public_facing_status = (
+        status_value.startswith("formalized")
+        or status_value.startswith("partially formalized")
+        or status_value.startswith("conditional")
     )
     if public_facing_status:
         return True
@@ -3294,6 +3512,25 @@ def paper_coverage_audit_required(folder: Path, inventory: dict[str, dict[str, A
 SOURCE_NAMED_CLAIM_RE = re.compile(
     r"^\s*(theorem|lemma|proposition|corollary)\b", re.IGNORECASE
 )
+SOURCE_REVIEW_TARGET_RE = re.compile(
+    r"\b(definition|example|remark|proposition|theorem|corollary|lemma)\b",
+    re.IGNORECASE,
+)
+SOURCE_APPENDIX_RE = re.compile(r"\bappendix\b", re.IGNORECASE)
+SOURCE_NON_TARGET_REASONS = (
+    "not a separate",
+    "not an independent",
+    "not a standalone",
+    "proof-only",
+    "proof step",
+    "proof detail",
+    "section heading",
+    "background",
+    "bibliographic",
+    "notation-only",
+    "purely notational",
+    "duplicate restatement",
+)
 
 
 def _source_inventory_item_is_named_claim(key: str, item: dict[str, Any]) -> bool:
@@ -3302,6 +3539,45 @@ def _source_inventory_item_is_named_claim(key: str, item: dict[str, Any]) -> boo
     statement = str(item.get("statement") or "").strip()
     key_text = str(key or "").strip()
     return bool(SOURCE_NAMED_CLAIM_RE.search(statement) or SOURCE_NAMED_CLAIM_RE.match(key_text))
+
+
+def _source_inventory_search_text(key: str, item: dict[str, Any]) -> str:
+    """Return source-inventory text used for policy classification."""
+
+    fields = [
+        key,
+        item.get("title"),
+        item.get("statement"),
+        item.get("source_location"),
+        item.get("source_status"),
+        item.get("source_note"),
+    ]
+    return " ".join(str(field or "") for field in fields)
+
+
+def _source_inventory_item_requires_review_row(key: str, item: dict[str, Any]) -> bool:
+    """Return whether source-visible material must be represented by dashboard row(s).
+
+    The paper-coverage inventory is source first: a compact dashboard is useful,
+    but it must not hide named source material from row-local LLM-as-judge review.
+    Main-text definitions, examples, remarks, propositions, theorems, corollaries,
+    and lemmas are required review targets. Appendix theorems/corollaries are also
+    required. Appendix lemmas remain a judgment call unless a paper marks them as
+    active targets elsewhere in the inventory.
+    """
+
+    text = _source_inventory_search_text(key, item)
+    lowered = text.lower()
+    if any(reason in lowered for reason in SOURCE_NON_TARGET_REASONS):
+        return False
+    match = SOURCE_REVIEW_TARGET_RE.search(text)
+    if not match:
+        return _source_inventory_item_is_named_claim(key, item)
+    label = match.group(1).lower()
+    in_appendix = bool(SOURCE_APPENDIX_RE.search(text))
+    if in_appendix and label == "lemma":
+        return False
+    return True
 
 
 def _coverage_link_label(source_key: str, row_name: str) -> str:
@@ -3454,6 +3730,8 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
     audit_kind = str(audit.get("audit_kind") or "").strip()
     audit_source_grounded = bool(audit.get("source_grounded") is True)
     audit_is_scaffold = bool(audit.get("seed_scaffold") is True) or audit_kind in PAPER_COVERAGE_SCAFFOLD_KINDS
+    audit_prompt_version_stale = bool(audit.get("prompt_version_stale"))
+    audit_metadata_missing = bool(audit_required and audit_items and audit.get("metadata_missing"))
     missing_source_grounded_audit = bool(
         audit_required
         and audit_items
@@ -3461,6 +3739,8 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
             audit_is_scaffold
             or audit_kind not in APPROVED_PAPER_COVERAGE_AUDIT_KINDS
             or not audit_source_grounded
+            or audit_prompt_version_stale
+            or audit_metadata_missing
         )
     )
     row_items = {item.name: item for item in items}
@@ -3482,6 +3762,7 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
     support_without_source_evidence: list[str] = []
     out_of_scope_without_reason: list[str] = []
     out_of_scope_without_source_evidence: list[str] = []
+    coverage_metadata_missing: list[str] = []
     row_statement_match_links: list[dict[str, Any]] = []
     row_statement_match_missing: list[str] = []
     row_statement_match_stale: list[str] = []
@@ -3500,9 +3781,13 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
     row_assumption_provenance_conditional: list[str] = []
     row_assumption_provenance_conditional_without_coverage_boundary: list[str] = []
     support_only_named_claims: list[str] = []
+    support_only_required_source_items: list[str] = []
+    required_out_of_scope: list[str] = []
     for key, item in audit_items.items():
         if key not in inventory:
             continue
+        if item.get("metadata_missing"):
+            coverage_metadata_missing.append(key)
         coverage = str(item.get("coverage") or "").strip()
         rows = _normalize_string_list(item.get("review_rows"))
         if coverage in {"covered", "covered_by_rows", "conditional_boundary", "covered_with_boundary"}:
@@ -3558,7 +3843,12 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
                         row_assumption_provenance_stale.append(link_label)
                     if not assumption_judgment:
                         row_assumption_provenance_missing.append(link_label)
-                    elif assumption_judgment in {"paper_assumption", "paper_condition", "documented_caveat"}:
+                    elif assumption_judgment in {
+                        "paper_assumption",
+                        "paper_condition",
+                        "documented_additional_assumption",
+                        "documented_caveat",
+                    }:
                         pass
                     elif assumption_judgment == "partial_boundary":
                         row_assumption_provenance_conditional.append(link_label)
@@ -3578,6 +3868,8 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
                 out_of_scope_without_reason.append(key)
             if not source_evidence:
                 out_of_scope_without_source_evidence.append(key)
+            if _source_inventory_item_requires_review_row(key, inventory[key]):
+                required_out_of_scope.append(key)
         elif coverage in {"covered_by_support", "support_only"}:
             support_only.append(key)
             support_declarations = _normalize_string_list(item.get("support_declarations"))
@@ -3591,6 +3883,8 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
                 support_without_source_evidence.append(key)
             if _source_inventory_item_is_named_claim(key, inventory[key]):
                 support_only_named_claims.append(key)
+            if _source_inventory_item_requires_review_row(key, inventory[key]):
+                support_only_required_source_items.append(key)
         elif coverage == "partially_covered":
             partial.append(key)
         elif coverage == "missing":
@@ -3606,6 +3900,7 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
         or (audit_required and inventory_is_scaffold)
         or missing_required
         or missing_source_grounded_audit
+        or coverage_metadata_missing
         or inventory_missing_source_url
         or inventory_missing_source_provenance
         or missing_coverage
@@ -3625,12 +3920,15 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
         or support_without_declarations
         or support_without_reason
         or support_without_source_evidence
+        or required_out_of_scope
         or out_of_scope_without_reason
         or out_of_scope_without_source_evidence
+        or extra_coverage
     )
     source_to_lean_needs_attention = bool(
         coverage_needs_attention
         or support_only_named_claims
+        or support_only_required_source_items
         or row_statement_match_missing
         or row_statement_match_stale
         or row_statement_match_mismatch
@@ -3680,6 +3978,8 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
         "support_without_reason_count": len(support_without_reason),
         "support_without_source_evidence_count": len(support_without_source_evidence),
         "support_only_named_claim_count": len(support_only_named_claims),
+        "support_only_required_source_item_count": len(support_only_required_source_items),
+        "required_out_of_scope_count": len(required_out_of_scope),
         "out_of_scope_without_reason_count": len(out_of_scope_without_reason),
         "out_of_scope_without_source_evidence_count": len(out_of_scope_without_source_evidence),
         "row_statement_match_link_count": len(row_statement_match_links),
@@ -3708,7 +4008,11 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
         "audit_kind": audit_kind,
         "audit_source_grounded": audit_source_grounded,
         "audit_is_scaffold": audit_is_scaffold,
+        "prompt_version": str(audit.get("prompt_version") or "").strip(),
+        "prompt_version_stale": audit_prompt_version_stale,
         "missing_source_grounded_audit": missing_source_grounded_audit,
+        "audit_metadata_missing": audit_metadata_missing,
+        "coverage_metadata_missing_count": len(coverage_metadata_missing),
         "missing_coverage": missing_coverage,
         "extra_coverage": extra_coverage,
         "conditional_boundary": conditional_boundary,
@@ -3730,8 +4034,11 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
         "support_without_reason": support_without_reason,
         "support_without_source_evidence": support_without_source_evidence,
         "support_only_named_claims": support_only_named_claims,
+        "support_only_required_source_items": support_only_required_source_items,
+        "required_out_of_scope": required_out_of_scope,
         "out_of_scope_without_reason": out_of_scope_without_reason,
         "out_of_scope_without_source_evidence": out_of_scope_without_source_evidence,
+        "coverage_metadata_missing": coverage_metadata_missing,
         "row_statement_match_links": row_statement_match_links,
         "row_statement_match_missing": row_statement_match_missing,
         "row_statement_match_stale": row_statement_match_stale,
@@ -3809,6 +4116,7 @@ def assumption_provenance_audit_summary(folder: Path, items: list[ReviewItem]) -
     premise_judgment_count = 0
     paper_assumptions = 0
     paper_conditions = 0
+    documented_additional_assumptions = 0
     documented_caveats = 0
     partial_boundaries = 0
 
@@ -3823,6 +4131,8 @@ def assumption_provenance_audit_summary(folder: Path, items: list[ReviewItem]) -
             paper_assumptions += 1
         elif judgment == "paper_condition":
             paper_conditions += 1
+        elif judgment == "documented_additional_assumption":
+            documented_additional_assumptions += 1
         elif judgment == "documented_caveat":
             documented_caveats += 1
         elif judgment == "partial_boundary":
@@ -3874,6 +4184,7 @@ def assumption_provenance_audit_summary(folder: Path, items: list[ReviewItem]) -
         "configured_count": len(configured_names),
         "paper_assumption_count": paper_assumptions,
         "paper_condition_count": paper_conditions,
+        "documented_additional_assumption_count": documented_additional_assumptions,
         "documented_caveat_count": documented_caveats,
         "partial_boundary_count": partial_boundaries,
         "missing_rows_count": len(missing_rows),
@@ -5462,7 +5773,7 @@ HTML_PAGE = """
       if (!bits.length) {
         bits.push(item.llm_match_judgment
           ? "No reason recorded."
-          : "Run the third-LLM paper-vs-TeX statement check and save statement_match_llm.json.");
+          : "Run the independent semantic paper-vs-TeX statement check and save statement_match_llm.json.");
       }
       if (item.llm_match_source) {
         bits.push(`Source: ${item.llm_match_source}`);
@@ -5482,6 +5793,9 @@ HTML_PAGE = """
       }
       if (value === "paper_condition") {
         return "Condition: in paper";
+      }
+      if (value === "documented_additional_assumption") {
+        return "Additional assumption";
       }
       if (value === "documented_caveat") {
         return "Documented caveat";
@@ -5503,7 +5817,12 @@ HTML_PAGE = """
       if (item.llm_assumption_stale) {
         return "warn";
       }
-      if (value === "paper_assumption" || value === "paper_condition" || value === "documented_caveat") {
+      if (
+        value === "paper_assumption" ||
+        value === "paper_condition" ||
+        value === "documented_additional_assumption" ||
+        value === "documented_caveat"
+      ) {
         return "ok";
       }
       if (value === "partial_boundary") {
@@ -6850,10 +7169,21 @@ def print_surface_audit_warnings(rows: list[dict[str, Any]], label: str) -> bool
             )
         if row.get("stale"):
             reasons.append("the saved review_surface_llm.json audit is stale")
+        if row.get("prompt_version_stale"):
+            reasons.append(
+                "the saved review_surface_llm.json prompt version is stale "
+                f"({row.get('prompt_version') or 'missing'})"
+            )
+        if row.get("metadata_missing"):
+            reasons.append("review_surface_llm.json is missing validator or validated_at success metadata")
         if row.get("judgment") == "needs_curation":
             reasons.append("the LLM audit says the surface needs curation")
         if row.get("judgment") == "uncertain":
             reasons.append("the LLM audit is uncertain")
+        if row.get("unknown_judgment"):
+            reasons.append(
+                f"the LLM audit judgment `{row.get('judgment') or 'missing'}` is not recognized"
+            )
         if not reasons:
             reasons.append("the review surface needs attention")
         print(f" - {paper}: {'; '.join(reasons)}.")
@@ -6935,11 +7265,16 @@ def print_statement_audit_warnings(rows: list[dict[str, Any]], label: str) -> bo
     print(
         "At statement-review boundaries, regenerate lean_to_tex_llm.json from the "
         "Lean statements alone, preserving every visible binder, hypothesis, "
-        "domain condition, equivalence/implication direction, and conclusion. "
+        "domain condition, named predicate/wrapper application, "
+        "equivalence/implication direction, conclusion, and input premise. "
         "Then regenerate statement_match_llm.json from the complete original "
         "paper theorem/definition/formula text and that translation. The judge "
-        "should mark mismatch or uncertain for omitted subparts, extra non-source "
-        "conditions, broad aggregate rows, source-row/certificate packages, or "
+        "should scrutinize every input semantically against the paper source "
+        "model, expanding named predicates/wrappers when needed. It must not "
+        "approve by theorem label, phrase overlap, or source-looking Lean name. "
+        "Mark mismatch or uncertain for omitted subparts, extra non-source "
+        "conditions, hidden strengthening inside named predicates, broad "
+        "aggregate rows, source-row/certificate/replay/process/bridge packages, or "
         "weakened/strengthened statements. If all rows are uncertain, treat that "
         "as a likely source extraction problem and fix the source map before "
         "accepting row-level judgments. A clean statement audit is still row-local; "
@@ -7022,6 +7357,17 @@ def print_paper_coverage_audit_warnings(
             reasons.append(
                 "paper_coverage_llm.json is not a source-grounded source-to-dashboard LLM audit"
             )
+        if row.get("prompt_version_stale"):
+            reasons.append(
+                "the saved paper_coverage_llm.json prompt version is stale "
+                f"({row.get('prompt_version') or 'missing'})"
+            )
+        if row.get("audit_metadata_missing"):
+            reasons.append("paper_coverage_llm.json is missing validator or validated_at success metadata")
+        if row.get("coverage_metadata_missing_count"):
+            reasons.append(
+                f"{row['coverage_metadata_missing_count']} coverage item(s) lack validator/timestamp metadata"
+            )
         if row.get("inventory_missing_source_url_count"):
             reasons.append(
                 f"{row['inventory_missing_source_url_count']} source-inventory statement(s) lack source URL"
@@ -7072,9 +7418,17 @@ def print_paper_coverage_audit_warnings(
             reasons.append(
                 f"{row['support_without_source_evidence_count']} support-covered source statement(s) lack source evidence"
             )
+        if row.get("required_out_of_scope_count"):
+            reasons.append(
+                f"{row['required_out_of_scope_count']} required source-visible review target(s) are marked out of scope/not paper targets"
+            )
         if source_to_lean and row.get("support_only_named_claim_count"):
             reasons.append(
                 f"{row['support_only_named_claim_count']} theorem-like source statement(s) are only support-covered, without review-row statement-match audit"
+            )
+        if source_to_lean and row.get("support_only_required_source_item_count"):
+            reasons.append(
+                f"{row['support_only_required_source_item_count']} required source-visible review target(s) are only support-covered, without review-row statement-match audit"
             )
         if source_to_lean and row.get("row_statement_match_missing_count"):
             reasons.append(
@@ -7160,9 +7514,11 @@ def print_paper_coverage_audit_warnings(
             ("covered_without_reason", "covered without reason"),
             ("covered_with_seed_reason", "exact-key scaffold reason"),
             ("covered_without_source_evidence", "missing source evidence"),
+            ("coverage_metadata_missing", "missing audit metadata"),
             ("support_without_declarations", "support missing declarations"),
             ("support_without_reason", "support without reason"),
             ("support_without_source_evidence", "support missing source evidence"),
+            ("required_out_of_scope", "required source target scoped out"),
             ("out_of_scope_without_reason", "out-of-scope without reason"),
             ("out_of_scope_without_source_evidence", "out-of-scope missing source evidence"),
             ("extra_coverage", "extra stale item"),
@@ -7172,6 +7528,7 @@ def print_paper_coverage_audit_warnings(
             sample_specs.extend(
                 [
                     ("support_only_named_claims", "support-only named claim"),
+                    ("support_only_required_source_items", "support-only required source target"),
                     ("row_statement_match_missing", "missing row correctness"),
                     ("row_statement_match_stale", "stale row correctness"),
                     ("row_statement_match_mismatch", "mismatched row correctness"),
@@ -7207,7 +7564,12 @@ def print_paper_coverage_audit_warnings(
         "more dashboard rows. Save that semantic source-to-dashboard judgment in "
         "paper_coverage_llm.json with audit_kind=source_to_dashboard_llm, "
         "source_grounded=true, source evidence, linked dashboard rows, and a "
-        "nontrivial match reason. Exact-key seeding is only a scaffold. The "
+        "nontrivial match reason. Exact-key seeding is only a scaffold. Do not "
+        "mark source-visible definitions, examples, remarks, propositions, "
+        "theorems, corollaries, or main-text lemmas as out of scope merely to keep "
+        "the review surface compact; expose dashboard rows so the LLM-as-judge "
+        "can inspect them. Appendix lemmas are a judgment call, but appendix "
+        "theorems and corollaries should be covered. The "
         "stricter source-to-Lean lane also requires those linked rows to have "
         "current row-local LLM correctness judgments in statement_match_llm.json "
         "for the same current dashboard paper statement; assumption_match_llm.json "
@@ -7333,7 +7695,10 @@ def print_assumption_audit_warnings(rows: list[dict[str, Any]], label: str) -> b
         "status.json review_surface.assumption_names, and judged in "
         "assumption_match_llm.json as a true paper/source model assumption, "
         "unless it is an explicitly accepted statement-level conditional "
-        "boundary recorded in statement_match_llm.json."
+        "boundary recorded in statement_match_llm.json. The judge must inspect "
+        "premise semantics rather than names: certificate, replay, process, "
+        "bridge, source-row, or broad package premises need a constructor from "
+        "paper primitives or they remain partial/conditional."
     )
     return True
 

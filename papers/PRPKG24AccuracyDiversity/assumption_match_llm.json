@@ -1,410 +1,161 @@
 {
-  "schema": 1,
-  "paper": "PRPKG24AccuracyDiversity",
-  "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "validated_at": "2026-06-26T00:00:00Z",
-  "comment": "Premise-level source/provenance audit against the local arXiv/source-text cache. Each audit-premise from Assumptions.lean is judged individually; group-level approval is not sufficient. Proposition 4's regularity row is a validation note, not a caveat or partial boundary.",
+  "comment": "Semantic premise provenance rejudge. Certificate/replay/process premises are not accepted by name and must be paper conditions, documented caveats, partial boundaries, or derived from primitives.",
   "items": {
-    "assumption_example1_positive_calibrated_exponential_parameters": {
-      "judgment": "paper_condition",
-      "reason": "Example 1 is a two-type probability model with an exponential conditional-value distribution.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:183-190, Example 1",
-      "premise_count": 4,
-      "premise_judgments": {
-        "hp1 : 0 < p1": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:183-185: a user prefers romance/action with probabilities p1,p2 and p1 > p2",
-          "reason": "Lean records the nondegenerate probability-domain condition for the two source likelihoods."
-        },
-        "hp2 : 0 < p2": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:183-185: a user prefers romance/action with probabilities p1,p2",
-          "reason": "The model uses p2 as a positive type likelihood in the calibrated two-genre example."
-        },
-        "hlambda : 0 < lambda": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:185-186: values are drawn from Exp(lambda); Table 2 also lists lambda > 0",
-          "reason": "The positive exponential rate is exactly the source distribution domain."
-        },
-        "hp_sum : p1 + p2 = 1": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:183-185: the two genres are the mutually exclusive preference alternatives with probabilities p1,p2",
-          "reason": "Since the example has exactly the two preference types, the two probabilities sum to one."
-        }
-      }
-    },
-    "assumption_finite_discrete_top_value_domain": {
-      "judgment": "paper_condition",
-      "reason": "Theorem 1(i) and its proof use a finite discrete support with a top value and lower support values.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:345-351 and 2121-2174",
-      "premise_count": 7,
-      "premise_judgments": {
-        "hk_pos : 0 < k": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:65-69 and 321-326: k is the number of consumed/recommended top items",
-          "reason": "The top-k objective is the source consumption-constraint parameter; Lean exposes the nonempty top-k domain."
-        },
-        "hxTop_pos : 0 < xTop": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:55-62 and 2121-2124: item values are user values and x1 is the top support value",
-          "reason": "The formal endpoint records the nonnegative/nondegenerate value-domain condition used by the finite-discrete proof."
-        },
-        "hxSecond_nonneg : 0 ≤ xSecond": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:55-62 and 2121-2124",
-          "reason": "Lean records the lower-support nonnegativity implicit in the nonnegative item-value model."
-        },
-        "hsecond_le_top : xSecond ≤ xTop": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:2121: support {x1,...,xr} with x1 > ... > xr",
-          "reason": "The non-strict comparison follows from the source ordering of finite support values."
-        },
-        "hsecond_lt_top : xSecond < xTop": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:2121: support {x1,...,xr} with x1 > ... > xr",
-          "reason": "This is exactly the top-versus-lower support separation used in the proof."
-        },
-        "hvalue_le : ∀ ω, value ω ≤ xTop": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:2121-2124: x1 is the top support value of D",
-          "reason": "Every sample value is bounded above by the top support value."
-        },
-        "hvalue_split : ∀ ω, value ω = xTop ∨ value ω ≤ xSecond": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:2121-2124: finite ordered support with top x1 and next/lower values",
-          "reason": "Every finite-support draw either attains the top value or lies in the lower support."
-        }
-      }
-    },
-    "assumption_positive_type_likelihoods": {
-      "judgment": "paper_condition",
-      "reason": "The paper's finite-type model uses type preference probabilities p_t as likelihood weights and normalizes homogeneity targets by them.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:55-62 and 272-301",
-      "premise_count": 3,
-      "premise_judgments": {
-        "hlike_pos : ∀ t : ItemType T, 0 < likelihood t": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:55-62: type t is preferred with probability p_t",
-          "reason": "Lean uses a finite-function representation of the paper's active type likelihoods."
-        },
-        "hlike_pos : ∀ t, 0 < likelihood t": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:55-62 and Definition 1",
-          "reason": "Positive likelihoods are the nondegenerate source domain for ratios and gamma-homogeneity normalizers."
-        },
-        "hlike_pos : ∀ t, 0 < B.likelihood t": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:55-62 and Theorem 3",
-          "reason": "The Bernoulli model uses the same active type-likelihood probabilities."
-        }
-      }
-    },
     "assumption_bounded_upper_endpoint_density_domain": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "dc5af20e33ca74f8acb68d09d56c84b7e283a87e966cc28c518b08903534a6b9",
+      "paper_statement_sha256": "502d9519719c312f43253852af5d3bde77d553dbcaa365c6bc9ed758579161c6",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "Theorem 1(ii) and Lemma 1 use a bounded upper support endpoint, nonnegative value domain, and positive tail constants.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:351-366, 701-713, and 2181-2205",
-      "premise_count": 6,
-      "premise_judgments": {
-        "h_base_bounds : ∀ᵐ y ∂baseMeasure, L ≤ y ∧ y ≤ M": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:351-366 and 701-713: D has support bounded from above by M; item values are nonnegative",
-          "reason": "Lean packages the source bounded-support domain as an almost-everywhere interval bound."
-        },
-        "h_nonneg : ∀ᵐ y ∂baseMeasure, 0 ≤ y": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:55-62: conditional item values are user values",
-          "reason": "The nonnegative value domain is part of the recommendation-value model."
-        },
-        "hM_pos : 0 < M": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:351-366 and 701-713",
-          "reason": "The nondegenerate nonnegative bounded-support endpoint is positive in the source distribution class."
-        },
-        "hbeta_pos : 0 < beta": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:351-366: for some beta,c > 0",
-          "reason": "This is an exact theorem-statement domain condition."
-        },
-        "hc_pos : 0 < c": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:351-366 and 701-713: for some beta,c > 0",
-          "reason": "This is an exact theorem/lemma tail-density condition."
-        },
-        "hwidth_pos : 0 < M - L": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "Derived from a nondegenerate bounded support interval in Theorem 1(ii)/Lemma 1",
-          "reason": "Lean exposes a positive-width interval for the bounded-support measure wrapper."
-        }
-      }
-    },
-    "assumption_exponential_order_statistic_domain": {
-      "judgment": "paper_condition",
-      "reason": "Theorem 1(iii) and Lemma D.3 use a positive-rate exponential distribution and positive top-k count.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:430-436 and 2778-2786",
-      "premise_count": 2,
-      "premise_judgments": {
-        "hlambda_pos : 0 < lambda": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:430-436 and 2778-2786: Exp(lambda) for lambda > 0",
-          "reason": "This is the exact exponential distribution domain."
-        },
-        "hk_pos : 0 < k": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:65-69 and Theorem 1",
-          "reason": "The paper's top-k objective uses a nonempty consumption count."
-        }
-      }
-    },
-    "assumption_pareto_finite_mean_domain": {
-      "judgment": "paper_condition",
-      "reason": "Theorem 1(iv) and Lemma D.4 use Pareto alpha > 1 and positive top-k count.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:434-436 and 2844-2854",
-      "premise_count": 2,
-      "premise_judgments": {
-        "halpha : 1 < alpha": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:434-436: Pareto(alpha) for alpha > 1",
-          "reason": "This is the exact finite-mean Pareto domain printed in Theorem 1(iv)."
-        },
-        "hk : 0 < k": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:65-69 and Theorem 1",
-          "reason": "The top-k objective is nonempty in the source model."
-        }
-      }
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_common_mean_argmax_domain": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "47c9631eea20c3e1e3ec7f62995f526452df8855a0e06f615644b9f20a977490",
+      "paper_statement_sha256": "40dc409b4a3e94d63d49877b3aeb2cc67c4e8344ad8e2d53489b2bc06a8e1122",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "The all-consumed endpoint chooses a type maximizing likelihood when conditional means are common and nonnegative.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:430-440, Theorem 1(v)",
-      "premise_count": 2,
-      "premise_judgments": {
-        "hmean_nonneg : 0 ≤ mean": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:55-62 and Theorem 1's finite-mean value model",
-          "reason": "Lean exposes the nonnegative common-value domain used by the all-consumed expected-value argument."
-        },
-        "hbest : ∀ t, likelihood t ≤ likelihood best": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:436-440: t = arg max_t p_t",
-          "reason": "This is the finite-function form of the source argmax condition."
-        }
-      }
-    },
-    "assumption_unique_common_mean_argmax_domain": {
-      "judgment": "paper_condition",
-      "reason": "The converse endpoint uses the nondegenerate positive common mean and a unique likelihood maximizer.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:436-440, Theorem 1(v)",
-      "premise_count": 2,
-      "premise_judgments": {
-        "hmean_pos : 0 < mean": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:55-62 and Theorem 1's common finite-mean value model",
-          "reason": "The uniqueness/converse wrapper records the nondegenerate positive common-value case."
-        },
-        "hbest_strict : ∀ t, t ≠ best → likelihood t < likelihood best": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:436-440: t = arg max_t p_t",
-          "reason": "Lean's strict form is the unique-argmax case of the paper's argmax notation."
-        }
-      }
-    },
-    "assumption_nonnegative_homogeneity_exponent": {
-      "judgment": "paper_condition",
-      "reason": "Corollary 1 quantifies over gamma >= 0.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:440-445",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hgamma_nonneg : 0 ≤ gamma": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:440-445: For any gamma >= 0",
-          "reason": "This is the exact source quantifier domain."
-        }
-      }
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_decaying_bernoulli_parameter_domain": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "2e357981a6e409349ffdf09c1aff844f4684626f2d741f358735ace6de7f6d9b",
+      "paper_statement_sha256": "d8cf931306638995ba7a8f4c129a4733b25fedd481336d097761d0d5fb5e7805",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "Theorem 2 uses decaying Bernoulli success probabilities, with source alpha regimes and nondegenerate Bernoulli probability domains.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:537-557 and Appendix D.3",
-      "premise_count": 11,
-      "premise_judgments": {
-        "halpha_nonneg : 0 ≤ alpha": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:537-543: alpha,c,d >= 0",
-          "reason": "This is an exact source-domain condition."
-        },
-        "halpha_lt_one : alpha < 1": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:543-552: case alpha < 1",
-          "reason": "This is the explicit Theorem 2(i) regime."
-        },
-        "halpha_gt_one : 1 < alpha": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:551-553: case alpha > 1",
-          "reason": "This is the explicit Theorem 2(iii) regime."
-        },
-        "halpha : 0 < alpha": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:553-557: Theorem 2(iv) handles alpha >= 0 with alpha=0 separately",
-          "reason": "Lean's positive-alpha branch is the nonzero subcase of the source all-consumed statement; the alpha=0 endpoint is exposed separately."
-        },
-        "hc : 0 < c": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:537-543: q_i = c(i+d)^(-alpha) are Bernoulli success probabilities",
-          "reason": "Lean records the nondegenerate positive-quality case needed for the paper's homogeneity targets; the source theorem prints c >= 0 but uses a nontrivial success-probability model."
-        },
-        "hc_pos : 0 < c": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:537-543 and Appendix D.3",
-          "reason": "Same nondegenerate decaying Bernoulli quality-domain condition as `hc`."
-        },
-        "hc_nonneg : 0 ≤ c": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:537-543: alpha,c,d >= 0",
-          "reason": "This is an exact source-domain condition."
-        },
-        "hd : 0 ≤ d": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:537-543: alpha,c,d >= 0",
-          "reason": "This is an exact source-domain condition."
-        },
-        "hd_nonneg : 0 ≤ d": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:537-543: alpha,c,d >= 0",
-          "reason": "This is an exact source-domain condition."
-        },
-        "hfirst : decayingBernoulliSuccess c d alpha 0 < 1": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:537-543: X_i are Bernoulli with success probabilities q_i",
-          "reason": "The Lean first-probability bound is the finite-function domain condition ensuring the printed q_i sequence is a valid Bernoulli success-probability sequence."
-        },
-        "hfirst : decayingBernoulliSuccess c d 1 0 < 1": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:537-543 and Theorem 2(ii)",
-          "reason": "This is the same Bernoulli probability-domain condition specialized to the alpha=1 case."
-        }
-      }
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "assumption_varying_bernoulli_probability_domain": {
+    "assumption_example1_positive_calibrated_exponential_parameters": {
       "judgment": "paper_condition",
-      "reason": "Theorem 3 and Corollary 3 use Bernoulli success probabilities in the nondegenerate probability range.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:518-523 and 605-616",
-      "premise_count": 3,
-      "premise_judgments": {
-        "hprob_pos : ∀ t, 0 < B.successProb t": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:605-616: X_i^(t) are Bernoulli(q_t) and the formula uses log(1/(1-q_t))",
-          "reason": "Lean exposes the positive nondegenerate Bernoulli probability domain required by the source formula."
-        },
-        "hprob_lt_one : ∀ t, B.successProb t < 1": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:605-616: Bernoulli(q_t) and log(1/(1-q_t))",
-          "reason": "The strict upper bound is the well-formed probability/log-domain condition for Theorem 3."
-        },
-        "hprob_eq : ∀ i j : ItemType T, B.successProb i = B.successProb j": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:518-523: Corollary 3 assumes X_i are Ber(q) with a common q > 0",
-          "reason": "This is the finite-function form of the i.i.d. Bernoulli/common-success-probability corollary."
-        }
-      }
+      "lean_statement_sha256": "d2e6c2880b0d326a1b1e8593f2f45ca6c008b1090d51f7f70ee6e50e9982bb24",
+      "paper_statement_sha256": "e3dad672a80c39d0d6f2075cfdb1dc510c2e630bfe079d505ef93ac9c1792cce",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Example 1 is a two-type probability model with an exponential conditional-value distribution.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "assumption_uniform_top_k_positive_count_domain": {
+    "assumption_exponential_order_statistic_domain": {
       "judgment": "paper_condition",
-      "reason": "Proposition 2 is about positive top-k recommendation/consumption counts along a positive population sequence.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:459-493",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hkpos : ∀ N, 0 < N → 0 < kseq N": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:459-493: Proposition 2 quantifies over top-k counts satisfying the printed k-bound",
-          "reason": "The Lean schedule condition records the nonempty top-k domain for the paper's asymptotic wrapper."
-        }
-      }
+      "lean_statement_sha256": "fdf3fcf90daac27a8fa4dff6fdd34bd76cb6a93e6c5a413cbc94d7ae8e24785e",
+      "paper_statement_sha256": "c19b9f749e71eaa5609fececfae71ff943a02c72260443dfc044200a9cd322f0",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Theorem 1(iii) and Lemma D.3 use a positive-rate exponential distribution and positive top-k count.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_finite_discrete_top_value_domain": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "85a4ffbc89f3300d04e03d57eaf9a87f1dc804738aa69084a13a5aa4a3a74436",
+      "paper_statement_sha256": "98af650ff18460602acf2f0f52b77aaf68e649e5044bdc1e85e13245d0f77781",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Theorem 1(i) and its proof use a finite discrete support with a top value and lower support values.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "7f991fdb0d70581fe484ebe168c84e4cc4b1965b485d1f91f80b213841c85f62",
+      "paper_statement_sha256": "0d3c80371b4da3c10e53acef6e80e0f4d09a0a309e40c30d8b675268eaf028bf",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "Lemma D.2's bounded-tail route uses the reflected-CDF power-tail asymptotic, monotonicity/range facts, positive rank count, and bounded-support saturation.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:701-713 and Appendix D.2, especially equations (91)-(96)",
-      "premise_count": 8,
-      "premise_judgments": {
-        "tail : BoundedTailCDFPowerSandwich G β c": {
-          "judgment": "paper_condition",
-          "source_location": "PRPKG24AccuracyDiversity.txt:701-713 and 2181-2205: bounded upper endpoint density/tail condition with beta,c > 0",
-          "reason": "The CDF power sandwich is the Lean source-shaped form of the paper's upper-endpoint tail-density asymptotic used in Lemma D.2."
-        },
-        "k_pos : 0 < k": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:65-69 and Appendix D.2: top-k recommendation count",
-          "reason": "The top-k loss expression is stated for a nonempty finite k."
-        },
-        "hM_pos : 0 < M": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:351-366 and 701-713: bounded support endpoint M for nonnegative values",
-          "reason": "Lean records the nondegenerate positive bounded-support endpoint used by the reflected-CDF route."
-        },
-        "hG_measurable : Measurable G": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:701-713 and Appendix D.2: G is the reflected distribution/tail mass function",
-          "reason": "Measurability is the standard measurable-distribution condition needed for the integral representation."
-        },
-        "hG_mono : Monotone G": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:701-713 and Appendix D.2: G is a CDF/reflected tail mass",
-          "reason": "The reflected CDF/tail-mass function is monotone in the threshold variable."
-        },
-        "hG_nonneg : ∀ x : ℝ, 0 ≤ G x": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:701-713 and Appendix D.2: G is a probability mass/CDF quantity",
-          "reason": "Probability masses are nonnegative."
-        },
-        "hG_le_one : ∀ x : ℝ, G x ≤ 1": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:701-713 and Appendix D.2: G is a probability mass/CDF quantity",
-          "reason": "Probability masses are bounded above by one."
-        },
-        "hG_eq_one_of_support : ∀ x : ℝ, M ≤ x → G x = 1": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "PRPKG24AccuracyDiversity.txt:351-366 and 701-713: D has support bounded above by M",
-          "reason": "For the reflected CDF, thresholds beyond the support width saturate the probability mass."
-        }
-      }
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "assumption_proposition4_continuous_sphere_laplace_boundary": {
+    "assumption_nonnegative_homogeneity_exponent": {
       "judgment": "paper_condition",
-      "reason": "Proposition 4's concrete sphere endpoint is formalized. This row records the theorem-level regularity and Gamma-interpretation note used by the paper-facing wrapper, not an open proof boundary.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:1122-1184, Proposition 4",
-      "premise_count": 3,
-      "premise_judgments": {
-        "hp : Continuous q": {
-          "judgment": "paper_condition",
-          "source_location": "PRPKG24AccuracyDiversity.txt:1122-1184, Proposition 4; human validation note 2026-06-26",
-          "reason": "Continuity is the regularity needed by the formal Laplace-principle route for the radial kernel and is recorded as a validation note rather than proof debt."
-        },
-        "hp_pos : ∀ r ∈ Set.Icc (0 : ℝ) 2, 0 < q r": {
-          "judgment": "source_text",
-          "source_location": "PRPKG24AccuracyDiversity.txt:1122-1184: p(u,v): S^d x S^d -> (0,1] and p(u,v)=q(||u-v||)",
-          "reason": "The Lean interval `[0,2]` is the unit-sphere distance range; positivity follows from the source codomain `(0,1]`."
-        },
-        "hGamma : paper Γ(α) is interpreted by the Laplace-defined supremum objective": {
-          "judgment": "paper_condition",
-          "source_location": "PRPKG24AccuracyDiversity.txt:1122-1184, Proposition 4; human validation note 2026-06-26",
-          "reason": "The source presents Gamma through the large-n error-probability limit; Lean's wrapper records the Laplace-defined compact-supremum reading used for that endpoint."
-        }
-      }
+      "lean_statement_sha256": "6ab8d099fb11fdeaace180465401cf301c98a780b132f0bc4463611590a9138e",
+      "paper_statement_sha256": "23748f5a13ab3554bfdde871b9759887d6375ec3c7c33941ed5af722f18911d6",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Corollary 1 quantifies over gamma >= 0.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_pareto_finite_mean_domain": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "b512e5026f077927a554b4772908b017c5baaf53899df95ff72bfdba3ca39341",
+      "paper_statement_sha256": "f1988c4ab157fa97aefa506ff30e725c6a72a11dcc45d9b6ed4e9a4e196a3d84",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Theorem 1(iv) and Lemma D.4 use Pareto alpha > 1 and positive top-k count.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_positive_rounding_population_size": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "e7e4ba6084ad80cfa7e545ab8a28c91424da414afa1f0ae6949604ba40a2e593",
+      "paper_statement_sha256": "466a43f626181dd98ecf65f211f340ee58c1c74bf451971d41d62da4c390b01b",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "Lemma D.5 and finite rounding statements are stated for positive population size.",
-      "source_location": "PRPKG24AccuracyDiversity.txt:1262-1325 and 3819-3960",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hNpos : 0 < N": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "PRPKG24AccuracyDiversity.txt:65-69 and Lemma D.1/D.5: n/N is the number of recommendations",
-          "reason": "The finite rounding lemmas operate on a positive population/recommendation count."
-        }
-      }
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_positive_type_likelihoods": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "3a8fe183bc39dfef317266e56221f8ff4549be740e4b239bb96073111c7b734a",
+      "paper_statement_sha256": "45c566002e63e11f5e51ee4cf98e5c1a5b762f7192403678ec5cf3df758ddfa1",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "The paper's finite-type model uses type preference probabilities p_t as likelihood weights and normalizes homogeneity targets by them.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_proposition4_continuous_sphere_laplace_boundary": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "000bdcb0ed3618490e8572779ba313e07c53c6ca9a3fe4317ec1d492844d0a88",
+      "paper_statement_sha256": "e8d0df7c70ed2190c277e7b73f4d5291422372a3438154242436766d1d8cf62e",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Proposition 4's concrete sphere endpoint is formalized. This row records the theorem-level regularity and Gamma-interpretation note used by the paper-facing wrapper, not an open proof boundary.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_uniform_top_k_positive_count_domain": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "1536135c7d8ff5eee028e4a5b96d34a884791d3e51cee362a51295b71bc0b3e7",
+      "paper_statement_sha256": "1918eca62642d6c4524c425cd87505370ed7c6cdac0e9bd4828d279826df1229",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Proposition 2 is about positive top-k recommendation/consumption counts along a positive population sequence.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_unique_common_mean_argmax_domain": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "440f942f08130c59235b7a3b7270aff9b5f8235f1552927fc07cc26a854f96e7",
+      "paper_statement_sha256": "b664ecd30dcc350cd5476082cf40b64c9a3882809b186e51e6d997a78f10758e",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "The converse endpoint uses the nondegenerate positive common mean and a unique likelihood maximizer.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_varying_bernoulli_probability_domain": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "d267304b07ba99e11248ce3a7104a336de65d6dcdd99c6f67825adc943ea3581",
+      "paper_statement_sha256": "49f31c3d17946ef0bca8b8953a16c79c3ec1cab7b723abf22d56913486f0acaa",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Theorem 3 and Corollary 3 use Bernoulli success probabilities in the nondegenerate probability range.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "PRPKG24AccuracyDiversity",
+  "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+  "schema": 1,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

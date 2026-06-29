@@ -1,5 +1,7 @@
 {
-  "configured_review_row_count": 24,
+  "boundary_input_count": 0,
+  "boundary_input_items": [],
+  "configured_review_row_count": 34,
   "expected_field_judgment_keys": [
     "GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg",
     "GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds",
@@ -16,16 +18,18 @@
     "Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge",
     "Theorem4AllMeasurableFeasibleAEPolicyFormData.surge"
   ],
+  "expected_input_judgment_keys": [],
   "import_module": "GN21DriverSurgePricing.PaperInterface",
   "lean_check": {
     "command": "lake build GN21DriverSurgePricing.PaperInterface && lake env lean <generated-source-record-audit-script>",
-    "output": "GN21DriverSurgePricing.PaperInterface.review_theorem2_multiplicative_policy_shape_ae\n  (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (R : DynamicReward)\n  (forms : Theorem4AllMeasurableFeasibleAEPolicyFormData mu R)\n  (hnonsurge :\n    \u2200 (rho : Fin 2 \u2192 TripPolicy) (hrho : dynamicMeasurableOptimal R rho),\n      have D := forms.nonsurge rho hrho;\n      \u2191D.fst = Lemma5DerivativeShape.positive \u2228 \u2191D.fst = Lemma5DerivativeShape.strictlyDecreasing)\n  (hsurge :\n    \u2200 (rho : Fin 2 \u2192 TripPolicy) (hrho : dynamicMeasurableOptimal R rho),\n      have D := forms.surge rho hrho;\n      \u2191D.fst = Lemma5DerivativeShape.positive \u2228 \u2191D.fst = Lemma5DerivativeShape.strictlyIncreasing) :\n  (\u2203 rho,\n      dynamicMeasurableOptimal R rho \u2227\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) \u2227\n    \u2200 (rho : Fin 2 \u2192 TripPolicy),\n      dynamicMeasurableOptimal R rho \u2192\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)\n'GN21DriverSurgePricing.PaperInterface.review_theorem2_multiplicative_policy_shape_ae' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.PaperInterface.review_theorem3_defined_reward_source_statement\n  (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (arrival : Fin 2 \u2192 \u211d) (rho R1 R2 switch12 switch21 : \u211d)\n  (hR1_eq : R1 = rho * R2) (hR1_pos : 0 < R1) (hR1_lt_R2 : R1 < R2) (hR2_pos : 0 < R2)\n  (hC_lt_rho :\n    theorem3FeasibilityThresholdC (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))\n        (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))\n        (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)\n        (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12) switch12 <\n      rho)\n  (hrho_lt_one : rho < 1) (harrival1_pos : 0 < arrival 0) (harrival2_pos : 0 < arrival 1) (hswitch12_pos : 0 < switch12)\n  (hswitch21_pos : 0 < switch21) (htime1_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => \u03c4) acceptAllPolicy (mu 0))\n  (htime2_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => \u03c4) acceptAllPolicy (mu 1))\n  (hq1_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => gn21SwitchProb switch12 switch21 \u03c4) acceptAllPolicy (mu 0))\n  (hq2_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => gn21SwitchProb switch21 switch12 \u03c4) acceptAllPolicy (mu 1))\n  (hmass1_pos : 0 < singleStateTripMass (mu 0) acceptAllPolicy)\n  (hmass2_pos : 0 < singleStateTripMass (mu 1) acceptAllPolicy)\n  (surge_reward_rate_data :\n    \u2200 (m z : Fin 2 \u2192 \u211d),\n      0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1 \u2192\n        theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z \u2192\n          \u2200 (\u03c1 : Fin 2 \u2192 TripPolicy),\n            dynamicFeasibleMeasurablePositiveMassPolicy mu \u03c1 \u2192\n              \u2203 R1_current ratio,\n                GN21SurgeLemma9AcceptAllAggregateRewardRateData (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21\n                  (m 1) R1_current (z 1) ratio (m 0) (z 0) (\u03c1 0) (\u03c1 1)) :\n  \u2203 m z,\n    (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2227\n      dynamicDefinedMeasurableIncentiveCompatible\n          (DynamicDefinedReward.of_total mu\n            (gn21MeasuredCTMCStructuredDynamicReward mu arrival switch12 switch21 m z)) \u2227\n        (\u2200 (\u03c1 : Fin 2 \u2192 TripPolicy),\n            dynamicDefinedMeasurableOptimal\n                (DynamicDefinedReward.of_total mu\n                  (gn21MeasuredCTMCStructuredDynamicReward mu arrival switch12 switch21 m z))\n                \u03c1 \u2192\n              dynamicAcceptAllAlmostEverywhere mu \u03c1) \u2227\n          (\u2203 q,\n              \u2200 (i : Fin 2) (\u03c4 : TripLength),\n                ctmcStructuredDynamicSurgePrice m z switch12 switch21 i \u03c4 = structuredSurgePrice (m i) (z i) (q i) \u03c4) \u2227\n            theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z\n'GN21DriverSurgePricing.PaperInterface.review_theorem3_defined_reward_source_statement' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "output": "GN21DriverSurgePricing.PaperInterface.review_definition_single_state_ic (R : SingleStateReward) : Prop\n'GN21DriverSurgePricing.PaperInterface.review_definition_single_state_ic' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.PaperInterface.review_definition_dynamic_ic (R : DynamicReward) : Prop\n'GN21DriverSurgePricing.PaperInterface.review_definition_dynamic_ic' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.PaperInterface.review_definition_threshold_policy (w : PricingFunction) (c : \u211d)\n  (sigma : TripPolicy) : Prop\n'GN21DriverSurgePricing.PaperInterface.review_definition_threshold_policy' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.PaperInterface.review_definition_dynamic_defined_reward\n  (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) : Type\n'GN21DriverSurgePricing.PaperInterface.review_definition_dynamic_defined_reward' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.PaperInterface.review_theorem2_multiplicative_policy_shape_ae\n  (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (R : DynamicReward)\n  (forms : Theorem4AllMeasurableFeasibleAEPolicyFormData mu R)\n  (hnonsurge :\n    \u2200 (rho : Fin 2 \u2192 TripPolicy) (hrho : dynamicMeasurableOptimal R rho),\n      have D := forms.nonsurge rho hrho;\n      \u2191D.fst = Lemma5DerivativeShape.positive \u2228 \u2191D.fst = Lemma5DerivativeShape.strictlyDecreasing)\n  (hsurge :\n    \u2200 (rho : Fin 2 \u2192 TripPolicy) (hrho : dynamicMeasurableOptimal R rho),\n      have D := forms.surge rho hrho;\n      \u2191D.fst = Lemma5DerivativeShape.positive \u2228 \u2191D.fst = Lemma5DerivativeShape.strictlyIncreasing) :\n  (\u2203 rho,\n      dynamicMeasurableOptimal R rho \u2227\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) \u2227\n    \u2200 (rho : Fin 2 \u2192 TripPolicy),\n      dynamicMeasurableOptimal R rho \u2192\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)\n'GN21DriverSurgePricing.PaperInterface.review_theorem2_multiplicative_policy_shape_ae' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.PaperInterface.review_theorem3_defined_reward_source_statement\n  (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (arrival : Fin 2 \u2192 \u211d) (rho R1 R2 switch12 switch21 : \u211d)\n  (hR1_eq : R1 = rho * R2) (hR1_pos : 0 < R1) (hR1_lt_R2 : R1 < R2) (hR2_pos : 0 < R2)\n  (hC_lt_rho :\n    theorem3FeasibilityThresholdC (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))\n        (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))\n        (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)\n        (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12) switch12 <\n      rho)\n  (hrho_lt_one : rho < 1) (harrival1_pos : 0 < arrival 0) (harrival2_pos : 0 < arrival 1) (hswitch12_pos : 0 < switch12)\n  (hswitch21_pos : 0 < switch21) (htime1_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => \u03c4) acceptAllPolicy (mu 0))\n  (htime2_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => \u03c4) acceptAllPolicy (mu 1))\n  (hq1_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => gn21SwitchProb switch12 switch21 \u03c4) acceptAllPolicy (mu 0))\n  (hq2_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => gn21SwitchProb switch21 switch12 \u03c4) acceptAllPolicy (mu 1))\n  (hmass1_pos : 0 < singleStateTripMass (mu 0) acceptAllPolicy)\n  (hmass2_pos : 0 < singleStateTripMass (mu 1) acceptAllPolicy)\n  (surge_reward_rate_data :\n    \u2200 (m z : Fin 2 \u2192 \u211d),\n      0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1 \u2192\n        theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z \u2192\n          \u2200 (\u03c1 : Fin 2 \u2192 TripPolicy),\n            dynamicFeasibleMeasurablePositiveMassPolicy mu \u03c1 \u2192\n              \u2203 R1_current ratio,\n                GN21SurgeLemma9AcceptAllAggregateRewardRateData (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21\n                  (m 1) R1_current (z 1) ratio (m 0) (z 0) (\u03c1 0) (\u03c1 1)) :\n  \u2203 m z,\n    (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2227\n      dynamicDefinedMeasurableIncentiveCompatible\n          (DynamicDefinedReward.of_total mu\n            (gn21MeasuredCTMCStructuredDynamicReward mu arrival switch12 switch21 m z)) \u2227\n        (\u2200 (\u03c1 : Fin 2 \u2192 TripPolicy),\n            dynamicDefinedMeasurableOptimal\n                (DynamicDefinedReward.of_total mu\n                  (gn21MeasuredCTMCStructuredDynamicReward mu arrival switch12 switch21 m z))\n                \u03c1 \u2192\n              dynamicAcceptAllAlmostEverywhere mu \u03c1) \u2227\n          (\u2203 q,\n              \u2200 (i : Fin 2) (\u03c4 : TripLength),\n                ctmcStructuredDynamicSurgePrice m z switch12 switch21 i \u03c4 = structuredSurgePrice (m i) (z i) (q i) \u03c4) \u2227\n            theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z\n'GN21DriverSurgePricing.PaperInterface.review_theorem3_defined_reward_source_statement' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.assumption_affine_single_state_parameter_domain (arrivalRate m a : \u211d) : Prop\n'GN21DriverSurgePricing.assumption_affine_single_state_parameter_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.assumption_single_state_defined_reward_domain (mu \u03bc : MeasureTheory.Measure TripLength)\n  (w : PricingFunction) : Prop\n'GN21DriverSurgePricing.assumption_single_state_defined_reward_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.assumption_dynamic_time_fraction_denominators (\u03bcI \u03bcJ : MeasureTheory.Measure TripLength)\n  (\u03c3I \u03c3J : TripPolicy) (arrivalI arrivalJ switchIJ switchJI : \u211d) : Prop\n'GN21DriverSurgePricing.assumption_dynamic_time_fraction_denominators' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.assumption_switch_rate_domain (lambdaIJ lambdaJI : \u211d) : Prop\n'GN21DriverSurgePricing.assumption_switch_rate_domain' depends on axioms: [propext, Classical.choice, Quot.sound]\nGN21DriverSurgePricing.assumption_fixed_response_policy_form_conditions (mu : MeasureTheory.Measure TripLength)\n  (response : TripLength \u2192 \u211d) (sigma : TripPolicy) : Prop\n'GN21DriverSurgePricing.assumption_fixed_response_policy_form_conditions' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.assumption_upper_endpoint_derivative_domain\n  (arrivalRate switchRate lowerEndpoint u Qj Tj Ri Rj Wj : \u211d) (density switchProb payment : \u211d \u2192 \u211d) : Prop\n'GN21DriverSurgePricing.assumption_upper_endpoint_derivative_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.assumption_affine_response_shape_domains (m a Ri Rj Qi Ti Qj Tj : \u211d) : Prop\n'GN21DriverSurgePricing.assumption_affine_response_shape_domains' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.assumption_surge_derivative_source_bounds\n  (ratio u T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 switch12 m R1 z : \u211d) : Prop\n'GN21DriverSurgePricing.assumption_surge_derivative_source_bounds' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.assumption_nonsurge_derivative_source_bounds\n  (ratio u T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 switch21 R2 z : \u211d) : Prop\n'GN21DriverSurgePricing.assumption_nonsurge_derivative_source_bounds' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.assumption_theorem3_source_data_domain (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength)\n  (arrival : Fin 2 \u2192 \u211d) (rho R1 R2 switch12 switch21 : \u211d) : Prop\n'GN21DriverSurgePricing.assumption_theorem3_source_data_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
     "returncode": 0,
     "truncated": false
   },
-  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GN21DriverSurgePricing\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Classify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/source-model field that states convexity, response semantics, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"field\": \"exists_optimal\",\n    \"judgment_key\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal\",\n    \"line\": 47368,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"optimal\"\n    ],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData\",\n    \"type\": \"\\u2203 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R \\u03c1\"\n  },\n  {\n    \"field\": \"nonsurge\",\n    \"judgment_key\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge\",\n    \"line\": 47370,\n    \"nested_structures\": [\n      \"Lemma5FeasiblePolicyFormAlmostEverywhereData\"\n    ],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData\",\n    \"type\": \"\\u2200 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R \\u03c1 \\u2192 \\u03a3 shape : {shape : Lemma5DerivativeShape // theorem4NonsurgeAllowedLemma5Shape shape}, Lemma5FeasiblePolicyFormAlmostEverywhereData (\\u03bc 0) shape.1 (\\u03c1 0)\"\n  },\n  {\n    \"field\": \"policy\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy\",\n    \"line\": 16691,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"TripPolicy\"\n  },\n  {\n    \"field\": \"policy_subset\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset\",\n    \"line\": 16692,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"policy \\u2286 acceptAllPolicy\"\n  },\n  {\n    \"field\": \"policy_measurable\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable\",\n    \"line\": 16693,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"MeasurableSet policy\"\n  },\n  {\n    \"field\": \"policy_form\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form\",\n    \"line\": 16694,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"lemma5PolicyForm shape policy\"\n  },\n  {\n    \"field\": \"policy_ae\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae\",\n    \"line\": 16695,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"policyAlmostEverywhereEq \\u03bc \\u03c3 policy\"\n  },\n  {\n    \"field\": \"surge\",\n    \"judgment_key\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData.surge\",\n    \"line\": 47377,\n    \"nested_structures\": [\n      \"Lemma5FeasiblePolicyFormAlmostEverywhereData\"\n    ],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.surge\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData\",\n    \"type\": \"\\u2200 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R \\u03c1 \\u2192 \\u03a3 shape : {shape : Lemma5DerivativeShape // theorem4SurgeAllowedLemma5Shape shape}, Lemma5FeasiblePolicyFormAlmostEverywhereData (\\u03bc 1) shape.1 (\\u03c1 1)\"\n  },\n  {\n    \"field\": \"current_mass_pos\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos\",\n    \"line\": 42295,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"0 < singleStateTripMass \\u03bcJ \\u03c3J\"\n  },\n  {\n    \"field\": \"bounds\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds\",\n    \"line\": 42296,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"lemma9StructuredBounds ratio (gn21ScaledStateTime \\u03bcI arrivalI \\u03c3I) (gn21ExitWeightIntegral \\u03bcI arrivalI switch12 switch21 \\u03c3I) (gn21ScaledStateTime \\u03bcJ arrivalJ \\u03c3J) (gn21ExitWeightIntegral \\u03bcJ arrivalJ switch21 switch12 \\u03c3J) switch21\"\n  },\n  {\n    \"field\": \"z_eq\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq\",\n    \"line\": 42303,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"z = ratio * (m - R1)\"\n  },\n  {\n    \"field\": \"m_sub_R1_pos\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos\",\n    \"line\": 42304,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"0 < m - R1\"\n  },\n  {\n    \"field\": \"R1_nonneg\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg\",\n    \"line\": 42305,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"0 \\u2264 R1\"\n  },\n  {\n    \"field\": \"fixed_reward_rate\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate\",\n    \"line\": 42306,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"gn21MeasuredStateRewardRate \\u03bcI arrivalI (ctmcStructuredSurgePrice mI zI switch12 switch21) \\u03c3I = R1\"\n  }\n]",
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GN21DriverSurgePricing\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"lean_source_declaration\": \"def review_definition_single_state_ic (R : SingleStateReward) : Prop :=\\n  \\u2200 \\u03c3 : TripPolicy, \\u03c3 \\u2286 acceptAllPolicy \\u2192 MeasurableSet \\u03c3 \\u2192 R \\u03c3 \\u2264 R acceptAllPolicy\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"review_definition_single_state_ic\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"R\",\n        \"type\": \"SingleStateReward\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def review_definition_dynamic_ic (R : DynamicReward) : Prop :=\\n  (\\u2200 i : Fin 2, acceptAllDynamicPolicy i \\u2286 acceptAllPolicy \\u2227\\n      MeasurableSet (acceptAllDynamicPolicy i)) \\u2227\\n    \\u2200 \\u03c3 : Fin 2 \\u2192 TripPolicy,\\n      (\\u2200 i : Fin 2, \\u03c3 i \\u2286 acceptAllPolicy \\u2227 MeasurableSet (\\u03c3 i)) \\u2192\\n        R \\u03c3 \\u2264 R acceptAllDynamicPolicy\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"review_definition_dynamic_ic\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"R\",\n        \"type\": \"DynamicReward\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def review_definition_threshold_policy (w : PricingFunction) (c : \\u211d) (sigma : TripPolicy) :\\n    Prop :=\\n  \\u2200 \\u2983\\u03c4 : TripLength\\u2984, 0 < \\u03c4 \\u2192 (\\u03c4 \\u2208 sigma \\u2194 c \\u2264 w \\u03c4 / \\u03c4)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"review_definition_threshold_policy\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"w\",\n        \"type\": \"PricingFunction\"\n      },\n      {\n        \"names\": \"c\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"sigma\",\n        \"type\": \"TripPolicy\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def review_definition_dynamic_defined_reward (mu : Fin 2 \\u2192 MeasureTheory.Measure TripLength) :\\n    Type :=\\n  (\\u03c3 : Fin 2 \\u2192 TripPolicy) \\u2192\\n    ((\\u2200 i : Fin 2, \\u03c3 i \\u2286 acceptAllPolicy \\u2227 MeasurableSet (\\u03c3 i)) \\u2227\\n      \\u2200 i : Fin 2, 0 < singleStateTripMass (mu i) (\\u03c3 i)) \\u2192\\n      \\u211d\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"review_definition_dynamic_defined_reward\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"mu\",\n        \"type\": \"Fin 2 \\u2192 MeasureTheory.Measure TripLength\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem review_theorem2_multiplicative_policy_shape_ae\\n    (mu : Fin 2 \\u2192 MeasureTheory.Measure TripLength) (R : DynamicReward)\\n    (forms : Theorem4AllMeasurableFeasibleAEPolicyFormData mu R)\\n    (hnonsurge :\\n      \\u2200 rho : Fin 2 \\u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \\u2192\\n        let D := forms.nonsurge rho hrho\\n        D.1.1 = .positive \\u2228 D.1.1 = .strictlyDecreasing)\\n    (hsurge :\\n      \\u2200 rho : Fin 2 \\u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \\u2192\\n        let D := forms.surge rho hrho\\n        D.1.1 = .positive \\u2228 D.1.1 = .strictlyIncreasing) :\\n    (\\u2203 rho : Fin 2 \\u2192 TripPolicy,\\n      dynamicMeasurableOptimal R rho \\u2227\\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \\u2227\\n        rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) \\u2227\\n      \\u2200 rho : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R rho \\u2192\\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \\u2227\\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1) :=\\n    theorem2_multiplicative_policy_shape_ae_of_feasible_ae_policy_forms\\n      mu R forms hnonsurge hsurge\",\n    \"record_premises\": [\n      \"Theorem4AllMeasurableFeasibleAEPolicyFormData\"\n    ],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"review_theorem2_multiplicative_policy_shape_ae\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"mu\",\n        \"type\": \"Fin 2 \\u2192 MeasureTheory.Measure TripLength\"\n      },\n      {\n        \"names\": \"R\",\n        \"type\": \"DynamicReward\"\n      },\n      {\n        \"names\": \"forms\",\n        \"type\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData mu R\"\n      },\n      {\n        \"names\": \"hnonsurge\",\n        \"type\": \"\\u2200 rho : Fin 2 \\u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \\u2192 let D := forms.nonsurge rho hrho D.1.1 = .positive \\u2228 D.1.1 = .strictlyDecreasing\"\n      },\n      {\n        \"names\": \"hsurge\",\n        \"type\": \"\\u2200 rho : Fin 2 \\u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \\u2192 let D := forms.surge rho hrho D.1.1 = .positive \\u2228 D.1.1 = .strictlyIncreasing\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem review_theorem3_defined_reward_source_statement\\n    (mu : Fin 2 \\u2192 MeasureTheory.Measure TripLength) (arrival : Fin 2 \\u2192 \\u211d)\\n    (rho R1 R2 switch12 switch21 : \\u211d)\\n    (hR1_eq : R1 = rho * R2)\\n    (hR1_pos : 0 < R1)\\n    (hR1_lt_R2 : R1 < R2)\\n    (hR2_pos : 0 < R2)\\n    (hC_lt_rho :\\n      theorem3FeasibilityThresholdC\\n          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))\\n          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))\\n          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)\\n          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)\\n          switch12 < rho)\\n    (hrho_lt_one : rho < 1)\\n    (harrival1_pos : 0 < arrival 0)\\n    (harrival2_pos : 0 < arrival 1)\\n    (hswitch12_pos : 0 < switch12)\\n    (hswitch21_pos : 0 < switch21)\\n    (htime1_integrable :\\n      IntegrableOn (fun \\u03c4 : TripLength => \\u03c4) acceptAllPolicy (mu 0))\\n    (htime2_integrable :\\n      IntegrableOn (fun \\u03c4 : TripLength => \\u03c4) acceptAllPolicy (mu 1))\\n    (hq1_integrable :\\n      IntegrableOn\\n        (fun \\u03c4 : TripLength => gn21SwitchProb switch12 switch21 \\u03c4)\\n        acceptAllPolicy (mu 0))\\n    (hq2_integrable :\\n      IntegrableOn\\n        (fun \\u03c4 : TripLength => gn21SwitchProb switch21 switch12 \\u03c4)\\n        acceptAllPolicy (mu 1))\\n    (hmass1_pos : 0 < singleStateTripMass (mu 0) acceptAllPolicy)\\n    (hmass2_pos : 0 < singleStateTripMass (mu 1) acceptAllPolicy)\\n    (surge_reward_rate_data :\\n      \\u2200 m z : Fin 2 \\u2192 \\u211d,\\n        (0 \\u2264 m 0 \\u2227 0 \\u2264 m 1 \\u2227 0 \\u2264 z 1) \\u2192\\n          theorem3AcceptAllStructuredParameterEvidence\\n            mu arrival R1 R2 switch12 switch21 m z \\u2192\\n          \\u2200 \\u03c1 : Fin 2 \\u2192 TripPolicy,\\n            dynamicFeasibleMeasurablePositiveMassPolicy mu \\u03c1 \\u2192\\n              \\u2203 R1_current ratio : \\u211d,\\n                GN21SurgeLemma9AcceptAllAggregateRewardRateData\\n                  (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21\\n                  (m 1) R1_current (z 1) ratio (m 0) (z 0)\\n                  (\\u03c1 0) (\\u03c1 1)) :\\n    \\u2203 m z : Fin 2 \\u2192 \\u211d,\\n      (0 \\u2264 m 0 \\u2227 0 \\u2264 m 1 \\u2227 0 \\u2264 z 1) \\u2227\\n        dynamicDefinedMeasurableIncentiveCompatible\\n          (DynamicDefinedReward.of_total mu\\n            (gn21MeasuredCTMCStructuredDynamicReward\\n              mu arrival switch12 switch21 m z)) \\u2227\\n        (\\u2200 \\u03c1 : Fin 2 \\u2192 TripPolicy,\\n          dynamicDefinedMeasurableOptimal\\n            (DynamicDefinedReward.of_total mu\\n              (gn21MeasuredCTMCStructuredDynamicReward\\n                mu arrival switch12 switch21 m z)) \\u03c1 \\u2192\\n            dynamicAcceptAllAlmostEverywhere mu \\u03c1) \\u2227\\n        (\\u2203 q : Fin 2 \\u2192 TripLength \\u2192 \\u211d,\\n          \\u2200 i \\u03c4,\\n            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i \\u03c4 =\\n              structuredSurgePrice (m i) (z i) (q i) \\u03c4) \\u2227\\n        theorem3AcceptAllStructuredParameterEvidence\\n          mu arrival R1 R2 switch12 switch21 m z := by\\n  let A :\\n      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions\\n        mu arrival rho R1 R2 switch12 switch21 :=\\n    { hR1_eq := hR1_eq\\n      hR1_pos := hR1_pos\\n      hR1_lt_R2 := hR1_lt_R2\\n      hR2_pos := hR2_pos\\n      hC_lt_rho := hC_lt_rho\\n      hrho_lt_one := hrho_lt_one\\n      harrival1_pos := harrival1_pos\\n      harrival2_pos := harrival2_pos\\n      hswitch12_pos := hswitch12_pos\\n      hswitch21_pos := hswitch21_pos\\n      htime1_integrable := htime1_integrable\\n      htime2_integrable := htime2_integrable\\n      hq1_integrable := hq1_integrable\\n      hq2_integrable := hq2_integrable\\n      hmass1_pos := hmass1_pos\\n      hmass2_pos := hmass2_pos\\n      surge_reward_rate_data := surge_reward_rate_data }\\n  simpa [theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion] using\\n    theorem3_defined_reward_source\\n      mu arrival rho R1 R2 switch12 switch21 A\",\n    \"record_premises\": [\n      \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\"\n    ],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"review_theorem3_defined_reward_source_statement\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"mu\",\n        \"type\": \"Fin 2 \\u2192 MeasureTheory.Measure TripLength\"\n      },\n      {\n        \"names\": \"arrival\",\n        \"type\": \"Fin 2 \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"rho R1 R2 switch12 switch21\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hR1_eq\",\n        \"type\": \"R1 = rho * R2\"\n      },\n      {\n        \"names\": \"hR1_pos\",\n        \"type\": \"0 < R1\"\n      },\n      {\n        \"names\": \"hR1_lt_R2\",\n        \"type\": \"R1 < R2\"\n      },\n      {\n        \"names\": \"hR2_pos\",\n        \"type\": \"0 < R2\"\n      },\n      {\n        \"names\": \"hC_lt_rho\",\n        \"type\": \"theorem3FeasibilityThresholdC (gn21AcceptAllScaledStateTime (mu 0) (arrival 0)) (gn21AcceptAllScaledStateTime (mu 1) (arrival 1)) (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21) (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12) switch12 < rho\"\n      },\n      {\n        \"names\": \"hrho_lt_one\",\n        \"type\": \"rho < 1\"\n      },\n      {\n        \"names\": \"harrival1_pos\",\n        \"type\": \"0 < arrival 0\"\n      },\n      {\n        \"names\": \"harrival2_pos\",\n        \"type\": \"0 < arrival 1\"\n      },\n      {\n        \"names\": \"hswitch12_pos\",\n        \"type\": \"0 < switch12\"\n      },\n      {\n        \"names\": \"hswitch21_pos\",\n        \"type\": \"0 < switch21\"\n      },\n      {\n        \"names\": \"htime1_integrable\",\n        \"type\": \"IntegrableOn (fun \\u03c4 : TripLength => \\u03c4) acceptAllPolicy (mu 0)\"\n      },\n      {\n        \"names\": \"htime2_integrable\",\n        \"type\": \"IntegrableOn (fun \\u03c4 : TripLength => \\u03c4) acceptAllPolicy (mu 1)\"\n      },\n      {\n        \"names\": \"hq1_integrable\",\n        \"type\": \"IntegrableOn (fun \\u03c4 : TripLength => gn21SwitchProb switch12 switch21 \\u03c4) acceptAllPolicy (mu 0)\"\n      },\n      {\n        \"names\": \"hq2_integrable\",\n        \"type\": \"IntegrableOn (fun \\u03c4 : TripLength => gn21SwitchProb switch21 switch12 \\u03c4) acceptAllPolicy (mu 1)\"\n      },\n      {\n        \"names\": \"hmass1_pos\",\n        \"type\": \"0 < singleStateTripMass (mu 0) acceptAllPolicy\"\n      },\n      {\n        \"names\": \"hmass2_pos\",\n        \"type\": \"0 < singleStateTripMass (mu 1) acceptAllPolicy\"\n      },\n      {\n        \"names\": \"surge_reward_rate_data\",\n        \"type\": \"\\u2200 m z : Fin 2 \\u2192 \\u211d, (0 \\u2264 m 0 \\u2227 0 \\u2264 m 1 \\u2227 0 \\u2264 z 1) \\u2192 theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z \\u2192 \\u2200 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicFeasibleMeasurablePositiveMassPolicy mu \\u03c1 \\u2192 \\u2203 R1_current ratio : \\u211d, GN21SurgeLemma9AcceptAllAggregateRewardRateData (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21 (m 1) R1_current (z 1) ratio (m 0) (z 0) (\\u03c1 0) (\\u03c1 1)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_affine_single_state_parameter_domain\\n    (arrivalRate m a : \\u211d) : Prop :=\\n  0 < arrivalRate \\u2227 0 \\u2264 a \\u2227 a \\u2264 m / arrivalRate\\n\\n                                                                                     \\n-- audit-premise: hrate_nonneg : \\u2200 tau : TripLength, 0 < tau \\u2192 0 \\u2264 w tau / tau\\n-- audit-premise: hrate_nonneg : \\u2200 \\u03c4 : TripLength, 0 < \\u03c4 \\u2192 0 \\u2264 w \\u03c4 / \\u03c4\\n-- audit-premise: hfinite_acceptAll : mu acceptAllPolicy \\u2260 \\u22a4\\n-- audit-premise: hfinite_acceptAll : \\u03bc acceptAllPolicy \\u2260 \\u22a4\\n-- audit-premise: hpositive_payout_mass : 0 < mu {\\u03c4 : TripLength | \\u03c4 \\u2208 acceptAllPolicy \\u2227 0 < w \\u03c4}\\n-- audit-premise: hpositive_payout_mass : 0 < \\u03bc {\\u03c4 : TripLength | \\u03c4 \\u2208 acceptAllPolicy \\u2227 0 < w \\u03c4}\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_affine_single_state_parameter_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"arrivalRate m a\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_single_state_defined_reward_domain\\n    (mu \\u03bc : Measure TripLength) (w : PricingFunction) : Prop :=\\n  (\\u2200 tau : TripLength, 0 < tau \\u2192 0 \\u2264 w tau / tau) \\u2227\\n    (\\u2200 \\u03c4 : TripLength, 0 < \\u03c4 \\u2192 0 \\u2264 w \\u03c4 / \\u03c4) \\u2227\\n      mu acceptAllPolicy \\u2260 \\u22a4 \\u2227 \\u03bc acceptAllPolicy \\u2260 \\u22a4 \\u2227\\n        0 < mu {\\u03c4 : TripLength | \\u03c4 \\u2208 acceptAllPolicy \\u2227 0 < w \\u03c4} \\u2227\\n          0 < \\u03bc {\\u03c4 : TripLength | \\u03c4 \\u2208 acceptAllPolicy \\u2227 0 < w \\u03c4}\\n\\n                                                      \\n-- audit-premise: hi : arrivalI * singleStateTripMass \\u03bcI \\u03c3I + switchIJ \\u2260 0\\n-- audit-premise: hj : arrivalJ * singleStateTripMass \\u03bcJ \\u03c3J + switchJI \\u2260 0\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_single_state_defined_reward_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"mu \\u03bc\",\n        \"type\": \"Measure TripLength\"\n      },\n      {\n        \"names\": \"w\",\n        \"type\": \"PricingFunction\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_dynamic_time_fraction_denominators\\n    (\\u03bcI \\u03bcJ : Measure TripLength) (\\u03c3I \\u03c3J : TripPolicy)\\n    (arrivalI arrivalJ switchIJ switchJI : \\u211d) : Prop :=\\n  arrivalI * singleStateTripMass \\u03bcI \\u03c3I + switchIJ \\u2260 0 \\u2227\\n    arrivalJ * singleStateTripMass \\u03bcJ \\u03c3J + switchJI \\u2260 0\\n\\n                                                                          \\n-- audit-premise: hlambdaIJ : 0 < lambdaIJ\\n-- audit-premise: hlambdaIJ : 0 \\u2264 lambdaIJ\\n-- audit-premise: hsum : 0 < lambdaIJ + lambdaJI\\n-- audit-premise: hsum : lambdaIJ + lambdaJI \\u2260 0\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_dynamic_time_fraction_denominators\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03bcI \\u03bcJ\",\n        \"type\": \"Measure TripLength\"\n      },\n      {\n        \"names\": \"\\u03c3I \\u03c3J\",\n        \"type\": \"TripPolicy\"\n      },\n      {\n        \"names\": \"arrivalI arrivalJ switchIJ switchJI\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_switch_rate_domain (lambdaIJ lambdaJI : \\u211d) : Prop :=\\n  0 < lambdaIJ \\u2227 0 \\u2264 lambdaIJ \\u2227\\n    0 < lambdaIJ + lambdaJI \\u2227 lambdaIJ + lambdaJI \\u2260 0\\n\\n                                                                                         \\n-- audit-premise: hresponse_measurable : Measurable response\\n-- audit-premise: hoptimal : \\u2200 sigma' : TripPolicy, sigma' \\u2286 acceptAllPolicy \\u2192 MeasurableSet sigma' \\u2192 lemma5MarginalSetReward mu response sigma' \\u2264 lemma5MarginalSetReward mu response sigma\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_switch_rate_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"lambdaIJ lambdaJI\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_fixed_response_policy_form_conditions\\n    (mu : Measure TripLength) (response : TripLength \\u2192 \\u211d) (sigma : TripPolicy) : Prop :=\\n  Measurable response \\u2227\\n    \\u2200 sigma' : TripPolicy, sigma' \\u2286 acceptAllPolicy \\u2192 MeasurableSet sigma' \\u2192\\n      lemma5MarginalSetReward mu response sigma' \\u2264 lemma5MarginalSetReward mu response sigma\\n\\n                                                  \\n-- audit-premise: harrival_pos : 0 < arrivalRate\\n-- audit-premise: hu : 0 < u\\n-- audit-premise: hQj_pos : 0 < Qj\\n-- audit-premise: hTi_pos : 0 < gn21EndpointTiPath arrivalRate lowerEndpoint density u\\n-- audit-premise: hTj_pos : 0 < Tj\\n-- audit-premise: hWi : gn21EndpointWiPath arrivalRate lowerEndpoint density payment u = Ri * gn21EndpointTiPath arrivalRate lowerEndpoint density u\\n-- audit-premise: hWj : Wj = Rj * Tj\\n-- audit-premise: hden : gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density switchProb u * Tj + Qj * gn21EndpointTiPath arrivalRate lowerEndpoint density u \\u2260 0\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_fixed_response_policy_form_conditions\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"mu\",\n        \"type\": \"Measure TripLength\"\n      },\n      {\n        \"names\": \"response\",\n        \"type\": \"TripLength \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"sigma\",\n        \"type\": \"TripPolicy\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_upper_endpoint_derivative_domain\\n    (arrivalRate switchRate lowerEndpoint u Qj Tj Ri Rj Wj : \\u211d)\\n    (density switchProb payment : \\u211d \\u2192 \\u211d) : Prop :=\\n  0 < arrivalRate \\u2227\\n    0 < u \\u2227\\n      0 < Qj \\u2227\\n        0 < gn21EndpointTiPath arrivalRate lowerEndpoint density u \\u2227\\n          0 < Tj \\u2227\\n            gn21EndpointWiPath arrivalRate lowerEndpoint density payment u =\\n              Ri * gn21EndpointTiPath arrivalRate lowerEndpoint density u \\u2227\\n              Wj = Rj * Tj \\u2227\\n                gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density switchProb u * Tj +\\n                    Qj * gn21EndpointTiPath arrivalRate lowerEndpoint density u \\u2260 0\\n\\n                                                  \\n-- audit-premise: hm_pos : 0 < m\\n-- audit-premise: ha_pos : 0 < a\\n-- audit-premise: ha_neg : a < 0\\n-- audit-premise: hdelta_ji_nonpos : Rj - Ri \\u2264 0\\n-- audit-premise: hdelta_ji_nonneg : 0 \\u2264 Rj - Ri\\n-- audit-premise: hstate_weight_pos : 0 < Qi / Ti + Qj / Tj\\n-- audit-premise: hTi : Ti \\u2260 0\\n-- audit-premise: hTj : Tj \\u2260 0\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_upper_endpoint_derivative_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"arrivalRate switchRate lowerEndpoint u Qj Tj Ri Rj Wj\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"density switchProb payment\",\n        \"type\": \"\\u211d \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_affine_response_shape_domains\\n    (m a Ri Rj Qi Ti Qj Tj : \\u211d) : Prop :=\\n  0 < m \\u2227 0 < a \\u2227 a < 0 \\u2227\\n    Rj - Ri \\u2264 0 \\u2227 0 \\u2264 Rj - Ri \\u2227\\n      0 < Qi / Ti + Qj / Tj \\u2227 Ti \\u2260 0 \\u2227 Tj \\u2260 0\\n\\n                                                                      \\n-- audit-premise: hbounds_bar : lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21\\n-- audit-premise: hz : z = ratio * (m - R1)\\n-- audit-premise: hmR_pos : 0 < m - R1\\n-- audit-premise: hR1_nonneg : 0 \\u2264 R1\\n-- audit-premise: hT1_nonneg : 0 \\u2264 T1\\n-- audit-premise: hQ1_pos : 0 < Q1\\n-- audit-premise: hswitch21_pos : 0 < switch21\\n-- audit-premise: hsum : 0 < switch21 + switch12\\n-- audit-premise: hu : 0 < u\\n-- audit-premise: hgap_nonneg : 0 \\u2264 switch21 * T2 - Q2\\n-- audit-premise: hgap_le : switch21 * T2 - Q2 \\u2264 switch21 * Tbar2 - Qbar2\\n-- audit-premise: hswitch_lt_Q2 : switch21 < Q2\\n-- audit-premise: hQ2_le : Q2 \\u2264 Qbar2\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_affine_response_shape_domains\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"m a Ri Rj Qi Ti Qj Tj\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_surge_derivative_source_bounds\\n    (ratio u T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 switch12 m R1 z : \\u211d) :\\n    Prop :=\\n  lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21 \\u2227\\n    z = ratio * (m - R1) \\u2227 0 < m - R1 \\u2227 0 \\u2264 R1 \\u2227\\n      0 \\u2264 T1 \\u2227 0 < Q1 \\u2227 0 < switch21 \\u2227\\n        0 < switch21 + switch12 \\u2227 0 < u \\u2227\\n          0 \\u2264 switch21 * T2 - Q2 \\u2227\\n            switch21 * T2 - Q2 \\u2264 switch21 * Tbar2 - Qbar2 \\u2227\\n              switch21 < Q2 \\u2227 Q2 \\u2264 Qbar2\\n\\n                                                                     \\n-- audit-premise: hbounds_bar : lemma10StructuredBounds ratio T2 Q2 Tbar1 Qbar1 switch12\\n-- audit-premise: hz : z = ratio * R2\\n-- audit-premise: hR2_pos : 0 < R2\\n-- audit-premise: hQ2_pos : 0 < Q2\\n-- audit-premise: hswitch12_pos : 0 < switch12\\n-- audit-premise: hsum : 0 < switch12 + switch21\\n-- audit-premise: hu : 0 < u\\n-- audit-premise: hA_pos : 0 < T2 * switch12 + Q2\\n-- audit-premise: hgap_nonneg : 0 \\u2264 switch12 * T1 - Q1\\n-- audit-premise: hgap_le : switch12 * T1 - Q1 \\u2264 switch12 * Tbar1 - Qbar1\\n-- audit-premise: hswitch_lt_Q1 : switch12 < Q1\\n-- audit-premise: hQ1_le : Q1 \\u2264 Qbar1\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_surge_derivative_source_bounds\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"ratio u T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 switch12 m R1 z\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_nonsurge_derivative_source_bounds\\n    (ratio u T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 switch21 R2 z : \\u211d) :\\n    Prop :=\\n  lemma10StructuredBounds ratio T2 Q2 Tbar1 Qbar1 switch12 \\u2227\\n    z = ratio * R2 \\u2227 0 < R2 \\u2227 0 < Q2 \\u2227 0 < switch12 \\u2227\\n      0 < switch12 + switch21 \\u2227 0 < u \\u2227\\n        0 < T2 * switch12 + Q2 \\u2227\\n          0 \\u2264 switch12 * T1 - Q1 \\u2227\\n            switch12 * T1 - Q1 \\u2264 switch12 * Tbar1 - Qbar1 \\u2227\\n              switch12 < Q1 \\u2227 Q1 \\u2264 Qbar1\\n\\n                                                                  \\n-- audit-premise: hR1_eq : R1 = rho * R2\\n-- audit-premise: hR1_pos : 0 < R1\\n-- audit-premise: hR1_lt_R2 : R1 < R2\\n-- audit-premise: hR2_pos : 0 < R2\\n-- audit-premise: hrho_lt_one : rho < 1\\n-- audit-premise: harrival1_pos : 0 < arrival 0\\n-- audit-premise: harrival2_pos : 0 < arrival 1\\n-- audit-premise: hswitch12_pos : 0 < switch12\\n-- audit-premise: hswitch21_pos : 0 < switch21\\n-- audit-premise: hmeasure1_pos : 0 < mu 0 acceptAllPolicy\\n-- audit-premise: hmeasure2_pos : 0 < mu 1 acceptAllPolicy\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_nonsurge_derivative_source_bounds\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"ratio u T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 switch21 R2 z\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_theorem3_source_data_domain\\n    (mu : Fin 2 \\u2192 Measure TripLength) (arrival : Fin 2 \\u2192 \\u211d)\\n    (rho R1 R2 switch12 switch21 : \\u211d) : Prop :=\\n  R1 = rho * R2 \\u2227 0 < R1 \\u2227 R1 < R2 \\u2227 0 < R2 \\u2227 rho < 1 \\u2227\\n    0 < arrival 0 \\u2227 0 < arrival 1 \\u2227\\n      0 < switch12 \\u2227 0 < switch21 \\u2227\\n        0 < mu 0 acceptAllPolicy \\u2227 0 < mu 1 acceptAllPolicy\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_theorem3_source_data_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"mu\",\n        \"type\": \"Fin 2 \\u2192 Measure TripLength\"\n      },\n      {\n        \"names\": \"arrival\",\n        \"type\": \"Fin 2 \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"rho R1 R2 switch12 switch21\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"field\": \"exists_optimal\",\n    \"judgment_key\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal\",\n    \"line\": 47368,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"optimal\"\n    ],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData\",\n    \"type\": \"\\u2203 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R \\u03c1\"\n  },\n  {\n    \"field\": \"nonsurge\",\n    \"judgment_key\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge\",\n    \"line\": 47370,\n    \"nested_structures\": [\n      \"Lemma5FeasiblePolicyFormAlmostEverywhereData\"\n    ],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData\",\n    \"type\": \"\\u2200 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R \\u03c1 \\u2192 \\u03a3 shape : {shape : Lemma5DerivativeShape // theorem4NonsurgeAllowedLemma5Shape shape}, Lemma5FeasiblePolicyFormAlmostEverywhereData (\\u03bc 0) shape.1 (\\u03c1 0)\"\n  },\n  {\n    \"field\": \"policy\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy\",\n    \"line\": 16691,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"TripPolicy\"\n  },\n  {\n    \"field\": \"policy_subset\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset\",\n    \"line\": 16692,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"policy \\u2286 acceptAllPolicy\"\n  },\n  {\n    \"field\": \"policy_measurable\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable\",\n    \"line\": 16693,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"MeasurableSet policy\"\n  },\n  {\n    \"field\": \"policy_form\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form\",\n    \"line\": 16694,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"lemma5PolicyForm shape policy\"\n  },\n  {\n    \"field\": \"policy_ae\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae\",\n    \"line\": 16695,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"policyAlmostEverywhereEq \\u03bc \\u03c3 policy\"\n  },\n  {\n    \"field\": \"surge\",\n    \"judgment_key\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData.surge\",\n    \"line\": 47377,\n    \"nested_structures\": [\n      \"Lemma5FeasiblePolicyFormAlmostEverywhereData\"\n    ],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.surge\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData\",\n    \"type\": \"\\u2200 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R \\u03c1 \\u2192 \\u03a3 shape : {shape : Lemma5DerivativeShape // theorem4SurgeAllowedLemma5Shape shape}, Lemma5FeasiblePolicyFormAlmostEverywhereData (\\u03bc 1) shape.1 (\\u03c1 1)\"\n  },\n  {\n    \"field\": \"current_mass_pos\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos\",\n    \"line\": 42295,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"0 < singleStateTripMass \\u03bcJ \\u03c3J\"\n  },\n  {\n    \"field\": \"bounds\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds\",\n    \"line\": 42296,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"lemma9StructuredBounds ratio (gn21ScaledStateTime \\u03bcI arrivalI \\u03c3I) (gn21ExitWeightIntegral \\u03bcI arrivalI switch12 switch21 \\u03c3I) (gn21ScaledStateTime \\u03bcJ arrivalJ \\u03c3J) (gn21ExitWeightIntegral \\u03bcJ arrivalJ switch21 switch12 \\u03c3J) switch21\"\n  },\n  {\n    \"field\": \"z_eq\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq\",\n    \"line\": 42303,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"z = ratio * (m - R1)\"\n  },\n  {\n    \"field\": \"m_sub_R1_pos\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos\",\n    \"line\": 42304,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"0 < m - R1\"\n  },\n  {\n    \"field\": \"R1_nonneg\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg\",\n    \"line\": 42305,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"0 \\u2264 R1\"\n  },\n  {\n    \"field\": \"fixed_reward_rate\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate\",\n    \"line\": 42306,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"gn21MeasuredStateRewardRate \\u03bcI arrivalI (ctmcStructuredSurgePrice mI zI switch12 switch21) \\u03c3I = R1\"\n  }\n]",
   "paper": "GN21DriverSurgePricing",
-  "paper_dir": "/home/nkgarg/src/EconCSLib-meta/EconCSLib-private/papers/GN21DriverSurgePricing",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/GN21DriverSurgePricing",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
   "recursion_failure_count": 0,
   "recursion_failures": [],
   "recursive_field_count": 14,
@@ -205,26 +209,708 @@
       "type": "gn21MeasuredStateRewardRate \u03bcI arrivalI (ctmcStructuredSurgePrice mI zI switch12 switch21) \u03c3I = R1"
     }
   ],
-  "review_row_count": 24,
+  "review_row_count": 34,
+  "row_visible_inputs": {
+    "assumption_affine_response_shape_domains": [
+      {
+        "names": "m a Ri Rj Qi Ti Qj Tj",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_affine_single_state_parameter_domain": [
+      {
+        "names": "arrivalRate m a",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_dynamic_time_fraction_denominators": [
+      {
+        "names": "\u03bcI \u03bcJ",
+        "type": "Measure TripLength"
+      },
+      {
+        "names": "\u03c3I \u03c3J",
+        "type": "TripPolicy"
+      },
+      {
+        "names": "arrivalI arrivalJ switchIJ switchJI",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_fixed_response_policy_form_conditions": [
+      {
+        "names": "mu",
+        "type": "Measure TripLength"
+      },
+      {
+        "names": "response",
+        "type": "TripLength \u2192 \u211d"
+      },
+      {
+        "names": "sigma",
+        "type": "TripPolicy"
+      }
+    ],
+    "assumption_nonsurge_derivative_source_bounds": [
+      {
+        "names": "ratio u T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 switch21 R2 z",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_single_state_defined_reward_domain": [
+      {
+        "names": "mu \u03bc",
+        "type": "Measure TripLength"
+      },
+      {
+        "names": "w",
+        "type": "PricingFunction"
+      }
+    ],
+    "assumption_surge_derivative_source_bounds": [
+      {
+        "names": "ratio u T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 switch12 m R1 z",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_switch_rate_domain": [
+      {
+        "names": "lambdaIJ lambdaJI",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_theorem3_source_data_domain": [
+      {
+        "names": "mu",
+        "type": "Fin 2 \u2192 Measure TripLength"
+      },
+      {
+        "names": "arrival",
+        "type": "Fin 2 \u2192 \u211d"
+      },
+      {
+        "names": "rho R1 R2 switch12 switch21",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_upper_endpoint_derivative_domain": [
+      {
+        "names": "arrivalRate switchRate lowerEndpoint u Qj Tj Ri Rj Wj",
+        "type": "\u211d"
+      },
+      {
+        "names": "density switchProb payment",
+        "type": "\u211d \u2192 \u211d"
+      }
+    ],
+    "review_definition_dynamic_defined_reward": [
+      {
+        "names": "mu",
+        "type": "Fin 2 \u2192 MeasureTheory.Measure TripLength"
+      }
+    ],
+    "review_definition_dynamic_ic": [
+      {
+        "names": "R",
+        "type": "DynamicReward"
+      }
+    ],
+    "review_definition_single_state_ic": [
+      {
+        "names": "R",
+        "type": "SingleStateReward"
+      }
+    ],
+    "review_definition_threshold_policy": [
+      {
+        "names": "w",
+        "type": "PricingFunction"
+      },
+      {
+        "names": "c",
+        "type": "\u211d"
+      },
+      {
+        "names": "sigma",
+        "type": "TripPolicy"
+      }
+    ],
+    "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds": [],
+    "review_lemma1_measured_dynamic_reward_decomposition": [],
+    "review_lemma2_switch_probability_formula": [],
+    "review_lemma3_measured_time_fraction_formula": [],
+    "review_lemma4_single_state_threshold_uniqueness": [],
+    "review_lemma5_fixed_response_policy_form": [],
+    "review_lemma6_upper_endpoint_derivative_formula": [],
+    "review_lemma7_affine_positive_additive_response_quasi_convex": [],
+    "review_lemma8_affine_negative_additive_response_quasi_concave": [],
+    "review_lemma9_surge_derivative_positive_of_acceptAll_bounds": [],
+    "review_proposition3_1_affine_single_state_ic": [],
+    "review_remark1_switch_probability_per_time_strictAntiOn": [],
+    "review_remark3_switch_probability_per_time_tendsto_at_zero": [],
+    "review_remark4_switch_time_minus_switch_probability_nonneg": [],
+    "review_section2_single_state_renewal_reward_iid_bridge": [],
+    "review_theorem1_single_state_threshold_best_response": [],
+    "review_theorem2_multiplicative_policy_shape_ae": [
+      {
+        "names": "mu",
+        "type": "Fin 2 \u2192 MeasureTheory.Measure TripLength"
+      },
+      {
+        "names": "R",
+        "type": "DynamicReward"
+      },
+      {
+        "names": "forms",
+        "type": "Theorem4AllMeasurableFeasibleAEPolicyFormData mu R"
+      },
+      {
+        "names": "hnonsurge",
+        "type": "\u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192 let D := forms.nonsurge rho hrho D.1.1 = .positive \u2228 D.1.1 = .strictlyDecreasing"
+      },
+      {
+        "names": "hsurge",
+        "type": "\u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192 let D := forms.surge rho hrho D.1.1 = .positive \u2228 D.1.1 = .strictlyIncreasing"
+      }
+    ],
+    "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states": [],
+    "review_theorem3_defined_reward_source_statement": [
+      {
+        "names": "mu",
+        "type": "Fin 2 \u2192 MeasureTheory.Measure TripLength"
+      },
+      {
+        "names": "arrival",
+        "type": "Fin 2 \u2192 \u211d"
+      },
+      {
+        "names": "rho R1 R2 switch12 switch21",
+        "type": "\u211d"
+      },
+      {
+        "names": "hR1_eq",
+        "type": "R1 = rho * R2"
+      },
+      {
+        "names": "hR1_pos",
+        "type": "0 < R1"
+      },
+      {
+        "names": "hR1_lt_R2",
+        "type": "R1 < R2"
+      },
+      {
+        "names": "hR2_pos",
+        "type": "0 < R2"
+      },
+      {
+        "names": "hC_lt_rho",
+        "type": "theorem3FeasibilityThresholdC (gn21AcceptAllScaledStateTime (mu 0) (arrival 0)) (gn21AcceptAllScaledStateTime (mu 1) (arrival 1)) (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21) (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12) switch12 < rho"
+      },
+      {
+        "names": "hrho_lt_one",
+        "type": "rho < 1"
+      },
+      {
+        "names": "harrival1_pos",
+        "type": "0 < arrival 0"
+      },
+      {
+        "names": "harrival2_pos",
+        "type": "0 < arrival 1"
+      },
+      {
+        "names": "hswitch12_pos",
+        "type": "0 < switch12"
+      },
+      {
+        "names": "hswitch21_pos",
+        "type": "0 < switch21"
+      },
+      {
+        "names": "htime1_integrable",
+        "type": "IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 0)"
+      },
+      {
+        "names": "htime2_integrable",
+        "type": "IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 1)"
+      },
+      {
+        "names": "hq1_integrable",
+        "type": "IntegrableOn (fun \u03c4 : TripLength => gn21SwitchProb switch12 switch21 \u03c4) acceptAllPolicy (mu 0)"
+      },
+      {
+        "names": "hq2_integrable",
+        "type": "IntegrableOn (fun \u03c4 : TripLength => gn21SwitchProb switch21 switch12 \u03c4) acceptAllPolicy (mu 1)"
+      },
+      {
+        "names": "hmass1_pos",
+        "type": "0 < singleStateTripMass (mu 0) acceptAllPolicy"
+      },
+      {
+        "names": "hmass2_pos",
+        "type": "0 < singleStateTripMass (mu 1) acceptAllPolicy"
+      },
+      {
+        "names": "surge_reward_rate_data",
+        "type": "\u2200 m z : Fin 2 \u2192 \u211d, (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2192 theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z \u2192 \u2200 \u03c1 : Fin 2 \u2192 TripPolicy, dynamicFeasibleMeasurablePositiveMassPolicy mu \u03c1 \u2192 \u2203 R1_current ratio : \u211d, GN21SurgeLemma9AcceptAllAggregateRewardRateData (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21 (m 1) R1_current (z 1) ratio (m 0) (z 0) (\u03c1 0) (\u03c1 1)"
+      }
+    ],
+    "review_theorem4_structural_policy_representatives": []
+  },
   "rows_with_record_premises": [
     {
       "lean_source_declaration": "theorem review_theorem2_multiplicative_policy_shape_ae\n    (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (R : DynamicReward)\n    (forms : Theorem4AllMeasurableFeasibleAEPolicyFormData mu R)\n    (hnonsurge :\n      \u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192\n        let D := forms.nonsurge rho hrho\n        D.1.1 = .positive \u2228 D.1.1 = .strictlyDecreasing)\n    (hsurge :\n      \u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192\n        let D := forms.surge rho hrho\n        D.1.1 = .positive \u2228 D.1.1 = .strictlyIncreasing) :\n    (\u2203 rho : Fin 2 \u2192 TripPolicy,\n      dynamicMeasurableOptimal R rho \u2227\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n        rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) \u2227\n      \u2200 rho : Fin 2 \u2192 TripPolicy, dynamicMeasurableOptimal R rho \u2192\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1) :=\n    theorem2_multiplicative_policy_shape_ae_of_feasible_ae_policy_forms\n      mu R forms hnonsurge hsurge",
       "record_premises": [
         "Theorem4AllMeasurableFeasibleAEPolicyFormData"
       ],
-      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
-      "row": "review_theorem2_multiplicative_policy_shape_ae"
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_theorem2_multiplicative_policy_shape_ae",
+      "visible_inputs": [
+        {
+          "names": "mu",
+          "type": "Fin 2 \u2192 MeasureTheory.Measure TripLength"
+        },
+        {
+          "names": "R",
+          "type": "DynamicReward"
+        },
+        {
+          "names": "forms",
+          "type": "Theorem4AllMeasurableFeasibleAEPolicyFormData mu R"
+        },
+        {
+          "names": "hnonsurge",
+          "type": "\u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192 let D := forms.nonsurge rho hrho D.1.1 = .positive \u2228 D.1.1 = .strictlyDecreasing"
+        },
+        {
+          "names": "hsurge",
+          "type": "\u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192 let D := forms.surge rho hrho D.1.1 = .positive \u2228 D.1.1 = .strictlyIncreasing"
+        }
+      ]
     },
     {
       "lean_source_declaration": "theorem review_theorem3_defined_reward_source_statement\n    (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (arrival : Fin 2 \u2192 \u211d)\n    (rho R1 R2 switch12 switch21 : \u211d)\n    (hR1_eq : R1 = rho * R2)\n    (hR1_pos : 0 < R1)\n    (hR1_lt_R2 : R1 < R2)\n    (hR2_pos : 0 < R2)\n    (hC_lt_rho :\n      theorem3FeasibilityThresholdC\n          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))\n          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))\n          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)\n          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)\n          switch12 < rho)\n    (hrho_lt_one : rho < 1)\n    (harrival1_pos : 0 < arrival 0)\n    (harrival2_pos : 0 < arrival 1)\n    (hswitch12_pos : 0 < switch12)\n    (hswitch21_pos : 0 < switch21)\n    (htime1_integrable :\n      IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 0))\n    (htime2_integrable :\n      IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 1))\n    (hq1_integrable :\n      IntegrableOn\n        (fun \u03c4 : TripLength => gn21SwitchProb switch12 switch21 \u03c4)\n        acceptAllPolicy (mu 0))\n    (hq2_integrable :\n      IntegrableOn\n        (fun \u03c4 : TripLength => gn21SwitchProb switch21 switch12 \u03c4)\n        acceptAllPolicy (mu 1))\n    (hmass1_pos : 0 < singleStateTripMass (mu 0) acceptAllPolicy)\n    (hmass2_pos : 0 < singleStateTripMass (mu 1) acceptAllPolicy)\n    (surge_reward_rate_data :\n      \u2200 m z : Fin 2 \u2192 \u211d,\n        (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2192\n          theorem3AcceptAllStructuredParameterEvidence\n            mu arrival R1 R2 switch12 switch21 m z \u2192\n          \u2200 \u03c1 : Fin 2 \u2192 TripPolicy,\n            dynamicFeasibleMeasurablePositiveMassPolicy mu \u03c1 \u2192\n              \u2203 R1_current ratio : \u211d,\n                GN21SurgeLemma9AcceptAllAggregateRewardRateData\n                  (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21\n                  (m 1) R1_current (z 1) ratio (m 0) (z 0)\n                  (\u03c1 0) (\u03c1 1)) :\n    \u2203 m z : Fin 2 \u2192 \u211d,\n      (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2227\n        dynamicDefinedMeasurableIncentiveCompatible\n          (DynamicDefinedReward.of_total mu\n            (gn21MeasuredCTMCStructuredDynamicReward\n              mu arrival switch12 switch21 m z)) \u2227\n        (\u2200 \u03c1 : Fin 2 \u2192 TripPolicy,\n          dynamicDefinedMeasurableOptimal\n            (DynamicDefinedReward.of_total mu\n              (gn21MeasuredCTMCStructuredDynamicReward\n                mu arrival switch12 switch21 m z)) \u03c1 \u2192\n            dynamicAcceptAllAlmostEverywhere mu \u03c1) \u2227\n        (\u2203 q : Fin 2 \u2192 TripLength \u2192 \u211d,\n          \u2200 i \u03c4,\n            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i \u03c4 =\n              structuredSurgePrice (m i) (z i) (q i) \u03c4) \u2227\n        theorem3AcceptAllStructuredParameterEvidence\n          mu arrival R1 R2 switch12 switch21 m z := by\n  let A :\n      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions\n        mu arrival rho R1 R2 switch12 switch21 :=\n    { hR1_eq := hR1_eq\n      hR1_pos := hR1_pos\n      hR1_lt_R2 := hR1_lt_R2\n      hR2_pos := hR2_pos\n      hC_lt_rho := hC_lt_rho\n      hrho_lt_one := hrho_lt_one\n      harrival1_pos := harrival1_pos\n      harrival2_pos := harrival2_pos\n      hswitch12_pos := hswitch12_pos\n      hswitch21_pos := hswitch21_pos\n      htime1_integrable := htime1_integrable\n      htime2_integrable := htime2_integrable\n      hq1_integrable := hq1_integrable\n      hq2_integrable := hq2_integrable\n      hmass1_pos := hmass1_pos\n      hmass2_pos := hmass2_pos\n      surge_reward_rate_data := surge_reward_rate_data }\n  simpa [theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion] using\n    theorem3_defined_reward_source\n      mu arrival rho R1 R2 switch12 switch21 A",
       "record_premises": [
         "GN21SurgeLemma9AcceptAllAggregateRewardRateData"
       ],
-      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
-      "row": "review_theorem3_defined_reward_source_statement"
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_theorem3_defined_reward_source_statement",
+      "visible_inputs": [
+        {
+          "names": "mu",
+          "type": "Fin 2 \u2192 MeasureTheory.Measure TripLength"
+        },
+        {
+          "names": "arrival",
+          "type": "Fin 2 \u2192 \u211d"
+        },
+        {
+          "names": "rho R1 R2 switch12 switch21",
+          "type": "\u211d"
+        },
+        {
+          "names": "hR1_eq",
+          "type": "R1 = rho * R2"
+        },
+        {
+          "names": "hR1_pos",
+          "type": "0 < R1"
+        },
+        {
+          "names": "hR1_lt_R2",
+          "type": "R1 < R2"
+        },
+        {
+          "names": "hR2_pos",
+          "type": "0 < R2"
+        },
+        {
+          "names": "hC_lt_rho",
+          "type": "theorem3FeasibilityThresholdC (gn21AcceptAllScaledStateTime (mu 0) (arrival 0)) (gn21AcceptAllScaledStateTime (mu 1) (arrival 1)) (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21) (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12) switch12 < rho"
+        },
+        {
+          "names": "hrho_lt_one",
+          "type": "rho < 1"
+        },
+        {
+          "names": "harrival1_pos",
+          "type": "0 < arrival 0"
+        },
+        {
+          "names": "harrival2_pos",
+          "type": "0 < arrival 1"
+        },
+        {
+          "names": "hswitch12_pos",
+          "type": "0 < switch12"
+        },
+        {
+          "names": "hswitch21_pos",
+          "type": "0 < switch21"
+        },
+        {
+          "names": "htime1_integrable",
+          "type": "IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 0)"
+        },
+        {
+          "names": "htime2_integrable",
+          "type": "IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 1)"
+        },
+        {
+          "names": "hq1_integrable",
+          "type": "IntegrableOn (fun \u03c4 : TripLength => gn21SwitchProb switch12 switch21 \u03c4) acceptAllPolicy (mu 0)"
+        },
+        {
+          "names": "hq2_integrable",
+          "type": "IntegrableOn (fun \u03c4 : TripLength => gn21SwitchProb switch21 switch12 \u03c4) acceptAllPolicy (mu 1)"
+        },
+        {
+          "names": "hmass1_pos",
+          "type": "0 < singleStateTripMass (mu 0) acceptAllPolicy"
+        },
+        {
+          "names": "hmass2_pos",
+          "type": "0 < singleStateTripMass (mu 1) acceptAllPolicy"
+        },
+        {
+          "names": "surge_reward_rate_data",
+          "type": "\u2200 m z : Fin 2 \u2192 \u211d, (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2192 theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z \u2192 \u2200 \u03c1 : Fin 2 \u2192 TripPolicy, dynamicFeasibleMeasurablePositiveMassPolicy mu \u03c1 \u2192 \u2203 R1_current ratio : \u211d, GN21SurgeLemma9AcceptAllAggregateRewardRateData (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21 (m 1) R1_current (z 1) ratio (m 0) (z 0) (\u03c1 0) (\u03c1 1)"
+        }
+      ]
     }
   ],
-  "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "def review_definition_single_state_ic (R : SingleStateReward) : Prop :=\n  \u2200 \u03c3 : TripPolicy, \u03c3 \u2286 acceptAllPolicy \u2192 MeasurableSet \u03c3 \u2192 R \u03c3 \u2264 R acceptAllPolicy",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_definition_single_state_ic",
+      "visible_inputs": [
+        {
+          "names": "R",
+          "type": "SingleStateReward"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def review_definition_dynamic_ic (R : DynamicReward) : Prop :=\n  (\u2200 i : Fin 2, acceptAllDynamicPolicy i \u2286 acceptAllPolicy \u2227\n      MeasurableSet (acceptAllDynamicPolicy i)) \u2227\n    \u2200 \u03c3 : Fin 2 \u2192 TripPolicy,\n      (\u2200 i : Fin 2, \u03c3 i \u2286 acceptAllPolicy \u2227 MeasurableSet (\u03c3 i)) \u2192\n        R \u03c3 \u2264 R acceptAllDynamicPolicy",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_definition_dynamic_ic",
+      "visible_inputs": [
+        {
+          "names": "R",
+          "type": "DynamicReward"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def review_definition_threshold_policy (w : PricingFunction) (c : \u211d) (sigma : TripPolicy) :\n    Prop :=\n  \u2200 \u2983\u03c4 : TripLength\u2984, 0 < \u03c4 \u2192 (\u03c4 \u2208 sigma \u2194 c \u2264 w \u03c4 / \u03c4)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_definition_threshold_policy",
+      "visible_inputs": [
+        {
+          "names": "w",
+          "type": "PricingFunction"
+        },
+        {
+          "names": "c",
+          "type": "\u211d"
+        },
+        {
+          "names": "sigma",
+          "type": "TripPolicy"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def review_definition_dynamic_defined_reward (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) :\n    Type :=\n  (\u03c3 : Fin 2 \u2192 TripPolicy) \u2192\n    ((\u2200 i : Fin 2, \u03c3 i \u2286 acceptAllPolicy \u2227 MeasurableSet (\u03c3 i)) \u2227\n      \u2200 i : Fin 2, 0 < singleStateTripMass (mu i) (\u03c3 i)) \u2192\n      \u211d",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_definition_dynamic_defined_reward",
+      "visible_inputs": [
+        {
+          "names": "mu",
+          "type": "Fin 2 \u2192 MeasureTheory.Measure TripLength"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem review_theorem2_multiplicative_policy_shape_ae\n    (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (R : DynamicReward)\n    (forms : Theorem4AllMeasurableFeasibleAEPolicyFormData mu R)\n    (hnonsurge :\n      \u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192\n        let D := forms.nonsurge rho hrho\n        D.1.1 = .positive \u2228 D.1.1 = .strictlyDecreasing)\n    (hsurge :\n      \u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192\n        let D := forms.surge rho hrho\n        D.1.1 = .positive \u2228 D.1.1 = .strictlyIncreasing) :\n    (\u2203 rho : Fin 2 \u2192 TripPolicy,\n      dynamicMeasurableOptimal R rho \u2227\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n        rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) \u2227\n      \u2200 rho : Fin 2 \u2192 TripPolicy, dynamicMeasurableOptimal R rho \u2192\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1) :=\n    theorem2_multiplicative_policy_shape_ae_of_feasible_ae_policy_forms\n      mu R forms hnonsurge hsurge",
+      "record_premises": [
+        "Theorem4AllMeasurableFeasibleAEPolicyFormData"
+      ],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_theorem2_multiplicative_policy_shape_ae",
+      "visible_inputs": [
+        {
+          "names": "mu",
+          "type": "Fin 2 \u2192 MeasureTheory.Measure TripLength"
+        },
+        {
+          "names": "R",
+          "type": "DynamicReward"
+        },
+        {
+          "names": "forms",
+          "type": "Theorem4AllMeasurableFeasibleAEPolicyFormData mu R"
+        },
+        {
+          "names": "hnonsurge",
+          "type": "\u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192 let D := forms.nonsurge rho hrho D.1.1 = .positive \u2228 D.1.1 = .strictlyDecreasing"
+        },
+        {
+          "names": "hsurge",
+          "type": "\u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192 let D := forms.surge rho hrho D.1.1 = .positive \u2228 D.1.1 = .strictlyIncreasing"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem review_theorem3_defined_reward_source_statement\n    (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (arrival : Fin 2 \u2192 \u211d)\n    (rho R1 R2 switch12 switch21 : \u211d)\n    (hR1_eq : R1 = rho * R2)\n    (hR1_pos : 0 < R1)\n    (hR1_lt_R2 : R1 < R2)\n    (hR2_pos : 0 < R2)\n    (hC_lt_rho :\n      theorem3FeasibilityThresholdC\n          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))\n          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))\n          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)\n          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)\n          switch12 < rho)\n    (hrho_lt_one : rho < 1)\n    (harrival1_pos : 0 < arrival 0)\n    (harrival2_pos : 0 < arrival 1)\n    (hswitch12_pos : 0 < switch12)\n    (hswitch21_pos : 0 < switch21)\n    (htime1_integrable :\n      IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 0))\n    (htime2_integrable :\n      IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 1))\n    (hq1_integrable :\n      IntegrableOn\n        (fun \u03c4 : TripLength => gn21SwitchProb switch12 switch21 \u03c4)\n        acceptAllPolicy (mu 0))\n    (hq2_integrable :\n      IntegrableOn\n        (fun \u03c4 : TripLength => gn21SwitchProb switch21 switch12 \u03c4)\n        acceptAllPolicy (mu 1))\n    (hmass1_pos : 0 < singleStateTripMass (mu 0) acceptAllPolicy)\n    (hmass2_pos : 0 < singleStateTripMass (mu 1) acceptAllPolicy)\n    (surge_reward_rate_data :\n      \u2200 m z : Fin 2 \u2192 \u211d,\n        (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2192\n          theorem3AcceptAllStructuredParameterEvidence\n            mu arrival R1 R2 switch12 switch21 m z \u2192\n          \u2200 \u03c1 : Fin 2 \u2192 TripPolicy,\n            dynamicFeasibleMeasurablePositiveMassPolicy mu \u03c1 \u2192\n              \u2203 R1_current ratio : \u211d,\n                GN21SurgeLemma9AcceptAllAggregateRewardRateData\n                  (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21\n                  (m 1) R1_current (z 1) ratio (m 0) (z 0)\n                  (\u03c1 0) (\u03c1 1)) :\n    \u2203 m z : Fin 2 \u2192 \u211d,\n      (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2227\n        dynamicDefinedMeasurableIncentiveCompatible\n          (DynamicDefinedReward.of_total mu\n            (gn21MeasuredCTMCStructuredDynamicReward\n              mu arrival switch12 switch21 m z)) \u2227\n        (\u2200 \u03c1 : Fin 2 \u2192 TripPolicy,\n          dynamicDefinedMeasurableOptimal\n            (DynamicDefinedReward.of_total mu\n              (gn21MeasuredCTMCStructuredDynamicReward\n                mu arrival switch12 switch21 m z)) \u03c1 \u2192\n            dynamicAcceptAllAlmostEverywhere mu \u03c1) \u2227\n        (\u2203 q : Fin 2 \u2192 TripLength \u2192 \u211d,\n          \u2200 i \u03c4,\n            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i \u03c4 =\n              structuredSurgePrice (m i) (z i) (q i) \u03c4) \u2227\n        theorem3AcceptAllStructuredParameterEvidence\n          mu arrival R1 R2 switch12 switch21 m z := by\n  let A :\n      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions\n        mu arrival rho R1 R2 switch12 switch21 :=\n    { hR1_eq := hR1_eq\n      hR1_pos := hR1_pos\n      hR1_lt_R2 := hR1_lt_R2\n      hR2_pos := hR2_pos\n      hC_lt_rho := hC_lt_rho\n      hrho_lt_one := hrho_lt_one\n      harrival1_pos := harrival1_pos\n      harrival2_pos := harrival2_pos\n      hswitch12_pos := hswitch12_pos\n      hswitch21_pos := hswitch21_pos\n      htime1_integrable := htime1_integrable\n      htime2_integrable := htime2_integrable\n      hq1_integrable := hq1_integrable\n      hq2_integrable := hq2_integrable\n      hmass1_pos := hmass1_pos\n      hmass2_pos := hmass2_pos\n      surge_reward_rate_data := surge_reward_rate_data }\n  simpa [theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion] using\n    theorem3_defined_reward_source\n      mu arrival rho R1 R2 switch12 switch21 A",
+      "record_premises": [
+        "GN21SurgeLemma9AcceptAllAggregateRewardRateData"
+      ],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_theorem3_defined_reward_source_statement",
+      "visible_inputs": [
+        {
+          "names": "mu",
+          "type": "Fin 2 \u2192 MeasureTheory.Measure TripLength"
+        },
+        {
+          "names": "arrival",
+          "type": "Fin 2 \u2192 \u211d"
+        },
+        {
+          "names": "rho R1 R2 switch12 switch21",
+          "type": "\u211d"
+        },
+        {
+          "names": "hR1_eq",
+          "type": "R1 = rho * R2"
+        },
+        {
+          "names": "hR1_pos",
+          "type": "0 < R1"
+        },
+        {
+          "names": "hR1_lt_R2",
+          "type": "R1 < R2"
+        },
+        {
+          "names": "hR2_pos",
+          "type": "0 < R2"
+        },
+        {
+          "names": "hC_lt_rho",
+          "type": "theorem3FeasibilityThresholdC (gn21AcceptAllScaledStateTime (mu 0) (arrival 0)) (gn21AcceptAllScaledStateTime (mu 1) (arrival 1)) (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21) (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12) switch12 < rho"
+        },
+        {
+          "names": "hrho_lt_one",
+          "type": "rho < 1"
+        },
+        {
+          "names": "harrival1_pos",
+          "type": "0 < arrival 0"
+        },
+        {
+          "names": "harrival2_pos",
+          "type": "0 < arrival 1"
+        },
+        {
+          "names": "hswitch12_pos",
+          "type": "0 < switch12"
+        },
+        {
+          "names": "hswitch21_pos",
+          "type": "0 < switch21"
+        },
+        {
+          "names": "htime1_integrable",
+          "type": "IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 0)"
+        },
+        {
+          "names": "htime2_integrable",
+          "type": "IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 1)"
+        },
+        {
+          "names": "hq1_integrable",
+          "type": "IntegrableOn (fun \u03c4 : TripLength => gn21SwitchProb switch12 switch21 \u03c4) acceptAllPolicy (mu 0)"
+        },
+        {
+          "names": "hq2_integrable",
+          "type": "IntegrableOn (fun \u03c4 : TripLength => gn21SwitchProb switch21 switch12 \u03c4) acceptAllPolicy (mu 1)"
+        },
+        {
+          "names": "hmass1_pos",
+          "type": "0 < singleStateTripMass (mu 0) acceptAllPolicy"
+        },
+        {
+          "names": "hmass2_pos",
+          "type": "0 < singleStateTripMass (mu 1) acceptAllPolicy"
+        },
+        {
+          "names": "surge_reward_rate_data",
+          "type": "\u2200 m z : Fin 2 \u2192 \u211d, (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2192 theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z \u2192 \u2200 \u03c1 : Fin 2 \u2192 TripPolicy, dynamicFeasibleMeasurablePositiveMassPolicy mu \u03c1 \u2192 \u2203 R1_current ratio : \u211d, GN21SurgeLemma9AcceptAllAggregateRewardRateData (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21 (m 1) R1_current (z 1) ratio (m 0) (z 0) (\u03c1 0) (\u03c1 1)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_affine_single_state_parameter_domain\n    (arrivalRate m a : \u211d) : Prop :=\n  0 < arrivalRate \u2227 0 \u2264 a \u2227 a \u2264 m / arrivalRate\n\n                                                                                     \n-- audit-premise: hrate_nonneg : \u2200 tau : TripLength, 0 < tau \u2192 0 \u2264 w tau / tau\n-- audit-premise: hrate_nonneg : \u2200 \u03c4 : TripLength, 0 < \u03c4 \u2192 0 \u2264 w \u03c4 / \u03c4\n-- audit-premise: hfinite_acceptAll : mu acceptAllPolicy \u2260 \u22a4\n-- audit-premise: hfinite_acceptAll : \u03bc acceptAllPolicy \u2260 \u22a4\n-- audit-premise: hpositive_payout_mass : 0 < mu {\u03c4 : TripLength | \u03c4 \u2208 acceptAllPolicy \u2227 0 < w \u03c4}\n-- audit-premise: hpositive_payout_mass : 0 < \u03bc {\u03c4 : TripLength | \u03c4 \u2208 acceptAllPolicy \u2227 0 < w \u03c4}",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_affine_single_state_parameter_domain",
+      "visible_inputs": [
+        {
+          "names": "arrivalRate m a",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_single_state_defined_reward_domain\n    (mu \u03bc : Measure TripLength) (w : PricingFunction) : Prop :=\n  (\u2200 tau : TripLength, 0 < tau \u2192 0 \u2264 w tau / tau) \u2227\n    (\u2200 \u03c4 : TripLength, 0 < \u03c4 \u2192 0 \u2264 w \u03c4 / \u03c4) \u2227\n      mu acceptAllPolicy \u2260 \u22a4 \u2227 \u03bc acceptAllPolicy \u2260 \u22a4 \u2227\n        0 < mu {\u03c4 : TripLength | \u03c4 \u2208 acceptAllPolicy \u2227 0 < w \u03c4} \u2227\n          0 < \u03bc {\u03c4 : TripLength | \u03c4 \u2208 acceptAllPolicy \u2227 0 < w \u03c4}\n\n                                                      \n-- audit-premise: hi : arrivalI * singleStateTripMass \u03bcI \u03c3I + switchIJ \u2260 0\n-- audit-premise: hj : arrivalJ * singleStateTripMass \u03bcJ \u03c3J + switchJI \u2260 0",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_single_state_defined_reward_domain",
+      "visible_inputs": [
+        {
+          "names": "mu \u03bc",
+          "type": "Measure TripLength"
+        },
+        {
+          "names": "w",
+          "type": "PricingFunction"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_dynamic_time_fraction_denominators\n    (\u03bcI \u03bcJ : Measure TripLength) (\u03c3I \u03c3J : TripPolicy)\n    (arrivalI arrivalJ switchIJ switchJI : \u211d) : Prop :=\n  arrivalI * singleStateTripMass \u03bcI \u03c3I + switchIJ \u2260 0 \u2227\n    arrivalJ * singleStateTripMass \u03bcJ \u03c3J + switchJI \u2260 0\n\n                                                                          \n-- audit-premise: hlambdaIJ : 0 < lambdaIJ\n-- audit-premise: hlambdaIJ : 0 \u2264 lambdaIJ\n-- audit-premise: hsum : 0 < lambdaIJ + lambdaJI\n-- audit-premise: hsum : lambdaIJ + lambdaJI \u2260 0",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_dynamic_time_fraction_denominators",
+      "visible_inputs": [
+        {
+          "names": "\u03bcI \u03bcJ",
+          "type": "Measure TripLength"
+        },
+        {
+          "names": "\u03c3I \u03c3J",
+          "type": "TripPolicy"
+        },
+        {
+          "names": "arrivalI arrivalJ switchIJ switchJI",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_switch_rate_domain (lambdaIJ lambdaJI : \u211d) : Prop :=\n  0 < lambdaIJ \u2227 0 \u2264 lambdaIJ \u2227\n    0 < lambdaIJ + lambdaJI \u2227 lambdaIJ + lambdaJI \u2260 0\n\n                                                                                         \n-- audit-premise: hresponse_measurable : Measurable response\n-- audit-premise: hoptimal : \u2200 sigma' : TripPolicy, sigma' \u2286 acceptAllPolicy \u2192 MeasurableSet sigma' \u2192 lemma5MarginalSetReward mu response sigma' \u2264 lemma5MarginalSetReward mu response sigma",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_switch_rate_domain",
+      "visible_inputs": [
+        {
+          "names": "lambdaIJ lambdaJI",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_fixed_response_policy_form_conditions\n    (mu : Measure TripLength) (response : TripLength \u2192 \u211d) (sigma : TripPolicy) : Prop :=\n  Measurable response \u2227\n    \u2200 sigma' : TripPolicy, sigma' \u2286 acceptAllPolicy \u2192 MeasurableSet sigma' \u2192\n      lemma5MarginalSetReward mu response sigma' \u2264 lemma5MarginalSetReward mu response sigma\n\n                                                  \n-- audit-premise: harrival_pos : 0 < arrivalRate\n-- audit-premise: hu : 0 < u\n-- audit-premise: hQj_pos : 0 < Qj\n-- audit-premise: hTi_pos : 0 < gn21EndpointTiPath arrivalRate lowerEndpoint density u\n-- audit-premise: hTj_pos : 0 < Tj\n-- audit-premise: hWi : gn21EndpointWiPath arrivalRate lowerEndpoint density payment u = Ri * gn21EndpointTiPath arrivalRate lowerEndpoint density u\n-- audit-premise: hWj : Wj = Rj * Tj\n-- audit-premise: hden : gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density switchProb u * Tj + Qj * gn21EndpointTiPath arrivalRate lowerEndpoint density u \u2260 0",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_fixed_response_policy_form_conditions",
+      "visible_inputs": [
+        {
+          "names": "mu",
+          "type": "Measure TripLength"
+        },
+        {
+          "names": "response",
+          "type": "TripLength \u2192 \u211d"
+        },
+        {
+          "names": "sigma",
+          "type": "TripPolicy"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_upper_endpoint_derivative_domain\n    (arrivalRate switchRate lowerEndpoint u Qj Tj Ri Rj Wj : \u211d)\n    (density switchProb payment : \u211d \u2192 \u211d) : Prop :=\n  0 < arrivalRate \u2227\n    0 < u \u2227\n      0 < Qj \u2227\n        0 < gn21EndpointTiPath arrivalRate lowerEndpoint density u \u2227\n          0 < Tj \u2227\n            gn21EndpointWiPath arrivalRate lowerEndpoint density payment u =\n              Ri * gn21EndpointTiPath arrivalRate lowerEndpoint density u \u2227\n              Wj = Rj * Tj \u2227\n                gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density switchProb u * Tj +\n                    Qj * gn21EndpointTiPath arrivalRate lowerEndpoint density u \u2260 0\n\n                                                  \n-- audit-premise: hm_pos : 0 < m\n-- audit-premise: ha_pos : 0 < a\n-- audit-premise: ha_neg : a < 0\n-- audit-premise: hdelta_ji_nonpos : Rj - Ri \u2264 0\n-- audit-premise: hdelta_ji_nonneg : 0 \u2264 Rj - Ri\n-- audit-premise: hstate_weight_pos : 0 < Qi / Ti + Qj / Tj\n-- audit-premise: hTi : Ti \u2260 0\n-- audit-premise: hTj : Tj \u2260 0",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_upper_endpoint_derivative_domain",
+      "visible_inputs": [
+        {
+          "names": "arrivalRate switchRate lowerEndpoint u Qj Tj Ri Rj Wj",
+          "type": "\u211d"
+        },
+        {
+          "names": "density switchProb payment",
+          "type": "\u211d \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_affine_response_shape_domains\n    (m a Ri Rj Qi Ti Qj Tj : \u211d) : Prop :=\n  0 < m \u2227 0 < a \u2227 a < 0 \u2227\n    Rj - Ri \u2264 0 \u2227 0 \u2264 Rj - Ri \u2227\n      0 < Qi / Ti + Qj / Tj \u2227 Ti \u2260 0 \u2227 Tj \u2260 0\n\n                                                                      \n-- audit-premise: hbounds_bar : lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21\n-- audit-premise: hz : z = ratio * (m - R1)\n-- audit-premise: hmR_pos : 0 < m - R1\n-- audit-premise: hR1_nonneg : 0 \u2264 R1\n-- audit-premise: hT1_nonneg : 0 \u2264 T1\n-- audit-premise: hQ1_pos : 0 < Q1\n-- audit-premise: hswitch21_pos : 0 < switch21\n-- audit-premise: hsum : 0 < switch21 + switch12\n-- audit-premise: hu : 0 < u\n-- audit-premise: hgap_nonneg : 0 \u2264 switch21 * T2 - Q2\n-- audit-premise: hgap_le : switch21 * T2 - Q2 \u2264 switch21 * Tbar2 - Qbar2\n-- audit-premise: hswitch_lt_Q2 : switch21 < Q2\n-- audit-premise: hQ2_le : Q2 \u2264 Qbar2",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_affine_response_shape_domains",
+      "visible_inputs": [
+        {
+          "names": "m a Ri Rj Qi Ti Qj Tj",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_surge_derivative_source_bounds\n    (ratio u T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 switch12 m R1 z : \u211d) :\n    Prop :=\n  lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21 \u2227\n    z = ratio * (m - R1) \u2227 0 < m - R1 \u2227 0 \u2264 R1 \u2227\n      0 \u2264 T1 \u2227 0 < Q1 \u2227 0 < switch21 \u2227\n        0 < switch21 + switch12 \u2227 0 < u \u2227\n          0 \u2264 switch21 * T2 - Q2 \u2227\n            switch21 * T2 - Q2 \u2264 switch21 * Tbar2 - Qbar2 \u2227\n              switch21 < Q2 \u2227 Q2 \u2264 Qbar2\n\n                                                                     \n-- audit-premise: hbounds_bar : lemma10StructuredBounds ratio T2 Q2 Tbar1 Qbar1 switch12\n-- audit-premise: hz : z = ratio * R2\n-- audit-premise: hR2_pos : 0 < R2\n-- audit-premise: hQ2_pos : 0 < Q2\n-- audit-premise: hswitch12_pos : 0 < switch12\n-- audit-premise: hsum : 0 < switch12 + switch21\n-- audit-premise: hu : 0 < u\n-- audit-premise: hA_pos : 0 < T2 * switch12 + Q2\n-- audit-premise: hgap_nonneg : 0 \u2264 switch12 * T1 - Q1\n-- audit-premise: hgap_le : switch12 * T1 - Q1 \u2264 switch12 * Tbar1 - Qbar1\n-- audit-premise: hswitch_lt_Q1 : switch12 < Q1\n-- audit-premise: hQ1_le : Q1 \u2264 Qbar1",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_surge_derivative_source_bounds",
+      "visible_inputs": [
+        {
+          "names": "ratio u T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 switch12 m R1 z",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_nonsurge_derivative_source_bounds\n    (ratio u T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 switch21 R2 z : \u211d) :\n    Prop :=\n  lemma10StructuredBounds ratio T2 Q2 Tbar1 Qbar1 switch12 \u2227\n    z = ratio * R2 \u2227 0 < R2 \u2227 0 < Q2 \u2227 0 < switch12 \u2227\n      0 < switch12 + switch21 \u2227 0 < u \u2227\n        0 < T2 * switch12 + Q2 \u2227\n          0 \u2264 switch12 * T1 - Q1 \u2227\n            switch12 * T1 - Q1 \u2264 switch12 * Tbar1 - Qbar1 \u2227\n              switch12 < Q1 \u2227 Q1 \u2264 Qbar1\n\n                                                                  \n-- audit-premise: hR1_eq : R1 = rho * R2\n-- audit-premise: hR1_pos : 0 < R1\n-- audit-premise: hR1_lt_R2 : R1 < R2\n-- audit-premise: hR2_pos : 0 < R2\n-- audit-premise: hrho_lt_one : rho < 1\n-- audit-premise: harrival1_pos : 0 < arrival 0\n-- audit-premise: harrival2_pos : 0 < arrival 1\n-- audit-premise: hswitch12_pos : 0 < switch12\n-- audit-premise: hswitch21_pos : 0 < switch21\n-- audit-premise: hmeasure1_pos : 0 < mu 0 acceptAllPolicy\n-- audit-premise: hmeasure2_pos : 0 < mu 1 acceptAllPolicy",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_nonsurge_derivative_source_bounds",
+      "visible_inputs": [
+        {
+          "names": "ratio u T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 switch21 R2 z",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_theorem3_source_data_domain\n    (mu : Fin 2 \u2192 Measure TripLength) (arrival : Fin 2 \u2192 \u211d)\n    (rho R1 R2 switch12 switch21 : \u211d) : Prop :=\n  R1 = rho * R2 \u2227 0 < R1 \u2227 R1 < R2 \u2227 0 < R2 \u2227 rho < 1 \u2227\n    0 < arrival 0 \u2227 0 < arrival 1 \u2227\n      0 < switch12 \u2227 0 < switch21 \u2227\n        0 < mu 0 acceptAllPolicy \u2227 0 < mu 1 acceptAllPolicy",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_theorem3_source_data_domain",
+      "visible_inputs": [
+        {
+          "names": "mu",
+          "type": "Fin 2 \u2192 Measure TripLength"
+        },
+        {
+          "names": "arrival",
+          "type": "Fin 2 \u2192 \u211d"
+        },
+        {
+          "names": "rho R1 R2 switch12 switch21",
+          "type": "\u211d"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "1d24ddffb533c78fbe738d98d827d74aad13d66dfa88708d0c02cc2e2cf939fe",
   "source_record_judgment_file": "source_record_match_llm.json",
   "unconfigured_paper_interface_rows": []
 }

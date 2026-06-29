@@ -1,0 +1,558 @@
+{
+  "boundary_input_count": 0,
+  "boundary_input_items": [],
+  "configured_review_row_count": 15,
+  "expected_field_judgment_keys": [],
+  "expected_input_judgment_keys": [],
+  "import_module": "GGSG19TopThree.PaperInterface",
+  "lean_check": {
+    "command": "lake build GGSG19TopThree.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "GGSG19TopThree.paper_definition_large_deviation_rate (A : \u2115 \u2192 \u211d) (r : \u211d) : Prop\n'GGSG19TopThree.paper_definition_large_deviation_rate' depends on axioms: [propext, Classical.choice, Quot.sound]\nGGSG19TopThree.source_proposition1_thm_consistency_tiered {n Stage : \u2115}\n  (law : PMF (EconCSLib.SocialChoice.Ranking.Ranking n))\n  (targetPrefix : Fin Stage \u2192 Finset (EconCSLib.SocialChoice.Ranking.Candidate n))\n  (hnonempty : \u2200 (stage : Fin Stage), Nonempty (CrossTierPair (targetPrefix stage)))\n  (hNoTie :\n    \u2200 (stage : Fin Stage) (hi lo : EconCSLib.SocialChoice.Ranking.Candidate n),\n      hi \u2208 targetPrefix stage \u2192\n        lo \u2209 targetPrefix stage \u2192\n          \u2200 (cut : RankingProperPrefixCut n), rankingTopPrefixProb law lo cut \u2260 rankingTopPrefixProb law hi cut) :\n  (\u2200 (stage : Fin Stage) (hi lo : EconCSLib.SocialChoice.Ranking.Candidate n),\n      hi \u2208 targetPrefix stage \u2192\n        lo \u2209 targetPrefix stage \u2192\n          \u2200 (cut : RankingProperPrefixCut n), rankingTopPrefixProb law lo cut < rankingTopPrefixProb law hi cut) \u2194\n    \u2200 (diff : RankingProperPrefixCut n \u2192 \u211d),\n      ReasonablePrefixWeights diff \u2192\n        Filter.Tendsto\n          (scoreTopTieredPrefixSelectionErrorProb law (rankingPrefixScore diff) targetPrefix fun stage voters sample =>\n            scoreTopSelectedSetOfCard (iidSampleCandidateScore (rankingPrefixScore diff) sample) (targetPrefix stage))\n          Filter.atTop (nhds 0)\n'GGSG19TopThree.source_proposition1_thm_consistency_tiered' depends on axioms: [propext, Classical.choice, Quot.sound]\nGGSG19TopThree.source_proposition2_thm_pairwiselearning_finite_support.{u_1} {Signal : Type u_1} [Fintype Signal]\n  [DecidableEq Signal] (law : PMF Signal) (hiScore loScore : Signal \u2192 \u211d)\n  (hmean : 0 \u2264 EconCSLib.pmfExp law fun signal => hiScore signal - loScore signal) :\n  EconCSLib.Probability.ExponentialRateCertificate (pairwiseScoringErrorProb law hiScore loScore)\n      (pairwiseScoringRate law hiScore loScore) \u2228\n    (\u2203 pZero,\n        (EconCSLib.pmfProb law fun signal => hiScore signal - loScore signal = 0) = pZero \u2227\n          0 < pZero \u2227\n            EconCSLib.Probability.ExponentialRateCertificate (pairwiseScoringErrorProb law hiScore loScore)\n              (-Real.log pZero)) \u2228\n      \u2200\u1da0 (n : \u2115) in Filter.atTop, pairwiseScoringErrorProb law hiScore loScore n = 0\n'GGSG19TopThree.source_proposition2_thm_pairwiselearning_finite_support' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGGSG19TopThree.source_proposition3_lem_pairwiselearning_approval_finite_ternary.{u_1} {Signal : Type u_1}\n  [Fintype Signal] [DecidableEq Signal] (law : PMF Signal) (hiScore loScore : Signal \u2192 \u211d) {pUp pDown pZero : \u211d}\n  (hle : pDown \u2264 pUp)\n  (hscore :\n    \u2200 (signal : Signal),\n      hiScore signal - loScore signal = 1 \u2228 hiScore signal - loScore signal = 0 \u2228 hiScore signal - loScore signal = -1)\n  (hUpProb : (EconCSLib.pmfProb law fun signal => hiScore signal - loScore signal = 1) = pUp)\n  (hDownProb : (EconCSLib.pmfProb law fun signal => hiScore signal - loScore signal = -1) = pDown)\n  (hZeroProb : (EconCSLib.pmfProb law fun signal => hiScore signal - loScore signal = 0) = pZero) :\n  EconCSLib.Probability.ExponentialRateCertificate (pairwiseScoringErrorProb law hiScore loScore)\n      (approvalPairwiseRate pUp pDown) \u2228\n    \u2200\u1da0 (n : \u2115) in Filter.atTop, pairwiseScoringErrorProb law hiScore loScore n = 0\n'GGSG19TopThree.source_proposition3_lem_pairwiselearning_approval_finite_ternary' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGGSG19TopThree.source_proposition4_thm_goal_learning_finite_support.{u_1, u_2, u_3} {Pair : Type u_1}\n  {Candidate : Type u_2} {Signal : Type u_3} [Fintype Pair] [DecidableEq Pair] [Fintype Signal] [DecidableEq Signal]\n  (law : PMF Signal) (score : Candidate \u2192 Signal \u2192 \u211d) (hi lo : Pair \u2192 Candidate)\n  (hmean : \u2200 (pair : Pair), 0 \u2264 EconCSLib.pmfExp law fun signal => score (hi pair) signal - score (lo pair) signal) :\n  \u2203 rate,\n    EconCSLib.Probability.HasExtendedExponentialRate\n      (fun sampleSize => \u2211 pair, finiteScoreGapPairwiseErrorProb law score (hi pair) (lo pair) sampleSize) rate\n'GGSG19TopThree.source_proposition4_thm_goal_learning_finite_support' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGGSG19TopThree.source_theorem1_lem_randomizebetterscoring.{u_1, u_2, u_3, u_4} {Rule : Type u_1} {Cut : Type u_2}\n  {Candidate : Type u_3} {Signal : Type u_4} [Fintype Rule] [DecidableEq Rule] [Fintype Cut] [DecidableEq Cut]\n  [Fintype Candidate] [DecidableEq Candidate] [Fintype Signal] [DecidableEq Signal] (law : PMF Signal)\n  (weight : Rule \u2192 \u211d) (diff : Rule \u2192 Cut \u2192 \u211d) (inPrefix : Signal \u2192 Candidate \u2192 Cut \u2192 Prop)\n  [(signal : Signal) \u2192 (candidate : Candidate) \u2192 (cut : Cut) \u2192 Decidable (inPrefix signal candidate cut)]\n  (winnerSet : Finset Candidate) [Nonempty (CrossTierPair winnerSet)] (hweight : \u2200 (rule : Rule), 0 \u2264 weight rule)\n  (hsum : \u2211 rule, weight rule = 1) (hdiff : \u2200 (rule : Rule), ReasonablePrefixWeights (diff rule))\n  (hdom : StrictTopPrefixDominanceOn (prefixProbFromEvent law inPrefix) fun hi lo => hi \u2208 winnerSet \u2227 lo \u2209 winnerSet) :\n  (ReasonablePrefixWeights fun cut => \u2211 rule, weight rule * diff rule cut) \u2227\n    Filter.Tendsto\n        (scoreTopSelectionErrorProb law\n          (fun candidate => prefixScoreFromEvent (fun cut => \u2211 rule, weight rule * diff rule cut) inPrefix candidate)\n          winnerSet fun n sample =>\n          scoreTopSelectedSetOfCard\n            (iidSampleCandidateScore\n              (fun candidate =>\n                prefixScoreFromEvent (fun cut => \u2211 rule, weight rule * diff rule cut) inPrefix candidate)\n              sample)\n            winnerSet)\n        Filter.atTop (nhds 0) \u2227\n      \u2203 staticRate,\n        EconCSLib.Probability.HasExtendedExponentialRate\n            (fun sampleSize =>\n              \u2211 pair,\n                finiteScoreGapPairwiseErrorProb law\n                  (fun candidate =>\n                    prefixScoreFromEvent (fun cut => \u2211 rule, weight rule * diff rule cut) inPrefix candidate)\n                  pair.hi pair.lo sampleSize)\n            staticRate \u2227\n          \u2191(finiteOutcomeLearningRate fun pair =>\n                EconCSLib.Probability.finiteChernoffRate (randomizedScoringSamplingLaw law weight hweight hsum)\n                  fun signal =>\n                  prefixScoreFromEvent (diff signal.1) inPrefix pair.hi signal.2 -\n                    prefixScoreFromEvent (diff signal.1) inPrefix pair.lo signal.2) \u2264\n            staticRate\n'GGSG19TopThree.source_theorem1_lem_randomizebetterscoring' depends on axioms: [propext, Classical.choice, Quot.sound]\nGGSG19TopThree.source_theorem2_lem_randomizenotbetterapproval_pairwise.{u_1} {n : \u2115} {Rule : Type u_1} [Fintype Rule]\n  [Nonempty Rule] (law : PMF (EconCSLib.SocialChoice.Ranking.Ranking n)) (K : Rule \u2192 \u2115) (weight : Rule \u2192 \u211d)\n  (hweight : \u2200 (rule : Rule), 0 \u2264 weight rule) (hsum : \u2211 rule, weight rule = 1)\n  (hi lo : EconCSLib.SocialChoice.Ranking.Candidate n) :\n  \u2203 rule,\n    \u2191(approvalPairwiseRate (\u2211 rule, weight rule * EconCSLib.SocialChoice.Ranking.kApprovalPairUpProb law (K rule) hi lo)\n          (\u2211 rule, weight rule * EconCSLib.SocialChoice.Ranking.kApprovalPairDownProb law (K rule) hi lo)) \u2264\n      approvalPairwiseExtendedRate (EconCSLib.SocialChoice.Ranking.kApprovalPairUpProb law (K rule) hi lo)\n        (EconCSLib.SocialChoice.Ranking.kApprovalPairDownProb law (K rule) hi lo)\n'GGSG19TopThree.source_theorem2_lem_randomizenotbetterapproval_pairwise' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGGSG19TopThree.source_corollary_lem_mallowsnorando.{u_1} {n : \u2115} (M : EconCSLib.SocialChoice.Ranking.MallowsSpec n)\n  (W : EconCSLib.SocialChoice.Ranking.Candidate n) (hW : 0 < \u2191W) (hq_lt : M.q < 1) {Rule : Type u_1} [Fintype Rule]\n  [Nonempty Rule] (K : Rule \u2192 \u2115) (hK_pos : \u2200 (rule : Rule), 0 < K rule) (hK_lt : \u2200 (rule : Rule), K rule < n + 2)\n  (weight : Rule \u2192 \u211d) (hweight : \u2200 (rule : Rule), 0 \u2264 weight rule) (hsum : \u2211 rule, weight rule = 1) :\n  \u2203 cut,\n    (\u2200 (cut' : RankingProperPrefixCut n),\n        mallowsTopWKApprovalOutcomeRate M W hW (\u2191cut' + 1) \u2264 mallowsTopWKApprovalOutcomeRate M W hW (\u2191cut + 1)) \u2227\n      mallowsTopWRandomizedKApprovalOutcomeRate M W hW K weight \u2264 mallowsTopWKApprovalOutcomeRate M W hW (\u2191cut + 1)\n'GGSG19TopThree.source_corollary_lem_mallowsnorando' depends on axioms: [propext, Classical.choice, Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GGSG19TopThree\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"lean_source_declaration\": \"abbrev paper_definition_large_deviation_rate (A : \\u2115 \\u2192 \\u211d) (r : \\u211d) : Prop :=\\n  definition_large_deviation_rate A r\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_definition_large_deviation_rate\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"A\",\n        \"type\": \"\\u2115 \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"r\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem source_proposition1_thm_consistency_tiered\\n    {n Stage : \\u2115}\\n    (law : PMF (Ranking n))\\n    (targetPrefix : Fin Stage \\u2192 Finset (Candidate n))\\n    (hnonempty :\\n      \\u2200 stage : Fin Stage, Nonempty (CrossTierPair (targetPrefix stage)))\\n    (hNoTie :\\n      \\u2200 stage : Fin Stage,\\n        \\u2200 hi lo : Candidate n,\\n          hi \\u2208 targetPrefix stage \\u2192\\n            lo \\u2209 targetPrefix stage \\u2192\\n              \\u2200 cut : RankingProperPrefixCut n,\\n                rankingTopPrefixProb law lo cut \\u2260\\n                  rankingTopPrefixProb law hi cut) :\\n    (\\u2200 stage : Fin Stage,\\n      \\u2200 hi lo : Candidate n,\\n        hi \\u2208 targetPrefix stage \\u2192\\n          lo \\u2209 targetPrefix stage \\u2192\\n            \\u2200 cut : RankingProperPrefixCut n,\\n              rankingTopPrefixProb law lo cut <\\n                rankingTopPrefixProb law hi cut) \\u2194\\n      (\\u2200 diff : RankingProperPrefixCut n \\u2192 \\u211d,\\n        ReasonablePrefixWeights diff \\u2192\\n          Filter.Tendsto\\n            (scoreTopTieredPrefixSelectionErrorProb law\\n              (rankingPrefixScore diff)\\n              targetPrefix\\n              (fun stage voters sample =>\\n                scoreTopSelectedSetOfCard\\n                  (iidSampleCandidateScore (rankingPrefixScore diff) sample)\\n                  (targetPrefix stage)))\\n            Filter.atTop (nhds 0)) :=\\n  proposition1_ranking_law_tiered_strict_prefix_dominance_iff_all_reasonable_tiered_prefix_score_consistency_of_no_cross_tier_prefix_ties\\n    law targetPrefix hnonempty hNoTie\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"source_proposition1_thm_consistency_tiered\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n Stage\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"law\",\n        \"type\": \"PMF (Ranking n)\"\n      },\n      {\n        \"names\": \"targetPrefix\",\n        \"type\": \"Fin Stage \\u2192 Finset (Candidate n)\"\n      },\n      {\n        \"names\": \"hnonempty\",\n        \"type\": \"\\u2200 stage : Fin Stage, Nonempty (CrossTierPair (targetPrefix stage))\"\n      },\n      {\n        \"names\": \"hNoTie\",\n        \"type\": \"\\u2200 stage : Fin Stage, \\u2200 hi lo : Candidate n, hi \\u2208 targetPrefix stage \\u2192 lo \\u2209 targetPrefix stage \\u2192 \\u2200 cut : RankingProperPrefixCut n, rankingTopPrefixProb law lo cut \\u2260 rankingTopPrefixProb law hi cut\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem source_proposition2_thm_pairwiselearning_finite_support\\n    {Signal : Type*} [Fintype Signal] [DecidableEq Signal]\\n    (law : PMF Signal) (hiScore loScore : Signal \\u2192 \\u211d)\\n    (hmean :\\n      0 \\u2264\\n        EconCSLib.pmfExp law\\n          (fun signal => hiScore signal - loScore signal)) :\\n    ExponentialRateCertificate\\n        (pairwiseScoringErrorProb law hiScore loScore)\\n        (pairwiseScoringRate law hiScore loScore) \\u2228\\n      (\\u2203 pZero : \\u211d,\\n        EconCSLib.pmfProb law\\n            (fun signal => hiScore signal - loScore signal = 0) =\\n          pZero \\u2227\\n        0 < pZero \\u2227\\n        ExponentialRateCertificate\\n          (pairwiseScoringErrorProb law hiScore loScore)\\n          (-Real.log pZero)) \\u2228\\n      (\\u2200\\u1da0 n in Filter.atTop,\\n        pairwiseScoringErrorProb law hiScore loScore n = 0) :=\\n  proposition2_pairwise_exact_rate_or_boundary_from_finite_support_mean_nonneg\\n    law hiScore loScore hmean\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"source_proposition2_thm_pairwiselearning_finite_support\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Signal\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"law\",\n        \"type\": \"PMF Signal\"\n      },\n      {\n        \"names\": \"hiScore loScore\",\n        \"type\": \"Signal \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hmean\",\n        \"type\": \"0 \\u2264 EconCSLib.pmfExp law (fun signal => hiScore signal - loScore signal)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem source_proposition3_lem_pairwiselearning_approval_finite_ternary\\n    {Signal : Type*} [Fintype Signal] [DecidableEq Signal]\\n    (law : PMF Signal) (hiScore loScore : Signal \\u2192 \\u211d)\\n    {pUp pDown pZero : \\u211d}\\n    (hle : pDown \\u2264 pUp)\\n    (hscore :\\n      \\u2200 signal,\\n        hiScore signal - loScore signal = 1 \\u2228\\n          hiScore signal - loScore signal = 0 \\u2228\\n          hiScore signal - loScore signal = -1)\\n    (hUpProb :\\n      EconCSLib.pmfProb law\\n          (fun signal => hiScore signal - loScore signal = 1) =\\n        pUp)\\n    (hDownProb :\\n      EconCSLib.pmfProb law\\n          (fun signal => hiScore signal - loScore signal = -1) =\\n        pDown)\\n    (hZeroProb :\\n      EconCSLib.pmfProb law\\n          (fun signal => hiScore signal - loScore signal = 0) =\\n        pZero) :\\n    ExponentialRateCertificate\\n        (pairwiseScoringErrorProb law hiScore loScore)\\n        (approvalPairwiseRate pUp pDown) \\u2228\\n      (\\u2200\\u1da0 n in Filter.atTop,\\n        pairwiseScoringErrorProb law hiScore loScore n = 0) :=\\n  proposition3_approval_pairwise_exact_rate_or_eventually_zero_from_ternary_scores\\n    law hiScore loScore hle hscore hUpProb hDownProb hZeroProb\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"source_proposition3_lem_pairwiselearning_approval_finite_ternary\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Signal\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"law\",\n        \"type\": \"PMF Signal\"\n      },\n      {\n        \"names\": \"hiScore loScore\",\n        \"type\": \"Signal \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"pUp pDown pZero\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hle\",\n        \"type\": \"pDown \\u2264 pUp\"\n      },\n      {\n        \"names\": \"hscore\",\n        \"type\": \"\\u2200 signal, hiScore signal - loScore signal = 1 \\u2228 hiScore signal - loScore signal = 0 \\u2228 hiScore signal - loScore signal = -1\"\n      },\n      {\n        \"names\": \"hUpProb\",\n        \"type\": \"EconCSLib.pmfProb law (fun signal => hiScore signal - loScore signal = 1) = pUp\"\n      },\n      {\n        \"names\": \"hDownProb\",\n        \"type\": \"EconCSLib.pmfProb law (fun signal => hiScore signal - loScore signal = -1) = pDown\"\n      },\n      {\n        \"names\": \"hZeroProb\",\n        \"type\": \"EconCSLib.pmfProb law (fun signal => hiScore signal - loScore signal = 0) = pZero\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem source_proposition4_thm_goal_learning_finite_support\\n    {Pair Candidate Signal : Type*} [Fintype Pair] [DecidableEq Pair]\\n    [Fintype Signal] [DecidableEq Signal]\\n    (law : PMF Signal) (score : Candidate \\u2192 Signal \\u2192 \\u211d)\\n    (hi lo : Pair \\u2192 Candidate)\\n    (hmean :\\n      \\u2200 pair,\\n        0 \\u2264 EconCSLib.pmfExp law\\n          (fun signal =>\\n            score (hi pair) signal - score (lo pair) signal)) :\\n    \\u2203 rate : WithTop \\u211d,\\n      HasExtendedExponentialRate\\n        (fun sampleSize =>\\n          \\u2211 pair : Pair,\\n            finiteScoreGapPairwiseErrorProb law score\\n              (hi pair) (lo pair) sampleSize)\\n        rate := by\\n  simpa using\\n    (proposition4_outcome_error_extended_rate_from_relevant_pairs_finite_support_trichotomy\\n      law score hi lo hmean\\n      (pairWeight := fun _ => (1 : \\u211d))\\n      (by intro pair; exact zero_le_one)\\n      (by intro pair; exact zero_lt_one))\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"source_proposition4_thm_goal_learning_finite_support\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Pair Candidate Signal\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"law\",\n        \"type\": \"PMF Signal\"\n      },\n      {\n        \"names\": \"score\",\n        \"type\": \"Candidate \\u2192 Signal \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hi lo\",\n        \"type\": \"Pair \\u2192 Candidate\"\n      },\n      {\n        \"names\": \"hmean\",\n        \"type\": \"\\u2200 pair, 0 \\u2264 EconCSLib.pmfExp law (fun signal => score (hi pair) signal - score (lo pair) signal)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem source_theorem1_lem_randomizebetterscoring\\n    {Rule Cut Candidate Signal : Type*}\\n    [Fintype Rule] [DecidableEq Rule] [Fintype Cut] [DecidableEq Cut]\\n    [Fintype Candidate] [DecidableEq Candidate]\\n    [Fintype Signal] [DecidableEq Signal]\\n    (law : PMF Signal) (weight : Rule \\u2192 \\u211d) (diff : Rule \\u2192 Cut \\u2192 \\u211d)\\n    (inPrefix : Signal \\u2192 Candidate \\u2192 Cut \\u2192 Prop)\\n    [\\u2200 signal candidate cut, Decidable (inPrefix signal candidate cut)]\\n    (winnerSet : Finset Candidate)\\n    [Nonempty (CrossTierPair winnerSet)]\\n    (hweight : \\u2200 rule, 0 \\u2264 weight rule)\\n    (hsum : (\\u2211 rule : Rule, weight rule) = 1)\\n    (hdiff : \\u2200 rule, ReasonablePrefixWeights (diff rule))\\n    (hdom :\\n      StrictTopPrefixDominanceOn (prefixProbFromEvent law inPrefix)\\n        (fun hi lo => hi \\u2208 winnerSet \\u2227 lo \\u2209 winnerSet)) :\\n    ReasonablePrefixWeights\\n        (fun cut => \\u2211 rule : Rule, weight rule * diff rule cut) \\u2227\\n      Filter.Tendsto\\n        (scoreTopSelectionErrorProb law\\n          (fun candidate =>\\n            prefixScoreFromEvent\\n              (fun cut => \\u2211 rule : Rule, weight rule * diff rule cut)\\n              inPrefix candidate)\\n          winnerSet\\n          (fun n sample =>\\n            scoreTopSelectedSetOfCard\\n              (iidSampleCandidateScore\\n                (fun candidate =>\\n                  prefixScoreFromEvent\\n                    (fun cut => \\u2211 rule : Rule, weight rule * diff rule cut)\\n                    inPrefix candidate)\\n                sample)\\n              winnerSet))\\n        Filter.atTop (nhds 0) \\u2227\\n      \\u2203 staticRate : WithTop \\u211d,\\n        HasExtendedExponentialRate\\n          (fun sampleSize =>\\n            \\u2211 pair : CrossTierPair winnerSet,\\n              finiteScoreGapPairwiseErrorProb law\\n                (fun candidate =>\\n                  prefixScoreFromEvent\\n                    (fun cut => \\u2211 rule : Rule, weight rule * diff rule cut)\\n                    inPrefix candidate)\\n                pair.hi pair.lo sampleSize)\\n          staticRate \\u2227\\n          ((finiteOutcomeLearningRate\\n              (fun pair : CrossTierPair winnerSet =>\\n                finiteChernoffRate\\n                  (randomizedScoringSamplingLaw law weight hweight hsum)\\n                  (fun signal : Rule \\u00d7 Signal =>\\n                    prefixScoreFromEvent (diff signal.1) inPrefix\\n                        pair.hi signal.2 -\\n                      prefixScoreFromEvent (diff signal.1) inPrefix\\n                        pair.lo signal.2)) : WithTop \\u211d) \\u2264\\n            staticRate) :=\\n  randomized_scoring_prefix_actual_cross_tier_static_selection_and_automatic_extended_static_rate_comparison\\n    law weight diff inPrefix winnerSet hweight hsum hdiff hdom\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"source_theorem1_lem_randomizebetterscoring\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Rule Cut Candidate Signal\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"law\",\n        \"type\": \"PMF Signal\"\n      },\n      {\n        \"names\": \"weight\",\n        \"type\": \"Rule \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"diff\",\n        \"type\": \"Rule \\u2192 Cut \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"inPrefix\",\n        \"type\": \"Signal \\u2192 Candidate \\u2192 Cut \\u2192 Prop\"\n      },\n      {\n        \"names\": \"winnerSet\",\n        \"type\": \"Finset Candidate\"\n      },\n      {\n        \"names\": \"hweight\",\n        \"type\": \"\\u2200 rule, 0 \\u2264 weight rule\"\n      },\n      {\n        \"names\": \"hsum\",\n        \"type\": \"(\\u2211 rule : Rule, weight rule) = 1\"\n      },\n      {\n        \"names\": \"hdiff\",\n        \"type\": \"\\u2200 rule, ReasonablePrefixWeights (diff rule)\"\n      },\n      {\n        \"names\": \"hdom\",\n        \"type\": \"StrictTopPrefixDominanceOn (prefixProbFromEvent law inPrefix) (fun hi lo => hi \\u2208 winnerSet \\u2227 lo \\u2209 winnerSet)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem source_theorem2_lem_randomizenotbetterapproval_pairwise\\n    {n : \\u2115} {Rule : Type*} [Fintype Rule] [Nonempty Rule]\\n    (law : PMF (Ranking n))\\n    (K : Rule \\u2192 \\u2115) (weight : Rule \\u2192 \\u211d)\\n    (hweight : \\u2200 rule, 0 \\u2264 weight rule)\\n    (hsum : (\\u2211 rule : Rule, weight rule) = 1)\\n    (hi lo : Candidate n) :\\n    \\u2203 rule : Rule,\\n      (approvalPairwiseRate\\n          (\\u2211 rule : Rule,\\n            weight rule * kApprovalPairUpProb law (K rule) hi lo)\\n          (\\u2211 rule : Rule,\\n            weight rule * kApprovalPairDownProb law (K rule) hi lo) :\\n        WithTop \\u211d) \\u2264\\n        approvalPairwiseExtendedRate\\n          (kApprovalPairUpProb law (K rule) hi lo)\\n          (kApprovalPairDownProb law (K rule) hi lo) :=\\n  randomized_k_approval_pairwise_extended_rate_le_static\\n    law K weight hweight hsum hi lo\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"source_theorem2_lem_randomizenotbetterapproval_pairwise\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"Rule\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"law\",\n        \"type\": \"PMF (Ranking n)\"\n      },\n      {\n        \"names\": \"K\",\n        \"type\": \"Rule \\u2192 \\u2115\"\n      },\n      {\n        \"names\": \"weight\",\n        \"type\": \"Rule \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hweight\",\n        \"type\": \"\\u2200 rule, 0 \\u2264 weight rule\"\n      },\n      {\n        \"names\": \"hsum\",\n        \"type\": \"(\\u2211 rule : Rule, weight rule) = 1\"\n      },\n      {\n        \"names\": \"hi lo\",\n        \"type\": \"Candidate n\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem source_corollary_lem_mallowsnorando\\n    {n : \\u2115} (M : MallowsSpec n) (W : Candidate n) (hW : 0 < W.val)\\n    (hq_lt : M.q < 1)\\n    {Rule : Type*} [Fintype Rule] [Nonempty Rule]\\n    (K : Rule \\u2192 \\u2115)\\n    (hK_pos : \\u2200 rule, 0 < K rule)\\n    (hK_lt : \\u2200 rule, K rule < n + 2)\\n    (weight : Rule \\u2192 \\u211d)\\n    (hweight : \\u2200 rule, 0 \\u2264 weight rule)\\n    (hsum : (\\u2211 rule : Rule, weight rule) = 1) :\\n    \\u2203 cut : RankingProperPrefixCut n,\\n      (\\u2200 cut' : RankingProperPrefixCut n,\\n        mallowsTopWKApprovalOutcomeRate M W hW (cut'.val + 1) \\u2264\\n          mallowsTopWKApprovalOutcomeRate M W hW (cut.val + 1)) \\u2227\\n      mallowsTopWRandomizedKApprovalOutcomeRate M W hW K weight \\u2264\\n        mallowsTopWKApprovalOutcomeRate M W hW (cut.val + 1) :=\\n  mallows_k_approval_no_randomization_to_approval_rate_optimal_from_mallows_model_q_lt_one\\n    M W hW hq_lt K hK_pos hK_lt weight hweight hsum\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"source_corollary_lem_mallowsnorando\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"MallowsSpec n\"\n      },\n      {\n        \"names\": \"W\",\n        \"type\": \"Candidate n\"\n      },\n      {\n        \"names\": \"hW\",\n        \"type\": \"0 < W.val\"\n      },\n      {\n        \"names\": \"hq_lt\",\n        \"type\": \"M.q < 1\"\n      },\n      {\n        \"names\": \"Rule\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"K\",\n        \"type\": \"Rule \\u2192 \\u2115\"\n      },\n      {\n        \"names\": \"hK_pos\",\n        \"type\": \"\\u2200 rule, 0 < K rule\"\n      },\n      {\n        \"names\": \"hK_lt\",\n        \"type\": \"\\u2200 rule, K rule < n + 2\"\n      },\n      {\n        \"names\": \"weight\",\n        \"type\": \"Rule \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hweight\",\n        \"type\": \"\\u2200 rule, 0 \\u2264 weight rule\"\n      },\n      {\n        \"names\": \"hsum\",\n        \"type\": \"(\\u2211 rule : Rule, weight rule) = 1\"\n      }\n    ]\n  }\n]",
+  "paper": "GGSG19TopThree",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/GGSG19TopThree",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 0,
+  "recursive_field_items": [],
+  "review_row_count": 15,
+  "row_visible_inputs": {
+    "assumption_mallows_nontrivial_winner_and_noise": [],
+    "assumption_nontrivial_k_approval_cutoffs": [],
+    "assumption_pairwise_approval_ternary_gap_domain": [],
+    "assumption_randomized_mechanism_probability_weights": [],
+    "assumption_strict_cross_tier_no_ties": [],
+    "paper_definition_large_deviation_rate": [
+      {
+        "names": "A",
+        "type": "\u2115 \u2192 \u211d"
+      },
+      {
+        "names": "r",
+        "type": "\u211d"
+      }
+    ],
+    "source_corollary_lem_mallowsnorando": [
+      {
+        "names": "n",
+        "type": "\u2115"
+      },
+      {
+        "names": "M",
+        "type": "MallowsSpec n"
+      },
+      {
+        "names": "W",
+        "type": "Candidate n"
+      },
+      {
+        "names": "hW",
+        "type": "0 < W.val"
+      },
+      {
+        "names": "hq_lt",
+        "type": "M.q < 1"
+      },
+      {
+        "names": "Rule",
+        "type": "Type*"
+      },
+      {
+        "names": "K",
+        "type": "Rule \u2192 \u2115"
+      },
+      {
+        "names": "hK_pos",
+        "type": "\u2200 rule, 0 < K rule"
+      },
+      {
+        "names": "hK_lt",
+        "type": "\u2200 rule, K rule < n + 2"
+      },
+      {
+        "names": "weight",
+        "type": "Rule \u2192 \u211d"
+      },
+      {
+        "names": "hweight",
+        "type": "\u2200 rule, 0 \u2264 weight rule"
+      },
+      {
+        "names": "hsum",
+        "type": "(\u2211 rule : Rule, weight rule) = 1"
+      }
+    ],
+    "source_proposition1_thm_consistency_tiered": [
+      {
+        "names": "n Stage",
+        "type": "\u2115"
+      },
+      {
+        "names": "law",
+        "type": "PMF (Ranking n)"
+      },
+      {
+        "names": "targetPrefix",
+        "type": "Fin Stage \u2192 Finset (Candidate n)"
+      },
+      {
+        "names": "hnonempty",
+        "type": "\u2200 stage : Fin Stage, Nonempty (CrossTierPair (targetPrefix stage))"
+      },
+      {
+        "names": "hNoTie",
+        "type": "\u2200 stage : Fin Stage, \u2200 hi lo : Candidate n, hi \u2208 targetPrefix stage \u2192 lo \u2209 targetPrefix stage \u2192 \u2200 cut : RankingProperPrefixCut n, rankingTopPrefixProb law lo cut \u2260 rankingTopPrefixProb law hi cut"
+      }
+    ],
+    "source_proposition2_thm_pairwiselearning_finite_support": [
+      {
+        "names": "Signal",
+        "type": "Type*"
+      },
+      {
+        "names": "law",
+        "type": "PMF Signal"
+      },
+      {
+        "names": "hiScore loScore",
+        "type": "Signal \u2192 \u211d"
+      },
+      {
+        "names": "hmean",
+        "type": "0 \u2264 EconCSLib.pmfExp law (fun signal => hiScore signal - loScore signal)"
+      }
+    ],
+    "source_proposition3_lem_pairwiselearning_approval_finite_ternary": [
+      {
+        "names": "Signal",
+        "type": "Type*"
+      },
+      {
+        "names": "law",
+        "type": "PMF Signal"
+      },
+      {
+        "names": "hiScore loScore",
+        "type": "Signal \u2192 \u211d"
+      },
+      {
+        "names": "pUp pDown pZero",
+        "type": "\u211d"
+      },
+      {
+        "names": "hle",
+        "type": "pDown \u2264 pUp"
+      },
+      {
+        "names": "hscore",
+        "type": "\u2200 signal, hiScore signal - loScore signal = 1 \u2228 hiScore signal - loScore signal = 0 \u2228 hiScore signal - loScore signal = -1"
+      },
+      {
+        "names": "hUpProb",
+        "type": "EconCSLib.pmfProb law (fun signal => hiScore signal - loScore signal = 1) = pUp"
+      },
+      {
+        "names": "hDownProb",
+        "type": "EconCSLib.pmfProb law (fun signal => hiScore signal - loScore signal = -1) = pDown"
+      },
+      {
+        "names": "hZeroProb",
+        "type": "EconCSLib.pmfProb law (fun signal => hiScore signal - loScore signal = 0) = pZero"
+      }
+    ],
+    "source_proposition4_thm_goal_learning_finite_support": [
+      {
+        "names": "Pair Candidate Signal",
+        "type": "Type*"
+      },
+      {
+        "names": "law",
+        "type": "PMF Signal"
+      },
+      {
+        "names": "score",
+        "type": "Candidate \u2192 Signal \u2192 \u211d"
+      },
+      {
+        "names": "hi lo",
+        "type": "Pair \u2192 Candidate"
+      },
+      {
+        "names": "hmean",
+        "type": "\u2200 pair, 0 \u2264 EconCSLib.pmfExp law (fun signal => score (hi pair) signal - score (lo pair) signal)"
+      }
+    ],
+    "source_theorem1_lem_randomizebetterscoring": [
+      {
+        "names": "Rule Cut Candidate Signal",
+        "type": "Type*"
+      },
+      {
+        "names": "law",
+        "type": "PMF Signal"
+      },
+      {
+        "names": "weight",
+        "type": "Rule \u2192 \u211d"
+      },
+      {
+        "names": "diff",
+        "type": "Rule \u2192 Cut \u2192 \u211d"
+      },
+      {
+        "names": "inPrefix",
+        "type": "Signal \u2192 Candidate \u2192 Cut \u2192 Prop"
+      },
+      {
+        "names": "winnerSet",
+        "type": "Finset Candidate"
+      },
+      {
+        "names": "hweight",
+        "type": "\u2200 rule, 0 \u2264 weight rule"
+      },
+      {
+        "names": "hsum",
+        "type": "(\u2211 rule : Rule, weight rule) = 1"
+      },
+      {
+        "names": "hdiff",
+        "type": "\u2200 rule, ReasonablePrefixWeights (diff rule)"
+      },
+      {
+        "names": "hdom",
+        "type": "StrictTopPrefixDominanceOn (prefixProbFromEvent law inPrefix) (fun hi lo => hi \u2208 winnerSet \u2227 lo \u2209 winnerSet)"
+      }
+    ],
+    "source_theorem2_lem_randomizenotbetterapproval_pairwise": [
+      {
+        "names": "n",
+        "type": "\u2115"
+      },
+      {
+        "names": "Rule",
+        "type": "Type*"
+      },
+      {
+        "names": "law",
+        "type": "PMF (Ranking n)"
+      },
+      {
+        "names": "K",
+        "type": "Rule \u2192 \u2115"
+      },
+      {
+        "names": "weight",
+        "type": "Rule \u2192 \u211d"
+      },
+      {
+        "names": "hweight",
+        "type": "\u2200 rule, 0 \u2264 weight rule"
+      },
+      {
+        "names": "hsum",
+        "type": "(\u2211 rule : Rule, weight rule) = 1"
+      },
+      {
+        "names": "hi lo",
+        "type": "Candidate n"
+      }
+    ],
+    "source_theorem_lem_mallowsnotWK_counterexample": [],
+    "source_theorem_lem_randomizebetterapproval_w_selection_constructed": []
+  },
+  "rows_with_record_premises": [],
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "abbrev paper_definition_large_deviation_rate (A : \u2115 \u2192 \u211d) (r : \u211d) : Prop :=\n  definition_large_deviation_rate A r",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_definition_large_deviation_rate",
+      "visible_inputs": [
+        {
+          "names": "A",
+          "type": "\u2115 \u2192 \u211d"
+        },
+        {
+          "names": "r",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem source_proposition1_thm_consistency_tiered\n    {n Stage : \u2115}\n    (law : PMF (Ranking n))\n    (targetPrefix : Fin Stage \u2192 Finset (Candidate n))\n    (hnonempty :\n      \u2200 stage : Fin Stage, Nonempty (CrossTierPair (targetPrefix stage)))\n    (hNoTie :\n      \u2200 stage : Fin Stage,\n        \u2200 hi lo : Candidate n,\n          hi \u2208 targetPrefix stage \u2192\n            lo \u2209 targetPrefix stage \u2192\n              \u2200 cut : RankingProperPrefixCut n,\n                rankingTopPrefixProb law lo cut \u2260\n                  rankingTopPrefixProb law hi cut) :\n    (\u2200 stage : Fin Stage,\n      \u2200 hi lo : Candidate n,\n        hi \u2208 targetPrefix stage \u2192\n          lo \u2209 targetPrefix stage \u2192\n            \u2200 cut : RankingProperPrefixCut n,\n              rankingTopPrefixProb law lo cut <\n                rankingTopPrefixProb law hi cut) \u2194\n      (\u2200 diff : RankingProperPrefixCut n \u2192 \u211d,\n        ReasonablePrefixWeights diff \u2192\n          Filter.Tendsto\n            (scoreTopTieredPrefixSelectionErrorProb law\n              (rankingPrefixScore diff)\n              targetPrefix\n              (fun stage voters sample =>\n                scoreTopSelectedSetOfCard\n                  (iidSampleCandidateScore (rankingPrefixScore diff) sample)\n                  (targetPrefix stage)))\n            Filter.atTop (nhds 0)) :=\n  proposition1_ranking_law_tiered_strict_prefix_dominance_iff_all_reasonable_tiered_prefix_score_consistency_of_no_cross_tier_prefix_ties\n    law targetPrefix hnonempty hNoTie",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "source_proposition1_thm_consistency_tiered",
+      "visible_inputs": [
+        {
+          "names": "n Stage",
+          "type": "\u2115"
+        },
+        {
+          "names": "law",
+          "type": "PMF (Ranking n)"
+        },
+        {
+          "names": "targetPrefix",
+          "type": "Fin Stage \u2192 Finset (Candidate n)"
+        },
+        {
+          "names": "hnonempty",
+          "type": "\u2200 stage : Fin Stage, Nonempty (CrossTierPair (targetPrefix stage))"
+        },
+        {
+          "names": "hNoTie",
+          "type": "\u2200 stage : Fin Stage, \u2200 hi lo : Candidate n, hi \u2208 targetPrefix stage \u2192 lo \u2209 targetPrefix stage \u2192 \u2200 cut : RankingProperPrefixCut n, rankingTopPrefixProb law lo cut \u2260 rankingTopPrefixProb law hi cut"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem source_proposition2_thm_pairwiselearning_finite_support\n    {Signal : Type*} [Fintype Signal] [DecidableEq Signal]\n    (law : PMF Signal) (hiScore loScore : Signal \u2192 \u211d)\n    (hmean :\n      0 \u2264\n        EconCSLib.pmfExp law\n          (fun signal => hiScore signal - loScore signal)) :\n    ExponentialRateCertificate\n        (pairwiseScoringErrorProb law hiScore loScore)\n        (pairwiseScoringRate law hiScore loScore) \u2228\n      (\u2203 pZero : \u211d,\n        EconCSLib.pmfProb law\n            (fun signal => hiScore signal - loScore signal = 0) =\n          pZero \u2227\n        0 < pZero \u2227\n        ExponentialRateCertificate\n          (pairwiseScoringErrorProb law hiScore loScore)\n          (-Real.log pZero)) \u2228\n      (\u2200\u1da0 n in Filter.atTop,\n        pairwiseScoringErrorProb law hiScore loScore n = 0) :=\n  proposition2_pairwise_exact_rate_or_boundary_from_finite_support_mean_nonneg\n    law hiScore loScore hmean",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "source_proposition2_thm_pairwiselearning_finite_support",
+      "visible_inputs": [
+        {
+          "names": "Signal",
+          "type": "Type*"
+        },
+        {
+          "names": "law",
+          "type": "PMF Signal"
+        },
+        {
+          "names": "hiScore loScore",
+          "type": "Signal \u2192 \u211d"
+        },
+        {
+          "names": "hmean",
+          "type": "0 \u2264 EconCSLib.pmfExp law (fun signal => hiScore signal - loScore signal)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem source_proposition3_lem_pairwiselearning_approval_finite_ternary\n    {Signal : Type*} [Fintype Signal] [DecidableEq Signal]\n    (law : PMF Signal) (hiScore loScore : Signal \u2192 \u211d)\n    {pUp pDown pZero : \u211d}\n    (hle : pDown \u2264 pUp)\n    (hscore :\n      \u2200 signal,\n        hiScore signal - loScore signal = 1 \u2228\n          hiScore signal - loScore signal = 0 \u2228\n          hiScore signal - loScore signal = -1)\n    (hUpProb :\n      EconCSLib.pmfProb law\n          (fun signal => hiScore signal - loScore signal = 1) =\n        pUp)\n    (hDownProb :\n      EconCSLib.pmfProb law\n          (fun signal => hiScore signal - loScore signal = -1) =\n        pDown)\n    (hZeroProb :\n      EconCSLib.pmfProb law\n          (fun signal => hiScore signal - loScore signal = 0) =\n        pZero) :\n    ExponentialRateCertificate\n        (pairwiseScoringErrorProb law hiScore loScore)\n        (approvalPairwiseRate pUp pDown) \u2228\n      (\u2200\u1da0 n in Filter.atTop,\n        pairwiseScoringErrorProb law hiScore loScore n = 0) :=\n  proposition3_approval_pairwise_exact_rate_or_eventually_zero_from_ternary_scores\n    law hiScore loScore hle hscore hUpProb hDownProb hZeroProb",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "source_proposition3_lem_pairwiselearning_approval_finite_ternary",
+      "visible_inputs": [
+        {
+          "names": "Signal",
+          "type": "Type*"
+        },
+        {
+          "names": "law",
+          "type": "PMF Signal"
+        },
+        {
+          "names": "hiScore loScore",
+          "type": "Signal \u2192 \u211d"
+        },
+        {
+          "names": "pUp pDown pZero",
+          "type": "\u211d"
+        },
+        {
+          "names": "hle",
+          "type": "pDown \u2264 pUp"
+        },
+        {
+          "names": "hscore",
+          "type": "\u2200 signal, hiScore signal - loScore signal = 1 \u2228 hiScore signal - loScore signal = 0 \u2228 hiScore signal - loScore signal = -1"
+        },
+        {
+          "names": "hUpProb",
+          "type": "EconCSLib.pmfProb law (fun signal => hiScore signal - loScore signal = 1) = pUp"
+        },
+        {
+          "names": "hDownProb",
+          "type": "EconCSLib.pmfProb law (fun signal => hiScore signal - loScore signal = -1) = pDown"
+        },
+        {
+          "names": "hZeroProb",
+          "type": "EconCSLib.pmfProb law (fun signal => hiScore signal - loScore signal = 0) = pZero"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem source_proposition4_thm_goal_learning_finite_support\n    {Pair Candidate Signal : Type*} [Fintype Pair] [DecidableEq Pair]\n    [Fintype Signal] [DecidableEq Signal]\n    (law : PMF Signal) (score : Candidate \u2192 Signal \u2192 \u211d)\n    (hi lo : Pair \u2192 Candidate)\n    (hmean :\n      \u2200 pair,\n        0 \u2264 EconCSLib.pmfExp law\n          (fun signal =>\n            score (hi pair) signal - score (lo pair) signal)) :\n    \u2203 rate : WithTop \u211d,\n      HasExtendedExponentialRate\n        (fun sampleSize =>\n          \u2211 pair : Pair,\n            finiteScoreGapPairwiseErrorProb law score\n              (hi pair) (lo pair) sampleSize)\n        rate := by\n  simpa using\n    (proposition4_outcome_error_extended_rate_from_relevant_pairs_finite_support_trichotomy\n      law score hi lo hmean\n      (pairWeight := fun _ => (1 : \u211d))\n      (by intro pair; exact zero_le_one)\n      (by intro pair; exact zero_lt_one))",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "source_proposition4_thm_goal_learning_finite_support",
+      "visible_inputs": [
+        {
+          "names": "Pair Candidate Signal",
+          "type": "Type*"
+        },
+        {
+          "names": "law",
+          "type": "PMF Signal"
+        },
+        {
+          "names": "score",
+          "type": "Candidate \u2192 Signal \u2192 \u211d"
+        },
+        {
+          "names": "hi lo",
+          "type": "Pair \u2192 Candidate"
+        },
+        {
+          "names": "hmean",
+          "type": "\u2200 pair, 0 \u2264 EconCSLib.pmfExp law (fun signal => score (hi pair) signal - score (lo pair) signal)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem source_theorem1_lem_randomizebetterscoring\n    {Rule Cut Candidate Signal : Type*}\n    [Fintype Rule] [DecidableEq Rule] [Fintype Cut] [DecidableEq Cut]\n    [Fintype Candidate] [DecidableEq Candidate]\n    [Fintype Signal] [DecidableEq Signal]\n    (law : PMF Signal) (weight : Rule \u2192 \u211d) (diff : Rule \u2192 Cut \u2192 \u211d)\n    (inPrefix : Signal \u2192 Candidate \u2192 Cut \u2192 Prop)\n    [\u2200 signal candidate cut, Decidable (inPrefix signal candidate cut)]\n    (winnerSet : Finset Candidate)\n    [Nonempty (CrossTierPair winnerSet)]\n    (hweight : \u2200 rule, 0 \u2264 weight rule)\n    (hsum : (\u2211 rule : Rule, weight rule) = 1)\n    (hdiff : \u2200 rule, ReasonablePrefixWeights (diff rule))\n    (hdom :\n      StrictTopPrefixDominanceOn (prefixProbFromEvent law inPrefix)\n        (fun hi lo => hi \u2208 winnerSet \u2227 lo \u2209 winnerSet)) :\n    ReasonablePrefixWeights\n        (fun cut => \u2211 rule : Rule, weight rule * diff rule cut) \u2227\n      Filter.Tendsto\n        (scoreTopSelectionErrorProb law\n          (fun candidate =>\n            prefixScoreFromEvent\n              (fun cut => \u2211 rule : Rule, weight rule * diff rule cut)\n              inPrefix candidate)\n          winnerSet\n          (fun n sample =>\n            scoreTopSelectedSetOfCard\n              (iidSampleCandidateScore\n                (fun candidate =>\n                  prefixScoreFromEvent\n                    (fun cut => \u2211 rule : Rule, weight rule * diff rule cut)\n                    inPrefix candidate)\n                sample)\n              winnerSet))\n        Filter.atTop (nhds 0) \u2227\n      \u2203 staticRate : WithTop \u211d,\n        HasExtendedExponentialRate\n          (fun sampleSize =>\n            \u2211 pair : CrossTierPair winnerSet,\n              finiteScoreGapPairwiseErrorProb law\n                (fun candidate =>\n                  prefixScoreFromEvent\n                    (fun cut => \u2211 rule : Rule, weight rule * diff rule cut)\n                    inPrefix candidate)\n                pair.hi pair.lo sampleSize)\n          staticRate \u2227\n          ((finiteOutcomeLearningRate\n              (fun pair : CrossTierPair winnerSet =>\n                finiteChernoffRate\n                  (randomizedScoringSamplingLaw law weight hweight hsum)\n                  (fun signal : Rule \u00d7 Signal =>\n                    prefixScoreFromEvent (diff signal.1) inPrefix\n                        pair.hi signal.2 -\n                      prefixScoreFromEvent (diff signal.1) inPrefix\n                        pair.lo signal.2)) : WithTop \u211d) \u2264\n            staticRate) :=\n  randomized_scoring_prefix_actual_cross_tier_static_selection_and_automatic_extended_static_rate_comparison\n    law weight diff inPrefix winnerSet hweight hsum hdiff hdom",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "source_theorem1_lem_randomizebetterscoring",
+      "visible_inputs": [
+        {
+          "names": "Rule Cut Candidate Signal",
+          "type": "Type*"
+        },
+        {
+          "names": "law",
+          "type": "PMF Signal"
+        },
+        {
+          "names": "weight",
+          "type": "Rule \u2192 \u211d"
+        },
+        {
+          "names": "diff",
+          "type": "Rule \u2192 Cut \u2192 \u211d"
+        },
+        {
+          "names": "inPrefix",
+          "type": "Signal \u2192 Candidate \u2192 Cut \u2192 Prop"
+        },
+        {
+          "names": "winnerSet",
+          "type": "Finset Candidate"
+        },
+        {
+          "names": "hweight",
+          "type": "\u2200 rule, 0 \u2264 weight rule"
+        },
+        {
+          "names": "hsum",
+          "type": "(\u2211 rule : Rule, weight rule) = 1"
+        },
+        {
+          "names": "hdiff",
+          "type": "\u2200 rule, ReasonablePrefixWeights (diff rule)"
+        },
+        {
+          "names": "hdom",
+          "type": "StrictTopPrefixDominanceOn (prefixProbFromEvent law inPrefix) (fun hi lo => hi \u2208 winnerSet \u2227 lo \u2209 winnerSet)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem source_theorem2_lem_randomizenotbetterapproval_pairwise\n    {n : \u2115} {Rule : Type*} [Fintype Rule] [Nonempty Rule]\n    (law : PMF (Ranking n))\n    (K : Rule \u2192 \u2115) (weight : Rule \u2192 \u211d)\n    (hweight : \u2200 rule, 0 \u2264 weight rule)\n    (hsum : (\u2211 rule : Rule, weight rule) = 1)\n    (hi lo : Candidate n) :\n    \u2203 rule : Rule,\n      (approvalPairwiseRate\n          (\u2211 rule : Rule,\n            weight rule * kApprovalPairUpProb law (K rule) hi lo)\n          (\u2211 rule : Rule,\n            weight rule * kApprovalPairDownProb law (K rule) hi lo) :\n        WithTop \u211d) \u2264\n        approvalPairwiseExtendedRate\n          (kApprovalPairUpProb law (K rule) hi lo)\n          (kApprovalPairDownProb law (K rule) hi lo) :=\n  randomized_k_approval_pairwise_extended_rate_le_static\n    law K weight hweight hsum hi lo",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "source_theorem2_lem_randomizenotbetterapproval_pairwise",
+      "visible_inputs": [
+        {
+          "names": "n",
+          "type": "\u2115"
+        },
+        {
+          "names": "Rule",
+          "type": "Type*"
+        },
+        {
+          "names": "law",
+          "type": "PMF (Ranking n)"
+        },
+        {
+          "names": "K",
+          "type": "Rule \u2192 \u2115"
+        },
+        {
+          "names": "weight",
+          "type": "Rule \u2192 \u211d"
+        },
+        {
+          "names": "hweight",
+          "type": "\u2200 rule, 0 \u2264 weight rule"
+        },
+        {
+          "names": "hsum",
+          "type": "(\u2211 rule : Rule, weight rule) = 1"
+        },
+        {
+          "names": "hi lo",
+          "type": "Candidate n"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem source_corollary_lem_mallowsnorando\n    {n : \u2115} (M : MallowsSpec n) (W : Candidate n) (hW : 0 < W.val)\n    (hq_lt : M.q < 1)\n    {Rule : Type*} [Fintype Rule] [Nonempty Rule]\n    (K : Rule \u2192 \u2115)\n    (hK_pos : \u2200 rule, 0 < K rule)\n    (hK_lt : \u2200 rule, K rule < n + 2)\n    (weight : Rule \u2192 \u211d)\n    (hweight : \u2200 rule, 0 \u2264 weight rule)\n    (hsum : (\u2211 rule : Rule, weight rule) = 1) :\n    \u2203 cut : RankingProperPrefixCut n,\n      (\u2200 cut' : RankingProperPrefixCut n,\n        mallowsTopWKApprovalOutcomeRate M W hW (cut'.val + 1) \u2264\n          mallowsTopWKApprovalOutcomeRate M W hW (cut.val + 1)) \u2227\n      mallowsTopWRandomizedKApprovalOutcomeRate M W hW K weight \u2264\n        mallowsTopWKApprovalOutcomeRate M W hW (cut.val + 1) :=\n  mallows_k_approval_no_randomization_to_approval_rate_optimal_from_mallows_model_q_lt_one\n    M W hW hq_lt K hK_pos hK_lt weight hweight hsum",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "source_corollary_lem_mallowsnorando",
+      "visible_inputs": [
+        {
+          "names": "n",
+          "type": "\u2115"
+        },
+        {
+          "names": "M",
+          "type": "MallowsSpec n"
+        },
+        {
+          "names": "W",
+          "type": "Candidate n"
+        },
+        {
+          "names": "hW",
+          "type": "0 < W.val"
+        },
+        {
+          "names": "hq_lt",
+          "type": "M.q < 1"
+        },
+        {
+          "names": "Rule",
+          "type": "Type*"
+        },
+        {
+          "names": "K",
+          "type": "Rule \u2192 \u2115"
+        },
+        {
+          "names": "hK_pos",
+          "type": "\u2200 rule, 0 < K rule"
+        },
+        {
+          "names": "hK_lt",
+          "type": "\u2200 rule, K rule < n + 2"
+        },
+        {
+          "names": "weight",
+          "type": "Rule \u2192 \u211d"
+        },
+        {
+          "names": "hweight",
+          "type": "\u2200 rule, 0 \u2264 weight rule"
+        },
+        {
+          "names": "hsum",
+          "type": "(\u2211 rule : Rule, weight rule) = 1"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "82250714db684e44f565d04b6be991904e5a36e6e48c92c8ff72142876b05604",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": []
+}

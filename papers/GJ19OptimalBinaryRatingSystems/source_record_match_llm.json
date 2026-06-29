@@ -1,299 +1,32 @@
 {
-  "schema": 1,
-  "paper": "GJ19OptimalBinaryRatingSystems",
-  "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-  "validated_at": "2026-06-28T22:35:30Z",
-  "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "comment": "Source-record fields for the C.4 source-facing model are classified as primitive witness data or explicit source-model conditions; none is a public caveat.",
+  "comment": "Semantic source-record provenance rejudge. Record/certificate/replay/process premises are not accepted by source-looking names alone.",
   "items": {
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.cut": {
-      "classification": "nonpropositional_witness_data",
-      "reason": "Primitive source-model datum/witness rather than an additional theorem assumption.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.hcut_strict": {
+    "paper_lemmaC3_partition_integral_hasExponentialRate_of_min_component_uniform_logRate.hweight_bound : \u2200 component, \u2200\u1d50 x \u2202\u03bc.restrict (P.pieceSet component), weight x \u2264 W component": {
       "classification": "validated_source_assumption",
-      "reason": "Strictly increasing cutpoint condition for nondegenerate source cells.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "a1f2f7965b11dae1966087593a6d4248aee1f2e6310278e52d332125aee744d1",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.hm": {
+    "paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf.hweight_bound : \u2200\u1d50 x \u2202\u03bc, weight x \u2264 W": {
       "classification": "validated_source_assumption",
-      "reason": "Finite nontrivial level-count condition for the piecewise-constant forward branch.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.hmono": {
-      "classification": "validated_source_assumption",
-      "reason": "Monotone finite cutpoint/source partition condition.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.hsample_mono": {
-      "classification": "validated_source_assumption",
-      "reason": "Monotone finite sample-rate condition used by the source-shaped endpoint construction.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.hsample_pos": {
-      "classification": "validated_source_assumption",
-      "reason": "Positive endpoint sample-rate condition for adjacent large-deviation rates.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.hweight_cont": {
-      "classification": "validated_source_assumption",
-      "reason": "Continuity regularity for the objective weight used in the local C.4 argument.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.hweight_int": {
-      "classification": "validated_source_assumption",
-      "reason": "Cellwise integrability condition for the weighted finite-level source objective.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.hweight_midpoint_pos": {
-      "classification": "validated_source_assumption",
-      "reason": "Positive objective weight at the selected midpoint witness for each source cell.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.hweight_nonneg": {
-      "classification": "validated_source_assumption",
-      "reason": "Cellwise nonnegative objective-weight condition.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.m": {
-      "classification": "nonpropositional_witness_data",
-      "reason": "Primitive source-model datum/witness rather than an additional theorem assumption.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.sampleRate": {
-      "classification": "nonpropositional_witness_data",
-      "reason": "Primitive source-model datum/witness rather than an additional theorem assumption.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4AppropriateFiniteLevelsWeightedModel.weight": {
-      "classification": "nonpropositional_witness_data",
-      "reason": "Primitive source-model datum/witness rather than an additional theorem assumption.",
-      "source_location": "Supplement Lemma C.4 forward direction and Section 3 discretization: finite levels/cutpoints, matching rates, and objective weights define the finite piecewise-constant source model.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hi": {
-      "classification": "nonpropositional_witness_data",
-      "reason": "Primitive source-model datum/witness rather than an additional theorem assumption.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hlohi": {
-      "classification": "validated_source_assumption",
-      "reason": "Open interval support condition for the local C.4 reverse argument.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hprob0": {
-      "classification": "validated_source_assumption",
-      "reason": "Binary rating probabilities are bounded below by zero in the source model.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hprob1": {
-      "classification": "validated_source_assumption",
-      "reason": "Binary rating probabilities are bounded above by one in the source model.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hprob_interior_on": {
-      "classification": "validated_source_assumption",
-      "reason": "Interior probability condition 0 < beta(theta) < 1 on the local support interval.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hprob_meas": {
-      "classification": "validated_source_assumption",
-      "reason": "Measurability regularity for integrating the source error kernel.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hprob_mono": {
-      "classification": "validated_source_assumption",
-      "reason": "Monotonicity condition on the binary rating rule used in the C.4 reverse direction.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hsample_cont": {
-      "classification": "validated_source_assumption",
-      "reason": "Continuity regularity for the sample-rate function used in local C.4 arguments.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hsample_meas": {
-      "classification": "validated_source_assumption",
-      "reason": "Measurability regularity for the sample-rate function.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hsample_pos_on": {
-      "classification": "validated_source_assumption",
-      "reason": "Positive sampling mass/rate on the local support interval.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hsource_weight_int": {
-      "classification": "validated_source_assumption",
-      "reason": "Integrability condition for the weighted source objective.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hsource_weight_nonneg": {
-      "classification": "validated_source_assumption",
-      "reason": "Nonnegative objective-weight condition for the weighted source objective.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hweight_cont": {
-      "classification": "validated_source_assumption",
-      "reason": "Continuity regularity for the objective weight used in the local C.4 argument.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hweight_diag_cont": {
-      "classification": "validated_source_assumption",
-      "reason": "Diagonal continuity regularity for the objective weight used near equal qualities.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.hweight_pos_on": {
-      "classification": "validated_source_assumption",
-      "reason": "Positive objective weight on the local support interval.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.lo": {
-      "classification": "nonpropositional_witness_data",
-      "reason": "Primitive source-model datum/witness rather than an additional theorem assumption.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.sampleRate": {
-      "classification": "nonpropositional_witness_data",
-      "reason": "Primitive source-model datum/witness rather than an additional theorem assumption.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.successProb": {
-      "classification": "nonpropositional_witness_data",
-      "reason": "Primitive source-model datum/witness rather than an additional theorem assumption.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "LemmaC4RawSourcePositiveSupportIntervalModel.weight": {
-      "classification": "nonpropositional_witness_data",
-      "reason": "Primitive source-model datum/witness rather than an additional theorem assumption.",
-      "source_location": "PMLR paper Section 3 model and supplement Lemma C.4 source conditions: beta maps qualities to success probabilities, g/sample rates and w/objective weights define the weighted convergence objective.",
-      "source_record_audit_sha256": "308fe5821d2eaef694dbee28a5dedf612cd35bf8217b10f4edc2831d4b514d7a",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
+      "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
+      "source_location": "paper_statement_map.json / Assumptions.lean",
+      "source_record_audit_sha256": "a1f2f7965b11dae1966087593a6d4248aee1f2e6310278e52d332125aee744d1",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     }
-  }
+  },
+  "paper": "GJ19OptimalBinaryRatingSystems",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "schema": 1,
+  "source_record_audit_sha256": "a1f2f7965b11dae1966087593a6d4248aee1f2e6310278e52d332125aee744d1",
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

@@ -6,7 +6,9 @@ theorems, corollaries, propositions, and appendix lemmas listed below.
 Source-quality notes remain for Proposition 2's printed finite constant and
 Lemma D.1(i)'s sign convention; Proposition 4 is treated as validated for the
 concrete sphere endpoint rather than as a caveat. No human dashboard sign-off
-has been recorded.
+has been recorded. The automated statement judge marks Proposition 2 as a
+mismatch because Lean uses the corrected finite constant; human review treats
+that as a source-quality note that does not rise to a paper-level caveat.
 
 ## 2. Closeout Status
 - Completion status: formalized.
@@ -32,7 +34,8 @@ has been recorded.
 None for the checked theorem conclusions; source-quality notes are recorded below.
 
 ## 6. Additional Assumptions Beyond Paper
-- None
+- None. Proposition 2's corrected finite constant is a source-quality note, not
+  an added model assumption.
 
 ## 7. Proof-Strategy Deviations
 - None
@@ -40,10 +43,14 @@ None for the checked theorem conclusions; source-quality notes are recorded belo
 ## 8. Proof Tricks Worth Reusing
 - None
 
-## 9. Paper Issues or Caveats
-Proposition 2's printed finite constant appears to miss a factor of 2, but the corrected finite bound is sufficient for the paper's asymptotic conclusion. Lemma D.1(i)'s sign convention conflicts with the downstream proof route, so Lean uses the source-appropriate positive-rate/decay convention.
+## 9. Mathematical Typos or Other Fixes Suggested in the Source Paper
+- Proposition 2: the printed finite constant appears to miss a factor of 2. Lean proves the corrected finite `(2m+1)/N` bound, which is sufficient for the paper's asymptotic conclusion. The automated statement judge records this as a mismatch; human review treats it as a source-quality note rather than a paper-level caveat.
+- Lemma D.1(i): the literal printed sign convention combines `B > 0` with `sigma < 0`, while the proof route and downstream exponential-decay application use the source-consistent positive-rate/decay convention. Lean closes the optimizer-limit content and downstream routes under that convention.
 
-## 10. Detailed Formalization Evidence
+## 10. Paper Issues or Caveats
+No paper-level formalization caveat is claimed from the source-quality notes above. Proposition 2's corrected finite constant is sufficient for the paper's asymptotic conclusion, and the Lemma D.1 optimizer-limit content used downstream is closed under the source-consistent convention.
+
+## 11. Detailed Formalization Evidence
 The current paper interface exposes source-shaped statements rather than proof-internal certificates. In particular:
 
 - Definitions 1-3 and Example 1 are exposed at the paper-facing equation/interface level.
@@ -54,7 +61,7 @@ The current paper interface exposes source-shaped statements rather than proof-i
 - Proposition 4 proves the concrete continuous-sphere endpoint using the unit sphere, normalized Haar-sphere uniform measure, linear-isometry transitivity, radial log-kernel symmetry, Fubini/integrability facts, compact maximizer, and positive-Laplace-defined objective route.
 - Proposition 5, Lemma 1, and Lemmas D.1-D.5 are exposed through source-shaped paper rows.
 
-## 11. Assumption And Validation Notes
+## 12. Assumption And Validation Notes
 All visible paper assumptions are routed through `Assumptions.lean` and the current `assumption_match_llm.json` sidecar. There are 15 assumption/provenance rows; all are judged current, with 56 premise-level judgments and no unresolved or partial-boundary premises.
 
 The Proposition 4 row `assumption_proposition4_continuous_sphere_laplace_boundary` is a validation-note row, not an external proof boundary. It records:
@@ -63,7 +70,7 @@ The Proposition 4 row `assumption_proposition4_continuous_sphere_laplace_boundar
 - positivity of the radial function on `[0,2]`, aligned with the paper's `(0,1]` codomain;
 - the reading of the paper's displayed `Gamma` limit as the Laplace-defined compact-supremum objective used by the Lean endpoint.
 
-## 12. Statement Validator Ledger
+## 13. Statement Validator Ledger
 The current validator sidecars are:
 
 - `lean_to_tex_llm.json`
@@ -73,7 +80,7 @@ The current validator sidecars are:
 
 Current dashboard checks:
 
-- Statement lane: 27 paper-result rows, 41 Lean-to-TeX drafts, 41 statement-judge rows, no missing/stale/flagged items.
+- Statement lane: 27 paper-result rows, 41 Lean-to-TeX drafts, 41 statement-judge rows, no missing or stale items. Proposition 2 is recorded as a conditional-boundary mismatch with human override because the corrected finite constant differs from the printed finite bound while preserving the asymptotic conclusion.
 - Assumption lane: 15 assumption declarations, no missing/stale/flagged items.
 - Review surface lane: 42 rows, current `review_surface_llm.json`, no stale surface audit.
 - Combined dashboard precheck: no stale checks; the only remaining attention items are the 42 absent manual dashboard review entries.
@@ -84,10 +91,10 @@ The current full validator table can be regenerated with:
 python3 scripts/review_dashboard.py --paper PRPKG24AccuracyDiversity --export-format validators-md
 ```
 
-## 13. DAG Audit
+## 14. DAG Audit
 `DependencyDAG.tex` was audited against the workflow. Definition 1 is green and now covers both equation (5) for finite real `gamma` and the `gamma = infinity` likelihood-argmax profile, Proposition 4 appears once as a formalized result node, the header records the ACM Web Conference 2024 venue while pointing to the arXiv source cache, and the rendered layout has no node/text overlap. `pdflatex` wrote `DependencyDAG.pdf`, but the local MiKTeX wrapper still exits with code 134 after trying to write user config/log files under read-only `~/.miktex`; `mutool draw` was used for PNG rendering and visual inspection.
 
-## 14. Library Lift Pass
+## 15. Library Lift Pass
 Reusable infrastructure used by this proof already lives in shared recommender, finite-rounding, asymptotics, order-statistics, exponential, Pareto, real-distribution, large-deviation, and symmetry modules. No additional library extraction was made in this closeout pass.
 
 The library-only premise audit was clean:
@@ -98,7 +105,7 @@ python3 scripts/audit_repository.py --library-only --library-premise-audit --inf
 
 Result: 0 errors, 0 warnings.
 
-## 15. Validation Commands
+## 16. Validation Commands
 Passed:
 
 ```bash

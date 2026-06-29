@@ -1,19 +1,23 @@
 {
+  "boundary_input_count": 0,
+  "boundary_input_items": [],
   "configured_review_row_count": 42,
   "expected_field_judgment_keys": [
     "BernoulliSatisfactionModel.likelihood",
     "BernoulliSatisfactionModel.successProb"
   ],
+  "expected_input_judgment_keys": [],
   "import_module": "PRPKG24AccuracyDiversity.PaperInterface",
   "lean_check": {
     "command": "lake build PRPKG24AccuracyDiversity.PaperInterface && lake env lean <generated-source-record-audit-script>",
-    "output": "PRPKG24AccuracyDiversity.assumption_varying_bernoulli_probability_domain {T : \u2115} (B : BernoulliSatisfactionModel T) :\n  Prop\n'PRPKG24AccuracyDiversity.assumption_varying_bernoulli_probability_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "output": "PRPKG24AccuracyDiversity.PaperInterface.definition3_expectedTopSum_formula (T : \u2115) (mu : \u2115 \u2192 \u2115 \u2192 \u211d) (k : \u2115)\n  (t : ItemType T) (a : \u2115) :\n  (PaperInterface.definition3 T mu).expectedTopSum k t a = \u2211 i \u2208 Finset.range (min k a), mu (a - i) a\n'PRPKG24AccuracyDiversity.PaperInterface.definition3_expectedTopSum_formula' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.PaperInterface.proposition4.{u_1} {E : Type u_1} [NormedAddCommGroup E] [InnerProductSpace \u211d E]\n  [MeasurableSpace E] [BorelSpace E] [OpensMeasurableSpace (Proposition4Sphere.UnitSphere E)] [FiniteDimensional \u211d E]\n  [Nontrivial E] (preferenceMeasure : MeasureTheory.Measure (Proposition4Sphere.UnitSphere E))\n  [MeasureTheory.IsProbabilityMeasure preferenceMeasure] (p : \u211d \u2192 \u211d) (hopen : preferenceMeasure.IsOpenPosMeasure)\n  (anchor : Proposition4Sphere.UnitSphere E) (hp : Continuous p) (hp_pos : \u2200 r \u2208 Set.Icc 0 2, 0 < p r)\n  (alpha : MeasureTheory.ProbabilityMeasure (Proposition4Sphere.UnitSphere E)) :\n  Proposition4Sphere.logRadialDistanceProfileSupValue p Proposition4Sphere.sphereVolumeUniformProbabilityMeasure \u2264\n    Proposition4Sphere.logRadialDistanceProfileSupValue p alpha\n'PRPKG24AccuracyDiversity.PaperInterface.proposition4' depends on axioms: [propext, Classical.choice, Quot.sound]\nPRPKG24AccuracyDiversity.assumption_example1_positive_calibrated_exponential_parameters (p1 p2 lambda : \u211d) : Prop\n'PRPKG24AccuracyDiversity.assumption_example1_positive_calibrated_exponential_parameters' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_finite_discrete_top_value_domain.{u_1} {\u03a9 : Type u_1} (k : \u2115) (value : \u03a9 \u2192 \u211d)\n  (xTop xSecond : \u211d) : Prop\n'PRPKG24AccuracyDiversity.assumption_finite_discrete_top_value_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_positive_type_likelihoods {T : \u2115} (likelihood : ItemType T \u2192 \u211d) : Prop\n'PRPKG24AccuracyDiversity.assumption_positive_type_likelihoods' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_bounded_upper_endpoint_density_domain (baseMeasure : MeasureTheory.Measure \u211d)\n  (L M beta c : \u211d) : Prop\n'PRPKG24AccuracyDiversity.assumption_bounded_upper_endpoint_density_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_exponential_order_statistic_domain (lambda : \u211d) (k : \u2115) : Prop\n'PRPKG24AccuracyDiversity.assumption_exponential_order_statistic_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_pareto_finite_mean_domain (alpha : \u211d) (k : \u2115) : Prop\n'PRPKG24AccuracyDiversity.assumption_pareto_finite_mean_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_common_mean_argmax_domain {T : \u2115} (likelihood : ItemType T \u2192 \u211d) (mean : \u211d)\n  (best : ItemType T) : Prop\n'PRPKG24AccuracyDiversity.assumption_common_mean_argmax_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_unique_common_mean_argmax_domain {T : \u2115} (likelihood : ItemType T \u2192 \u211d) (mean : \u211d)\n  (best : ItemType T) : Prop\n'PRPKG24AccuracyDiversity.assumption_unique_common_mean_argmax_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_nonnegative_homogeneity_exponent (gamma : \u211d) : Prop\n'PRPKG24AccuracyDiversity.assumption_nonnegative_homogeneity_exponent' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_decaying_bernoulli_parameter_domain (alpha c d : \u211d) : Prop\n'PRPKG24AccuracyDiversity.assumption_decaying_bernoulli_parameter_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_varying_bernoulli_probability_domain {T : \u2115} (B : BernoulliSatisfactionModel T) :\n  Prop\n'PRPKG24AccuracyDiversity.assumption_varying_bernoulli_probability_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_uniform_top_k_positive_count_domain (kseq : \u2115 \u2192 \u2115) : Prop\n'PRPKG24AccuracyDiversity.assumption_uniform_top_k_positive_count_domain' does not depend on any axioms\nPRPKG24AccuracyDiversity.assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support {G : \u211d \u2192 \u211d} (\u03b2 c M : \u211d)\n  (k : \u2115) : Prop\n'PRPKG24AccuracyDiversity.assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nPRPKG24AccuracyDiversity.assumption_positive_rounding_population_size (N : \u2115) : Prop\n'PRPKG24AccuracyDiversity.assumption_positive_rounding_population_size' does not depend on any axioms\n",
     "returncode": 0,
     "truncated": false
   },
-  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: PRPKG24AccuracyDiversity\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Classify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/source-model field that states convexity, response semantics, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"field\": \"likelihood\",\n    \"judgment_key\": \"BernoulliSatisfactionModel.likelihood\",\n    \"line\": 58,\n    \"nested_structures\": [],\n    \"path\": \"BernoulliSatisfactionModel -> BernoulliSatisfactionModel.likelihood\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/PRPKG24AccuracyDiversity/Bernoulli.lean\",\n    \"structure\": \"BernoulliSatisfactionModel\",\n    \"type\": \"ItemType T \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"successProb\",\n    \"judgment_key\": \"BernoulliSatisfactionModel.successProb\",\n    \"line\": 59,\n    \"nested_structures\": [],\n    \"path\": \"BernoulliSatisfactionModel -> BernoulliSatisfactionModel.successProb\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/PRPKG24AccuracyDiversity/Bernoulli.lean\",\n    \"structure\": \"BernoulliSatisfactionModel\",\n    \"type\": \"ItemType T \\u2192 \\u211d\"\n  }\n]",
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: PRPKG24AccuracyDiversity\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"lean_source_declaration\": \"theorem definition3_expectedTopSum_formula\\n    (T : \\u2115) (mu : \\u2115 \\u2192 \\u2115 \\u2192 \\u211d) (k : \\u2115) (t : ItemType T) (a : \\u2115) :\\n    (definition3 T mu).expectedTopSum k t a =\\n      \\u2211 i \\u2208 Finset.range (min k a), mu (a - i) a := by\\n  rfl\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"definition3_expectedTopSum_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"T\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"mu\",\n        \"type\": \"\\u2115 \\u2192 \\u2115 \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"k\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"t\",\n        \"type\": \"ItemType T\"\n      },\n      {\n        \"names\": \"a\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem proposition4\\n    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace \\u211d E]\\n    [MeasurableSpace E] [BorelSpace E]\\n    [OpensMeasurableSpace (Proposition4Sphere.UnitSphere E)]\\n    [FiniteDimensional \\u211d E] [Nontrivial E]\\n    (preferenceMeasure : MeasureTheory.Measure (Proposition4Sphere.UnitSphere E))\\n    [MeasureTheory.IsProbabilityMeasure preferenceMeasure]\\n    (p : \\u211d \\u2192 \\u211d)\\n    (hopen : MeasureTheory.Measure.IsOpenPosMeasure preferenceMeasure)\\n    (anchor : Proposition4Sphere.UnitSphere E)\\n    (hp : Continuous p)\\n    (hp_pos : \\u2200 r : \\u211d, r \\u2208 Set.Icc (0 : \\u211d) 2 \\u2192 0 < p r) :\\n    \\u2200 alpha : MeasureTheory.ProbabilityMeasure (Proposition4Sphere.UnitSphere E),\\n      Proposition4Sphere.logRadialDistanceProfileSupValue (E := E) p\\n          (Proposition4Sphere.sphereVolumeUniformProbabilityMeasure (E := E)) \\u2264\\n        Proposition4Sphere.logRadialDistanceProfileSupValue (E := E) p alpha :=\\n  Proposition4Sphere.radialDistanceKernel_probabilityProfile_sphereVolumeUniform_minimizes_of_continuous_positive_profileSup\\n    (E := E) preferenceMeasure p hopen anchor hp hp_pos\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"proposition4\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"E\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"preferenceMeasure\",\n        \"type\": \"MeasureTheory.Measure (Proposition4Sphere.UnitSphere E)\"\n      },\n      {\n        \"names\": \"p\",\n        \"type\": \"\\u211d \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hopen\",\n        \"type\": \"MeasureTheory.Measure.IsOpenPosMeasure preferenceMeasure\"\n      },\n      {\n        \"names\": \"anchor\",\n        \"type\": \"Proposition4Sphere.UnitSphere E\"\n      },\n      {\n        \"names\": \"hp\",\n        \"type\": \"Continuous p\"\n      },\n      {\n        \"names\": \"hp_pos\",\n        \"type\": \"\\u2200 r : \\u211d, r \\u2208 Set.Icc (0 : \\u211d) 2 \\u2192 0 < p r\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_example1_positive_calibrated_exponential_parameters\\n    (p1 p2 lambda : \\u211d) : Prop :=\\n  0 < p1 \\u2227 0 < p2 \\u2227 0 < lambda \\u2227 p1 + p2 = 1\\n\\n                                                                                     \\n-- audit-premise: hk_pos : 0 < k\\n-- audit-premise: hxTop_pos : 0 < xTop\\n-- audit-premise: hxSecond_nonneg : 0 \\u2264 xSecond\\n-- audit-premise: hsecond_le_top : xSecond \\u2264 xTop\\n-- audit-premise: hsecond_lt_top : xSecond < xTop\\n-- audit-premise: hvalue_le : \\u2200 \\u03c9, value \\u03c9 \\u2264 xTop\\n-- audit-premise: hvalue_split : \\u2200 \\u03c9, value \\u03c9 = xTop \\u2228 value \\u03c9 \\u2264 xSecond\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_example1_positive_calibrated_exponential_parameters\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"p1 p2 lambda\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_finite_discrete_top_value_domain {\\u03a9 : Type*}\\n    (k : \\u2115) (value : \\u03a9 \\u2192 \\u211d) (xTop xSecond : \\u211d) : Prop :=\\n  0 < k \\u2227\\n    0 < xTop \\u2227\\n      0 \\u2264 xSecond \\u2227\\n        xSecond \\u2264 xTop \\u2227\\n          xSecond < xTop \\u2227\\n            (\\u2200 \\u03c9, value \\u03c9 \\u2264 xTop) \\u2227\\n              (\\u2200 \\u03c9, value \\u03c9 = xTop \\u2228 value \\u03c9 \\u2264 xSecond)\\n\\n                                                                      \\n-- audit-premise: hlike_pos : \\u2200 t : ItemType T, 0 < likelihood t\\n-- audit-premise: hlike_pos : \\u2200 t, 0 < likelihood t\\n-- audit-premise: hlike_pos : \\u2200 t, 0 < B.likelihood t\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_finite_discrete_top_value_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03a9\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"k\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"value\",\n        \"type\": \"\\u03a9 \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"xTop xSecond\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_positive_type_likelihoods {T : \\u2115}\\n    (likelihood : ItemType T \\u2192 \\u211d) : Prop :=\\n  \\u2200 t : ItemType T, 0 < likelihood t\\n\\n                                                                                       \\n-- audit-premise: h_base_bounds : \\u2200\\u1d50 y \\u2202baseMeasure, L \\u2264 y \\u2227 y \\u2264 M\\n-- audit-premise: h_nonneg : \\u2200\\u1d50 y \\u2202baseMeasure, 0 \\u2264 y\\n-- audit-premise: hM_pos : 0 < M\\n-- audit-premise: hbeta_pos : 0 < beta\\n-- audit-premise: hc_pos : 0 < c\\n-- audit-premise: hwidth_pos : 0 < M - L\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_positive_type_likelihoods\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"T\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"likelihood\",\n        \"type\": \"ItemType T \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_bounded_upper_endpoint_density_domain\\n    (baseMeasure : MeasureTheory.Measure \\u211d) (L M beta c : \\u211d) : Prop :=\\n  (\\u2200\\u1d50 y \\u2202baseMeasure, L \\u2264 y \\u2227 y \\u2264 M) \\u2227\\n    (\\u2200\\u1d50 y \\u2202baseMeasure, 0 \\u2264 y) \\u2227\\n      0 < M \\u2227 0 < beta \\u2227 0 < c \\u2227 0 < M - L\\n\\n                                                                             \\n-- audit-premise: hlambda_pos : 0 < lambda\\n-- audit-premise: hk_pos : 0 < k\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_bounded_upper_endpoint_density_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"baseMeasure\",\n        \"type\": \"MeasureTheory.Measure \\u211d\"\n      },\n      {\n        \"names\": \"L M beta c\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_exponential_order_statistic_domain\\n    (lambda : \\u211d) (k : \\u2115) : Prop :=\\n  0 < lambda \\u2227 0 < k\\n\\n                                                                 \\n-- audit-premise: halpha : 1 < alpha\\n-- audit-premise: hk : 0 < k\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_exponential_order_statistic_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"lambda\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"k\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_pareto_finite_mean_domain (alpha : \\u211d) (k : \\u2115) : Prop :=\\n  1 < alpha \\u2227 0 < k\\n\\n                                                                               \\n-- audit-premise: hmean_nonneg : 0 \\u2264 mean\\n-- audit-premise: hbest : \\u2200 t, likelihood t \\u2264 likelihood best\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_pareto_finite_mean_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"k\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_common_mean_argmax_domain {T : \\u2115}\\n    (likelihood : ItemType T \\u2192 \\u211d) (mean : \\u211d) (best : ItemType T) : Prop :=\\n  0 \\u2264 mean \\u2227 \\u2200 t, likelihood t \\u2264 likelihood best\\n\\n                                                                                  \\n-- audit-premise: hmean_pos : 0 < mean\\n-- audit-premise: hbest_strict : \\u2200 t, t \\u2260 best \\u2192 likelihood t < likelihood best\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_common_mean_argmax_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"T\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"likelihood\",\n        \"type\": \"ItemType T \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"mean\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"best\",\n        \"type\": \"ItemType T\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_unique_common_mean_argmax_domain {T : \\u2115}\\n    (likelihood : ItemType T \\u2192 \\u211d) (mean : \\u211d) (best : ItemType T) : Prop :=\\n  0 < mean \\u2227 \\u2200 t, t \\u2260 best \\u2192 likelihood t < likelihood best\\n\\n                                                                 \\n-- audit-premise: hgamma_nonneg : 0 \\u2264 gamma\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_unique_common_mean_argmax_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"T\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"likelihood\",\n        \"type\": \"ItemType T \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"mean\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"best\",\n        \"type\": \"ItemType T\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_nonnegative_homogeneity_exponent (gamma : \\u211d) : Prop :=\\n  0 \\u2264 gamma\\n\\n                                                                            \\n-- audit-premise: halpha_nonneg : 0 \\u2264 alpha\\n-- audit-premise: halpha_lt_one : alpha < 1\\n-- audit-premise: halpha_gt_one : 1 < alpha\\n-- audit-premise: halpha : 0 < alpha\\n-- audit-premise: hc : 0 < c\\n-- audit-premise: hc_pos : 0 < c\\n-- audit-premise: hc_nonneg : 0 \\u2264 c\\n-- audit-premise: hd : 0 \\u2264 d\\n-- audit-premise: hd_nonneg : 0 \\u2264 d\\n-- audit-premise: hfirst : decayingBernoulliSuccess c d alpha 0 < 1\\n-- audit-premise: hfirst : decayingBernoulliSuccess c d 1 0 < 1\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_nonnegative_homogeneity_exponent\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"gamma\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_decaying_bernoulli_parameter_domain\\n    (alpha c d : \\u211d) : Prop :=\\n  ((0 \\u2264 alpha \\u2227 alpha < 1) \\u2228 alpha = 1 \\u2228 1 < alpha \\u2228 0 < alpha) \\u2227\\n    0 < c \\u2227\\n      0 \\u2264 c \\u2227\\n        0 \\u2264 d \\u2227\\n          decayingBernoulliSuccess c d alpha 0 < 1 \\u2227\\n            decayingBernoulliSuccess c d 1 0 < 1\\n\\n                                                                        \\n-- audit-premise: hprob_pos : \\u2200 t, 0 < B.successProb t\\n-- audit-premise: hprob_lt_one : \\u2200 t, B.successProb t < 1\\n-- audit-premise: hprob_eq : \\u2200 i j : ItemType T, B.successProb i = B.successProb j\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_decaying_bernoulli_parameter_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha c d\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_varying_bernoulli_probability_domain {T : \\u2115}\\n    (B : BernoulliSatisfactionModel T) : Prop :=\\n  (\\u2200 t, 0 < B.successProb t) \\u2227\\n    (\\u2200 t, B.successProb t < 1) \\u2227\\n      (\\u2200 i j : ItemType T, B.successProb i = B.successProb j)\\n\\n                                                                                               \\n-- audit-premise: hkpos : \\u2200 N, 0 < N \\u2192 0 < kseq N\",\n    \"record_premises\": [\n      \"BernoulliSatisfactionModel\"\n    ],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_varying_bernoulli_probability_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"T\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"B\",\n        \"type\": \"BernoulliSatisfactionModel T\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_uniform_top_k_positive_count_domain (kseq : \\u2115 \\u2192 \\u2115) : Prop :=\\n  \\u2200 N, 0 < N \\u2192 0 < kseq N\\n\\n   \\n                                                                             \\n                                                     \\n  \\n-- audit-premise: tail : BoundedTailCDFPowerSandwich G \\u03b2 c\\n-- audit-premise: k_pos : 0 < k\\n-- audit-premise: hM_pos : 0 < M\\n-- audit-premise: hG_measurable : Measurable G\\n-- audit-premise: hG_mono : Monotone G\\n-- audit-premise: hG_nonneg : \\u2200 x : \\u211d, 0 \\u2264 G x\\n-- audit-premise: hG_le_one : \\u2200 x : \\u211d, G x \\u2264 1\\n-- audit-premise: hG_eq_one_of_support : \\u2200 x : \\u211d, M \\u2264 x \\u2192 G x = 1\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_uniform_top_k_positive_count_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"kseq\",\n        \"type\": \"\\u2115 \\u2192 \\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support\\n    {G : \\u211d \\u2192 \\u211d} (\\u03b2 c M : \\u211d) (k : \\u2115) : Prop :=\\n  BoundedTailCDFPowerSandwich G \\u03b2 c \\u2227\\n    0 < k \\u2227\\n      0 < M \\u2227\\n        Measurable G \\u2227\\n          Monotone G \\u2227\\n            (\\u2200 x : \\u211d, 0 \\u2264 G x) \\u2227\\n              (\\u2200 x : \\u211d, G x \\u2264 1) \\u2227\\n                (\\u2200 x : \\u211d, M \\u2264 x \\u2192 G x = 1)\\n\\n   \\n                                                               \\n                                                                           \\n                                                                           \\n                                                                            \\n                                                                         \\n  \\n-- audit-premise: hp : Continuous q\\n-- audit-premise: hp_pos : \\u2200 r \\u2208 Set.Icc (0 : \\u211d) 2, 0 < q r\\n-- audit-premise: hGamma : paper \\u0393(\\u03b1) is interpreted by the Laplace-defined supremum objective\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"G\",\n        \"type\": \"\\u211d \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"\\u03b2 c M\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"k\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_positive_rounding_population_size (N : \\u2115) : Prop :=\\n  0 < N\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_positive_rounding_population_size\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"N\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"field\": \"likelihood\",\n    \"judgment_key\": \"BernoulliSatisfactionModel.likelihood\",\n    \"line\": 58,\n    \"nested_structures\": [],\n    \"path\": \"BernoulliSatisfactionModel -> BernoulliSatisfactionModel.likelihood\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/PRPKG24AccuracyDiversity/Bernoulli.lean\",\n    \"structure\": \"BernoulliSatisfactionModel\",\n    \"type\": \"ItemType T \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"successProb\",\n    \"judgment_key\": \"BernoulliSatisfactionModel.successProb\",\n    \"line\": 59,\n    \"nested_structures\": [],\n    \"path\": \"BernoulliSatisfactionModel -> BernoulliSatisfactionModel.successProb\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/PRPKG24AccuracyDiversity/Bernoulli.lean\",\n    \"structure\": \"BernoulliSatisfactionModel\",\n    \"type\": \"ItemType T \\u2192 \\u211d\"\n  }\n]",
   "paper": "PRPKG24AccuracyDiversity",
   "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/PRPKG24AccuracyDiversity",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
   "recursion_failure_count": 0,
   "recursion_failures": [],
   "recursive_field_count": 2,
@@ -43,18 +47,556 @@
       "type": "ItemType T \u2192 \u211d"
     }
   ],
-  "review_row_count": 57,
+  "review_row_count": 42,
+  "row_visible_inputs": {
+    "assumption_bounded_upper_endpoint_density_domain": [
+      {
+        "names": "baseMeasure",
+        "type": "MeasureTheory.Measure \u211d"
+      },
+      {
+        "names": "L M beta c",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_common_mean_argmax_domain": [
+      {
+        "names": "T",
+        "type": "\u2115"
+      },
+      {
+        "names": "likelihood",
+        "type": "ItemType T \u2192 \u211d"
+      },
+      {
+        "names": "mean",
+        "type": "\u211d"
+      },
+      {
+        "names": "best",
+        "type": "ItemType T"
+      }
+    ],
+    "assumption_decaying_bernoulli_parameter_domain": [
+      {
+        "names": "alpha c d",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_example1_positive_calibrated_exponential_parameters": [
+      {
+        "names": "p1 p2 lambda",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_exponential_order_statistic_domain": [
+      {
+        "names": "lambda",
+        "type": "\u211d"
+      },
+      {
+        "names": "k",
+        "type": "\u2115"
+      }
+    ],
+    "assumption_finite_discrete_top_value_domain": [
+      {
+        "names": "\u03a9",
+        "type": "Type*"
+      },
+      {
+        "names": "k",
+        "type": "\u2115"
+      },
+      {
+        "names": "value",
+        "type": "\u03a9 \u2192 \u211d"
+      },
+      {
+        "names": "xTop xSecond",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support": [
+      {
+        "names": "G",
+        "type": "\u211d \u2192 \u211d"
+      },
+      {
+        "names": "\u03b2 c M",
+        "type": "\u211d"
+      },
+      {
+        "names": "k",
+        "type": "\u2115"
+      }
+    ],
+    "assumption_nonnegative_homogeneity_exponent": [
+      {
+        "names": "gamma",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_pareto_finite_mean_domain": [
+      {
+        "names": "alpha",
+        "type": "\u211d"
+      },
+      {
+        "names": "k",
+        "type": "\u2115"
+      }
+    ],
+    "assumption_positive_rounding_population_size": [
+      {
+        "names": "N",
+        "type": "\u2115"
+      }
+    ],
+    "assumption_positive_type_likelihoods": [
+      {
+        "names": "T",
+        "type": "\u2115"
+      },
+      {
+        "names": "likelihood",
+        "type": "ItemType T \u2192 \u211d"
+      }
+    ],
+    "assumption_proposition4_continuous_sphere_laplace_boundary": [],
+    "assumption_uniform_top_k_positive_count_domain": [
+      {
+        "names": "kseq",
+        "type": "\u2115 \u2192 \u2115"
+      }
+    ],
+    "assumption_unique_common_mean_argmax_domain": [
+      {
+        "names": "T",
+        "type": "\u2115"
+      },
+      {
+        "names": "likelihood",
+        "type": "ItemType T \u2192 \u211d"
+      },
+      {
+        "names": "mean",
+        "type": "\u211d"
+      },
+      {
+        "names": "best",
+        "type": "ItemType T"
+      }
+    ],
+    "assumption_varying_bernoulli_probability_domain": [
+      {
+        "names": "T",
+        "type": "\u2115"
+      },
+      {
+        "names": "B",
+        "type": "BernoulliSatisfactionModel T"
+      }
+    ],
+    "corollary1": [],
+    "corollary3": [],
+    "definition1": [],
+    "definition2": [],
+    "definition3_expectedTopSum_formula": [
+      {
+        "names": "T",
+        "type": "\u2115"
+      },
+      {
+        "names": "mu",
+        "type": "\u2115 \u2192 \u2115 \u2192 \u211d"
+      },
+      {
+        "names": "k",
+        "type": "\u2115"
+      },
+      {
+        "names": "t",
+        "type": "ItemType T"
+      },
+      {
+        "names": "a",
+        "type": "\u2115"
+      }
+    ],
+    "example1": [],
+    "lemma1_tail_formula": [],
+    "lemmaD1": [],
+    "lemmaD2_formula": [],
+    "lemmaD3_formula": [],
+    "lemmaD4_formula": [],
+    "lemmaD5": [],
+    "proposition2": [],
+    "proposition4": [
+      {
+        "names": "E",
+        "type": "Type*"
+      },
+      {
+        "names": "preferenceMeasure",
+        "type": "MeasureTheory.Measure (Proposition4Sphere.UnitSphere E)"
+      },
+      {
+        "names": "p",
+        "type": "\u211d \u2192 \u211d"
+      },
+      {
+        "names": "hopen",
+        "type": "MeasureTheory.Measure.IsOpenPosMeasure preferenceMeasure"
+      },
+      {
+        "names": "anchor",
+        "type": "Proposition4Sphere.UnitSphere E"
+      },
+      {
+        "names": "hp",
+        "type": "Continuous p"
+      },
+      {
+        "names": "hp_pos",
+        "type": "\u2200 r : \u211d, r \u2208 Set.Icc (0 : \u211d) 2 \u2192 0 < p r"
+      }
+    ],
+    "proposition5_identity": [],
+    "theorem1_i_formula": [],
+    "theorem1_ii_formula": [],
+    "theorem1_iii_formula": [],
+    "theorem1_iv_formula": [],
+    "theorem1_v_common_mean": [],
+    "theorem1_v_unique_common_mean": [],
+    "theorem2_i_formula": [],
+    "theorem2_ii_formula": [],
+    "theorem2_iii_formula": [],
+    "theorem2_iv_alpha_zero_condition": [],
+    "theorem2_iv_positive_alpha": [],
+    "theorem3_formula": []
+  },
   "rows_with_record_premises": [
     {
       "lean_source_declaration": "abbrev assumption_varying_bernoulli_probability_domain {T : \u2115}\n    (B : BernoulliSatisfactionModel T) : Prop :=\n  (\u2200 t, 0 < B.successProb t) \u2227\n    (\u2200 t, B.successProb t < 1) \u2227\n      (\u2200 i j : ItemType T, B.successProb i = B.successProb j)\n\n                                                                                               \n-- audit-premise: hkpos : \u2200 N, 0 < N \u2192 0 < kseq N",
       "record_premises": [
         "BernoulliSatisfactionModel"
       ],
-      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
-      "row": "assumption_varying_bernoulli_probability_domain"
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_varying_bernoulli_probability_domain",
+      "visible_inputs": [
+        {
+          "names": "T",
+          "type": "\u2115"
+        },
+        {
+          "names": "B",
+          "type": "BernoulliSatisfactionModel T"
+        }
+      ]
     }
   ],
-  "source_record_audit_sha256": "932a086cf43d5779b03e1d041e2292027fc1295ec2f77e976b80cdc67a04ab22",
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "theorem definition3_expectedTopSum_formula\n    (T : \u2115) (mu : \u2115 \u2192 \u2115 \u2192 \u211d) (k : \u2115) (t : ItemType T) (a : \u2115) :\n    (definition3 T mu).expectedTopSum k t a =\n      \u2211 i \u2208 Finset.range (min k a), mu (a - i) a := by\n  rfl",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "definition3_expectedTopSum_formula",
+      "visible_inputs": [
+        {
+          "names": "T",
+          "type": "\u2115"
+        },
+        {
+          "names": "mu",
+          "type": "\u2115 \u2192 \u2115 \u2192 \u211d"
+        },
+        {
+          "names": "k",
+          "type": "\u2115"
+        },
+        {
+          "names": "t",
+          "type": "ItemType T"
+        },
+        {
+          "names": "a",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem proposition4\n    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace \u211d E]\n    [MeasurableSpace E] [BorelSpace E]\n    [OpensMeasurableSpace (Proposition4Sphere.UnitSphere E)]\n    [FiniteDimensional \u211d E] [Nontrivial E]\n    (preferenceMeasure : MeasureTheory.Measure (Proposition4Sphere.UnitSphere E))\n    [MeasureTheory.IsProbabilityMeasure preferenceMeasure]\n    (p : \u211d \u2192 \u211d)\n    (hopen : MeasureTheory.Measure.IsOpenPosMeasure preferenceMeasure)\n    (anchor : Proposition4Sphere.UnitSphere E)\n    (hp : Continuous p)\n    (hp_pos : \u2200 r : \u211d, r \u2208 Set.Icc (0 : \u211d) 2 \u2192 0 < p r) :\n    \u2200 alpha : MeasureTheory.ProbabilityMeasure (Proposition4Sphere.UnitSphere E),\n      Proposition4Sphere.logRadialDistanceProfileSupValue (E := E) p\n          (Proposition4Sphere.sphereVolumeUniformProbabilityMeasure (E := E)) \u2264\n        Proposition4Sphere.logRadialDistanceProfileSupValue (E := E) p alpha :=\n  Proposition4Sphere.radialDistanceKernel_probabilityProfile_sphereVolumeUniform_minimizes_of_continuous_positive_profileSup\n    (E := E) preferenceMeasure p hopen anchor hp hp_pos",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "proposition4",
+      "visible_inputs": [
+        {
+          "names": "E",
+          "type": "Type*"
+        },
+        {
+          "names": "preferenceMeasure",
+          "type": "MeasureTheory.Measure (Proposition4Sphere.UnitSphere E)"
+        },
+        {
+          "names": "p",
+          "type": "\u211d \u2192 \u211d"
+        },
+        {
+          "names": "hopen",
+          "type": "MeasureTheory.Measure.IsOpenPosMeasure preferenceMeasure"
+        },
+        {
+          "names": "anchor",
+          "type": "Proposition4Sphere.UnitSphere E"
+        },
+        {
+          "names": "hp",
+          "type": "Continuous p"
+        },
+        {
+          "names": "hp_pos",
+          "type": "\u2200 r : \u211d, r \u2208 Set.Icc (0 : \u211d) 2 \u2192 0 < p r"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_example1_positive_calibrated_exponential_parameters\n    (p1 p2 lambda : \u211d) : Prop :=\n  0 < p1 \u2227 0 < p2 \u2227 0 < lambda \u2227 p1 + p2 = 1\n\n                                                                                     \n-- audit-premise: hk_pos : 0 < k\n-- audit-premise: hxTop_pos : 0 < xTop\n-- audit-premise: hxSecond_nonneg : 0 \u2264 xSecond\n-- audit-premise: hsecond_le_top : xSecond \u2264 xTop\n-- audit-premise: hsecond_lt_top : xSecond < xTop\n-- audit-premise: hvalue_le : \u2200 \u03c9, value \u03c9 \u2264 xTop\n-- audit-premise: hvalue_split : \u2200 \u03c9, value \u03c9 = xTop \u2228 value \u03c9 \u2264 xSecond",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_example1_positive_calibrated_exponential_parameters",
+      "visible_inputs": [
+        {
+          "names": "p1 p2 lambda",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_finite_discrete_top_value_domain {\u03a9 : Type*}\n    (k : \u2115) (value : \u03a9 \u2192 \u211d) (xTop xSecond : \u211d) : Prop :=\n  0 < k \u2227\n    0 < xTop \u2227\n      0 \u2264 xSecond \u2227\n        xSecond \u2264 xTop \u2227\n          xSecond < xTop \u2227\n            (\u2200 \u03c9, value \u03c9 \u2264 xTop) \u2227\n              (\u2200 \u03c9, value \u03c9 = xTop \u2228 value \u03c9 \u2264 xSecond)\n\n                                                                      \n-- audit-premise: hlike_pos : \u2200 t : ItemType T, 0 < likelihood t\n-- audit-premise: hlike_pos : \u2200 t, 0 < likelihood t\n-- audit-premise: hlike_pos : \u2200 t, 0 < B.likelihood t",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_finite_discrete_top_value_domain",
+      "visible_inputs": [
+        {
+          "names": "\u03a9",
+          "type": "Type*"
+        },
+        {
+          "names": "k",
+          "type": "\u2115"
+        },
+        {
+          "names": "value",
+          "type": "\u03a9 \u2192 \u211d"
+        },
+        {
+          "names": "xTop xSecond",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_positive_type_likelihoods {T : \u2115}\n    (likelihood : ItemType T \u2192 \u211d) : Prop :=\n  \u2200 t : ItemType T, 0 < likelihood t\n\n                                                                                       \n-- audit-premise: h_base_bounds : \u2200\u1d50 y \u2202baseMeasure, L \u2264 y \u2227 y \u2264 M\n-- audit-premise: h_nonneg : \u2200\u1d50 y \u2202baseMeasure, 0 \u2264 y\n-- audit-premise: hM_pos : 0 < M\n-- audit-premise: hbeta_pos : 0 < beta\n-- audit-premise: hc_pos : 0 < c\n-- audit-premise: hwidth_pos : 0 < M - L",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_positive_type_likelihoods",
+      "visible_inputs": [
+        {
+          "names": "T",
+          "type": "\u2115"
+        },
+        {
+          "names": "likelihood",
+          "type": "ItemType T \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_bounded_upper_endpoint_density_domain\n    (baseMeasure : MeasureTheory.Measure \u211d) (L M beta c : \u211d) : Prop :=\n  (\u2200\u1d50 y \u2202baseMeasure, L \u2264 y \u2227 y \u2264 M) \u2227\n    (\u2200\u1d50 y \u2202baseMeasure, 0 \u2264 y) \u2227\n      0 < M \u2227 0 < beta \u2227 0 < c \u2227 0 < M - L\n\n                                                                             \n-- audit-premise: hlambda_pos : 0 < lambda\n-- audit-premise: hk_pos : 0 < k",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_bounded_upper_endpoint_density_domain",
+      "visible_inputs": [
+        {
+          "names": "baseMeasure",
+          "type": "MeasureTheory.Measure \u211d"
+        },
+        {
+          "names": "L M beta c",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_exponential_order_statistic_domain\n    (lambda : \u211d) (k : \u2115) : Prop :=\n  0 < lambda \u2227 0 < k\n\n                                                                 \n-- audit-premise: halpha : 1 < alpha\n-- audit-premise: hk : 0 < k",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_exponential_order_statistic_domain",
+      "visible_inputs": [
+        {
+          "names": "lambda",
+          "type": "\u211d"
+        },
+        {
+          "names": "k",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_pareto_finite_mean_domain (alpha : \u211d) (k : \u2115) : Prop :=\n  1 < alpha \u2227 0 < k\n\n                                                                               \n-- audit-premise: hmean_nonneg : 0 \u2264 mean\n-- audit-premise: hbest : \u2200 t, likelihood t \u2264 likelihood best",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_pareto_finite_mean_domain",
+      "visible_inputs": [
+        {
+          "names": "alpha",
+          "type": "\u211d"
+        },
+        {
+          "names": "k",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_common_mean_argmax_domain {T : \u2115}\n    (likelihood : ItemType T \u2192 \u211d) (mean : \u211d) (best : ItemType T) : Prop :=\n  0 \u2264 mean \u2227 \u2200 t, likelihood t \u2264 likelihood best\n\n                                                                                  \n-- audit-premise: hmean_pos : 0 < mean\n-- audit-premise: hbest_strict : \u2200 t, t \u2260 best \u2192 likelihood t < likelihood best",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_common_mean_argmax_domain",
+      "visible_inputs": [
+        {
+          "names": "T",
+          "type": "\u2115"
+        },
+        {
+          "names": "likelihood",
+          "type": "ItemType T \u2192 \u211d"
+        },
+        {
+          "names": "mean",
+          "type": "\u211d"
+        },
+        {
+          "names": "best",
+          "type": "ItemType T"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_unique_common_mean_argmax_domain {T : \u2115}\n    (likelihood : ItemType T \u2192 \u211d) (mean : \u211d) (best : ItemType T) : Prop :=\n  0 < mean \u2227 \u2200 t, t \u2260 best \u2192 likelihood t < likelihood best\n\n                                                                 \n-- audit-premise: hgamma_nonneg : 0 \u2264 gamma",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_unique_common_mean_argmax_domain",
+      "visible_inputs": [
+        {
+          "names": "T",
+          "type": "\u2115"
+        },
+        {
+          "names": "likelihood",
+          "type": "ItemType T \u2192 \u211d"
+        },
+        {
+          "names": "mean",
+          "type": "\u211d"
+        },
+        {
+          "names": "best",
+          "type": "ItemType T"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_nonnegative_homogeneity_exponent (gamma : \u211d) : Prop :=\n  0 \u2264 gamma\n\n                                                                            \n-- audit-premise: halpha_nonneg : 0 \u2264 alpha\n-- audit-premise: halpha_lt_one : alpha < 1\n-- audit-premise: halpha_gt_one : 1 < alpha\n-- audit-premise: halpha : 0 < alpha\n-- audit-premise: hc : 0 < c\n-- audit-premise: hc_pos : 0 < c\n-- audit-premise: hc_nonneg : 0 \u2264 c\n-- audit-premise: hd : 0 \u2264 d\n-- audit-premise: hd_nonneg : 0 \u2264 d\n-- audit-premise: hfirst : decayingBernoulliSuccess c d alpha 0 < 1\n-- audit-premise: hfirst : decayingBernoulliSuccess c d 1 0 < 1",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_nonnegative_homogeneity_exponent",
+      "visible_inputs": [
+        {
+          "names": "gamma",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_decaying_bernoulli_parameter_domain\n    (alpha c d : \u211d) : Prop :=\n  ((0 \u2264 alpha \u2227 alpha < 1) \u2228 alpha = 1 \u2228 1 < alpha \u2228 0 < alpha) \u2227\n    0 < c \u2227\n      0 \u2264 c \u2227\n        0 \u2264 d \u2227\n          decayingBernoulliSuccess c d alpha 0 < 1 \u2227\n            decayingBernoulliSuccess c d 1 0 < 1\n\n                                                                        \n-- audit-premise: hprob_pos : \u2200 t, 0 < B.successProb t\n-- audit-premise: hprob_lt_one : \u2200 t, B.successProb t < 1\n-- audit-premise: hprob_eq : \u2200 i j : ItemType T, B.successProb i = B.successProb j",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_decaying_bernoulli_parameter_domain",
+      "visible_inputs": [
+        {
+          "names": "alpha c d",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_varying_bernoulli_probability_domain {T : \u2115}\n    (B : BernoulliSatisfactionModel T) : Prop :=\n  (\u2200 t, 0 < B.successProb t) \u2227\n    (\u2200 t, B.successProb t < 1) \u2227\n      (\u2200 i j : ItemType T, B.successProb i = B.successProb j)\n\n                                                                                               \n-- audit-premise: hkpos : \u2200 N, 0 < N \u2192 0 < kseq N",
+      "record_premises": [
+        "BernoulliSatisfactionModel"
+      ],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_varying_bernoulli_probability_domain",
+      "visible_inputs": [
+        {
+          "names": "T",
+          "type": "\u2115"
+        },
+        {
+          "names": "B",
+          "type": "BernoulliSatisfactionModel T"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_uniform_top_k_positive_count_domain (kseq : \u2115 \u2192 \u2115) : Prop :=\n  \u2200 N, 0 < N \u2192 0 < kseq N\n\n   \n                                                                             \n                                                     \n  \n-- audit-premise: tail : BoundedTailCDFPowerSandwich G \u03b2 c\n-- audit-premise: k_pos : 0 < k\n-- audit-premise: hM_pos : 0 < M\n-- audit-premise: hG_measurable : Measurable G\n-- audit-premise: hG_mono : Monotone G\n-- audit-premise: hG_nonneg : \u2200 x : \u211d, 0 \u2264 G x\n-- audit-premise: hG_le_one : \u2200 x : \u211d, G x \u2264 1\n-- audit-premise: hG_eq_one_of_support : \u2200 x : \u211d, M \u2264 x \u2192 G x = 1",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_uniform_top_k_positive_count_domain",
+      "visible_inputs": [
+        {
+          "names": "kseq",
+          "type": "\u2115 \u2192 \u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support\n    {G : \u211d \u2192 \u211d} (\u03b2 c M : \u211d) (k : \u2115) : Prop :=\n  BoundedTailCDFPowerSandwich G \u03b2 c \u2227\n    0 < k \u2227\n      0 < M \u2227\n        Measurable G \u2227\n          Monotone G \u2227\n            (\u2200 x : \u211d, 0 \u2264 G x) \u2227\n              (\u2200 x : \u211d, G x \u2264 1) \u2227\n                (\u2200 x : \u211d, M \u2264 x \u2192 G x = 1)\n\n   \n                                                               \n                                                                           \n                                                                           \n                                                                            \n                                                                         \n  \n-- audit-premise: hp : Continuous q\n-- audit-premise: hp_pos : \u2200 r \u2208 Set.Icc (0 : \u211d) 2, 0 < q r\n-- audit-premise: hGamma : paper \u0393(\u03b1) is interpreted by the Laplace-defined supremum objective",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support",
+      "visible_inputs": [
+        {
+          "names": "G",
+          "type": "\u211d \u2192 \u211d"
+        },
+        {
+          "names": "\u03b2 c M",
+          "type": "\u211d"
+        },
+        {
+          "names": "k",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_positive_rounding_population_size (N : \u2115) : Prop :=\n  0 < N",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_positive_rounding_population_size",
+      "visible_inputs": [
+        {
+          "names": "N",
+          "type": "\u2115"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "ce8250e3a8e01a11afb5defbf037415c00613e50f9e146616574e4cc0282a083",
   "source_record_judgment_file": "source_record_match_llm.json",
   "unconfigured_paper_interface_rows": [
     "definition3",

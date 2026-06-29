@@ -1,562 +1,687 @@
 {
-  "schema": 1,
-  "paper": "PRPKG24AccuracyDiversity",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "e31bcdff8a2676a9d5ec65140f858851f451e2299d230385de303ebf5318f8ba",
-  "review_surface_sha256": "a52094c16fb1e2742b2793faefe976ff24c19d5bfe543e3aee75e81e497e69ab",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
     "assumption_bounded_upper_endpoint_density_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_bounded_upper_endpoint_density_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(ii) and Lemma 1 use the bounded-support upper-endpoint density domain. The dashboard row `assumption_bounded_upper_endpoint_density_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_bounded_upper_endpoint_density_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(ii) and Lemma 1 use the bounded-support upper-endpoint density domain. The dashboard row `assumption_bounded_upper_endpoint_density_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1(ii) and Lemma 1 use the bounded-support upper-endpoint density domain.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_bounded_upper_endpoint_density_domain`.",
-      "statement_sha256": "502d9519719c312f43253852af5d3bde77d553dbcaa365c6bc9ed758579161c6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "502d9519719c312f43253852af5d3bde77d553dbcaa365c6bc9ed758579161c6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_common_mean_argmax_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_common_mean_argmax_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(v) common-mean all-consumed endpoint uses an argmax condition. The dashboard row `assumption_common_mean_argmax_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_common_mean_argmax_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(v) common-mean all-consumed endpoint uses an argmax condition. The dashboard row `assumption_common_mean_argmax_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1(v) common-mean all-consumed endpoint uses an argmax condition.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_common_mean_argmax_domain`.",
-      "statement_sha256": "40dc409b4a3e94d63d49877b3aeb2cc67c4e8344ad8e2d53489b2bc06a8e1122",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "40dc409b4a3e94d63d49877b3aeb2cc67c4e8344ad8e2d53489b2bc06a8e1122",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_decaying_bernoulli_parameter_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_decaying_bernoulli_parameter_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 decaying Bernoulli statements use source parameter domains. The dashboard row `assumption_decaying_bernoulli_parameter_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_decaying_bernoulli_parameter_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 decaying Bernoulli statements use source parameter domains. The dashboard row `assumption_decaying_bernoulli_parameter_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 2 decaying Bernoulli statements use source parameter domains.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_decaying_bernoulli_parameter_domain`.",
-      "statement_sha256": "d8cf931306638995ba7a8f4c129a4733b25fedd481336d097761d0d5fb5e7805",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d8cf931306638995ba7a8f4c129a4733b25fedd481336d097761d0d5fb5e7805",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_example1_positive_calibrated_exponential_parameters": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_example1_positive_calibrated_exponential_parameters",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Example 1 uses a calibrated two-type exponential mixture with positive parameters. The dashboard row `assumption_example1_positive_calibrated_exponential_parameters` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_example1_positive_calibrated_exponential_parameters"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Example 1 uses a calibrated two-type exponential mixture with positive parameters. The dashboard row `assumption_example1_positive_calibrated_exponential_parameters` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Example 1 uses a calibrated two-type exponential mixture with positive parameters.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_example1_positive_calibrated_exponential_parameters`.",
-      "statement_sha256": "e3dad672a80c39d0d6f2075cfdb1dc510c2e630bfe079d505ef93ac9c1792cce",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e3dad672a80c39d0d6f2075cfdb1dc510c2e630bfe079d505ef93ac9c1792cce",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_exponential_order_statistic_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_exponential_order_statistic_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(iii)/Lemma D.3 use positive exponential rate and top-k size. The dashboard row `assumption_exponential_order_statistic_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_exponential_order_statistic_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(iii)/Lemma D.3 use positive exponential rate and top-k size. The dashboard row `assumption_exponential_order_statistic_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1(iii)/Lemma D.3 use positive exponential rate and top-k size.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_exponential_order_statistic_domain`.",
-      "statement_sha256": "c19b9f749e71eaa5609fececfae71ff943a02c72260443dfc044200a9cd322f0",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "c19b9f749e71eaa5609fececfae71ff943a02c72260443dfc044200a9cd322f0",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_finite_discrete_top_value_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_finite_discrete_top_value_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(i) finite-discrete endpoint separates a top value from lower values. The dashboard row `assumption_finite_discrete_top_value_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_finite_discrete_top_value_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(i) finite-discrete endpoint separates a top value from lower values. The dashboard row `assumption_finite_discrete_top_value_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1(i) finite-discrete endpoint separates a top value from lower values.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_finite_discrete_top_value_domain`.",
-      "statement_sha256": "98af650ff18460602acf2f0f52b77aaf68e649e5044bdc1e85e13245d0f77781",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "98af650ff18460602acf2f0f52b77aaf68e649e5044bdc1e85e13245d0f77781",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.2 uses the bounded-tail CDF power sandwich, monotonicity/range facts, and bounded-support saturation for the reflected CDF. The dashboard row `assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.2 uses the bounded-tail CDF power sandwich, monotonicity/range facts, and bounded-support saturation for the reflected CDF. The dashboard row `assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Lemma D.2 uses the bounded-tail CDF power sandwich, monotonicity/range facts, and bounded-support saturation for the reflected CDF.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_lemmaD2_cdf_power_sandwich_monotone_bounded_support`.",
-      "statement_sha256": "0d3c80371b4da3c10e53acef6e80e0f4d09a0a309e40c30d8b675268eaf028bf",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0d3c80371b4da3c10e53acef6e80e0f4d09a0a309e40c30d8b675268eaf028bf",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_nonnegative_homogeneity_exponent": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_nonnegative_homogeneity_exponent",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 1 ranges over nonnegative homogeneity exponents. The dashboard row `assumption_nonnegative_homogeneity_exponent` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_nonnegative_homogeneity_exponent"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 1 ranges over nonnegative homogeneity exponents. The dashboard row `assumption_nonnegative_homogeneity_exponent` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Corollary 1 ranges over nonnegative homogeneity exponents.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_nonnegative_homogeneity_exponent`.",
-      "statement_sha256": "23748f5a13ab3554bfdde871b9759887d6375ec3c7c33941ed5af722f18911d6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "23748f5a13ab3554bfdde871b9759887d6375ec3c7c33941ed5af722f18911d6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_pareto_finite_mean_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_pareto_finite_mean_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(iv)/Lemma D.4 use the finite-mean Pareto domain. The dashboard row `assumption_pareto_finite_mean_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_pareto_finite_mean_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(iv)/Lemma D.4 use the finite-mean Pareto domain. The dashboard row `assumption_pareto_finite_mean_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1(iv)/Lemma D.4 use the finite-mean Pareto domain.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_pareto_finite_mean_domain`.",
-      "statement_sha256": "f1988c4ab157fa97aefa506ff30e725c6a72a11dcc45d9b6ed4e9a4e196a3d84",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f1988c4ab157fa97aefa506ff30e725c6a72a11dcc45d9b6ed4e9a4e196a3d84",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_positive_rounding_population_size": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_positive_rounding_population_size",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.5's finite rounding endpoint is stated for positive `N`. The dashboard row `assumption_positive_rounding_population_size` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_positive_rounding_population_size"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.5's finite rounding endpoint is stated for positive `N`. The dashboard row `assumption_positive_rounding_population_size` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Lemma D.5's finite rounding endpoint is stated for positive `N`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_positive_rounding_population_size`.",
-      "statement_sha256": "466a43f626181dd98ecf65f211f340ee58c1c74bf451971d41d62da4c390b01b",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "466a43f626181dd98ecf65f211f340ee58c1c74bf451971d41d62da4c390b01b",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_positive_type_likelihoods": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_positive_type_likelihoods",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Type-likelihood weights in the optimization model are positive. The dashboard row `assumption_positive_type_likelihoods` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_positive_type_likelihoods"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Type-likelihood weights in the optimization model are positive. The dashboard row `assumption_positive_type_likelihoods` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Type-likelihood weights in the optimization model are positive.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_positive_type_likelihoods`.",
-      "statement_sha256": "45c566002e63e11f5e51ee4cf98e5c1a5b762f7192403678ec5cf3df758ddfa1",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "45c566002e63e11f5e51ee4cf98e5c1a5b762f7192403678ec5cf3df758ddfa1",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_proposition4_continuous_sphere_laplace_boundary": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_proposition4_continuous_sphere_laplace_boundary",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 4. Consider a non-constant function p(u, v) : Sd \u00d7 Sd \u2192 (0, 1], interpreted as the probability that item v does not satisfy a user with preference u, such that p(u, v) = q(\u2225u \u2212 v\u2225) can be expressed as a function of the cosine... The dashboard row `assumption_proposition4_continuous_sphere_laplace_boundary` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_proposition4_continuous_sphere_laplace_boundary"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 4. Consider a non-constant function p(u, v) : Sd \u00d7 Sd \u2192 (0, 1], interpreted as the probability that item v does not satisfy a user with preference u, such that p(u, v) = q(\u2225u \u2212 v\u2225) can be expressed as a function of the cosine... The dashboard row `assumption_proposition4_continuous_sphere_laplace_boundary` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Proposition 4. Consider a non-constant function p(u, v) : Sd \u00d7 Sd \u2192 (0, 1], interpreted as the probability that item v does not satisfy a user with preference u, such that p(u, v) = q(\u2225u \u2212 v\u2225) can be expressed as a function of the cosine distance between u...",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_proposition4_continuous_sphere_laplace_boundary`.",
-      "statement_sha256": "e8d0df7c70ed2190c277e7b73f4d5291422372a3438154242436766d1d8cf62e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e8d0df7c70ed2190c277e7b73f4d5291422372a3438154242436766d1d8cf62e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_uniform_top_k_positive_count_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_uniform_top_k_positive_count_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 2's corrected uniform route uses positive type likelihoods and top-k counts. The dashboard row `assumption_uniform_top_k_positive_count_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_uniform_top_k_positive_count_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 2's corrected uniform route uses positive type likelihoods and top-k counts. The dashboard row `assumption_uniform_top_k_positive_count_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Proposition 2's corrected uniform route uses positive type likelihoods and top-k counts.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_uniform_top_k_positive_count_domain`.",
-      "statement_sha256": "1918eca62642d6c4524c425cd87505370ed7c6cdac0e9bd4828d279826df1229",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1918eca62642d6c4524c425cd87505370ed7c6cdac0e9bd4828d279826df1229",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_unique_common_mean_argmax_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_unique_common_mean_argmax_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(v) converse uses a positive mean and unique likelihood maximizer. The dashboard row `assumption_unique_common_mean_argmax_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_unique_common_mean_argmax_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1(v) converse uses a positive mean and unique likelihood maximizer. The dashboard row `assumption_unique_common_mean_argmax_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1(v) converse uses a positive mean and unique likelihood maximizer.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_unique_common_mean_argmax_domain`.",
-      "statement_sha256": "b664ecd30dcc350cd5476082cf40b64c9a3882809b186e51e6d997a78f10758e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "b664ecd30dcc350cd5476082cf40b64c9a3882809b186e51e6d997a78f10758e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_varying_bernoulli_probability_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_varying_bernoulli_probability_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3/Corollary 3 require Bernoulli probabilities in `(0,1)`. The dashboard row `assumption_varying_bernoulli_probability_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_varying_bernoulli_probability_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3/Corollary 3 require Bernoulli probabilities in `(0,1)`. The dashboard row `assumption_varying_bernoulli_probability_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 3/Corollary 3 require Bernoulli probabilities in `(0,1)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_varying_bernoulli_probability_domain`.",
-      "statement_sha256": "49f31c3d17946ef0bca8b8953a16c79c3ec1cab7b723abf22d56913486f0acaa",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "49f31c3d17946ef0bca8b8953a16c79c3ec1cab7b723abf22d56913486f0acaa",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "corollary1": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "corollary1",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 1. For any \u03b3 \u2265 0, there exists D such that when Xi homogeneous. \u223c D and k is fixed, {Sn,k }\u221e n=1 is \u03b3- Intuitively, heavy-tailed distributions (part (iv)) induce less diverse recommendations since the marginal returns of recomm... The dashboard row `corollary1` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "corollary1"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 1. For any \u03b3 \u2265 0, there exists D such that when Xi homogeneous. \u223c D and k is fixed, {Sn,k }\u221e n=1 is \u03b3- Intuitively, heavy-tailed distributions (part (iv)) induce less diverse recommendations since the marginal returns of recomm... The dashboard row `corollary1` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Corollary 1. For any \u03b3 \u2265 0, there exists D such that when Xi homogeneous. \u223c D and k is fixed, {Sn,k }\u221e n=1 is \u03b3- Intuitively, heavy-tailed distributions (part (iv)) induce less diverse recommendations since the marginal returns of recommending more items fr...",
-      "dashboard_evidence": "Current human-dashboard row(s): `corollary1`.",
-      "statement_sha256": "d28f97cdcfe2b080abeb9bb88257ec48519ff11ccb44b989f54d222de1efba11",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d28f97cdcfe2b080abeb9bb88257ec48519ff11ccb44b989f54d222de1efba11",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "corollary3": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "corollary3",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 3 (Conditional item values are i.i.d. Bernoulli). When Xi 0-homogeneous. \u223c Ber(q) for q > 0, then Sn,1 is Therefore, if the success probability is the same for all items, optimal solutions are 0-homogeneous (each item is equall... The dashboard row `corollary3` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "corollary3"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 3 (Conditional item values are i.i.d. Bernoulli). When Xi 0-homogeneous. \u223c Ber(q) for q > 0, then Sn,1 is Therefore, if the success probability is the same for all items, optimal solutions are 0-homogeneous (each item is equall... The dashboard row `corollary3` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Corollary 3 (Conditional item values are i.i.d. Bernoulli). When Xi 0-homogeneous. \u223c Ber(q) for q > 0, then Sn,1 is Therefore, if the success probability is the same for all items, optimal solutions are 0-homogeneous (each item is equally represented) for l...",
-      "dashboard_evidence": "Current human-dashboard row(s): `corollary3`.",
-      "statement_sha256": "f660a832aa65cafa4a8f4fdb3c5ece1a8df688c91b98b32847c74a2ea3a84d80",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f660a832aa65cafa4a8f4fdb3c5ece1a8df688c91b98b32847c74a2ea3a84d80",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition1": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition1",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Definition 1 (\u03b3-homogeneity). A set S is \u03b3-homogeneous if for all t \u2208 [m], p\u03b3 rt (S) = Pmt \u03b3. i=1 pi (5) \u03b3-homogeneity captures several intuitive notions of diversity, using p1 , \u00b7 \u00b7 \u00b7 , pm as a benchmark: 1 The mathematical result in th... The dashboard row `definition1` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition1"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Definition 1 (\u03b3-homogeneity). A set S is \u03b3-homogeneous if for all t \u2208 [m], p\u03b3 rt (S) = Pmt \u03b3. i=1 pi (5) \u03b3-homogeneity captures several intuitive notions of diversity, using p1 , \u00b7 \u00b7 \u00b7 , pm as a benchmark: 1 The mathematical result in th... The dashboard row `definition1` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Definition 1 (\u03b3-homogeneity). A set S is \u03b3-homogeneous if for all t \u2208 [m], p\u03b3 rt (S) = Pmt \u03b3. i=1 pi (5) \u03b3-homogeneity captures several intuitive notions of diversity, using p1 , \u00b7 \u00b7 \u00b7 , pm as a benchmark: 1 The mathematical result in this example also appe...",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition1`.",
-      "statement_sha256": "57cb7d5cba85a69ee4f0ff7ce01869e5cd97f78980a315be60872956f0d531f1",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "57cb7d5cba85a69ee4f0ff7ce01869e5cd97f78980a315be60872956f0d531f1",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition2": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition2",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Definition 2 (\u03b3-homogeneity for set sequences). A sequence of sets {Sn }\u221e n=1 is \u03b3-homogeneous if for all t \u2208 [m], p\u03b3 (6) lim rt (Sn ) = Pmt \u03b3 . n\u2192\u221e i=1 pi One perhaps surprising aspect of our results is that \u03b3-homogeneity is sufficient... The dashboard row `definition2` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition2"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Definition 2 (\u03b3-homogeneity for set sequences). A sequence of sets {Sn }\u221e n=1 is \u03b3-homogeneous if for all t \u2208 [m], p\u03b3 (6) lim rt (Sn ) = Pmt \u03b3 . n\u2192\u221e i=1 pi One perhaps surprising aspect of our results is that \u03b3-homogeneity is sufficient... The dashboard row `definition2` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Definition 2 (\u03b3-homogeneity for set sequences). A sequence of sets {Sn }\u221e n=1 is \u03b3-homogeneous if for all t \u2208 [m], p\u03b3 (6) lim rt (Sn ) = Pmt \u03b3 . n\u2192\u221e i=1 pi One perhaps surprising aspect of our results is that \u03b3-homogeneity is sufficient to characterize dive...",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition2`.",
-      "statement_sha256": "7a6d27a730b7e17991bf70282443e43648786b3ba34f34e66d59b395e8c5eb56",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "7a6d27a730b7e17991bf70282443e43648786b3ba34f34e66d59b395e8c5eb56",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition3_expectedTopSum_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition3_expectedTopSum_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Definition 3. Define \u00b5D (i, a) to be the expected value of the i-th order statistic2 of a random variables drawn i.i.d. from D. (Thus, \u00b5D (1, a) is the expected minimum of a i.i.d. draws from D and \u00b5D (a, a) is the expected maximum.) The... The dashboard row `definition3_expectedTopSum_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition3_expectedTopSum_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Definition 3. Define \u00b5D (i, a) to be the expected value of the i-th order statistic2 of a random variables drawn i.i.d. from D. (Thus, \u00b5D (1, a) is the expected minimum of a i.i.d. draws from D and \u00b5D (a, a) is the expected maximum.) The... The dashboard row `definition3_expectedTopSum_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Definition 3. Define \u00b5D (i, a) to be the expected value of the i-th order statistic2 of a random variables drawn i.i.d. from D. (Thus, \u00b5D (1, a) is the expected minimum of a i.i.d. draws from D and \u00b5D (a, a) is the expected maximum.) Then conditioned on the...",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition3_expectedTopSum_formula`.",
-      "statement_sha256": "7a676c34051d557fc65510ed10af833bf9094c08259962f81bb1413c1451d8ed",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "7a676c34051d557fc65510ed10af833bf9094c08259962f81bb1413c1451d8ed",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "example1": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "example1",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Example 1: exact calibrated top-one exponential sequence. The dashboard row `example1` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "example1"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Example 1: exact calibrated top-one exponential sequence. The dashboard row `example1` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Example 1: exact calibrated top-one exponential sequence.",
-      "dashboard_evidence": "Current human-dashboard row(s): `example1`.",
-      "statement_sha256": "01ad4c1e0be21f62f0bbacd28802b921a68075db4197584c9a92a4fbd44b5192",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "01ad4c1e0be21f62f0bbacd28802b921a68075db4197584c9a92a4fbd44b5192",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma1_tail_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma1_tail_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1. If D has support bounded from above by M with pdf fD such that limx\u2192M (Mf\u2212x) \u03b2\u22121 = c for some \u03b2, c > 0, then lima\u2192\u221e M k\u2212h(a) = 1. \u22121 Ba \u03b2 Combining Lemma 1 with Lemma D.1(ii), with \u03c3 = \u2212 \u03b21 , we show that for D as in Theorem 1(i... The dashboard row `lemma1_tail_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma1_tail_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1. If D has support bounded from above by M with pdf fD such that limx\u2192M (Mf\u2212x) \u03b2\u22121 = c for some \u03b2, c > 0, then lima\u2192\u221e M k\u2212h(a) = 1. \u22121 Ba \u03b2 Combining Lemma 1 with Lemma D.1(ii), with \u03c3 = \u2212 \u03b21 , we show that for D as in Theorem 1(i... The dashboard row `lemma1_tail_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Lemma 1. If D has support bounded from above by M with pdf fD such that limx\u2192M (Mf\u2212x) \u03b2\u22121 = c for some \u03b2, c > 0, then lima\u2192\u221e M k\u2212h(a) = 1. \u22121 Ba \u03b2 Combining Lemma 1 with Lemma D.1(ii), with \u03c3 = \u2212 \u03b21 , we show that for D as in Theorem 1(ii), \u03b2 (n) a p \u03b2+1 li...",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma1_tail_formula`.",
-      "statement_sha256": "4b9b410ce993ac179b92c97c4ecb308f128d4776529de40fad719d084406fa00",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "4b9b410ce993ac179b92c97c4ecb308f128d4776529de40fad719d084406fa00",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaD1": {
-      "coverage": "covered",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "conditional_boundary",
+      "dashboard_evidence": "lemmaD1",
+      "reason": "Lean uses the source-appropriate positive-rate/decay convention because the printed sign convention conflicts with the downstream proof route.",
       "review_rows": [
         "lemmaD1"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.1: optimizer sequence limit from the appendix compactness/unique-limit objective route. The dashboard row `lemmaD1` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Lemma D.1: optimizer sequence limit from the appendix compactness/unique-limit objective route.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaD1`.",
-      "statement_sha256": "becf13f2f22458a69173d2e16ae6cc487979ffcda57fd91df251bd6ab1905277",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "becf13f2f22458a69173d2e16ae6cc487979ffcda57fd91df251bd6ab1905277",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaD2_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemmaD2_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.2: bounded-tail integral asymptotic. The dashboard row `lemmaD2_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemmaD2_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.2: bounded-tail integral asymptotic. The dashboard row `lemmaD2_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Lemma D.2: bounded-tail integral asymptotic.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaD2_formula`.",
-      "statement_sha256": "0100482523b79ee759fa36d06d4e059a409b5232e83441c92e3fcd0a368ac214",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0100482523b79ee759fa36d06d4e059a409b5232e83441c92e3fcd0a368ac214",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaD3_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemmaD3_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.3: exponential order-statistic sequence formula. The dashboard row `lemmaD3_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemmaD3_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.3: exponential order-statistic sequence formula. The dashboard row `lemmaD3_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Lemma D.3: exponential order-statistic sequence formula.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaD3_formula`.",
-      "statement_sha256": "dae6e1fdeedbb729c242ac92eb3531c18220f3de8f07d9078b8fc394a279db77",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "dae6e1fdeedbb729c242ac92eb3531c18220f3de8f07d9078b8fc394a279db77",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaD4_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemmaD4_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.4: concrete iid Pareto order-statistic sequence formula. The dashboard row `lemmaD4_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemmaD4_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.4: concrete iid Pareto order-statistic sequence formula. The dashboard row `lemmaD4_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Lemma D.4: concrete iid Pareto order-statistic sequence formula.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaD4_formula`.",
-      "statement_sha256": "f2d7227c30894ae8c3f6b623e769bedc8969374fde7c319357020451fbfa1c1a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f2d7227c30894ae8c3f6b623e769bedc8969374fde7c319357020451fbfa1c1a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaD5": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemmaD5",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.5: real-to-integer rounding bridge. The dashboard row `lemmaD5` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemmaD5"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma D.5: real-to-integer rounding bridge. The dashboard row `lemmaD5` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Lemma D.5: real-to-integer rounding bridge.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaD5`.",
-      "statement_sha256": "f6d7252cd0ea895d165610ead820a40524d83609ece08509776f63f30140b793",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f6d7252cd0ea895d165610ead820a40524d83609ece08509776f63f30140b793",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "proposition2": {
-      "coverage": "covered",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "conditional_boundary",
+      "dashboard_evidence": "proposition2",
+      "reason": "Lean proves the corrected finite constant, which is sufficient for the source asymptotic conclusion; the printed finite bound appears to miss a factor of 2.",
       "review_rows": [
         "proposition2"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 2. When Xi \u223c U ([0, 1]), \u221a pt rt (Sn,k ) \u2212 Pm \u221a i=1 pi \u2264 m+1 . n (8) \u221a p for all k \u2264 Pm m\u221api n \u2212 m \u2212 1. i=1 Therefore, for any n, Sn,k is approximately 21 -homogeneous. In addition, for any k that is smaller than a constant f... The dashboard row `proposition2` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Proposition 2. When Xi \u223c U ([0, 1]), \u221a pt rt (Sn,k ) \u2212 Pm \u221a i=1 pi \u2264 m+1 . n (8) \u221a p for all k \u2264 Pm m\u221api n \u2212 m \u2212 1. i=1 Therefore, for any n, Sn,k is approximately 21 -homogeneous. In addition, for any k that is smaller than a constant fraction of n, the di...",
-      "dashboard_evidence": "Current human-dashboard row(s): `proposition2`.",
-      "statement_sha256": "0a2e0320b107331414a4bcab3aadf068a2e0d304da5945a359fa4e493605d804",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0a2e0320b107331414a4bcab3aadf068a2e0d304da5945a359fa4e493605d804",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "proposition4": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "proposition4",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 4. Consider a non-constant function p(u, v) : Sd \u00d7 Sd \u2192 (0, 1], interpreted as the probability that item v does not satisfy a user with preference u, such that p(u, v) = q(\u2225u \u2212 v\u2225) can be expressed as a function of the cosine... The dashboard row `proposition4` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "proposition4"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 4. Consider a non-constant function p(u, v) : Sd \u00d7 Sd \u2192 (0, 1], interpreted as the probability that item v does not satisfy a user with preference u, such that p(u, v) = q(\u2225u \u2212 v\u2225) can be expressed as a function of the cosine... The dashboard row `proposition4` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Proposition 4. Consider a non-constant function p(u, v) : Sd \u00d7 Sd \u2192 (0, 1], interpreted as the probability that item v does not satisfy a user with preference u, such that p(u, v) = q(\u2225u \u2212 v\u2225) can be expressed as a function of the cosine distance between u...",
-      "dashboard_evidence": "Current human-dashboard row(s): `proposition4`.",
-      "statement_sha256": "e8d0df7c70ed2190c277e7b73f4d5291422372a3438154242436766d1d8cf62e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e8d0df7c70ed2190c277e7b73f4d5291422372a3438154242436766d1d8cf62e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "proposition5_identity": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "proposition5_identity",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 5. For Xi \u223c D, min{k,a} h(a) = X i=1 \u00b5D (a \u2212 i + 1, a). (78) Recall that \u00b5D (i, a) is the expected value of the i-th order statistic of a random variables drawn i.i.d. from D. The dashboard row `proposition5_identity` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "proposition5_identity"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 5. For Xi \u223c D, min{k,a} h(a) = X i=1 \u00b5D (a \u2212 i + 1, a). (78) Recall that \u00b5D (i, a) is the expected value of the i-th order statistic of a random variables drawn i.i.d. from D. The dashboard row `proposition5_identity` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Proposition 5. For Xi \u223c D, min{k,a} h(a) = X i=1 \u00b5D (a \u2212 i + 1, a). (78) Recall that \u00b5D (i, a) is the expected value of the i-th order statistic of a random variables drawn i.i.d. from D.",
-      "dashboard_evidence": "Current human-dashboard row(s): `proposition5_identity`.",
-      "statement_sha256": "fe2a1a879eb87392a273bf2ad41ab66c8566c05ae2c6bd178b88c116fb5b84ee",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "fe2a1a879eb87392a273bf2ad41ab66c8566c05ae2c6bd178b88c116fb5b84ee",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_i_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_i_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_i_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_i_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_i_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M with pdf fD satisfyin...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_i_formula`.",
-      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_ii_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_ii_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_ii_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_ii_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_ii_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M with pdf fD satisfyin...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_ii_formula`.",
-      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_iii_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_iii_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_iii_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_iii_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_iii_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M with pdf fD satisfyin...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_iii_formula`.",
-      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_iv_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_iv_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_iv_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_iv_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_iv_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M with pdf fD satisfyin...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_iv_formula`.",
-      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_v_common_mean": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_v_common_mean",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_v_common_mean` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_v_common_mean"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_v_common_mean` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M with pdf fD satisfyin...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_v_common_mean`.",
-      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_v_unique_common_mean": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_v_unique_common_mean",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_v_unique_common_mean` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_v_unique_common_mean"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M w... The dashboard row `theorem1_v_unique_common_mean` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 1. Suppose Xi \u223c D where D has finite mean. Then the following statements hold. (i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }\u221e n=1 is 0-homogeneous. (ii) [Bounded] If D has support bounded from above by M with pdf fD satisfyin...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_v_unique_common_mean`.",
-      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6864b6bd97f89b385b40dc5555c99bb8ffd790106944638a86ddc2434da0b165",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_i_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2_i_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_i_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2_i_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_i_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homogeneous for \u03b1 < 1. (...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_i_formula`.",
-      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_ii_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2_ii_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_ii_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2_ii_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_ii_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homogeneous for \u03b1 < 1. (...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_ii_formula`.",
-      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_iii_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2_iii_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_iii_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2_iii_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_iii_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homogeneous for \u03b1 < 1. (...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_iii_formula`.",
-      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_iv_alpha_zero_condition": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2_iv_alpha_zero_condition",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_iv_alpha_zero_condition` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2_iv_alpha_zero_condition"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_iv_alpha_zero_condition` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homogeneous for \u03b1 < 1. (...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_iv_alpha_zero_condition`.",
-      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_iv_positive_alpha": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2_iv_positive_alpha",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_iv_positive_alpha` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2_iv_positive_alpha"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homo... The dashboard row `theorem2_iv_positive_alpha` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 2 (Decaying success probabilities). Suppose that Xi \u223c Ber(qi ) are i.i.d. Bernoulli random (t) variables such that qi = c(i + d)\u2212\u03b1 for all i \u2265 1 and some \u03b1, c, d \u2265 0. Then the following statements hold. (i) {Sn,1 }\u221e n=1 is 0-homogeneous for \u03b1 < 1. (...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_iv_positive_alpha`.",
-      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "14e823f21243ffe5cda0c07d6a8cb8c082cdc61dfeee92d328eeca5904325375",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 (Varying success probability across types). Suppose that for each fixed t, Xi i.i.d. Bernoulli random variables. Then lim rt (Sn,1 ) \u221d n\u2192\u221e log 1\u2212q t \u223c Ber(qt ) are (9) while Sn,n contains only items of type t = arg maxt\u2208[m] pt... The dashboard row `theorem3_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 (Varying success probability across types). Suppose that for each fixed t, Xi i.i.d. Bernoulli random variables. Then lim rt (Sn,1 ) \u221d n\u2192\u221e log 1\u2212q t \u223c Ber(qt ) are (9) while Sn,n contains only items of type t = arg maxt\u2208[m] pt... The dashboard row `theorem3_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PRPKG24AccuracyDiversity.txt, validation reports, and source-record audit notes. Source inventory item: Theorem 3 (Varying success probability across types). Suppose that for each fixed t, Xi i.i.d. Bernoulli random variables. Then lim rt (Sn,1 ) \u221d n\u2192\u221e log 1\u2212q t \u223c Ber(qt ) are (9) while Sn,n contains only items of type t = arg maxt\u2208[m] pt qt . The surprising...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_formula`.",
-      "statement_sha256": "877cff66d36b7e94e4e58801627408b15d46ab65f4c1afaab124b77f0a3780a6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "877cff66d36b7e94e4e58801627408b15d46ab65f4c1afaab124b77f0a3780a6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "PRPKG24AccuracyDiversity",
+  "paper_statement_inventory_sha256": "e31bcdff8a2676a9d5ec65140f858851f451e2299d230385de303ebf5318f8ba",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "a52094c16fb1e2742b2793faefe976ff24c19d5bfe543e3aee75e81e497e69ab",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

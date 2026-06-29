@@ -87,23 +87,32 @@ definition body, derived lemma, explicit validated source assumption, or
 partial boundary. A result is not fully formalized merely because the final
 wrapper has the right-looking theorem text.
 Run a recursive abstraction-debt audit whenever a paper-facing row depends on a
-record, certificate, semantics object, source model, bridge, package, or
-consequences bundle. Expand the theorem's visible premises and then inspect the
-fields of every such structure recursively until each field is classified as a
-proved Lean consequence, an imported shared-library theorem, a validated
-paper-source formula/assumption, a recursively audited container field, a
-derived consequence-record output, a non-propositional witness datum, an approved
-external proof boundary, or unresolved proof debt. The LLM-as-judge prompt for
-these rows must explicitly
-ask whether any field smuggles in the result being claimed, a displayed formula,
+record, certificate, replay, process, semantics object, source model, bridge,
+package, or consequences bundle. Expand the theorem's visible premises and then
+inspect every input semantically against the paper source model; names are only
+routing hints and are never evidence by themselves. For each input, either
+identify the exact paper primitive/source assumption it corresponds to, cite the
+Lean-checked constructor theorem that derives it from those primitives, route it
+through an approved external boundary, or mark the row conditional/partial.
+For `Certificate`, `Replay`, `Process`, and `Bridge` inputs in particular, the
+audit must ask for an instantiation path from the paper's primitive model, not
+just a source-looking type name or theorem wrapper.
+Then inspect the fields of every such structure recursively until each field is
+classified as a proved Lean consequence, an imported shared-library theorem, a
+validated paper-source formula/assumption, a recursively audited container
+field, a derived consequence-record output, a non-propositional witness datum,
+an approved external proof boundary, or unresolved proof debt. The
+LLM-as-judge prompt for these rows must explicitly ask whether any theorem
+input or field smuggles in the result being claimed, a displayed formula,
 trajectory generation, convexity, continuity, equilibrium, response semantics,
-or convergence that should have been derived. Rows whose proof merely projects
-an opaque field such as `trace`, `bridge`, `directionalField_eq`,
-`convex_solutionSpace`, `response`, `isMax`, `convergence`, or
-`continuity` are conditional on instantiating that field, even if Lean compiles
-and the top-level theorem statement matches the paper. Mark those rows as
-source-model boundaries or proof debt unless a separate reviewed row proves the
-field from more primitive paper assumptions.
+replay/trace validity, transfer preservation, or convergence that should have
+been derived. Rows whose proof merely projects an opaque field such as `trace`,
+`replay`, `process`, `bridge`, `directionalField_eq`,
+`convex_solutionSpace`, `response`, `isMax`, `convergence`, or `continuity` are
+conditional on instantiating that field, even if Lean compiles and the
+top-level theorem statement matches the paper. Mark those rows as source-model
+boundaries or proof debt unless a separate reviewed row proves the field from
+more primitive paper assumptions.
 The recursive audit is a search for an eventual source-backed leaf, not a
 permission to stop at an intermediate Lean package. If a paper-facing theorem
 assumes a field that is not directly a source definition/model primitive, the
@@ -441,6 +450,10 @@ undischarged. This can be the top-level judgment for an `assumption_*`
 declaration as well as an individual premise judgment. Do not downgrade it to
 `documented_caveat` unless the source statement itself is false, missing a
 needed non-source condition, or intentionally repaired in the Lean endpoint.
+Use `documented_additional_assumption` for a non-source condition that a human
+has approved as an additional-assumption note while keeping the paper status
+formalized, such as an endpoint restriction that is recorded in the validation
+report and explicitly marked non-caveat.
 For a user-approved axiom boundary, keep the axiom in the paper folder's
 `Assumptions.lean` or another paper-local assumptions file, give it a precise
 `assumption_*` name, and validate it as `partial_boundary`. Do not put
@@ -500,18 +513,60 @@ paper/source model assumption. Capacity equations, threshold identities,
 density normalizers, selection-mass formulas, row packages, and certificate
 fields are proof obligations unless the paper explicitly assumes them.
 Use the strict prompt sidecars when doing this validation. `lean_to_tex_llm.json`
-should record `prompt_version: "lean-to-tex-v2-strict-context-free"` and
-preserve every binder, hypothesis, domain, direction, and conclusion in the
-translation. `statement_match_llm.json` should record
-`prompt_version: "statement-match-v2-strict-full-statement"` and reject
-omitted source subparts, extra non-source hypotheses, formula-level changes,
-broad aggregates, source-row packages, and certificate packages. For
-assumptions, `assumption_match_llm.json` should record
-`prompt_version: "assumption-provenance-v2-exact-premise-source"`. Every exact
+should record
+`prompt_version: "lean-to-tex-v3-strict-context-free-semantic-inputs"` and
+preserve every binder, hypothesis, domain, named predicate/wrapper application,
+direction, and conclusion in the translation; it must not turn a named premise
+into a theorem label, source-like phrase, or proof-route summary. Each row needs
+the current `lean_statement_sha256`; missing digests are stale audit evidence,
+not optional metadata.
+All model/agent audit sidecars are fail-closed. A blank scaffold, parse error,
+missing file, missing current `prompt_version`, missing current digest, missing
+validator/model identity, missing timestamp, stale source inventory, stale
+dashboard surface, unrecognized judgment, failed run, or item without an
+explicit success verdict is an alarm and does not count as audit evidence. The
+only passing state is a current sidecar whose version, digests, validator
+metadata, and recognized success judgment match the current Lean/source inputs.
+Do not convert a missing or failed judge run into a warning merely because Lean
+builds; Lean proves the encoded statement, while these sidecars audit whether
+the encoded statement and visible assumptions match the paper.
+At public-facing closeout, require an explicit current `review_surface_llm.json`
+pass even for small dashboards. The 30-row threshold is an early workflow prompt
+for broad human review, not an exemption from final review-surface evidence.
+`statement_match_llm.json` should record
+`prompt_version: "statement-match-v3-semantic-full-statement"` and reject
+omitted source subparts, extra non-source hypotheses, hidden strengthening
+inside named predicates, formula-level changes, broad aggregates, source-row
+packages, certificate/replay/process/bridge packages, and any input whose
+semantics does not match a paper primitive or a Lean-derived consequence of
+paper primitives. The statement judge must inspect named predicates/wrappers
+semantically; phrase overlap and source-looking Lean names are not evidence.
+Each item needs current Lean, paper, and TeX statement digests.
+For assumptions,
+`assumption_match_llm.json` should record
+`prompt_version: "assumption-provenance-v3-semantic-exact-premise-source"`. Every exact
 `-- audit-premise:` entry needs its own `premise_judgments` row with either a
 source location, a Lean-derived provenance judgment, or an explicit
 partial-boundary/not-source finding; a declaration-level judgment alone is not
 evidence.
+For source-record provenance, `source_record_match_llm.json` should record
+`prompt_version: "source-record-v2-semantic-boundary-inputs"`. The judge must
+classify every boundary-shaped visible theorem input and every recursive field
+from `source_record_audit.json`; a replay/certificate/process/bridge/source-row
+input cannot be approved unless the sidecar gives specific source evidence, a
+Lean constructor/derivation from primitives, an approved external boundary, or
+an unresolved finding. Do not count old unversioned source-record sidecars as
+current.
+A `source_record_match_llm.json` entry classified as
+`approved_external_boundary` is not compatible with a fully `formalized` paper
+endpoint unless that endpoint is explicitly outside the claimed proof surface.
+It is valid evidence for a partial/conditional row only after the same boundary
+appears in `status.json`, the DAG, and the final validation report. If a
+source-record audit separates bare witness data from a proposition-valued
+validity or replay predicate, treat the bare witness as possible source-model
+data and the validity/replay/process-preservation predicate as proof debt until
+it is derived from paper primitives or recorded as the intentional partial
+boundary.
 Remember the visibility limit of the LLM assumption lane. It sees configured
 `Assumptions.lean` declarations and exact `-- audit-premise:` rows; it does not
 automatically certify arbitrary structure fields, library definition bodies, or
@@ -702,6 +757,11 @@ script output. Do not rely on a manually remembered list of "public papers";
 selected public partials are easy to omit, and private/in-progress papers are
 easy to leak. Run the aggregate status sync in the checkout whose outputs will
 be committed, because private and public aggregate tables intentionally differ.
+If the command is run from the private incubator, still derive the public-paper
+audit set from the sibling public checkout. A broad private `papers/status.json`
+loop is useful for incubator triage, but failures on private-only papers are
+not public-release blockers unless those papers are intentionally being moved
+into the public repo.
 If the user asks for DAG regeneration, commit, or push at the next milestone,
 treat the milestone as a green named theorem seam plus the relevant targeted
 builds and hygiene checks, not as every helper alias. At that milestone, refresh
@@ -1056,6 +1116,12 @@ For stable-matching/deferred-acceptance papers, load
 `references/proof-markets-social-choice.md` after the first status pass. It
 contains the matching-specific assumptions, strict-preference notation checks,
 DA infrastructure guidance, manipulation-rank warning, and source-repair notes.
+
+For STV/RCV, ranked-choice voting, Thiele, or multi-member district papers,
+load `references/proof-markets-social-choice.md` before building paper-local
+models. Start with reusable voting semantics under
+`EconCSLib/SocialChoice/Voting`, then keep paper folders as source-versioned
+thin wrappers and explicit empirical/simulation-boundary ledgers.
 
 For papers with computational-complexity, hardness, approximation-hardness, or
 randomized-class claims, load `references/proof-algorithms-complexity.md` after
@@ -1515,18 +1581,21 @@ the Lean statements against the paper.
   Do not overcorrect by shrinking a substantial completed paper to only a few
   formula rows. A final review surface should cover all main source theorem
   blocks, key displayed formulas, examples, and appendix/convergence pieces
-  that support the paper claim. For a large paper, a compact curated surface is
-  often roughly 20-30 rows; fewer than about 10 rows is suspicious unless the
-  source paper itself has very few named results.
-  A dashboard with hundreds of rows is almost always a sign that implementation
-  endpoints leaked into the human interface. Curate the source-facing
-  definitions/results in the paper-local `status.json` `review_surface`, and
-  move broad proof aliases to `ProofInterface.lean`; slices make review
-  navigable, but they do not make an oversized interface appropriate for
-  humans.
-  Final reports should cite the post-filter human-review row count. If the
-  count is still in the hundreds, stop and curate the dashboard surface before
-  publishing the report.
+  that support the paper claim. LLM-as-judge legibility and source coverage are
+  more important than a small row count: adding rows is correct when it makes a
+  source-visible claim explicit enough for semantic checking. If a large paper
+  naturally needs many source-facing rows, keep them and improve slices,
+  source statements, and row grouping instead of hiding paper content.
+  A dashboard with hundreds of rows is a warning that implementation endpoints
+  may have leaked into the human interface, not a reason to delete
+  source-visible content. Curate the source-facing definitions/results in the
+  paper-local `status.json` `review_surface`, and move broad proof aliases to
+  `ProofInterface.lean`; use slices to keep a large but legitimate review
+  surface navigable.
+  Final reports should cite the post-filter human-review row count and describe
+  how the source inventory is covered. If the count is still in the hundreds,
+  audit whether rows are source-facing; keep them when they are needed for
+  complete source coverage.
 - Before asking for dashboard review, run a statement-surface audit: every
   dashboard row should be a paper-facing definition, formula, or named source
   statement; the total should be close to the paper's named result inventory.
@@ -1552,6 +1621,14 @@ the Lean statements against the paper.
   from the compact dashboard, `partially_covered`, `missing`, or explicitly
   `out_of_scope`/`not_a_paper_target` with a reason. Run
   `python3 scripts/review_dashboard.py --paper <paper-folder> --paper-coverage-precheck`.
+  Compactness is not a valid reason to mark source-visible review targets out
+  of scope. Main-text definitions, examples, remarks, propositions,
+  theorems/corollaries, and main-text lemmas should have review-legible
+  dashboard rows with row-local statement judgments. Appendix
+  theorems/corollaries should also be covered. Appendix lemmas are a judgment
+  call, but if they carry paper-facing mathematical content needed for the
+  formalized claim, expose individual or tightly grouped rows instead of one
+  broad "wrapped support" placeholder.
   For public-facing statuses (`formalized` or `partially formalized`), the
   audit requires an explicit source inventory; heuristic source-text extraction
   is only a seeding aid and must not satisfy closeout by itself.
@@ -1578,8 +1655,9 @@ the Lean statements against the paper.
   unless the paper itself states them as theorem targets.
   After changing the review surface or assumption-source metadata, refresh the
   paper dashboard cache, regenerate `paper_coverage_llm.json`, rerun the
-  assumption-provenance audit, and refresh `source_record_audit.json` plus its
-  judgment digest if the expected source-record field set is unchanged.
+  assumption-provenance audit, and refresh `source_record_audit.json` plus
+  `source_record_match_llm.json` whenever the audit digest or prompt version is
+  stale.
 - Treat source-to-Lean coverage as a chained audit, not two unrelated green
   checks. A source item marked `covered` in `paper_coverage_llm.json` must link
   to concrete `review_rows`, and those rows must have current row-local LLM
@@ -1597,6 +1675,10 @@ the Lean statements against the paper.
   covered only by `support_declarations` is a warning sign: promote it to a
   source-facing `PaperInterface.lean` row with Lean-to-TeX and statement-match
   judgments, or mark the paper status/coverage boundary honestly.
+  The repository audit treats required source-visible targets marked
+  `out_of_scope`/`not_a_paper_target` as failures. If the dashboard grows, make
+  it more navigable with slices and clear source-facing statements rather than
+  shrinking away paper content.
 - Treat paper coverage as three separate LLM-as-judge lanes:
   1. **Source inventory lane.** Read the source PDF/TeX/text (or a previously
      recorded source inventory with source locations) and write
@@ -1885,15 +1967,20 @@ the Lean statements against the paper.
   `statement_match_llm.json` entries should include Lean, paper, and TeX
   statement digests so stale target checks work.
 - At a statement-review boundary, run the exact statement-translation workflow:
-  1. Curate `PaperInterface.lean` first. It should contain only paper-facing
-     definitions, formulas, and named source results that a reviewer should
-     inspect. Do not include proof plumbing, empirical sections, helper lemmas,
-     or library-internal facts unless they are explicitly paper-facing.
+  1. Curate `PaperInterface.lean` first. It should contain paper-facing
+     definitions, formulas, examples, remarks, and named source results that a
+     reviewer or LLM-as-judge should inspect. Do not include proof plumbing,
+     empirical sections, helper lemmas, or library-internal facts unless they
+     are explicitly paper-facing. Completeness beats compactness: do not hide
+     named source content only because it makes the review surface longer.
   2. If the dashboard has more than 30 rows, run a no-paper-context surface
      pass over the row list and save `review_surface_llm.json`. The pass asks
      only whether each row belongs on the human-facing paper surface. At 120 or
-     more rows, treat the surface as a warning even if an audit exists; shrink
-     it unless there is a concrete paper-facing reason for every row.
+     more rows, treat the surface as a warning even if an audit exists; improve
+     slices, source statements, and row grouping, but do not remove
+     source-visible content that the coverage audit needs. More rows are fine
+     when they make the review surface more legible to the LLM-as-judge and the
+     source inventory confirms that they cover paper claims.
   3. Build or refresh `paper_statement_map.json` from the source paper itself,
      not from the Lean row list. It should be a canonical source inventory with
      aliases only as lookup aids. Then generate `paper_coverage_llm.json` with
@@ -1906,7 +1993,9 @@ the Lean statements against the paper.
      missing named statements, mark support-only proof-route lemmas as
      `covered_by_support` with explicit `support_declarations`, mark rows that
      match only under a declared proof boundary as `conditional_boundary`, or
-     mark non-target source material as `out_of_scope` with reasons.
+     mark genuinely non-target source material as `out_of_scope` with reasons.
+     Do not use `out_of_scope` for source-visible named material merely because
+     adding rows would make the dashboard longer.
   4. Generate `lean_to_tex_llm.json` from the Lean statements alone, with no
      paper text and no proof context. Use one item per current dashboard row.
      The translator prompt must be literal rather than explanatory: preserve
@@ -1991,6 +2080,14 @@ the Lean statements against the paper.
      affected audit payloads needed for the changed rows. Run the full
      repository audit only at closeout/public-promotion time or when the user
      explicitly asks for post-validation.
+     When prompt versions, digest fields, or cache schemas change, verify the
+     audit path in both uncached and cached modes. Cached review rows must
+     rehydrate all Lean, paper, TeX, source-record, and premise digests used by
+     `--source-to-lean-check`; a green uncached check with a cached digest
+     failure usually means the cache loader or schema migration is stale, not
+     that the paper proof changed. Patch the audit script, bump the cache schema
+     if needed, run `python3 -m py_compile` on changed scripts, and rerun the
+     paper-local checks.
   5. Treat `mismatch` or `uncertain` as a problem with the formalized statement
      unless the translation is plainly wrong. Usually the fix is to make the
      `PaperInterface.lean` declaration more paper-facing and self-contained,
@@ -2061,9 +2158,18 @@ the Lean statements against the paper.
     source-shaped type solely because a primitive enum/base carrier name ends in
     a trigger suffix such as `Model`, add that name to the audit helper's
     non-source-record whitelist instead of adding a fake source judgment;
+    similarly, do not classify ordinary source predicates as provenance
+    packages merely because their names end in `Bound` or `Bounds` (for example
+    `MarginalBound`); those belong to row-local statement matching unless they
+    are inside a certificate/source-record/process/replay/bridge structure;
   - generate `statement_match_llm.json` with the strict full-statement,
     exact-formula, recursive-definition prompt described above, including the
     source-record audit entries for rows that depend on such structures;
+  - inspect source-record classifications before setting the status: any
+    remaining `approved_external_boundary`, `unresolved_assumed_math`, stale
+    source-record digest, or missing source-record judgment makes the affected
+    row partial/conditional unless a Lean constructor has discharged it or the
+    status claim explicitly excludes that source item;
   - generate `assumption_match_llm.json` for every name in
     `review_surface.assumption_names`, including both source assumptions and
     any user-approved proof-boundary axiom names from
@@ -2071,6 +2177,12 @@ the Lean statements against the paper.
   - classify proof-boundary axioms as `partial_boundary`, not as source
     assumptions, and give item-level `premise_judgments` for each exact
     `-- audit-premise` line in `Assumptions.lean`;
+  - treat `resolution: "conditional_boundary"` in `statement_match_llm.json` as
+    a provenance suppression only for the same current review row, only with the
+    current prompt version plus validator/timestamp metadata, and only for
+    non-completed statuses. A `formalized` paper must still discharge or
+    source-record-validate every certificate/source-model/replay/process
+    premise rather than relying on a conditional row mismatch;
   - update `DependencyDAG.tex`, render and visually inspect
     `DependencyDAG.pdf`, and record that DAG audit evidence in both
     `FINAL_VALIDATION_REPORT.md` and `POST_FORMALIZATION_AUDIT.md`;
@@ -3267,13 +3379,16 @@ pass:
   differences are explicit formalization boundaries, say `None beyond the
   formalization boundaries already recorded above` and point to the assumptions
   or remaining-gaps sections.
-- Put theorem-statement caveats, missing hypotheses, duplicated case labels,
-  ambiguous definitions, sign-convention inconsistencies, or other possible
-  source-paper issues in `Paper Issues or Caveats`, even when they are already
-  reflected in the DAG or remaining-gaps section. Write these as short
+- Put likely source typos, missing constants, sign-convention inconsistencies,
+  source-version corrections, and theorem-statement repairs in `Mathematical
+  Typos or Other Fixes Suggested in the Source Paper`. Write these as short
   human-facing mathematical notes and avoid Lean declaration names. When the
   evidence is only a formalization caveat, say that directly instead of claiming
-  the paper is wrong. Include the section even when the body is `None found.`.
+  the paper is wrong.
+- Use `Paper Issues or Caveats` for the status-facing conclusion after those
+  source-fix notes: for example, whether the paper has a real caveat, whether a
+  source-quality note is nonblocking, or whether no paper-level caveat is being
+  claimed. Include the section even when the body is `None found.`.
 - Avoid wide Markdown tables for definition inventories when the notation or
   declaration names are long. Use a concise bullet checklist instead, with the
   paper notation first and the Lean interface declaration second.
@@ -3316,10 +3431,6 @@ source-record packages here.
 
 ## 6. Additional Assumptions Beyond Paper
 - `<assumption declaration>`: <why needed, where used>
-- Do not list partial-formalization, external-library, analytic, solver,
-  runtime, or source-certificate boundaries here. Those belong in `Remaining
-  Boundaries and Gaps` unless they are genuinely non-paper hypotheses added to
-  prove a claimed endpoint.
 - If none: `None`
 
 ## 7. Proof-Strategy Deviations
@@ -3336,17 +3447,23 @@ source-record packages here.
 - <modeling/proof/library-seam lesson that should inform future papers>
 - If none: `None`
 
-## 9. Paper Issues or Caveats
+## 9. Mathematical Typos or Other Fixes Suggested in the Source Paper
+- `<location in paper>`: <likely typo, missing constant, sign issue,
+  source-version correction, or theorem-statement repair suggested by the
+  formalization>
+- If none: `None found.`
+
+## 10. Paper Issues or Caveats
 - `<location in paper>`: <issue description + formalization evidence in
   paper language>
 - If none: `None found.`
 
-## 10. Detailed Formalization Evidence
+## 11. Detailed Formalization Evidence
 Record the detailed proof inventory here after the researcher-facing summary,
 gaps, and caveats. Lean declaration names are allowed here when they are useful
 evidence, but keep the paper result or formula first.
 
-## 11. Paper Assumption Provenance
+## 12. Paper Assumption Provenance
 Every paper-facing theorem premise that is not derived in Lean should appear as
 a named assumption declaration in `Assumptions.lean`, be listed in `status.json`
 `review_surface.assumption_names`, and be checked in `assumption_match_llm.json`
@@ -3359,15 +3476,16 @@ Every exact premise must have a `premise_judgments` entry in
 `assumption_match_llm.json` with a source location and one of these meanings:
 `source_text_model_primitive` / `source_text` / `paper_condition` for textually
 stated model or theorem conditions, `derived_from_source_primitives` only when a
-Lean derivation from source primitives already exists, `documented_caveat` for
-an acknowledged source mismatch, or `partial_boundary` for a visible premise
-that is not yet source-matched or derived. A paper with any `partial_boundary`
-premise is not fully formalized; update `status.json`, the final validation
-report, and the generated status tables accordingly. A grouped assumption
-declaration may also have top-level `judgment: "partial_boundary"` when the
-whole declaration is a known external/library/analytic boundary. Do not use
-`documented_caveat` for that case unless the paper statement itself needs a
-repair.
+Lean derivation from source primitives already exists,
+`documented_additional_assumption` for a human-approved non-caveat added
+condition, `documented_caveat` for an acknowledged source mismatch, or
+`partial_boundary` for a visible premise that is not yet source-matched or
+derived. A paper with any `partial_boundary` premise is not fully formalized;
+update `status.json`, the final validation report, and the generated status
+tables accordingly. A grouped assumption declaration may also have top-level
+`judgment: "partial_boundary"` when the whole declaration is a known
+external/library/analytic boundary. Do not use `documented_caveat` for that
+case unless the paper statement itself needs a repair.
 When a theorem closes only after assuming a rich source-model record, selector
 convention, argmax witness, or local-support witness, treat that record as a
 boundary unless there is a separate reviewed Lean theorem deriving the record
@@ -3376,22 +3494,14 @@ formalizations: a C.4-style positive-support witness model, an `S*`
 compact/continuous optimizer package, or an Appendix-B common-floor selector
 package can be scientifically useful, but the full paper remains partial until
 those packages are derived or explicitly accepted as source assumptions.
-For continuum formalization work, source-facing premise reductions are useful
-but not closure. A finite-vector `S*` objective wrapper reduces an opaque
-range-dependence premise, a global floor-tracking wrapper reduces a dyadic
-selector-envelope premise, and a positive-support `_fields` wrapper reduces a
-record-construction premise; none of these derives the paper's arbitrary
-optimal selector, concrete weighted objective continuity, finite-level source
-realization equality, or non-finite-range witness from primitive global paper
-assumptions by itself.
-When rendering this information in a human-facing report, translate raw
-validator enums to paper-facing labels: `source_text_model_primitive`,
-`source_text`, and `paper_condition` become `source condition`;
-`derived_from_source_primitives` becomes `derived`; a genuine non-paper
-hypothesis becomes `additional assumption`; `partial_boundary` becomes
-`formalization boundary`; `documented_caveat` becomes `paper caveat`; and helper
-or plumbing rows become `not paper-facing`. Do not show raw enum labels in the
-researcher-facing tables unless the section is explicitly a machine ledger.
+For continuum selector and positive-support work, source-facing premise
+reductions are useful but not closure. A finite-vector `S*` objective wrapper
+reduces an opaque range-dependence premise, a global floor-tracking wrapper
+reduces a dyadic selector-envelope premise, and a positive-support `_fields`
+wrapper reduces a record-construction premise; none of these derives the
+paper's arbitrary optimal selector, concrete weighted objective continuity,
+finite-level source realization equality, or non-finite-range witness from
+primitive global paper assumptions by itself.
 
 | Assumption declaration | Lean declaration | Source location / statement | Assumption validators | Comments |
 | --- | --- | --- | --- | --- |

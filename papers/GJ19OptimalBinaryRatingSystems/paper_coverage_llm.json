@@ -1,237 +1,302 @@
 {
-  "schema": 1,
-  "paper": "GJ19OptimalBinaryRatingSystems",
-  "prompt_version": "paper-coverage-v1-source-inventory-to-review-surface",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "gpt-5-codex",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "c76f320cff0e225d2a5066640054f45daaa0a10555094e284da2a9867ae9cb91",
-  "review_surface_sha256": "644e52c665561ea6c38ee9feea9a4fc752990fec826afc20ecbf7a392ee3822b",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
-    "model_nondecreasing_match_function": {
-      "coverage": "covered_by_support",
-      "review_rows": [],
+    "corollaryC1_rate_tends_to_zero": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "paper_corollaryC2_uniform_equalized_last_rate_tendsto_zero",
+      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
+      "review_rows": [
+        "paper_corollaryC2_uniform_equalized_last_rate_tendsto_zero"
+      ],
+      "source_evidence": "Source inventory item `corollaryC1_rate_tends_to_zero`: Corollary C.1: under uniform matching, for every epsilon there is M such that all larger finite optimal rates are below epsilon.",
+      "source_grounded": true,
+      "statement_sha256": "f73ff98ac250adc790be105c8239924f1d8fe527c61fda4b759841e3c6507f93",
       "support_declarations": [
-        "paper_theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate",
-        "paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair"
+        "paper_corollaryC2_uniform_equalized_last_rate_tendsto_zero"
       ],
-      "reason": "The nondecreasing match-function condition is a source model primitive used by the monotone adjacent-dominance support layer; it is not a standalone compact theorem row.",
-      "source_evidence": "Source inventory item `model_nondecreasing_match_function`: Model setup: item quality is matched according to a nondecreasing match function g(theta), bounded above and bounded away from zero.",
-      "dashboard_evidence": "Support declaration(s): `paper_theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate`, `paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair`.",
-      "statement_sha256": "f90f413aa039930b141cb1e63a52fe6ce7651e5323a65fe1c043354cda818aee",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "theorem31_two_stage_optimality": {
+    "corollaryC2_adjacent_mesh_tends_to_zero": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_corollaryC2_uniform_equalized_adjacent_mesh_tendsto_zero",
+      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
       "review_rows": [
-        "paper_theorem31_two_stage_lexicographic_optimality",
-        "paper_theorem31_exists_cell_integral_volume_weighted_uniform_endpoint_two_stage_lexicographic_optimality_of_integrableOn_Icc"
+        "paper_corollaryC2_uniform_equalized_adjacent_mesh_tendsto_zero"
       ],
-      "reason": "The two Theorem 3.1 rows expose the value-then-rate lexicographic decomposition and the cell-integral weighted bridge from the paper source.",
-      "source_evidence": "Source inventory item `theorem31_two_stage_optimality`: Theorem 3.1: the optimal beta decomposes into an optimal discretization S* maximizing the limiting value and optimal levels t* maximizing the large-deviation rate among those discretizations.",
-      "dashboard_evidence": "Dashboard row(s): `paper_theorem31_two_stage_lexicographic_optimality`, `paper_theorem31_exists_cell_integral_volume_weighted_uniform_endpoint_two_stage_lexicographic_optimality_of_integrableOn_Icc`.",
-      "statement_sha256": "3c4c91908c308565f9f797490888f568a34ae321d9ce91921f04758b16c8addf",
-      "audit_kind": "source_to_dashboard_agent",
+      "source_evidence": "Source inventory item `corollaryC2_adjacent_mesh_tends_to_zero`: Corollary C.2: under uniform matching, the maximum adjacent level gap tends to zero.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ddea603a9894a4d87ef69c35f56b1cd4019218cf505693ffc9e8ceab39221a05",
+      "support_declarations": [
+        "paper_corollaryC2_uniform_equalized_adjacent_mesh_tendsto_zero"
+      ],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "theorem31_adjacent_rate_expression": {
+    "corollaryC3_monotone_first_level_lower_bound": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "corollaryC3_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq",
+      "reason": "The dashboard now exposes the Corollary C.3 finite lower-bound core directly: monotone normalized sample rates dominate the uniform-rate objective on the uniformly spaced chain, and Theorem 3.1 finite rate optimality transfers the polynomial lower bound to the equalized optimum's first interior level.",
       "review_rows": [
-        "theorem31_adjacent_binary_rate_formula"
+        "corollaryC3_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq"
       ],
-      "reason": "The row exposes the adjacent Bernoulli rate expression appearing in Theorem 3.1; the support-safe top variant is present in the dashboard but not needed for this source item.",
-      "source_evidence": "Source inventory item `theorem31_adjacent_rate_expression`: Theorem 3.1 rate expression: r(t) is the minimum over adjacent intervals of inf_a {g_{i+1} KL(a||t_{i+1}) + g_i KL(a||t_i)}.",
-      "dashboard_evidence": "Dashboard row(s): `theorem31_adjacent_binary_rate_formula`.",
-      "statement_sha256": "63a17a5c2f44adb9d33c7eb84133cdc215e739539f4bf1dcacb505b62c333603",
-      "audit_kind": "source_to_dashboard_agent",
+      "source_evidence": "Source inventory item `corollaryC3_monotone_first_level_lower_bound`: Corollary C.3: under monotonically nondecreasing g, the first interior optimal level has a polynomial lower bound C M^{-3}, using Lemma B.1.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6efdc44da17861f13ea58dab93995e1b48d8afa04ae64ecccb52c94b83cbb1f6",
+      "support_declarations": [
+        "binaryEndpointAwareAdjacentRate_uniformEndpointLevels_le_of_sampleRate_mono_first_eq_one",
+        "BinaryEndpointAwareAdjacentRatesEqualize_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq"
+      ],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "corollaryC4_kendall_spearman_uniform_subsequence": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "paper_corollaryC4_equispaced_optimal_subsequence_exists_canonical_uniform_optimal_equispaced_floor_selector",
+      "reason": "The dashboard row covers the canonical optimal equispaced Kendall/Spearman Corollary C.4 branch.",
+      "review_rows": [
+        "paper_corollaryC4_equispaced_optimal_subsequence_exists_canonical_uniform_optimal_equispaced_floor_selector"
+      ],
+      "source_evidence": "Source inventory item `corollaryC4_kendall_spearman_uniform_subsequence`: Corollary C.4: for Kendall tau and Spearman rho, there exists beta such that beta_{2^N} converges uniformly.",
+      "source_grounded": true,
+      "statement_sha256": "001660a4080e37ce01f00ff8ecc94f748b679e15d51512c1fc76e1766307a511",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "definitionC1_kendall_spearman_population_objectives": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "definitionC1_kendall_spearman_population_objectives",
+      "reason": "The dashboard row exposes Definition C.1 as the Kendall constant-weight and Spearman linear-weight interval-gap objective formulas used by the source appendix; it is now a direct dashboard row rather than support-only context.",
+      "review_rows": [
+        "definitionC1_kendall_spearman_population_objectives"
+      ],
+      "source_evidence": "Source inventory item `definitionC1_kendall_spearman_population_objectives`: Definition C.1: population Kendall tau and Spearman rho objectives are proportional to the displayed integrals of P_k.",
+      "source_grounded": true,
+      "statement_sha256": "2788e472f8ee900875e252405d93873e36a089a92ef5c677668a5ab41cc5b5b9",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T21:25:00Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma31_equalized_rates_optimize": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma31_closed_adjacent_rate_formula, lemma31_forward_clipped_equalized_rates_exist_unique, lemma31_endpoint_aware_equalized_rates_are_isMaximizerOn, lemma31_endpoint_aware_maximizer_iff_pairwise_equalized",
+      "reason": "The Lemma 3.1 source claim is covered by the closed adjacent-rate formula, existence/uniqueness of equalized levels, and the maximizer/equalization equivalence rows.",
       "review_rows": [
         "lemma31_closed_adjacent_rate_formula",
         "lemma31_forward_clipped_equalized_rates_exist_unique",
         "lemma31_endpoint_aware_equalized_rates_are_isMaximizerOn",
         "lemma31_endpoint_aware_maximizer_iff_pairwise_equalized"
       ],
-      "reason": "The Lemma 3.1 source claim is covered by the closed adjacent-rate formula, existence/uniqueness of equalized levels, and the maximizer/equalization equivalence rows.",
       "source_evidence": "Source inventory item `lemma31_equalized_rates_optimize`: Lemma 3.1: the unique endpoint-normalized solution equalizing all adjacent rates maximizes r(t).",
-      "dashboard_evidence": "Dashboard row(s): `lemma31_closed_adjacent_rate_formula`, `lemma31_forward_clipped_equalized_rates_exist_unique`, `lemma31_endpoint_aware_equalized_rates_are_isMaximizerOn`, `lemma31_endpoint_aware_maximizer_iff_pairwise_equalized`.",
+      "source_grounded": true,
       "statement_sha256": "fc67e7baa879920eec4c07fc86c12505cb487d80ad144ae53989a15e808b1dfe",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "theorem32_nested_bisection_runtime": {
-      "coverage": "covered",
-      "review_rows": [
-        "theorem32_exists_grid_depth_rate_loss_and_runtime_le_of_nested_bisection_uniform_doubled_closed_run_calculated_grid_low_bisection_upper_one_sub_grid_early_exact_return_of_eps_pos"
-      ],
-      "support_declarations": [
-        "paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le"
-      ],
-      "reason": "The dashboard row states the source-grid calculated-recursion endpoint: for every positive tolerance it constructs a positive grid and finite bisection depth whose exact-hit early-return output satisfies the additive-rate loss and nested-bisection runtime certificate. The runtime-support declaration records the asymptotic Big-O bridge used to present the result in the paper's O(M log^2(M/epsilon)) form.",
-      "source_evidence": "Source inventory item `theorem32_nested_bisection_runtime`: Theorem 3.2: NestedBisection finds an epsilon-optimal t in O(M log^2(M/epsilon)) operations.",
-      "dashboard_evidence": "Dashboard row: `theorem32_exists_grid_depth_rate_loss_and_runtime_le_of_nested_bisection_uniform_doubled_closed_run_calculated_grid_low_bisection_upper_one_sub_grid_early_exact_return_of_eps_pos`; runtime support declaration: `paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le`.",
-      "statement_sha256": "cb0786a2532d30c3fd2ed2555659c0e673d5d2cc868cf99be8aaa864f47e00fc",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaB1_matching_rate_shift": {
-      "coverage": "covered_by_rows",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "paper_theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate, paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair",
+      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
       "review_rows": [
         "paper_theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate",
         "paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair"
       ],
+      "source_evidence": "Source inventory item `lemmaB1_matching_rate_shift`: Lemma B.1: if matching rates shift upward above index k and downward below k, with equality at k, then the kth optimal beta level shifts upward.",
+      "source_grounded": true,
+      "statement_sha256": "240752c93a832cd970edf87d6a22488bbb9c95f6c0977c167aadc2e164512012",
       "support_declarations": [
         "weightedBernoulliClosedThresholdRate_le_of_weights_le",
         "weightedBernoulliClosedThresholdRate_adjacent_le_nonadjacent_of_monotone",
         "theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate",
         "theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair"
       ],
-      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
-      "source_evidence": "Source inventory item `lemmaB1_matching_rate_shift`: Lemma B.1: if matching rates shift upward above index k and downward below k, with equality at k, then the kth optimal beta level shifts upward.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate`, `paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair`.",
-      "statement_sha256": "240752c93a832cd970edf87d6a22488bbb9c95f6c0977c167aadc2e164512012",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "theoremB1_uniform_subsequence_convergence": {
-      "coverage": "covered",
-      "review_rows": [
-        "paper_theoremB1_uniform_subsequence_principle_to_of_quantile_floor_tendstoUniformlyOn_geometric_mesh"
-      ],
-      "reason": "The dashboard row states the source Theorem B.1 route from quantile-floor representation, finite optimality, and uniform convergence of interval-quantile maps; it derives the selector window from uniform convergence and C.5.",
-      "source_evidence": "Source inventory item `theoremB1_uniform_subsequence_convergence`: Theorem B.1: for uniform g, if the interval-quantile maps q_M^w converge uniformly, every dyadic subsequence beta_{C 2^N + 1}^w has a uniform limit.",
-      "dashboard_evidence": "Dashboard row(s): `paper_theoremB1_uniform_subsequence_principle_to_of_quantile_floor_tendstoUniformlyOn_geometric_mesh`.",
-      "statement_sha256": "cc20373d0b60ea4872d895305839fc6680da78c2d09eb07ec4ecdb5b2992e5d1",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaB2_known_type_learning": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_lemmaB2_knownTypeExperiment_uniform_convergence_of_lipschitz_tracking",
+      "reason": "The dashboard row exposes the deterministic KnownTypeExperiment uniform-convergence core matching Lemma B.2.",
       "review_rows": [
         "paper_lemmaB2_knownTypeExperiment_uniform_convergence_of_lipschitz_tracking"
       ],
-      "reason": "The dashboard row exposes the deterministic KnownTypeExperiment uniform-convergence core matching Lemma B.2.",
       "source_evidence": "Source inventory item `lemmaB2_known_type_learning`: Lemma B.2: with KnownTypeExperiment and Lipschitz psi(theta,y), empirical estimates converge uniformly to psi as the number of samples and representatives grow.",
-      "dashboard_evidence": "Dashboard row(s): `paper_lemmaB2_knownTypeExperiment_uniform_convergence_of_lipschitz_tracking`.",
-      "statement_sha256": "789008ccb6a54246dd52071e0b3bfafd9d9c6422b22143f1af17b3bdd79e80ab",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "789008ccb6a54246dd52071e0b3bfafd9d9c6422b22143f1af17b3bdd79e80ab",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaB3_unknown_type_learning": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_lemmaB3_unknownTypeExperiment_uniform_convergence_of_ranking_tracking",
+      "reason": "The dashboard row exposes the deterministic UnknownTypeExperiment uniform-convergence core matching Lemma B.3.",
       "review_rows": [
         "paper_lemmaB3_unknownTypeExperiment_uniform_convergence_of_ranking_tracking"
       ],
-      "reason": "The dashboard row exposes the deterministic UnknownTypeExperiment uniform-convergence core matching Lemma B.3.",
       "source_evidence": "Source inventory item `lemmaB3_unknown_type_learning`: Lemma B.3: with UnknownTypeExperiment and Lipschitz psi(theta,y), empirical estimates converge uniformly to psi as item count and samples grow.",
-      "dashboard_evidence": "Dashboard row(s): `paper_lemmaB3_unknownTypeExperiment_uniform_convergence_of_ranking_tracking`.",
-      "statement_sha256": "6826c8bd0754ab91d6994fddbcb3a0f62c2432c1e5c131eb33bca0d6f4a7400f",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6826c8bd0754ab91d6994fddbcb3a0f62c2432c1e5c131eb33bca0d6f4a7400f",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC10_spearman_weight_reduction": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective",
+      "reason": "The dashboard row states the Spearman source-integral reduction to the linear ordered-pair objective.",
+      "review_rows": [
+        "paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective"
+      ],
+      "source_evidence": "Source inventory item `lemmaC10_spearman_weight_reduction`: Lemma C.10: Spearman rho can be written as an ordered-pair objective with weight w(theta_1,theta_2)=theta_1-theta_2.",
+      "source_grounded": true,
+      "statement_sha256": "fb2c96df50533e6bb17c2e23eda925eef8ed9a640282356978f02b1a7a6a2522",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC11_kendall_equispaced_intervals": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "paper_lemmaC11_kendall_constant_weight_ordered_pair_interval_objective_le_equispaced",
+      "reason": "The dashboard row states the Kendall constant-weight ordered-pair objective bound with equispaced maximizer.",
+      "review_rows": [
+        "paper_lemmaC11_kendall_constant_weight_ordered_pair_interval_objective_le_equispaced"
+      ],
+      "source_evidence": "Source inventory item `lemmaC11_kendall_equispaced_intervals`: Lemma C.11: with constant weight, the Kendall interval objective is maximized by equispaced cutpoints.",
+      "source_grounded": true,
+      "statement_sha256": "0c916d1721a06e61e1b3e85cd201e74a1b246f252257b67861dffe7d47c1c650",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC12_spearman_equispaced_intervals": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "paper_lemmaC12_spearman_linear_weight_ordered_pair_interval_objective_le_equispaced",
+      "reason": "The dashboard row states the Spearman linear-weight ordered-pair objective bound with equispaced maximizer.",
+      "review_rows": [
+        "paper_lemmaC12_spearman_linear_weight_ordered_pair_interval_objective_le_equispaced"
+      ],
+      "source_evidence": "Source inventory item `lemmaC12_spearman_equispaced_intervals`: Lemma C.12: with weight theta_1-theta_2, the Spearman interval objective is maximized by equispaced cutpoints.",
+      "source_grounded": true,
+      "statement_sha256": "7bc7f1cc8714167302ece0f15e6177e9a132b8401be75e3fe6d0afc5f3cfbbfd",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC1_pairwise_error_rate": {
-      "coverage": "covered_by_rows",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "binary_rating_model_mgf_formula, binary_rating_model_log_mgf_formula, binary_rating_model_log_mgf_derivative_formula, binary_rating_pairwise_threshold_rate_certificates_from_derivatives",
+      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
       "review_rows": [
         "binary_rating_model_mgf_formula",
         "binary_rating_model_log_mgf_formula",
         "binary_rating_model_log_mgf_derivative_formula",
         "binary_rating_pairwise_threshold_rate_certificates_from_derivatives"
       ],
+      "source_evidence": "Source inventory item `lemmaC1_pairwise_error_rate`: Lemma C.1: the left-tail pairwise score error has large-deviation exponent inf_a {g(theta_1) I(a|theta_1) + g(theta_2) I(a|theta_2)}.",
+      "source_grounded": true,
+      "statement_sha256": "0bd2a4925ea5c00fd93e66812340893bbe265dcbbd7f3a184c731d6ed5442f25",
       "support_declarations": [
         "binary_rating_model_mgf_formula",
         "binary_rating_model_log_mgf_formula",
         "binary_rating_model_log_mgf_derivative_formula",
         "binary_rating_pairwise_threshold_rate_certificates_from_derivatives"
       ],
-      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
-      "source_evidence": "Source inventory item `lemmaC1_pairwise_error_rate`: Lemma C.1: the left-tail pairwise score error has large-deviation exponent inf_a {g(theta_1) I(a|theta_1) + g(theta_2) I(a|theta_2)}.",
-      "dashboard_evidence": "Current human-dashboard row(s): `binary_rating_model_mgf_formula`, `binary_rating_model_log_mgf_formula`, `binary_rating_model_log_mgf_derivative_formula`, `binary_rating_pairwise_threshold_rate_certificates_from_derivatives`.",
-      "statement_sha256": "0bd2a4925ea5c00fd93e66812340893bbe265dcbbd7f3a184c731d6ed5442f25",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC2_binary_complement_rate": {
-      "coverage": "covered_by_rows",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "binary_rating_model_rate_function_is_bernoulli_kl, binary_rating_model_rate_function_top_is_bernoulli_kl, binary_rating_pairwise_rate_objective_top_is_threshold_kl_rate, binary_rating_pairwise_threshold_rate_top_is_closed_weighted_rate",
+      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
       "review_rows": [
         "binary_rating_model_rate_function_is_bernoulli_kl",
         "binary_rating_model_rate_function_top_is_bernoulli_kl",
         "binary_rating_pairwise_rate_objective_top_is_threshold_kl_rate",
         "binary_rating_pairwise_threshold_rate_top_is_closed_weighted_rate"
       ],
+      "source_evidence": "Source inventory item `lemmaC2_binary_complement_rate`: Lemma C.2: for Bernoulli scores with I(a|theta)=KL(a||beta(theta)), the complement pairwise ranking probability has the same infimum rate.",
+      "source_grounded": true,
+      "statement_sha256": "8b2ddb963147a56501fdd386062f3af31f26b72f60e7d8b42c978b508e6aecff",
       "support_declarations": [
         "binary_rating_model_rate_function_is_bernoulli_kl",
         "binary_rating_model_rate_function_top_is_bernoulli_kl",
         "binary_rating_pairwise_rate_objective_top_is_threshold_kl_rate",
         "binary_rating_pairwise_threshold_rate_top_is_closed_weighted_rate"
       ],
-      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
-      "source_evidence": "Source inventory item `lemmaC2_binary_complement_rate`: Lemma C.2: for Bernoulli scores with I(a|theta)=KL(a||beta(theta)), the complement pairwise ranking probability has the same infimum rate.",
-      "dashboard_evidence": "Current human-dashboard row(s): `binary_rating_model_rate_function_is_bernoulli_kl`, `binary_rating_model_rate_function_top_is_bernoulli_kl`, `binary_rating_pairwise_rate_objective_top_is_threshold_kl_rate`, `binary_rating_pairwise_threshold_rate_top_is_closed_weighted_rate`.",
-      "statement_sha256": "8b2ddb963147a56501fdd386062f3af31f26b72f60e7d8b42c978b508e6aecff",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "theoremC1_laplace_principle": {
-      "coverage": "covered",
-      "review_rows": [
-        "paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf"
-      ],
-      "reason": "The dashboard row exposes the weighted Laplace-principle skeleton matching the source Theorem C.1, with explicit positive-weight near-minimizer hypotheses.",
-      "source_evidence": "Source inventory item `theoremC1_laplace_principle`: Theorem C.1: under compactness, finite measure, nonnegativity, essential infima, and uniform convergence of rate functions, the integral of exp(-n phi_n) has exponent -phi.",
-      "dashboard_evidence": "Dashboard row(s): `paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf`.",
-      "statement_sha256": "9dae5f8dc45aef174c842e4fab396e4e32831ef89b8f2d4b302f219a2f618a8d",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC3_piecewise_constant_rate": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_lemmaC3_partition_integral_hasExponentialRate_of_min_component_uniform_logRate, paper_lemmaC3_ordered_quality_endpoint_piecewiseConstKernel_integral_hasExponentialRate_of_adjacent_min_weight_pos_of_cell_midpoints",
+      "reason": "The C.3 rows cover the finite partition/min-component exponent and the source ordered-pair piecewise-constant kernel endpoint.",
       "review_rows": [
         "paper_lemmaC3_partition_integral_hasExponentialRate_of_min_component_uniform_logRate",
         "paper_lemmaC3_ordered_quality_endpoint_piecewiseConstKernel_integral_hasExponentialRate_of_adjacent_min_weight_pos_of_cell_midpoints"
       ],
-      "reason": "The C.3 rows cover the finite partition/min-component exponent and the source ordered-pair piecewise-constant kernel endpoint.",
       "source_evidence": "Source inventory item `lemmaC3_piecewise_constant_rate`: Lemma C.3: for piecewise constant beta with levels t_i, Wbar_k has exponent equal to the minimum adjacent Bernoulli rate.",
-      "dashboard_evidence": "Dashboard row(s): `paper_lemmaC3_partition_integral_hasExponentialRate_of_min_component_uniform_logRate`, `paper_lemmaC3_ordered_quality_endpoint_piecewiseConstKernel_integral_hasExponentialRate_of_adjacent_min_weight_pos_of_cell_midpoints`.",
-      "statement_sha256": "7aa9b13dff4b8226bd9273850e48115a60b94ed506023646636abce346a60bb4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "7aa9b13dff4b8226bd9273850e48115a60b94ed506023646636abce346a60bb4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC4_positive_rate_iff_piecewise_constant": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paper_lemmaC4_rawSourcePositiveSupportIntervalModel_finiteStep_iff_exists_positive_exponential_rate_of_sourcePbar_selected_realization, paper_lemmaC4_piecewise_constant_iff_exists_positive_exponential_rate_of_defined_tieErasedSourceWbar_nonpiecewise_nonTie_interval_witness",
+      "reason": "The C.4 rows cover the paper-local finite-step iff for the source Pbar kernel and the tie-erased Wbar positive-rate iff with non-tie interval witnesses.",
       "review_rows": [
         "paper_lemmaC4_rawSourcePositiveSupportIntervalModel_finiteStep_iff_exists_positive_exponential_rate_of_sourcePbar_selected_realization",
         "paper_lemmaC4_piecewise_constant_iff_exists_positive_exponential_rate_of_defined_tieErasedSourceWbar_nonpiecewise_nonTie_interval_witness"
       ],
-      "reason": "The C.4 rows cover the paper-local finite-step iff for the source Pbar kernel and the tie-erased Wbar positive-rate iff with non-tie interval witnesses.",
       "source_evidence": "Source inventory item `lemmaC4_positive_rate_iff_piecewise_constant`: Lemma C.4: beta is piecewise constant if and only if Wbar_k has a positive exponential convergence rate.",
-      "dashboard_evidence": "Dashboard row(s): `paper_lemmaC4_rawSourcePositiveSupportIntervalModel_finiteStep_iff_exists_positive_exponential_rate_of_sourcePbar_selected_realization`, `paper_lemmaC4_piecewise_constant_iff_exists_positive_exponential_rate_of_defined_tieErasedSourceWbar_nonpiecewise_nonTie_interval_witness`.",
-      "statement_sha256": "1342e59ffc7e4b4438d60047c56083e2b6022dfc839058f2a59b4ccaa4193f3b",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1342e59ffc7e4b4438d60047c56083e2b6022dfc839058f2a59b4ccaa4193f3b",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC5_uniform_doubled_chain": {
-      "coverage": "covered_by_rows",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "lemmaC5_uniform_doubled_endpoint_levels, lemmaC5_uniform_doubled_endpoint_levels_even, lemmaC5_uniform_doubled_endpoint_levels_first_odd, lemmaC5_uniform_doubled_endpoint_levels_last_odd, lemmaC5_uniform_doubled_endpoint_levels_equalizes",
+      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
       "review_rows": [
         "lemmaC5_uniform_doubled_endpoint_levels",
         "lemmaC5_uniform_doubled_endpoint_levels_even",
@@ -239,228 +304,232 @@
         "lemmaC5_uniform_doubled_endpoint_levels_last_odd",
         "lemmaC5_uniform_doubled_endpoint_levels_equalizes"
       ],
-      "support_declarations": [
-        "lemmaC5_uniform_doubled_endpoint_levels",
-        "lemmaC5_uniform_doubled_endpoint_levels_even",
-        "lemmaC5_uniform_doubled_endpoint_levels_first_odd",
-        "lemmaC5_uniform_doubled_endpoint_levels_last_odd",
-        "lemmaC5_uniform_doubled_endpoint_levels_equalizes"
-      ],
-      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
       "source_evidence": "Source inventory item `lemmaC5_uniform_doubled_chain`: Lemma C.5: under uniform matching, the optimal beta_{2M-1} levels are obtained from beta_M by copying old levels and inserting the displayed square-root midpoint formulas.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaC5_uniform_doubled_endpoint_levels`, `lemmaC5_uniform_doubled_endpoint_levels_even`, `lemmaC5_uniform_doubled_endpoint_levels_first_odd`, `lemmaC5_uniform_doubled_endpoint_levels_last_odd`, `lemmaC5_uniform_doubled_endpoint_levels_equalizes`.",
+      "source_grounded": true,
       "statement_sha256": "0053c53bdc5642731c5e1fb840908aee3d8692f8cfa6d4131ad634ac28f37e12",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "corollaryC1_rate_tends_to_zero": {
-      "coverage": "covered_by_rows",
-      "review_rows": [
-        "paper_corollaryC2_uniform_equalized_last_rate_tendsto_zero"
-      ],
       "support_declarations": [
-        "paper_corollaryC2_uniform_equalized_last_rate_tendsto_zero"
+        "lemmaC5_uniform_doubled_endpoint_levels",
+        "lemmaC5_uniform_doubled_endpoint_levels_even",
+        "lemmaC5_uniform_doubled_endpoint_levels_first_odd",
+        "lemmaC5_uniform_doubled_endpoint_levels_last_odd",
+        "lemmaC5_uniform_doubled_endpoint_levels_equalizes"
       ],
-      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
-      "source_evidence": "Source inventory item `corollaryC1_rate_tends_to_zero`: Corollary C.1: under uniform matching, for every epsilon there is M such that all larger finite optimal rates are below epsilon.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_corollaryC2_uniform_equalized_last_rate_tendsto_zero`.",
-      "statement_sha256": "f73ff98ac250adc790be105c8239924f1d8fe527c61fda4b759841e3c6507f93",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "corollaryC2_adjacent_mesh_tends_to_zero": {
-      "coverage": "covered_by_rows",
-      "review_rows": [
-        "paper_corollaryC2_uniform_equalized_adjacent_mesh_tendsto_zero"
-      ],
-      "support_declarations": [
-        "paper_corollaryC2_uniform_equalized_adjacent_mesh_tendsto_zero"
-      ],
-      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
-      "source_evidence": "Source inventory item `corollaryC2_adjacent_mesh_tends_to_zero`: Corollary C.2: under uniform matching, the maximum adjacent level gap tends to zero.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paper_corollaryC2_uniform_equalized_adjacent_mesh_tendsto_zero`.",
-      "statement_sha256": "ddea603a9894a4d87ef69c35f56b1cd4019218cf505693ffc9e8ceab39221a05",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC6_monotone_penultimate_lower_bound": {
-      "coverage": "covered_by_rows",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "lemmaC6_penultimate_level_ge_one_sub_inv_of_width_minimal, lemmaC6_uniform_penultimate_level_ge_one_sub_inv_of_equalized_rates, theorem32_rate_loss_le_of_nested_bisection_width_minimal",
+      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
       "review_rows": [
         "lemmaC6_penultimate_level_ge_one_sub_inv_of_width_minimal",
         "lemmaC6_uniform_penultimate_level_ge_one_sub_inv_of_equalized_rates",
         "theorem32_rate_loss_le_of_nested_bisection_width_minimal"
       ],
+      "source_evidence": "Source inventory item `lemmaC6_monotone_penultimate_lower_bound`: Lemma C.6: if g is nondecreasing in theta, then the penultimate optimal level satisfies t_{M-2} >= 1 - 1/(M-1).",
+      "source_grounded": true,
+      "statement_sha256": "d45b999d07e51593b25ee53a7ee15a0d60c9ab15645a5da2b581547187e51ed9",
       "support_declarations": [
         "lemmaC6_penultimate_level_ge_one_sub_inv_of_width_minimal",
         "lemmaC6_uniform_penultimate_level_ge_one_sub_inv_of_equalized_rates",
         "theorem32_rate_loss_le_of_nested_bisection_width_minimal"
       ],
-      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
-      "source_evidence": "Source inventory item `lemmaC6_monotone_penultimate_lower_bound`: Lemma C.6: if g is nondecreasing in theta, then the penultimate optimal level satisfies t_{M-2} >= 1 - 1/(M-1).",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaC6_penultimate_level_ge_one_sub_inv_of_width_minimal`, `lemmaC6_uniform_penultimate_level_ge_one_sub_inv_of_equalized_rates`, `theorem32_rate_loss_le_of_nested_bisection_width_minimal`.",
-      "statement_sha256": "d45b999d07e51593b25ee53a7ee15a0d60c9ab15645a5da2b581547187e51ed9",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC7_uniform_rate_refinement_lower_bound": {
-      "coverage": "covered_by_rows",
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "lemmaC7_uniform_refined_last_rate_ge_one_fifth, lemmaC7_uniform_refined_objective_rate_ge_one_fifth, lemmaC7_uniform_doubled_objective_rate_ge_one_fifth_old_objective",
+      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
       "review_rows": [
         "lemmaC7_uniform_refined_last_rate_ge_one_fifth",
         "lemmaC7_uniform_refined_objective_rate_ge_one_fifth",
         "lemmaC7_uniform_doubled_objective_rate_ge_one_fifth_old_objective"
       ],
+      "source_evidence": "Source inventory item `lemmaC7_uniform_rate_refinement_lower_bound`: Lemma C.7: under uniform matching, the refined optimal rate along the doubled chain is at least one fifth of the old rate.",
+      "source_grounded": true,
+      "statement_sha256": "3897f3b0afb392eccca0cfd46bb4a0fa574bdaa81bb80c30d429d71795da32d3",
       "support_declarations": [
         "lemmaC7_uniform_refined_last_rate_ge_one_fifth",
         "lemmaC7_uniform_refined_objective_rate_ge_one_fifth",
         "lemmaC7_uniform_doubled_objective_rate_ge_one_fifth_old_objective"
       ],
-      "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
-      "source_evidence": "Source inventory item `lemmaC7_uniform_rate_refinement_lower_bound`: Lemma C.7: under uniform matching, the refined optimal rate along the doubled chain is at least one fifth of the old rate.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaC7_uniform_refined_last_rate_ge_one_fifth`, `lemmaC7_uniform_refined_objective_rate_ge_one_fifth`, `lemmaC7_uniform_doubled_objective_rate_ge_one_fifth_old_objective`.",
-      "statement_sha256": "3897f3b0afb392eccca0cfd46bb4a0fa574bdaa81bb80c30d429d71795da32d3",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC8_uniform_first_level_lower_bound": {
-      "coverage": "covered_by_rows",
-      "review_rows": [
-        "lemmaC8_uniform_first_level_ge_half_of_first_rate_lower",
-        "lemmaC8_uniform_first_level_ge_half_of_equalized_last_rate_lower",
-        "lemmaC8_uniform_first_level_ge_half_of_equalized_objective_rate_lower"
-      ],
-      "support_declarations": [
-        "lemmaC8_uniform_first_level_ge_half_of_first_rate_lower",
-        "lemmaC8_uniform_first_level_ge_half_of_equalized_last_rate_lower",
-        "lemmaC8_uniform_first_level_ge_half_of_equalized_objective_rate_lower"
-      ],
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "lemmaC8_uniform_first_level_ge_half_of_first_rate_lower, lemmaC8_uniform_first_level_ge_half_of_equalized_last_rate_lower, lemmaC8_uniform_first_level_ge_half_of_equalized_objective_rate_lower",
       "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
-      "source_evidence": "Source inventory item `lemmaC8_uniform_first_level_lower_bound`: Lemma C.8: under uniform matching, the first interior optimal level has a polynomial lower bound C M^{-3}.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaC8_uniform_first_level_ge_half_of_first_rate_lower`, `lemmaC8_uniform_first_level_ge_half_of_equalized_last_rate_lower`, `lemmaC8_uniform_first_level_ge_half_of_equalized_objective_rate_lower`.",
-      "statement_sha256": "ebb87494b18737a6d0f86176ba722918532db36826caeed5eac836e08e0e96b7",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "corollaryC3_monotone_first_level_lower_bound": {
-      "coverage": "covered_by_rows",
       "review_rows": [
-        "corollaryC3_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq"
+        "lemmaC8_uniform_first_level_ge_half_of_first_rate_lower",
+        "lemmaC8_uniform_first_level_ge_half_of_equalized_last_rate_lower",
+        "lemmaC8_uniform_first_level_ge_half_of_equalized_objective_rate_lower"
       ],
-      "support_declarations": [
-        "binaryEndpointAwareAdjacentRate_uniformEndpointLevels_le_of_sampleRate_mono_first_eq_one",
-        "BinaryEndpointAwareAdjacentRatesEqualize_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq"
-      ],
-      "reason": "The dashboard now exposes the Corollary C.3 finite lower-bound core directly: monotone normalized sample rates dominate the uniform-rate objective on the uniformly spaced chain, and Theorem 3.1 finite rate optimality transfers the polynomial lower bound to the equalized optimum's first interior level.",
-      "source_evidence": "Source inventory item `corollaryC3_monotone_first_level_lower_bound`: Corollary C.3: under monotonically nondecreasing g, the first interior optimal level has a polynomial lower bound C M^{-3}, using Lemma B.1.",
-      "dashboard_evidence": "Dashboard row: `corollaryC3_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq`; support includes `binaryEndpointAwareAdjacentRate_uniformEndpointLevels_le_of_sampleRate_mono_first_eq_one` and `BinaryEndpointAwareAdjacentRatesEqualize_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq`.",
-      "statement_sha256": "6efdc44da17861f13ea58dab93995e1b48d8afa04ae64ecccb52c94b83cbb1f6",
-      "audit_kind": "source_to_dashboard_agent",
+      "source_evidence": "Source inventory item `lemmaC8_uniform_first_level_lower_bound`: Lemma C.8: under uniform matching, the first interior optimal level has a polynomial lower bound C M^{-3}.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ebb87494b18737a6d0f86176ba722918532db36826caeed5eac836e08e0e96b7",
+      "support_declarations": [
+        "lemmaC8_uniform_first_level_ge_half_of_first_rate_lower",
+        "lemmaC8_uniform_first_level_ge_half_of_equalized_last_rate_lower",
+        "lemmaC8_uniform_first_level_ge_half_of_equalized_objective_rate_lower"
+      ],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemmaC9_nested_bisection_runtime": {
-      "coverage": "covered_by_rows",
-      "review_rows": [
-        "lemmaC9_nested_bisection_operation_count_le_stepBound",
-        "lemmaC9_nested_bisection_operation_count_le_mul_succ_sq",
-        "paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le"
-      ],
-      "support_declarations": [
-        "lemmaC9_nested_bisection_operation_count_le_stepBound",
-        "lemmaC9_nested_bisection_operation_count_le_mul_succ_sq",
-        "paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le"
-      ],
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "lemmaC9_nested_bisection_operation_count_le_stepBound, lemmaC9_nested_bisection_operation_count_le_mul_succ_sq, paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le",
       "reason": "The source item is covered by the linked source-facing dashboard rows, which expose the finite rate, refinement, convergence, or runtime components used for this named source lemma/corollary rather than leaving the claim as support-only coverage.",
+      "review_rows": [
+        "lemmaC9_nested_bisection_operation_count_le_stepBound",
+        "lemmaC9_nested_bisection_operation_count_le_mul_succ_sq",
+        "paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le"
+      ],
       "source_evidence": "Source inventory item `lemmaC9_nested_bisection_runtime`: Lemma C.9: NestedBisection runs in O(M log^2(1/delta)) operations for bisection grid width delta.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemmaC9_nested_bisection_operation_count_le_stepBound`, `lemmaC9_nested_bisection_operation_count_le_mul_succ_sq`, `paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le`.",
+      "source_grounded": true,
       "statement_sha256": "00eacbbbab7a2d4dcf7681374d04d1a8bcdd3c2eac12e9d55c7cc9b3f6b0251c",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "definitionC1_kendall_spearman_population_objectives": {
-      "coverage": "covered_by_support",
-      "review_rows": [],
       "support_declarations": [
-        "paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective"
+        "lemmaC9_nested_bisection_operation_count_le_stepBound",
+        "lemmaC9_nested_bisection_operation_count_le_mul_succ_sq",
+        "paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le"
       ],
-      "reason": "The source population objectives are primarily definitional support for the Spearman/Kendall example rows; Spearman reduction is exposed directly and Kendall constant-weight objective appears in Lemma C.11.",
-      "source_evidence": "Source inventory item `definitionC1_kendall_spearman_population_objectives`: Definition C.1: population Kendall tau and Spearman rho objectives are proportional to the displayed integrals of P_k.",
-      "dashboard_evidence": "Support declaration(s): `paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective`.",
-      "statement_sha256": "2788e472f8ee900875e252405d93873e36a089a92ef5c677668a5ab41cc5b5b9",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "lemmaC10_spearman_weight_reduction": {
-      "coverage": "covered",
-      "review_rows": [
-        "paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective"
-      ],
-      "reason": "The dashboard row states the Spearman source-integral reduction to the linear ordered-pair objective.",
-      "source_evidence": "Source inventory item `lemmaC10_spearman_weight_reduction`: Lemma C.10: Spearman rho can be written as an ordered-pair objective with weight w(theta_1,theta_2)=theta_1-theta_2.",
-      "dashboard_evidence": "Dashboard row(s): `paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective`.",
-      "statement_sha256": "fb2c96df50533e6bb17c2e23eda925eef8ed9a640282356978f02b1a7a6a2522",
-      "audit_kind": "source_to_dashboard_agent",
+    "model_nondecreasing_match_function": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered_by_support",
+      "dashboard_evidence": "paper_theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate, paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair",
+      "reason": "The nondecreasing match-function condition is a source model primitive used by the monotone adjacent-dominance support layer; it is not a standalone compact theorem row.",
+      "review_rows": [],
+      "source_evidence": "Source inventory item `model_nondecreasing_match_function`: Model setup: item quality is matched according to a nondecreasing match function g(theta), bounded above and bounded away from zero.",
       "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "lemmaC11_kendall_equispaced_intervals": {
-      "coverage": "covered",
-      "review_rows": [
-        "paper_lemmaC11_kendall_constant_weight_ordered_pair_interval_objective_le_equispaced"
+      "statement_sha256": "f90f413aa039930b141cb1e63a52fe6ce7651e5323a65fe1c043354cda818aee",
+      "support_declarations": [
+        "paper_theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate",
+        "paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair"
       ],
-      "reason": "The dashboard row states the Kendall constant-weight ordered-pair objective bound with equispaced maximizer.",
-      "source_evidence": "Source inventory item `lemmaC11_kendall_equispaced_intervals`: Lemma C.11: with constant weight, the Kendall interval objective is maximized by equispaced cutpoints.",
-      "dashboard_evidence": "Dashboard row(s): `paper_lemmaC11_kendall_constant_weight_ordered_pair_interval_objective_le_equispaced`.",
-      "statement_sha256": "0c916d1721a06e61e1b3e85cd201e74a1b246f252257b67861dffe7d47c1c650",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "lemmaC12_spearman_equispaced_intervals": {
-      "coverage": "covered",
-      "review_rows": [
-        "paper_lemmaC12_spearman_linear_weight_ordered_pair_interval_objective_le_equispaced"
-      ],
-      "reason": "The dashboard row states the Spearman linear-weight ordered-pair objective bound with equispaced maximizer.",
-      "source_evidence": "Source inventory item `lemmaC12_spearman_equispaced_intervals`: Lemma C.12: with weight theta_1-theta_2, the Spearman interval objective is maximized by equispaced cutpoints.",
-      "dashboard_evidence": "Dashboard row(s): `paper_lemmaC12_spearman_linear_weight_ordered_pair_interval_objective_le_equispaced`.",
-      "statement_sha256": "7bc7f1cc8714167302ece0f15e6177e9a132b8401be75e3fe6d0afc5f3cfbbfd",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
-    },
-    "corollaryC4_kendall_spearman_uniform_subsequence": {
-      "coverage": "covered",
-      "review_rows": [
-        "paper_corollaryC4_equispaced_optimal_subsequence_exists_canonical_uniform_optimal_equispaced_floor_selector"
-      ],
-      "reason": "The dashboard row covers the canonical optimal equispaced Kendall/Spearman Corollary C.4 branch.",
-      "source_evidence": "Source inventory item `corollaryC4_kendall_spearman_uniform_subsequence`: Corollary C.4: for Kendall tau and Spearman rho, there exists beta such that beta_{2^N} converges uniformly.",
-      "dashboard_evidence": "Dashboard row(s): `paper_corollaryC4_equispaced_optimal_subsequence_exists_canonical_uniform_optimal_equispaced_floor_selector`.",
-      "statement_sha256": "001660a4080e37ce01f00ff8ecc94f748b679e15d51512c1fc76e1766307a511",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "source_definition_bernoulli_kl_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition_bernoulli_kl_formula",
+      "reason": "The dashboard row states the same Bernoulli KL formula displayed in the main paper.",
       "review_rows": [
         "definition_bernoulli_kl_formula"
       ],
-      "reason": "The dashboard row states the same Bernoulli KL formula displayed in the main paper.",
       "source_evidence": "Source inventory item `definition_bernoulli_kl_formula`: Definition below Theorem 3.1: Bernoulli KL divergence KL(a||b) = a log(a/b) + (1-a) log((1-a)/(1-b)).",
-      "dashboard_evidence": "Dashboard row(s): `definition_bernoulli_kl_formula`.",
-      "statement_sha256": "574d0a11339da97375965b79af31e87636531696640c05b6600a6fa2ea706e32",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "574d0a11339da97375965b79af31e87636531696640c05b6600a6fa2ea706e32",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "theorem31_adjacent_rate_expression": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem31_adjacent_binary_rate_formula",
+      "reason": "The row exposes the adjacent Bernoulli rate expression appearing in Theorem 3.1; the support-safe top variant is present in the dashboard but not needed for this source item.",
+      "review_rows": [
+        "theorem31_adjacent_binary_rate_formula"
+      ],
+      "source_evidence": "Source inventory item `theorem31_adjacent_rate_expression`: Theorem 3.1 rate expression: r(t) is the minimum over adjacent intervals of inf_a {g_{i+1} KL(a||t_{i+1}) + g_i KL(a||t_i)}.",
+      "source_grounded": true,
+      "statement_sha256": "63a17a5c2f44adb9d33c7eb84133cdc215e739539f4bf1dcacb505b62c333603",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "theorem31_two_stage_optimality": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "paper_theorem31_two_stage_lexicographic_optimality, paper_theorem31_exists_cell_integral_volume_weighted_uniform_endpoint_two_stage_lexicographic_optimality_of_integrableOn_Icc",
+      "reason": "The two Theorem 3.1 rows expose the value-then-rate lexicographic decomposition and the cell-integral weighted bridge from the paper source.",
+      "review_rows": [
+        "paper_theorem31_two_stage_lexicographic_optimality",
+        "paper_theorem31_exists_cell_integral_volume_weighted_uniform_endpoint_two_stage_lexicographic_optimality_of_integrableOn_Icc"
+      ],
+      "source_evidence": "Source inventory item `theorem31_two_stage_optimality`: Theorem 3.1: the optimal beta decomposes into an optimal discretization S* maximizing the limiting value and optimal levels t* maximizing the large-deviation rate among those discretizations.",
+      "source_grounded": true,
+      "statement_sha256": "3c4c91908c308565f9f797490888f568a34ae321d9ce91921f04758b16c8addf",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "theorem32_nested_bisection_runtime": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem32_exists_grid_depth_rate_loss_and_runtime_le_of_nested_bisection_uniform_doubled_closed_run_calculated_grid_low_bisection_upper_one_sub_grid_early_exact_return_of_eps_pos",
+      "reason": "The dashboard row states the source-grid calculated-recursion endpoint: for every positive tolerance it constructs a positive grid and finite bisection depth whose exact-hit early-return output satisfies the additive-rate loss and nested-bisection runtime certificate. The runtime-support declaration records the asymptotic Big-O bridge used to present the result in the paper's O(M log^2(M/epsilon)) form.",
+      "review_rows": [
+        "theorem32_exists_grid_depth_rate_loss_and_runtime_le_of_nested_bisection_uniform_doubled_closed_run_calculated_grid_low_bisection_upper_one_sub_grid_early_exact_return_of_eps_pos"
+      ],
+      "source_evidence": "Source inventory item `theorem32_nested_bisection_runtime`: Theorem 3.2: NestedBisection finds an epsilon-optimal t in O(M log^2(M/epsilon)) operations.",
+      "source_grounded": true,
+      "statement_sha256": "cb0786a2532d30c3fd2ed2555659c0e673d5d2cc868cf99be8aaa864f47e00fc",
+      "support_declarations": [
+        "paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le"
+      ],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "theoremB1_uniform_subsequence_convergence": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "paper_theoremB1_uniform_subsequence_principle_to_of_quantile_floor_tendstoUniformlyOn_geometric_mesh",
+      "reason": "The dashboard row states the source Theorem B.1 route from quantile-floor representation, finite optimality, and uniform convergence of interval-quantile maps; it derives the selector window from uniform convergence and C.5.",
+      "review_rows": [
+        "paper_theoremB1_uniform_subsequence_principle_to_of_quantile_floor_tendstoUniformlyOn_geometric_mesh"
+      ],
+      "source_evidence": "Source inventory item `theoremB1_uniform_subsequence_convergence`: Theorem B.1: for uniform g, if the interval-quantile maps q_M^w converge uniformly, every dyadic subsequence beta_{C 2^N + 1}^w has a uniform limit.",
+      "source_grounded": true,
+      "statement_sha256": "cc20373d0b60ea4872d895305839fc6680da78c2d09eb07ec4ecdb5b2992e5d1",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "theoremC1_laplace_principle": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf",
+      "reason": "The dashboard row exposes the weighted Laplace-principle skeleton matching the source Theorem C.1, with explicit positive-weight near-minimizer hypotheses.",
+      "review_rows": [
+        "paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf"
+      ],
+      "source_evidence": "Source inventory item `theoremC1_laplace_principle`: Theorem C.1: under compactness, finite measure, nonnegativity, essential infima, and uniform convergence of rate functions, the integral of exp(-n phi_n) has exponent -phi.",
+      "source_grounded": true,
+      "statement_sha256": "9dae5f8dc45aef174c842e4fab396e4e32831ef89b8f2d4b302f219a2f618a8d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "GJ19OptimalBinaryRatingSystems",
+  "paper_statement_inventory_sha256": "c76f320cff0e225d2a5066640054f45daaa0a10555094e284da2a9867ae9cb91",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "34d5a4d9078a492ffa7738bb19255bb557149454bfc7a9fb4f0f65c1b00d0dbe",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T21:25:00Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

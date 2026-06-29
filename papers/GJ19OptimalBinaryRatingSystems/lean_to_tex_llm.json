@@ -1,450 +1,459 @@
 {
-  "schema": 1,
-  "paper": "GJ19OptimalBinaryRatingSystems",
-  "prompt_version": "dashboard-cache-context-free-2026-06-28",
-  "generator": "gpt-5-codex",
-  "generator_type": "model",
-  "generated_at": "2026-06-28T22:35:30Z",
+  "comment": "Regenerated context-free Lean-to-TeX drafts for semantic statement rejudge; every visible binder/hypothesis remains part of the translated surface.",
   "items": {
-    "definition_bernoulli_kl_formula": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "5c5eb1a4e1a13ce23615a545c7044c2630df6ebe589375bb41d1e9504c488034",
-      "tex_statement": "(a b : ℝ) : paperBernoulliKL a b = a * Real.log (a / b) + (1 - a) * Real.log ((1 - a) / (1 - b))",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "binary_rating_model_log_mgf_derivative_formula": {
+      "lean_statement_sha256": "1cbe5e2c19bf669c7e958334ecd53206efd6f08ac560e968ef80de87bca7381d",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1) (\u03b8 : Seller) (z : \u211d), HasDerivAt (fun t  =>  (binaryRatingModel successProb hprob0 hprob1).logMGF \u03b8 t) (successProb \u03b8 * exp z / (1 - successProb \u03b8 + successProb \u03b8 * exp z)) z",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "definition_bernoulli_kl_top_formula": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "e9417bf4cf62df3589865c8c74817d4bf71f60d4158661403b820da89120be71",
-      "tex_statement": "(a b : ℝ) : paperBernoulliKLTop a b = if 0 \\le a \\land a \\le 1 then (paperBernoulliKL a b : WithTop ℝ) else ⊤",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "binary_rating_model_log_mgf_formula": {
+      "lean_statement_sha256": "14fa754ea04eae7bdf6aac4f7baaa89f30e8af07c06adf7276f5dbc5a2e82536",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1) (\u03b8 : Seller) (z : \u211d), (binaryRatingModel successProb hprob0 hprob1).logMGF \u03b8 z = log (1 - successProb \u03b8 + successProb \u03b8 * exp z)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "theorem31_adjacent_binary_rate_formula": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "f9f501c10caec9f6354aa58cfa26a3bd60db2d2d9b25acb5fb78bc26fb906b6e",
-      "tex_statement": "(gHi gLo tHi tLo : ℝ) : paperAdjacentBinaryRatingRate gHi gLo tHi tLo = sInf (Set.range fun a : ℝ  =>  gHi * paperBernoulliKL a tHi + gLo * paperBernoulliKL a tLo)",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "binary_rating_model_mgf_formula": {
+      "lean_statement_sha256": "43a9be9cf8402cb6f6dbdadb536d83ad4252ffd93e5ce0edf3e91ef396d940b1",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1) (\u03b8 : Seller) (z : \u211d), (binaryRatingModel successProb hprob0 hprob1).mgf \u03b8 z = 1 - successProb \u03b8 + successProb \u03b8 * exp z",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "theorem31_adjacent_binary_rate_top_formula": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "f809eacc0b66f1449199834ba233333279dd57d2d993222ac55857b89c5c207a",
-      "tex_statement": "(gHi gLo tHi tLo : ℝ) : paperAdjacentBinaryRatingRateTop gHi gLo tHi tLo = sInf (Set.range fun a : ℝ  =>  withTopRealScale gHi (paperBernoulliKLTop a tHi) + withTopRealScale gLo (paperBernoulliKLTop a tLo))",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "binary_rating_model_rate_function_is_bernoulli_kl": {
+      "lean_statement_sha256": "ae605bc3c25ef3bbae80bb44cb4e62b5a02244197caa5e9aedcd724e3041000b",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1), (\\forall (\u03b8 : Seller), 0 < successProb \u03b8) \\to (\\forall (\u03b8 : Seller), successProb \u03b8 < 1) \\to \\forall (\u03b8 : Seller) {a : \u211d}, 0 < a \\to a < 1 \\to (binaryRatingModel successProb hprob0 hprob1).rateFunction \u03b8 a = paperBernoulliKL a (successProb \u03b8)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "lemma31_closed_adjacent_rate_formula": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "187666c3a51d47b56976d647898c84b097e610eb272c69d81429c975dc63f4a8",
-      "tex_statement": "(gLo gHi tLo tHi : ℝ) : paperAdjacentBinaryClosedRate gLo gHi tLo tHi = -(gLo + gHi) * Real.log (((1 - tLo) ^ (gLo / (gLo + gHi))) * ((1 - tHi) ^ (gHi / (gLo + gHi))) + (tLo ^ (gLo / (gLo + gHi))) * (tHi ^ (gHi / (gLo + gHi))))",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "binary_rating_model_rate_function_top_is_bernoulli_kl": {
+      "lean_statement_sha256": "1219b0a0615e3370f37c6267cedbed58cdeaaa20c2701e5409914d6f5a2417b6",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1), (\\forall (\u03b8 : Seller), 0 < successProb \u03b8) \\to (\\forall (\u03b8 : Seller), successProb \u03b8 < 1) \\to \\forall (\u03b8 : Seller) {a : \u211d}, 0 < a \\to a < 1 \\to (binaryRatingModel successProb hprob0 hprob1).rateFunctionTop \u03b8 a = \u2191(paperBernoulliKL a (successProb \u03b8))",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "lemma31_forward_clipped_equalized_rates_exist_unique": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "df11b41ab2fcfd9ed311991d7d2dd6cbaa5a5d6443f40be7fbeab3538099ddad",
-      "tex_statement": "\\forall {m : ℕ}, 1 < m \\to \\forall (sampleRate : Fin (m + 2) \\to ℝ), (\\forall k < m + 2, 0 < binaryEndpointSampleRateNat sampleRate k) \\to \\exists! levels, BinaryEndpointLevelVector levels \\land BinaryEndpointAwareAdjacentRatesEqualize levels sampleRate",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "binary_rating_pairwise_rate_objective_top_is_threshold_kl_rate": {
+      "lean_statement_sha256": "2858d9dbf6ba708e0862f121ca5e4f291e67d62ea8a6c1cbd9234faeb96725b2",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1), (\\forall (\u03b8 : Seller), 0 < successProb \u03b8) \\to (\\forall (\u03b8 : Seller), successProb \u03b8 < 1) \\to \\forall (sampleRate : Seller \\to \u211d) (hi lo : Seller) {a : \u211d}, 0 < a \\to a < 1 \\to (binaryRatingModel successProb hprob0 hprob1).pairwiseRateObjectiveTop sampleRate hi lo a = \u2191(twoBernoulliThresholdRate (sampleRate hi) (sampleRate lo) (successProb hi) (successProb lo) a)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "lemma31_endpoint_aware_equalized_rates_are_isMaximizerOn": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "dbb8f3ca2c2c55c2ca05a9e08aecbb4a643bd3b214e3b98ad051bc804fc12b02",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall (sampleRate candidate : Fin (m + 2) \\to ℝ) {r : ℝ}, BinaryEndpointLevelVector candidate \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentHighIndex i)) \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentLowIndex i)) \\to (\\forall (i : Fin (m + 1)), binaryEndpointAwareAdjacentRate candidate sampleRate i = r) \\to IsMaximizerOn BinaryEndpointLevelVector (fun levels  =>  binaryEndpointAwareAdjacentRateObjective levels sampleRate) candidate",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "binary_rating_pairwise_threshold_rate_certificates_from_derivatives": {
+      "lean_statement_sha256": "6de95f1236572d3e2bfb24f98b0d960758e33607ee762e7aaaa7fe384cd93019",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "{Seller Pair : Type*} (successProb : Seller \\to \u211d) (hprob0 : \\forall \u03b8, 0 \\le successProb \u03b8) (hprob1 : \\forall \u03b8, successProb \u03b8 \\le 1) (hprob_pos : \\forall \u03b8, 0 < successProb \u03b8) (hprob_lt_one : \\forall \u03b8, successProb \u03b8 < 1) (sampleRate : Seller \\to \u211d) (pairHi pairLo : Pair \\to Seller) (hpositive_hi : \\forall p : Pair, 0 < sampleRate (pairHi p)) (hpositive_lo : \\forall p : Pair, 0 < sampleRate (pairLo p)) (a z : Pair \\to \u211d) (hz : \\forall p : Pair, z p \\le 0) (hderiv_hi : \\forall p : Pair, HasDerivAt (fun t : \u211d  =>  (binaryRatingModel successProb hprob0 hprob1).logMGF (pairHi p) t) (a p) (z p * (sampleRate (pairHi p))\u207b\u00b9)) (hderiv_lo : \\forall p : Pair, HasDerivAt (fun t : \u211d  =>  (binaryRatingModel successProb hprob0 hprob1).logMGF (pairLo p) t) (a p) (-(z p * (sampleRate (pairLo p))\u207b\u00b9))) = binaryRatingModel_pairwiseThresholdRateTopLdpCertificate_of_common_logMGF_derivatives successProb hprob0 hprob1 hprob_pos hprob_lt_one sampleRate pairHi pairLo hpositive_hi hpositive_lo a z hz hderiv_hi hderiv_lo",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "lemma31_endpoint_aware_maximizer_iff_pairwise_equalized": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "d08f711e16c13e6f35518f32c754a0d0d6fac3062389ff8e1c2534a1798cac66",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall (sampleRate candidate alt : Fin (m + 2) \\to ℝ), BinaryEndpointLevelVector candidate \\to BinaryEndpointLevelVector alt \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentHighIndex i)) \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentLowIndex i)) \\to BinaryEndpointAwareAdjacentRatesEqualize candidate sampleRate \\to (IsMaximizerOn BinaryEndpointLevelVector (fun levels  =>  binaryEndpointAwareAdjacentRateObjective levels sampleRate) alt \\iff BinaryEndpointAwareAdjacentRatesEqualize alt sampleRate)",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "paper_theorem31_two_stage_lexicographic_optimality": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "891ec89733a4f9813430943651b31a17849a5fd90cc1612fa50e2a96a326d38d",
-      "tex_statement": "\\forall {Design : Type u_1} (feasible : Design \\to Prop) (limitingValue rate : Design \\to ℝ) (candidate : Design), IsMaximizerOn feasible limitingValue candidate \\to (\\forall (alternative : Design), feasible alternative \\to limitingValue alternative = limitingValue candidate \\to rate alternative \\le rate candidate) \\to IsLexicographicMaximizerOn feasible limitingValue rate candidate",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "paper_theorem31_exists_cell_integral_volume_weighted_uniform_endpoint_two_stage_lexicographic_optimality_of_integrableOn_Icc": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "b0673c6147fc7660bc91e1ac780eba892cf85373184a80f339cd4f326b258efe",
-      "tex_statement": "\\forall (m : ℕ) {weight : ℝ × ℝ \\to ℝ}, IntegrableOn weight (Icc 0 1 ×ˢ Icc 0 1) (prod volume) \\to \\exists design, IsLexicographicMaximizerOn (fun design  =>  monotoneIntervalCutpointsEndpointFeasible (m + 2) design.1 \\land BinaryEndpointLevelVector design.2) (fun design  =>  cutpointRangeFunctional (m + 2) (theorem31CellIntegralFiniteObjective volume m weight) design.1) (fun design  =>  binaryEndpointAwareAdjacentRateObjective design.2 fun x  =>  1) design",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "8e5e14fd2bf2c595a438d5070f2b9ca98913dd6029673e33c16f926f6b2b5525",
-      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] (\\mu : Measure \\Omega) [IsFiniteMeasure \\mu] (weight : \\Omega \\to ℝ) (phiSeq : ℕ \\to \\Omega \\to ℝ) (phi : \\Omega \\to ℝ) {rate W : ℝ}, (\\forall (k : ℕ), Integrable (fun x  =>  weight x * exp (-↑k * phiSeq k x)) \\mu) \\to 0 < W \\to (\\forallᵐ (x : \\Omega) ∂\\mu, 0 \\le weight x) \\to (\\forallᵐ (x : \\Omega) ∂\\mu, weight x \\le W) \\to HasAEEssentialInfimum \\mu phi rate \\to HasPositiveWeightNearAEEssentialInfimum \\mu weight phi rate \\to (\\forall \\epsilon > 0, \\forallᶠ (k : ℕ) in atTop, \\forall (x : \\Omega), |phiSeq k x - phi x| \\le \\epsilon) \\to HasExponentialRate (fun k  =>  \\int (x : \\Omega), weight x * exp (-↑k * phiSeq k x) ∂\\mu) rate",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "paper_lemmaC3_ordered_quality_endpoint_piecewiseConstKernel_integral_hasExponentialRate_of_adjacent_min_weight_pos_of_cell_midpoints": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "9a9fda343d2e3571a97047570a759f3ede005f95d331f0eb327b4a49dea639aa",
-      "tex_statement": "\\forall (\\mu : Measure ℝ) [IsFiniteMeasure (\\mu.prod \\mu)] [(\\mu.prod \\mu).IsOpenPosMeasure] {m : ℕ}, 0 < m \\to \\forall (cut : ℕ \\to ℝ) (hmono : Monotone cut), (\\forall i < m + 2, cut i < cut (i + 1)) \\to \\forall (successProb sampleRate : Fin (m + 2) \\to ℝ) (hlevels : BinaryEndpointLevelVector successProb), (\\forall (idx : Fin (m + 2)), 0 < sampleRate idx) \\to (\\forall {a b : Fin (m + 2)}, ↑a \\le ↑b \\to sampleRate a \\le sampleRate b) \\to \\forall (weight : ℝ × ℝ \\to ℝ), (\\forall (component : { piece // theorem31OrderedNontrivialPairSelected piece }), IntegrableOn weight ((theorem31_ordered_quality_pair_partition \\mu (m + 2) cut hmono theorem31OrderedNontrivialPairSelected).pieceSet component) (\\mu.prod \\mu)) \\to (\\forall (component : { piece // theorem31OrderedNontrivialPairSelected piece }), \\forallᵐ (x : ℝ × ℝ) ∂(\\mu.prod \\mu).restrict ((theorem31_ordered_quality_pair_partition \\mu (m + 2) cut hmono theorem31OrderedNontrivialPairSelected).pieceSet component), 0 \\le weight x) \\to Continuous weight \\to (\\forall (component : theorem31OrderedNontrivialPairComponent m), 0 < weight (theorem31_ordered_quality_pair_component_midpoint cut component)) \\to \\forall (minAdjacent : Fin (m + 1)), (\\forall (adj : Fin (m + 1)), binaryEndpointAwareAdjacentRate successProb sampleRate minAdjacent \\le binaryEndpointAwareAdjacentRate successProb sampleRate adj) \\to HasExponentialRate (fun k  =>  \\int (x : ℝ × ℝ) in (theorem31_ordered_quality_pair_partition \\mu (m + 2) cut hmono theorem31OrderedNontrivialPairSelected).support, weight x * (theorem31_ordered_quality_pair_partition \\mu (m + 2) cut hmono theorem31OrderedNontrivialPairSelected).piecewiseConstKernel (fun component k  =>  twoSampleFloorPkComplementErrorProb (binaryRatingModel successProb ⋯ ⋯) sampleRate (↑component).2 (↑component).",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "paper_lemmaC4_piecewise_constant_iff_exists_positive_exponential_rate_of_defined_tieErasedSourceWbar_nonpiecewise_nonTie_interval_witness": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "0ab3ee3f0fa50a7341e154e8a172615864cea91ba9e75c1d124108245875e65a",
-      "tex_statement": "\\forall (\\mu : Measure ℝ) [IsFiniteMeasure (\\mu.prod \\mu)] [(\\mu.prod \\mu).IsOpenPosMeasure] (isPiecewiseConstant : Prop) (successProb sampleRate : ℝ \\to ℝ), Monotone successProb \\to \\forall (hprob0 : \\forall (θ : ℝ), 0 \\le successProb θ) (hprob1 : \\forall (θ : ℝ), successProb θ \\le 1), Measurable successProb \\to Measurable sampleRate \\to \\forall (weight : ℝ × ℝ \\to ℝ) (sourcePbarKernel : ℕ \\to ℝ × ℝ \\to ℝ) {K : ℝ}, Integrable weight ((\\mu.prod \\mu).restrict strictUpperPairSet) \\to (\\forallᵐ (q : ℝ × ℝ) ∂(\\mu.prod \\mu).restrict strictUpperPairSet, 0 \\le weight q) \\to 0 \\le K \\to (\\forallᶠ (k : ℕ) in atTop, AEStronglyMeasurable (sourcePbarKernel k) ((\\mu.prod \\mu).restrict strictUpperPairSet)) \\to (\\forallᶠ (k : ℕ) in atTop, \\forallᵐ (q : ℝ × ℝ) ∂(\\mu.prod \\mu).restrict strictUpperPairSet, 0 \\le sourcePbarKernel k q \\land sourcePbarKernel k q \\le K) \\to (isPiecewiseConstant \\to \\exists rate, 0 < rate \\land ExponentialRateCertificate (lemmaC4TieErasedSourceWbar \\mu weight sourcePbarKernel) rate) \\to (\\lnotisPiecewiseConstant \\to \\exists a b, a < b \\land Integrable weight ((\\mu.prod \\mu).restrict (strictUpperPairSetOn a b)) \\land (\\forallᵐ (q : ℝ × ℝ) ∂(\\mu.prod \\mu).restrict (strictUpperPairSetOn a b), 0 \\le weight q) \\land (\\forall θ \\in Ioo a b, ContinuousAt weight (θ, θ)) \\land (\\forall θ \\in Ioo a b, 0 < weight (θ, θ)) \\land (\\forall θ \\in Icc a b, 0 < sampleRate θ) \\land (\\forall θ \\in Icc a b, 0 < successProb θ) \\land (\\forall θ \\in Icc a b, successProb θ < 1) \\land (\\forall θ \\in Icc a b, ContinuousAt sampleRate θ) \\land \\forallᶠ (k : ℕ) in atTop, \\forall q \\in strictUpperPairSetOn a b, sourcePbarKernel k q = twoSampleFloorPkComplementErrorProb (binaryRatingModel successProb hprob0 hprob1) sampleRate q.1 q.2 k) \\to (isPiecewiseConstant \\iff \\exists rate, 0 < rate \\",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "paper_lemmaC4_rawSourcePositiveSupportIntervalModel_finiteStep_iff_exists_positive_exponential_rate_of_sourcePbar_selected_realization": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "604537bbb707c5c4e1fb122a741fd9932b0cdae1e2b2e636f39bb13dfd23201b",
-      "tex_statement": "\\forall (\\mu : Measure ℝ) [IsFiniteMeasure (\\mu.prod \\mu)] [(\\mu.prod \\mu).IsOpenPosMeasure] (R : LemmaC4RawSourcePositiveSupportIntervalModel \\mu) (S : LemmaC4AppropriateFiniteLevelsWeightedModel \\mu) (sourcePbarKernel : ℕ \\to ℝ × ℝ \\to ℝ) {K : ℝ}, 0 \\le K \\to (\\forall (k : ℕ), AEStronglyMeasurable (sourcePbarKernel k) ((\\mu.prod \\mu).restrict strictUpperPairSet)) \\to (\\forall (k : ℕ), \\forallᵐ (q : ℝ × ℝ) ∂(\\mu.prod \\mu).restrict strictUpperPairSet, 0 \\le sourcePbarKernel k q \\land sourcePbarKernel k q \\le K) \\to UniformNormalizedLogRateCertificateOn sourcePbarKernel (fun q  =>  weightedBernoulliClosedThresholdRate (sampleRate q.1) (sampleRate q.2) (successProb q.1) (successProb q.2)) strictUpperPairSet \\to (\\forall (levels : Fin (m + 2) \\to ℝ) (hlevels : BinaryEndpointLevelVector levels), BinaryEndpointAwareAdjacentRatesEqualize levels sampleRate \\to LemmaC4TieErasedSelectedIntegralRealization \\mu weight weight sourcePbarKernel (theorem31SelectedSourceKernel \\mu cut ⋯ sampleRate levels hlevels) theorem31SelectedSourceCoordinateMap (theorem31SelectedSourceSupport \\mu cut ⋯)) \\to (lemmaC4FiniteStepOnIoo successProb lo hi \\iff \\exists rate, 0 < rate \\land ExponentialRateCertificate (lemmaC4TieErasedSourceWbar \\mu weight sourcePbarKernel) rate)",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "paper_lemmaC3_partition_integral_hasExponentialRate_of_min_component_uniform_logRate": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "f8ec084655d7ae88612c74ab8e4212b5e1dcb3ec0695de17cab81a2843afa531",
-      "tex_statement": "\\forall {\\Omega : Type u_1} {Component : Type u_2} [inst : MeasurableSpace \\Omega] [inst_1 : Fintype Component] [DecidableEq Component] (\\mu : Measure \\Omega) [IsFiniteMeasure \\mu] (P : FiniteMeasurableSetPartition \\mu Component) (weight : \\Omega \\to ℝ) (kernel : ℕ \\to \\Omega \\to ℝ) (phi : Component \\to \\Omega \\to ℝ) (rate W : Component \\to ℝ), (\\forall (k : ℕ) (component : Component), IntegrableOn (fun x  =>  weight x * kernel k x) (pieceSet component) \\mu) \\to (\\forall (component : Component), IntegrableOn weight (pieceSet component) \\mu) \\to (\\forall (component : Component), 0 < W component) \\to (\\forall (component : Component), \\forallᵐ (x : \\Omega) ∂\\mu.restrict (pieceSet component), 0 \\le weight x) \\to (\\forall (component : Component), \\forallᵐ (x : \\Omega) ∂\\mu.restrict (pieceSet component), weight x \\le W component) \\to (\\forall (component : Component), HasAEEssentialInfimum (\\mu.restrict (pieceSet component)) (phi component) (rate component)) \\to (\\forall (component : Component), HasPositiveWeightNearAEEssentialInfimum (\\mu.restrict (pieceSet component)) weight (phi component) (rate component)) \\to (\\forall (k : ℕ) (x : \\Omega), 0 < kernel k x) \\to (\\forall (component : Component), \\forall \\epsilon > 0, \\forallᶠ (k : ℕ) in atTop, \\forall (x : \\Omega), |-log (kernel k x) / ↑k - phi component x| \\le \\epsilon) \\to \\forall (minComponent : Component), (\\forall (component : Component), rate minComponent \\le rate component) \\to HasExponentialRate (fun k  =>  \\int (x : \\Omega) in support, weight x * kernel k x ∂\\mu) (rate minComponent)",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "binary_rating_pairwise_threshold_rate_top_is_closed_weighted_rate": {
+      "lean_statement_sha256": "3cf08c10df89c0425e92453c79656200a86344cd0ac1125f53b122abed3782c5",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1), (\\forall (\u03b8 : Seller), 0 < successProb \u03b8) \\to (\\forall (\u03b8 : Seller), successProb \u03b8 < 1) \\to \\forall (sampleRate : Seller \\to \u211d) (hi lo : Seller), 0 < sampleRate hi \\to 0 < sampleRate lo \\to sampleRate hi + sampleRate lo \\ne 0 \\to pairwiseSellerThresholdRateTop (binaryRatingModel successProb hprob0 hprob1) sampleRate hi lo = \u2191(weightedBernoulliClosedThresholdRate (sampleRate hi) (sampleRate lo) (successProb hi) (successProb lo))",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "corollaryC3_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
       "lean_statement_sha256": "301d052ba6c07496a6a8697e5a1886d67ca990ba9334566b7232348ef1a6a1c3",
-      "tex_statement": "{m : ℕ} : 0 < m → {levels sampleRate : Fin (m + 2) → ℝ} → BinaryEndpointLevelVector levels → BinaryEndpointAwareAdjacentRatesEqualize levels sampleRate → (∀ idx : Fin (m + 2), 0 < sampleRate idx) → (∀ {a b : Fin (m + 2)}, a.val ≤ b.val → sampleRate a ≤ sampleRate b) → sampleRate (adjacentHighIndex firstAdjacentIndex) = 1 → ((1 / ((m + 1 : ℕ) : ℝ)) ^ 2) / 2 ≤ levels (adjacentHighIndex firstAdjacentIndex)",
-      "validated_at": "2026-06-29T07:14:13Z",
-      "validator": "gpt-5-codex",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "{m : \u2115} : 0 < m \u2192 {levels sampleRate : Fin (m + 2) \u2192 \u211d} \u2192 BinaryEndpointLevelVector levels \u2192 BinaryEndpointAwareAdjacentRatesEqualize levels sampleRate \u2192 (\u2200 idx : Fin (m + 2), 0 < sampleRate idx) \u2192 (\u2200 {a b : Fin (m + 2)}, a.val \u2264 b.val \u2192 sampleRate a \u2264 sampleRate b) \u2192 sampleRate (adjacentHighIndex firstAdjacentIndex) = 1 \u2192 ((1 / ((m + 1 : \u2115) : \u211d)) ^ 2) / 2 \u2264 levels (adjacentHighIndex firstAdjacentIndex)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "theorem32_exists_grid_depth_rate_loss_and_runtime_le_of_nested_bisection_uniform_doubled_closed_run_calculated_grid_low_bisection_upper_one_sub_grid_early_exact_return_of_eps_pos": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "lean_statement_sha256": "7a7a56ba25b384b67afa6fe77cbdf1c012a9fb0f6a33e4e915a9a0579e27e37d",
-      "tex_statement": "\\forall {m M : ℕ}, 0 < m \\to \\forall (oldLevels : Fin (m + 2) \\to ℝ) {eps : ℝ}, 0 < eps \\to BinaryEndpointLevelVector oldLevels \\to (BinaryEndpointAwareAdjacentRatesEqualize oldLevels fun x  =>  1) \\to \\exists grid, 0 < grid \\land grid < (1 / 5 * binaryEndpointAwareAdjacentRateObjective oldLevels fun x  =>  1) / 2 \\land \\exists L, have optimal := uniformDoubledEndpointLevels oldLevels; have levelTarget := optimal (adjacentLowIndex lastAdjacentIndex); have lastLow := (realBisectionRun (realBisectionAboveTarget levelTarget) (L + 1) (1 - 1 / ↑(2 * m + 1 + 1)) (1 - grid)).2; have tFirst := optimal (adjacentHighIndex firstAdjacentIndex); have target := -log lastLow; have gridReturned := theorem32BackwardGridLowBisectionLevels (2 * m + 1) L grid tFirst target lastLow; have returned := if levelTarget = lastLow then optimal else gridReturned; ((binaryEndpointAwareAdjacentRateObjective optimal fun x  =>  1) - binaryEndpointAwareAdjacentRateObjective returned fun x  =>  1) \\le eps \\land nestedBisectionOperationCount M (L + 1) L \\le nestedBisectionStepBound M L",
-      "validated_at": "2026-06-29T07:14:13Z",
-      "validator": "gpt-5-codex",
+    "definitionC1_kendall_spearman_population_objectives": {
+      "lean_statement_sha256": "3fadf5e5bc9743bfb1fbb13fa52ee08bbbd959a1c7f4c9427e1db64b3862875c",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (M : \\mathbb{N}) (s : \\mathbb{N} \\to \\mathbb{R}),\\; K_M(s) = \\frac{1 - \\sum_i (s_{i+1}-s_i)^2}{2} \\land S_M(s) = \\frac{1 - \\sum_i (s_{i+1}-s_i)^3}{6}",
+      "translated_at": "2026-06-29T21:25:00Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "7cb98e87dc01348aaf0d81d7ee8a39d2bdeed559b10eed1f3fcb1170594deff6",
-      "tex_statement": "\\forall (M : ℕ) (s : ℕ \\to ℝ), s 0 = 0 \\to s M = 1 \\to spearmanLinearWeightOrderedPairIntervalObjective M s = spearmanLinearWeightIntervalObjective M s",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "definition_bernoulli_kl_formula": {
+      "lean_statement_sha256": "5c5eb1a4e1a13ce23615a545c7044c2630df6ebe589375bb41d1e9504c488034",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "(a b : \u211d) : paperBernoulliKL a b = a * Real.log (a / b) + (1 - a) * Real.log ((1 - a) / (1 - b))",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "paper_lemmaC11_kendall_constant_weight_ordered_pair_interval_objective_le_equispaced": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "e2d098a36eed4f258d2111c900c4245d93e5d479bbb1f8348bcdf8b92623a7bd",
-      "tex_statement": "\\forall {M : ℕ} [Nonempty (Fin M)] (s : ℕ \\to ℝ), s 0 = 0 \\to s M = 1 \\to (\\sum i, \\sum j, if i < j then (s (↑i + 1) - s ↑i) * (s (↑j + 1) - s ↑j) else 0) \\le (1 - (↑M)⁻¹) / 2",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "definition_bernoulli_kl_top_formula": {
+      "lean_statement_sha256": "7e43cddc0b237da67adbde795deaf9809858c86ccb165d72f7138cdc4a588e6a",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "(a b : \u211d) : paperBernoulliKLTop a b = if 0 \\le a \\land a \\le 1 then (paperBernoulliKL a b : WithTop \u211d) else \u22a4",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "paper_lemmaC12_spearman_linear_weight_ordered_pair_interval_objective_le_equispaced": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "ad5a8d32260323584f60e3cc869ae8bd8fe4bbdb6805fdd538e96ecb1317f519",
-      "tex_statement": "\\forall {M : ℕ} [Nonempty (Fin M)] (s : ℕ \\to ℝ), Monotone s \\to s 0 = 0 \\to s M = 1 \\to spearmanLinearWeightOrderedPairIntervalObjective M s \\le (1 - (↑M)⁻¹ ^ 2) / 6",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "lemma31_closed_adjacent_rate_formula": {
+      "lean_statement_sha256": "187666c3a51d47b56976d647898c84b097e610eb272c69d81429c975dc63f4a8",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "(gLo gHi tLo tHi : \u211d) : paperAdjacentBinaryClosedRate gLo gHi tLo tHi = -(gLo + gHi) * Real.log (((1 - tLo) ^ (gLo / (gLo + gHi))) * ((1 - tHi) ^ (gHi / (gLo + gHi))) + (tLo ^ (gLo / (gLo + gHi))) * (tHi ^ (gHi / (gLo + gHi))))",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "paper_theorem31_kendall_constant_weight_equispaced_canonical_uniform_endpoint_lexicographic_optimality": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "5cf306380cea7f149dcc40b69126b76a0fad55da792242ad544961f601f9f72d",
-      "tex_statement": "\\forall {M : ℕ} [Nonempty (Fin M)], 0 < M \\to IsLexicographicMaximizerOn (fun design  =>  intervalCutpointsEndpointFeasible M design.1 \\land BinaryEndpointLevelVector design.2) (fun design  =>  kendallConstantWeightOrderedPairIntervalObjective M design.1) (fun design  =>  binaryEndpointAwareAdjacentRateObjective design.2 fun x  =>  1) (equispacedIntervalCutpoint M, canonicalUniformEqualizedEndpointLevels M)",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "lemma31_endpoint_aware_equalized_rates_are_isMaximizerOn": {
+      "lean_statement_sha256": "bc5e59ad897b73b4a88447126af99f0d6e323dd845f0bd05dda82c192f76a5a7",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall (sampleRate candidate : Fin (m + 2) \\to \u211d) {r : \u211d}, BinaryEndpointLevelVector candidate \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentHighIndex i)) \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentLowIndex i)) \\to (\\forall (i : Fin (m + 1)), binaryEndpointAwareAdjacentRate candidate sampleRate i = r) \\to IsMaximizerOn BinaryEndpointLevelVector (fun levels  =>  binaryEndpointAwareAdjacentRateObjective levels sampleRate) candidate",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "paper_theorem31_spearman_linear_weight_equispaced_canonical_uniform_endpoint_lexicographic_optimality": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "5a0e155cd4b28f2d7cc26b3d446bd91182502dceb64a14fd79566cbc9fa1cb55",
-      "tex_statement": "\\forall {M : ℕ} [Nonempty (Fin M)], 0 < M \\to IsLexicographicMaximizerOn (fun design  =>  monotoneIntervalCutpointsEndpointFeasible M design.1 \\land BinaryEndpointLevelVector design.2) (fun design  =>  spearmanLinearWeightOrderedPairIntervalObjective M design.1) (fun design  =>  binaryEndpointAwareAdjacentRateObjective design.2 fun x  =>  1) (equispacedIntervalCutpoint M, canonicalUniformEqualizedEndpointLevels M)",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "lemma31_endpoint_aware_maximizer_iff_pairwise_equalized": {
+      "lean_statement_sha256": "3f45715a718e86d7e3de57c03735101d83aa4b0ba89364d876dc9cacba631822",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall (sampleRate candidate alt : Fin (m + 2) \\to \u211d), BinaryEndpointLevelVector candidate \\to BinaryEndpointLevelVector alt \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentHighIndex i)) \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentLowIndex i)) \\to BinaryEndpointAwareAdjacentRatesEqualize candidate sampleRate \\to (IsMaximizerOn BinaryEndpointLevelVector (fun levels  =>  binaryEndpointAwareAdjacentRateObjective levels sampleRate) alt \\iff BinaryEndpointAwareAdjacentRatesEqualize alt sampleRate)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "paper_theoremB1_uniform_subsequence_principle_to_of_quantile_floor_tendstoUniformlyOn_geometric_mesh": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "d9145e2bf0ea1f55c19854b727c45423ccbf8f4f032b94ac8f807350c2643573",
-      "tex_statement": "\\forall (betaSeq quantileSeq : ℕ \\to ℝ \\to ℝ) (quantileLimit : ℝ \\to ℝ) (levels : (m : ℕ) \\to Fin (m + 2) \\to ℝ) (levelIndex : (m : ℕ) \\to ℝ \\to Fin (m + 2)), (\\forall (m : ℕ) (θ : ℝ), betaSeq (m + 2) θ = levels m (levelIndex m θ)) \\to (\\forall (m : ℕ), IsMaximizerOn BinaryEndpointLevelVector (fun xs  =>  binaryEndpointAwareAdjacentRateObjective xs fun x  =>  1) (levels m)) \\to (\\forall (m : ℕ), \\forall θ \\in Icc 0 1, ↑(levelIndex m θ) = min ⌊↑(m + 2) * quantileSeq (m + 2) θ⌋₊ (m + 1)) \\to (\\forall (m : ℕ), \\forall θ \\in Icc 0 1, quantileSeq (m + 2) θ \\in Icc 0 1) \\to TendstoUniformlyOn quantileSeq quantileLimit atTop (Icc 0 1) \\to theoremB1UniformOptimalSubsequencePrincipleTo betaSeq quantileSeq quantileLimit",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "lemma31_forward_clipped_equalized_rates_exist_unique": {
+      "lean_statement_sha256": "2c1a5ae64471ff900fba1ac69cb312ffa57d3980f76e4c2af9ec8becb1cdcddb",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 1 < m \\to \\forall (sampleRate : Fin (m + 2) \\to \u211d), (\\forall k < m + 2, 0 < binaryEndpointSampleRateNat sampleRate k) \\to \\exists! levels, BinaryEndpointLevelVector levels \\land BinaryEndpointAwareAdjacentRatesEqualize levels sampleRate",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "paper_lemmaB2_knownTypeExperiment_uniform_convergence_of_lipschitz_tracking": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "92f57aabc12c11640e6aa8c09f751670d6892368a7cdc95fc1eb599a31888abb",
-      "tex_statement": "\\forall {Y : Type u_1} (psiHat : ℕ \\to ℝ \\to Y \\to ℝ) (psi : ℝ \\to Y \\to ℝ) (representative : ℕ \\to ℝ \\to ℝ) (noise mesh : ℕ \\to ℝ) {K : ℝ}, 0 \\le K \\to Tendsto noise atTop (nhds 0) \\to Tendsto mesh atTop (nhds 0) \\to (\\forallᶠ (n : ℕ) in atTop, \\forall θ \\in Icc 0 1, \\forall (y : Y), dist (psiHat n θ y) (psi (representative n θ) y) \\le noise n) \\to (\\forallᶠ (n : ℕ) in atTop, \\forall θ \\in Icc 0 1, dist (representative n θ) θ \\le mesh n) \\to (\\forall (θ θ' : ℝ) (y : Y), dist (psi θ y) (psi θ' y) \\le K * dist θ θ') \\to TendstoUniformlyOn (fun n p  =>  psiHat n p.1 p.2) (fun p  =>  psi p.1 p.2) atTop (Icc 0 1 ×ˢ univ)",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "lemmaC5_uniform_doubled_endpoint_levels": {
+      "lean_statement_sha256": "2be675bcd06e3aad8f33008d00b6a9f20fab8afcad6b0f8d7bbea4ef2c86d2c4",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "{m : \u2115} (oldLevels : Fin (m + 2) \\to \u211d) = uniformDoubledEndpointLevels oldLevels",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "paper_lemmaB3_unknownTypeExperiment_uniform_convergence_of_ranking_tracking": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
-      "lean_statement_sha256": "9dfbd4939c71c9aedb39c3bca9106a9b63a2805f30deed4268eae4ca8ac51b77",
-      "tex_statement": "\\forall {Y : Type u_1} (psiHat : ℕ \\to ℝ \\to Y \\to ℝ) (psi : ℝ \\to Y \\to ℝ) (rankRepresentative : ℕ \\to ℝ \\to ℝ) (noise mesh : ℕ \\to ℝ) {K : ℝ}, 0 \\le K \\to Tendsto noise atTop (nhds 0) \\to Tendsto mesh atTop (nhds 0) \\to (\\forallᶠ (n : ℕ) in atTop, \\forall θ \\in Icc 0 1, \\forall (y : Y), dist (psiHat n θ y) (psi (rankRepresentative n θ) y) \\le noise n) \\to (\\forallᶠ (n : ℕ) in atTop, \\forall θ \\in Icc 0 1, dist (rankRepresentative n θ) θ \\le mesh n) \\to (\\forall (θ θ' : ℝ) (y : Y), dist (psi θ y) (psi θ' y) \\le K * dist θ θ') \\to TendstoUniformlyOn (fun n p  =>  psiHat n p.1 p.2) (fun p  =>  psi p.1 p.2) atTop (Icc 0 1 ×ˢ univ)",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+    "lemmaC5_uniform_doubled_endpoint_levels_equalizes": {
+      "lean_statement_sha256": "3876a258e597862be4545f651090cef0ddfe144550569b0c5893afe2cfe53fb5",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {oldLevels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector oldLevels \\to (BinaryEndpointAwareAdjacentRatesEqualize oldLevels fun x  =>  1) \\to BinaryEndpointAwareAdjacentRatesEqualize (lemmaC5_uniform_doubled_endpoint_levels oldLevels) fun x  =>  1",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC5_uniform_doubled_endpoint_levels_even": {
+      "lean_statement_sha256": "2f32201de4a7c88d345f96f28db616c45fdcf6b6e14252153f2564a4571794e5",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115} (oldLevels : Fin (m + 2) \\to \u211d) (i : Fin (m + 2)), lemmaC5_uniform_doubled_endpoint_levels oldLevels \u27e82 * \u2191i, \u22ef\u27e9 = oldLevels i",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC5_uniform_doubled_endpoint_levels_first_odd": {
+      "lean_statement_sha256": "574a9ed2d6091f7973846354af4d3ae3f55daeb78dc9756adc20641a2a6f5455",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115} (oldLevels : Fin (m + 2) \\to \u211d), lemmaC5_uniform_doubled_endpoint_levels oldLevels \u27e81, \u22ef\u27e9 = bernoulliFirstEndpointEqualSplit (oldLevels (adjacentHighIndex firstAdjacentIndex))",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC5_uniform_doubled_endpoint_levels_last_odd": {
+      "lean_statement_sha256": "b512ca90a2a7718e86620b545f7706c4b12db30dfd0d7446353890c19d35c7bd",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall (oldLevels : Fin (m + 2) \\to \u211d), lemmaC5_uniform_doubled_endpoint_levels oldLevels \u27e82 * m + 1, \u22ef\u27e9 = bernoulliLastEndpointEqualSplit (oldLevels (adjacentLowIndex lastAdjacentIndex))",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC6_penultimate_level_ge_one_sub_inv_of_width_minimal": {
+      "lean_statement_sha256": "9ecc80fc07c347a0b61ce549bb4f7e70693b3e5c4ef6940b9de8105357281c18",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115} {levels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector levels \\to (\\forall (i : Fin (m + 1)), levels (adjacentHighIndex lastAdjacentIndex) - levels (adjacentLowIndex lastAdjacentIndex) \\le levels (adjacentHighIndex i) - levels (adjacentLowIndex i)) \\to 1 - 1 / \u2191(m + 1) \\le levels (adjacentLowIndex lastAdjacentIndex)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC6_uniform_penultimate_level_ge_one_sub_inv_of_equalized_rates": {
+      "lean_statement_sha256": "784f95aed6deae26c709f6ffa2ba5287c7f806ebcb0d7b221d1a2419603173ff",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to 1 - 1 / \u2191(m + 1) \\le levels (adjacentLowIndex lastAdjacentIndex)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC7_uniform_doubled_objective_rate_ge_one_fifth_old_objective": {
+      "lean_statement_sha256": "8a7c52993a084623e02697fd1812e4bb8f4c27aba1d2a7baa6b775f8e76c8d20",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {oldLevels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector oldLevels \\to (BinaryEndpointAwareAdjacentRatesEqualize oldLevels fun x  =>  1) \\to (1 / 5 * binaryEndpointAwareAdjacentRateObjective oldLevels fun x  =>  1) \\le binaryEndpointAwareAdjacentRateObjective (lemmaC5_uniform_doubled_endpoint_levels oldLevels) fun x  =>  1",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC7_uniform_refined_last_rate_ge_one_fifth": {
+      "lean_statement_sha256": "ca357a1183d8bdbac8c28125983fb8c063b723a45ab73cc62cc4078d06c7a466",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to \\forall {refinedLastLow : \u211d}, refinedLastLow = (1 + \u221a(levels (adjacentLowIndex lastAdjacentIndex))) / 2 \\to 1 / 5 * binaryEndpointAwareAdjacentRate levels (fun x  =>  1) lastAdjacentIndex \\le -log refinedLastLow",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC7_uniform_refined_objective_rate_ge_one_fifth": {
+      "lean_statement_sha256": "c958073a5fc4d0eadc37d83833d7ce802273f64bf7b70ab0246d8b0e43cc24d9",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {mOld mNew : \u2115}, 0 < mOld \\to 0 < mNew \\to \\forall {oldLevels : Fin (mOld + 2) \\to \u211d} {newLevels : Fin (mNew + 2) \\to \u211d}, BinaryEndpointLevelVector oldLevels \\to BinaryEndpointLevelVector newLevels \\to (BinaryEndpointAwareAdjacentRatesEqualize oldLevels fun x  =>  1) \\to (BinaryEndpointAwareAdjacentRatesEqualize newLevels fun x  =>  1) \\to newLevels (adjacentLowIndex lastAdjacentIndex) = (1 + \u221a(oldLevels (adjacentLowIndex lastAdjacentIndex))) / 2 \\to (1 / 5 * binaryEndpointAwareAdjacentRateObjective oldLevels fun x  =>  1) \\le binaryEndpointAwareAdjacentRateObjective newLevels fun x  =>  1",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC8_uniform_first_level_ge_half_of_equalized_last_rate_lower": {
+      "lean_statement_sha256": "aa7f207b93486637a8af9a71063167ab776b1dc0d2f797ce7d38749cde30361b",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to \\forall {lower : \u211d}, 0 \\le lower \\to lower \\le 1 \\to lower \\le binaryEndpointAwareAdjacentRate levels (fun x  =>  1) lastAdjacentIndex \\to lower / 2 \\le levels (adjacentHighIndex firstAdjacentIndex)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC8_uniform_first_level_ge_half_of_equalized_objective_rate_lower": {
+      "lean_statement_sha256": "85fdd09e5c3a2ac011f5d789b7bc262fdae1415c3a272aa45c098dd7630e019f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to \\forall {lower : \u211d}, 0 \\le lower \\to lower \\le 1 \\to (lower \\le binaryEndpointAwareAdjacentRateObjective levels fun x  =>  1) \\to lower / 2 \\le levels (adjacentHighIndex firstAdjacentIndex)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC8_uniform_first_level_ge_half_of_first_rate_lower": {
+      "lean_statement_sha256": "3b7b9f17a5054322465aa17661a35446581cf6fa96e246b0ad63b700944ffeee",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector levels \\to \\forall {lower : \u211d}, 0 \\le lower \\to lower \\le 1 \\to lower \\le binaryEndpointAwareAdjacentRate levels (fun x  =>  1) firstAdjacentIndex \\to lower / 2 \\le levels (adjacentHighIndex firstAdjacentIndex)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC9_nested_bisection_operation_count_le_mul_succ_sq": {
+      "lean_statement_sha256": "08841729e791806b4a60955c1fd7c374a27343816f0e18af3148a202cbc6730f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {M L outerSteps innerSteps : \u2115}, 0 < M \\to outerSteps \\le L + 1 \\to innerSteps \\le L \\to nestedBisectionOperationCount M outerSteps innerSteps \\le M * (L + 1) ^ 2",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "lemmaC9_nested_bisection_operation_count_le_stepBound": {
+      "lean_statement_sha256": "09a5b3c031495df7a29c5c6bd1227ca70caf55b6d3116b921d43da5067389b7b",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {M L outerSteps innerSteps : \u2115}, outerSteps \\le L + 1 \\to innerSteps \\le L \\to nestedBisectionOperationCount M outerSteps innerSteps \\le nestedBisectionStepBound M L",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_corollaryC2_uniform_equalized_adjacent_mesh_tendsto_zero": {
+      "lean_statement_sha256": "4fb3f24b9a324c66bc187747033a7c838a12082cf52c8f27e05af25f0e70dd6a",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (levels : (N : \u2115) \\to Fin (N + 1 + 2) \\to \u211d), (\\forall (N : \u2115), BinaryEndpointLevelVector (levels N)) \\to (\\forall (N : \u2115), BinaryEndpointAwareAdjacentRatesEqualize (levels N) fun x  =>  1) \\to Tendsto (fun N  =>  binaryEndpointAdjacentMaxWidth (levels N)) atTop (nhds 0)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_corollaryC2_uniform_equalized_last_rate_tendsto_zero": {
+      "lean_statement_sha256": "23f3cdcff6329df71ac9b211d4fc023e7e5ffe3d7590dba7cf216b0118575f8e",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (levels : (N : \u2115) \\to Fin (N + 1 + 2) \\to \u211d), (\\forall (N : \u2115), BinaryEndpointLevelVector (levels N)) \\to (\\forall (N : \u2115), BinaryEndpointAwareAdjacentRatesEqualize (levels N) fun x  =>  1) \\to Tendsto (fun N  =>  binaryEndpointAwareAdjacentRate (levels N) (fun x  =>  1) lastAdjacentIndex) atTop (nhds 0)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "paper_corollaryC4_equispaced_optimal_subsequence_exists_canonical_uniform_optimal_equispaced_floor_selector": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row, generated from the dashboard cache.",
       "lean_statement_sha256": "d55247c7f2ca26c860830ee8f95aeefe438e85bf460b8599a980f5aacea1d162",
-      "tex_statement": "\\forall (C : ℕ), \\exists betaLimit, TendstoUniformlyOn (fun N θ  =>  canonicalUniformEqualizedClampedFloorBetaSeq (theoremB1SubsequenceIndex C N) θ) betaLimit atTop (Icc 0 1)",
-      "validated_at": "2026-06-28T22:35:30Z",
-      "validator": "gpt-5-codex",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (C : \u2115), \\exists betaLimit, TendstoUniformlyOn (fun N \u03b8  =>  canonicalUniformEqualizedClampedFloorBetaSeq (theoremB1SubsequenceIndex C N) \u03b8) betaLimit atTop (Icc 0 1)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_lemmaB2_knownTypeExperiment_uniform_convergence_of_lipschitz_tracking": {
+      "lean_statement_sha256": "92f57aabc12c11640e6aa8c09f751670d6892368a7cdc95fc1eb599a31888abb",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Y : Type u_1} (psiHat : \u2115 \\to \u211d \\to Y \\to \u211d) (psi : \u211d \\to Y \\to \u211d) (representative : \u2115 \\to \u211d \\to \u211d) (noise mesh : \u2115 \\to \u211d) {K : \u211d}, 0 \\le K \\to Tendsto noise atTop (nhds 0) \\to Tendsto mesh atTop (nhds 0) \\to (\\forall\u1da0 (n : \u2115) in atTop, \\forall \u03b8 \\in Icc 0 1, \\forall (y : Y), dist (psiHat n \u03b8 y) (psi (representative n \u03b8) y) \\le noise n) \\to (\\forall\u1da0 (n : \u2115) in atTop, \\forall \u03b8 \\in Icc 0 1, dist (representative n \u03b8) \u03b8 \\le mesh n) \\to (\\forall (\u03b8 \u03b8' : \u211d) (y : Y), dist (psi \u03b8 y) (psi \u03b8' y) \\le K * dist \u03b8 \u03b8') \\to TendstoUniformlyOn (fun n p  =>  psiHat n p.1 p.2) (fun p  =>  psi p.1 p.2) atTop (Icc 0 1 \u00d7\u02e2 univ)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_lemmaB3_unknownTypeExperiment_uniform_convergence_of_ranking_tracking": {
+      "lean_statement_sha256": "9dfbd4939c71c9aedb39c3bca9106a9b63a2805f30deed4268eae4ca8ac51b77",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Y : Type u_1} (psiHat : \u2115 \\to \u211d \\to Y \\to \u211d) (psi : \u211d \\to Y \\to \u211d) (rankRepresentative : \u2115 \\to \u211d \\to \u211d) (noise mesh : \u2115 \\to \u211d) {K : \u211d}, 0 \\le K \\to Tendsto noise atTop (nhds 0) \\to Tendsto mesh atTop (nhds 0) \\to (\\forall\u1da0 (n : \u2115) in atTop, \\forall \u03b8 \\in Icc 0 1, \\forall (y : Y), dist (psiHat n \u03b8 y) (psi (rankRepresentative n \u03b8) y) \\le noise n) \\to (\\forall\u1da0 (n : \u2115) in atTop, \\forall \u03b8 \\in Icc 0 1, dist (rankRepresentative n \u03b8) \u03b8 \\le mesh n) \\to (\\forall (\u03b8 \u03b8' : \u211d) (y : Y), dist (psi \u03b8 y) (psi \u03b8' y) \\le K * dist \u03b8 \u03b8') \\to TendstoUniformlyOn (fun n p  =>  psiHat n p.1 p.2) (fun p  =>  psi p.1 p.2) atTop (Icc 0 1 \u00d7\u02e2 univ)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective": {
+      "lean_statement_sha256": "7cb98e87dc01348aaf0d81d7ee8a39d2bdeed559b10eed1f3fcb1170594deff6",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (M : \u2115) (s : \u2115 \\to \u211d), s 0 = 0 \\to s M = 1 \\to spearmanLinearWeightOrderedPairIntervalObjective M s = spearmanLinearWeightIntervalObjective M s",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_lemmaC11_kendall_constant_weight_ordered_pair_interval_objective_le_equispaced": {
+      "lean_statement_sha256": "7dea7c22a1d5cfde813b62dc04555ebca6356da4ab6fbb3944bbeb71a676278f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {M : \u2115} [Nonempty (Fin M)] (s : \u2115 \\to \u211d), s 0 = 0 \\to s M = 1 \\to (\\sum i, \\sum j, if i < j then (s (\u2191i + 1) - s \u2191i) * (s (\u2191j + 1) - s \u2191j) else 0) \\le (1 - (\u2191M)\u207b\u00b9) / 2",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_lemmaC12_spearman_linear_weight_ordered_pair_interval_objective_le_equispaced": {
+      "lean_statement_sha256": "a9e9a9292d5c49148081f526ef31a8f42b778962535bdeb4f7a063698741c74f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {M : \u2115} [Nonempty (Fin M)] (s : \u2115 \\to \u211d), Monotone s \\to s 0 = 0 \\to s M = 1 \\to spearmanLinearWeightOrderedPairIntervalObjective M s \\le (1 - (\u2191M)\u207b\u00b9 ^ 2) / 6",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_lemmaC3_ordered_quality_endpoint_piecewiseConstKernel_integral_hasExponentialRate_of_adjacent_min_weight_pos_of_cell_midpoints": {
+      "lean_statement_sha256": "9a9fda343d2e3571a97047570a759f3ede005f95d331f0eb327b4a49dea639aa",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (\\mu : Measure \u211d) [IsFiniteMeasure (\\mu.prod \\mu)] [(\\mu.prod \\mu).IsOpenPosMeasure] {m : \u2115}, 0 < m \\to \\forall (cut : \u2115 \\to \u211d) (hmono : Monotone cut), (\\forall i < m + 2, cut i < cut (i + 1)) \\to \\forall (successProb sampleRate : Fin (m + 2) \\to \u211d) (hlevels : BinaryEndpointLevelVector successProb), (\\forall (idx : Fin (m + 2)), 0 < sampleRate idx) \\to (\\forall {a b : Fin (m + 2)}, \u2191a \\le \u2191b \\to sampleRate a \\le sampleRate b) \\to \\forall (weight : \u211d \u00d7 \u211d \\to \u211d), (\\forall (component : { piece // theorem31OrderedNontrivialPairSelected piece }), IntegrableOn weight ((theorem31_ordered_quality_pair_partition \\mu (m + 2) cut hmono theorem31OrderedNontrivialPairSelected).pieceSet component) (\\mu.prod \\mu)) \\to (\\forall (component : { piece // theorem31OrderedNontrivialPairSelected piece }), \\forall\u1d50 (x : \u211d \u00d7 \u211d) \u2202(\\mu.prod \\mu).restrict ((theorem31_ordered_quality_pair_partition \\mu (m + 2) cut hmono theorem31OrderedNontrivialPairSelected).pieceSet component), 0 \\le weight x) \\to Continuous weight \\to (\\forall (component : theorem31OrderedNontrivialPairComponent m), 0 < weight (theorem31_ordered_quality_pair_component_midpoint cut component)) \\to \\forall (minAdjacent : Fin (m + 1)), (\\forall (adj : Fin (m + 1)), binaryEndpointAwareAdjacentRate successProb sampleRate minAdjacent \\le binaryEndpointAwareAdjacentRate successProb sampleRate adj) \\to HasExponentialRate (fun k  =>  \\int (x : \u211d \u00d7 \u211d) in (theorem31_ordered_quality_pair_partition \\mu (m + 2) cut hmono theorem31OrderedNontrivialPairSelected).support, weight x * (theorem31_ordered_quality_pair_partition \\mu (m + 2) cut hmono theorem31OrderedNontrivialPairSelected).piecewiseConstKernel (fun component k  =>  twoSampleFloorPkComplementErrorProb (binaryRatingModel successProb \u22ef \u22ef) sampleRate (\u2191component).2 (\u2191component).",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_lemmaC3_partition_integral_hasExponentialRate_of_min_component_uniform_logRate": {
+      "lean_statement_sha256": "1bd61ee9ec01d29d632c5a5ae4f68bd2319a5d2f631c3258b253ed4c630b561f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {Component : Type u_2} [inst : MeasurableSpace \\Omega] [inst_1 : Fintype Component] [DecidableEq Component] (\\mu : Measure \\Omega) [IsFiniteMeasure \\mu] (P : FiniteMeasurableSetPartition \\mu Component) (weight : \\Omega \\to \u211d) (kernel : \u2115 \\to \\Omega \\to \u211d) (phi : Component \\to \\Omega \\to \u211d) (rate W : Component \\to \u211d), (\\forall (k : \u2115) (component : Component), IntegrableOn (fun x  =>  weight x * kernel k x) (pieceSet component) \\mu) \\to (\\forall (component : Component), IntegrableOn weight (pieceSet component) \\mu) \\to (\\forall (component : Component), 0 < W component) \\to (\\forall (component : Component), \\forall\u1d50 (x : \\Omega) \u2202\\mu.restrict (pieceSet component), 0 \\le weight x) \\to (\\forall (component : Component), \\forall\u1d50 (x : \\Omega) \u2202\\mu.restrict (pieceSet component), weight x \\le W component) \\to (\\forall (component : Component), HasAEEssentialInfimum (\\mu.restrict (pieceSet component)) (phi component) (rate component)) \\to (\\forall (component : Component), HasPositiveWeightNearAEEssentialInfimum (\\mu.restrict (pieceSet component)) weight (phi component) (rate component)) \\to (\\forall (k : \u2115) (x : \\Omega), 0 < kernel k x) \\to (\\forall (component : Component), \\forall \\epsilon > 0, \\forall\u1da0 (k : \u2115) in atTop, \\forall (x : \\Omega), |-log (kernel k x) / \u2191k - phi component x| \\le \\epsilon) \\to \\forall (minComponent : Component), (\\forall (component : Component), rate minComponent \\le rate component) \\to HasExponentialRate (fun k  =>  \\int (x : \\Omega) in support, weight x * kernel k x \u2202\\mu) (rate minComponent)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_lemmaC4_piecewise_constant_iff_exists_positive_exponential_rate_of_defined_tieErasedSourceWbar_nonpiecewise_nonTie_interval_witness": {
+      "lean_statement_sha256": "0ab3ee3f0fa50a7341e154e8a172615864cea91ba9e75c1d124108245875e65a",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (\\mu : Measure \u211d) [IsFiniteMeasure (\\mu.prod \\mu)] [(\\mu.prod \\mu).IsOpenPosMeasure] (isPiecewiseConstant : Prop) (successProb sampleRate : \u211d \\to \u211d), Monotone successProb \\to \\forall (hprob0 : \\forall (\u03b8 : \u211d), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : \u211d), successProb \u03b8 \\le 1), Measurable successProb \\to Measurable sampleRate \\to \\forall (weight : \u211d \u00d7 \u211d \\to \u211d) (sourcePbarKernel : \u2115 \\to \u211d \u00d7 \u211d \\to \u211d) {K : \u211d}, Integrable weight ((\\mu.prod \\mu).restrict strictUpperPairSet) \\to (\\forall\u1d50 (q : \u211d \u00d7 \u211d) \u2202(\\mu.prod \\mu).restrict strictUpperPairSet, 0 \\le weight q) \\to 0 \\le K \\to (\\forall\u1da0 (k : \u2115) in atTop, AEStronglyMeasurable (sourcePbarKernel k) ((\\mu.prod \\mu).restrict strictUpperPairSet)) \\to (\\forall\u1da0 (k : \u2115) in atTop, \\forall\u1d50 (q : \u211d \u00d7 \u211d) \u2202(\\mu.prod \\mu).restrict strictUpperPairSet, 0 \\le sourcePbarKernel k q \\land sourcePbarKernel k q \\le K) \\to (isPiecewiseConstant \\to \\exists rate, 0 < rate \\land ExponentialRateCertificate (lemmaC4TieErasedSourceWbar \\mu weight sourcePbarKernel) rate) \\to (\\lnotisPiecewiseConstant \\to \\exists a b, a < b \\land Integrable weight ((\\mu.prod \\mu).restrict (strictUpperPairSetOn a b)) \\land (\\forall\u1d50 (q : \u211d \u00d7 \u211d) \u2202(\\mu.prod \\mu).restrict (strictUpperPairSetOn a b), 0 \\le weight q) \\land (\\forall \u03b8 \\in Ioo a b, ContinuousAt weight (\u03b8, \u03b8)) \\land (\\forall \u03b8 \\in Ioo a b, 0 < weight (\u03b8, \u03b8)) \\land (\\forall \u03b8 \\in Icc a b, 0 < sampleRate \u03b8) \\land (\\forall \u03b8 \\in Icc a b, 0 < successProb \u03b8) \\land (\\forall \u03b8 \\in Icc a b, successProb \u03b8 < 1) \\land (\\forall \u03b8 \\in Icc a b, ContinuousAt sampleRate \u03b8) \\land \\forall\u1da0 (k : \u2115) in atTop, \\forall q \\in strictUpperPairSetOn a b, sourcePbarKernel k q = twoSampleFloorPkComplementErrorProb (binaryRatingModel successProb hprob0 hprob1) sampleRate q.1 q.2 k) \\to (isPiecewiseConstant \\iff \\exists rate, 0 < rate \\",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_lemmaC4_rawSourcePositiveSupportIntervalModel_finiteStep_iff_exists_positive_exponential_rate_of_sourcePbar_selected_realization": {
+      "lean_statement_sha256": "604537bbb707c5c4e1fb122a741fd9932b0cdae1e2b2e636f39bb13dfd23201b",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (\\mu : Measure \u211d) [IsFiniteMeasure (\\mu.prod \\mu)] [(\\mu.prod \\mu).IsOpenPosMeasure] (R : LemmaC4RawSourcePositiveSupportIntervalModel \\mu) (S : LemmaC4AppropriateFiniteLevelsWeightedModel \\mu) (sourcePbarKernel : \u2115 \\to \u211d \u00d7 \u211d \\to \u211d) {K : \u211d}, 0 \\le K \\to (\\forall (k : \u2115), AEStronglyMeasurable (sourcePbarKernel k) ((\\mu.prod \\mu).restrict strictUpperPairSet)) \\to (\\forall (k : \u2115), \\forall\u1d50 (q : \u211d \u00d7 \u211d) \u2202(\\mu.prod \\mu).restrict strictUpperPairSet, 0 \\le sourcePbarKernel k q \\land sourcePbarKernel k q \\le K) \\to UniformNormalizedLogRateCertificateOn sourcePbarKernel (fun q  =>  weightedBernoulliClosedThresholdRate (sampleRate q.1) (sampleRate q.2) (successProb q.1) (successProb q.2)) strictUpperPairSet \\to (\\forall (levels : Fin (m + 2) \\to \u211d) (hlevels : BinaryEndpointLevelVector levels), BinaryEndpointAwareAdjacentRatesEqualize levels sampleRate \\to LemmaC4TieErasedSelectedIntegralRealization \\mu weight weight sourcePbarKernel (theorem31SelectedSourceKernel \\mu cut \u22ef sampleRate levels hlevels) theorem31SelectedSourceCoordinateMap (theorem31SelectedSourceSupport \\mu cut \u22ef)) \\to (lemmaC4FiniteStepOnIoo successProb lo hi \\iff \\exists rate, 0 < rate \\land ExponentialRateCertificate (lemmaC4TieErasedSourceWbar \\mu weight sourcePbarKernel) rate)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair": {
+      "lean_statement_sha256": "086dfead322eea324568e2ec6dfdfafec24513e5e12c48b6884fcd40b7bb4fb3",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115} (sampleRate successProb : Fin (m + 2) \\to \u211d), (\\forall (idx : Fin (m + 2)), 0 < sampleRate idx) \\to (\\forall {a b : Fin (m + 2)}, \u2191a \\le \u2191b \\to sampleRate a \\le sampleRate b) \\to (\\forall {a b : Fin (m + 2)}, \u2191a \\le \u2191b \\to successProb a \\le successProb b) \\to (\\forall (idx : Fin (m + 2)), 0 \\le successProb idx) \\to (\\forall (idx : Fin (m + 2)), \u2191idx \\ne 0 \\to 0 < successProb idx) \\to (\\forall (idx : Fin (m + 2)), \u2191idx \\ne m + 1 \\to successProb idx < 1) \\to \\forall (low high : Fin (m + 2)), \u2191low + 1 \\le \u2191high \\to \u2191low \\ne 0 \\lor \u2191high \\ne m + 1 \\to \\exists adj, binaryEndpointAwareAdjacentRate successProb sampleRate adj \\le binaryEndpointAwarePairRate successProb sampleRate low high",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_theorem31_exists_cell_integral_volume_weighted_uniform_endpoint_two_stage_lexicographic_optimality_of_integrableOn_Icc": {
+      "lean_statement_sha256": "b0673c6147fc7660bc91e1ac780eba892cf85373184a80f339cd4f326b258efe",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (m : \u2115) {weight : \u211d \u00d7 \u211d \\to \u211d}, IntegrableOn weight (Icc 0 1 \u00d7\u02e2 Icc 0 1) (prod volume) \\to \\exists design, IsLexicographicMaximizerOn (fun design  =>  monotoneIntervalCutpointsEndpointFeasible (m + 2) design.1 \\land BinaryEndpointLevelVector design.2) (fun design  =>  cutpointRangeFunctional (m + 2) (theorem31CellIntegralFiniteObjective volume m weight) design.1) (fun design  =>  binaryEndpointAwareAdjacentRateObjective design.2 fun x  =>  1) design",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_theorem31_kendall_constant_weight_equispaced_canonical_uniform_endpoint_lexicographic_optimality": {
+      "lean_statement_sha256": "0f51a59047d140715f3f3f93d44fa13b1c57708ab1988c1c67aef1fa9927e99d",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {M : \u2115} [Nonempty (Fin M)], 0 < M \\to IsLexicographicMaximizerOn (fun design  =>  intervalCutpointsEndpointFeasible M design.1 \\land BinaryEndpointLevelVector design.2) (fun design  =>  kendallConstantWeightOrderedPairIntervalObjective M design.1) (fun design  =>  binaryEndpointAwareAdjacentRateObjective design.2 fun x  =>  1) (equispacedIntervalCutpoint M, canonicalUniformEqualizedEndpointLevels M)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "paper_theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate": {
       "lean_statement_sha256": "0a19d0d10292ef26c66fad7374cac056cf605a83753b5eea8f14d2cca2bdaa76",
-      "tex_statement": "\\forall {sampleRate successProb : ℕ \\to ℝ} {i j : ℕ}, (\\forall (n : ℕ), 0 < sampleRate n) \\to Monotone sampleRate \\to Monotone successProb \\to 0 < successProb i \\to successProb j < 1 \\to i + 1 \\le j \\to weightedBernoulliClosedThresholdRate (sampleRate (i + 1)) (sampleRate i) (successProb (i + 1)) (successProb i) \\le weightedBernoulliClosedThresholdRate (sampleRate j) (sampleRate i) (successProb j) (successProb i)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {sampleRate successProb : \u2115 \\to \u211d} {i j : \u2115}, (\\forall (n : \u2115), 0 < sampleRate n) \\to Monotone sampleRate \\to Monotone successProb \\to 0 < successProb i \\to successProb j < 1 \\to i + 1 \\le j \\to weightedBernoulliClosedThresholdRate (sampleRate (i + 1)) (sampleRate i) (successProb (i + 1)) (successProb i) \\le weightedBernoulliClosedThresholdRate (sampleRate j) (sampleRate i) (successProb j) (successProb i)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair": {
-      "lean_statement_sha256": "086dfead322eea324568e2ec6dfdfafec24513e5e12c48b6884fcd40b7bb4fb3",
-      "tex_statement": "\\forall {m : ℕ} (sampleRate successProb : Fin (m + 2) \\to ℝ), (\\forall (idx : Fin (m + 2)), 0 < sampleRate idx) \\to (\\forall {a b : Fin (m + 2)}, ↑a \\le ↑b \\to sampleRate a \\le sampleRate b) \\to (\\forall {a b : Fin (m + 2)}, ↑a \\le ↑b \\to successProb a \\le successProb b) \\to (\\forall (idx : Fin (m + 2)), 0 \\le successProb idx) \\to (\\forall (idx : Fin (m + 2)), ↑idx \\ne 0 \\to 0 < successProb idx) \\to (\\forall (idx : Fin (m + 2)), ↑idx \\ne m + 1 \\to successProb idx < 1) \\to \\forall (low high : Fin (m + 2)), ↑low + 1 \\le ↑high \\to ↑low \\ne 0 \\lor ↑high \\ne m + 1 \\to \\exists adj, binaryEndpointAwareAdjacentRate successProb sampleRate adj \\le binaryEndpointAwarePairRate successProb sampleRate low high",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
+    "paper_theorem31_spearman_linear_weight_equispaced_canonical_uniform_endpoint_lexicographic_optimality": {
+      "lean_statement_sha256": "42807a128b66b208a0a4c1fc7447edfd0fd391ae3b7fff89a06d3e3308452489",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {M : \u2115} [Nonempty (Fin M)], 0 < M \\to IsLexicographicMaximizerOn (fun design  =>  monotoneIntervalCutpointsEndpointFeasible M design.1 \\land BinaryEndpointLevelVector design.2) (fun design  =>  spearmanLinearWeightOrderedPairIntervalObjective M design.1) (fun design  =>  binaryEndpointAwareAdjacentRateObjective design.2 fun x  =>  1) (equispacedIntervalCutpoint M, canonicalUniformEqualizedEndpointLevels M)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "binary_rating_model_mgf_formula": {
-      "lean_statement_sha256": "43a9be9cf8402cb6f6dbdadb536d83ad4252ffd93e5ce0edf3e91ef396d940b1",
-      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to ℝ) (hprob0 : \\forall (θ : Seller), 0 \\le successProb θ) (hprob1 : \\forall (θ : Seller), successProb θ \\le 1) (θ : Seller) (z : ℝ), (binaryRatingModel successProb hprob0 hprob1).mgf θ z = 1 - successProb θ + successProb θ * exp z",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "binary_rating_model_log_mgf_formula": {
-      "lean_statement_sha256": "14fa754ea04eae7bdf6aac4f7baaa89f30e8af07c06adf7276f5dbc5a2e82536",
-      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to ℝ) (hprob0 : \\forall (θ : Seller), 0 \\le successProb θ) (hprob1 : \\forall (θ : Seller), successProb θ \\le 1) (θ : Seller) (z : ℝ), (binaryRatingModel successProb hprob0 hprob1).logMGF θ z = log (1 - successProb θ + successProb θ * exp z)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "binary_rating_model_log_mgf_derivative_formula": {
-      "lean_statement_sha256": "1cbe5e2c19bf669c7e958334ecd53206efd6f08ac560e968ef80de87bca7381d",
-      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to ℝ) (hprob0 : \\forall (θ : Seller), 0 \\le successProb θ) (hprob1 : \\forall (θ : Seller), successProb θ \\le 1) (θ : Seller) (z : ℝ), HasDerivAt (fun t  =>  (binaryRatingModel successProb hprob0 hprob1).logMGF θ t) (successProb θ * exp z / (1 - successProb θ + successProb θ * exp z)) z",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "binary_rating_pairwise_threshold_rate_certificates_from_derivatives": {
-      "lean_statement_sha256": "6de95f1236572d3e2bfb24f98b0d960758e33607ee762e7aaaa7fe384cd93019",
-      "tex_statement": "{Seller Pair : Type*} (successProb : Seller \\to ℝ) (hprob0 : \\forall θ, 0 \\le successProb θ) (hprob1 : \\forall θ, successProb θ \\le 1) (hprob_pos : \\forall θ, 0 < successProb θ) (hprob_lt_one : \\forall θ, successProb θ < 1) (sampleRate : Seller \\to ℝ) (pairHi pairLo : Pair \\to Seller) (hpositive_hi : \\forall p : Pair, 0 < sampleRate (pairHi p)) (hpositive_lo : \\forall p : Pair, 0 < sampleRate (pairLo p)) (a z : Pair \\to ℝ) (hz : \\forall p : Pair, z p \\le 0) (hderiv_hi : \\forall p : Pair, HasDerivAt (fun t : ℝ  =>  (binaryRatingModel successProb hprob0 hprob1).logMGF (pairHi p) t) (a p) (z p * (sampleRate (pairHi p))⁻¹)) (hderiv_lo : \\forall p : Pair, HasDerivAt (fun t : ℝ  =>  (binaryRatingModel successProb hprob0 hprob1).logMGF (pairLo p) t) (a p) (-(z p * (sampleRate (pairLo p))⁻¹))) = binaryRatingModel_pairwiseThresholdRateTopLdpCertificate_of_common_logMGF_derivatives successProb hprob0 hprob1 hprob_pos hprob_lt_one sampleRate pairHi pairLo hpositive_hi hpositive_lo a z hz hderiv_hi hderiv_lo",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "binary_rating_model_rate_function_is_bernoulli_kl": {
-      "lean_statement_sha256": "ae605bc3c25ef3bbae80bb44cb4e62b5a02244197caa5e9aedcd724e3041000b",
-      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to ℝ) (hprob0 : \\forall (θ : Seller), 0 \\le successProb θ) (hprob1 : \\forall (θ : Seller), successProb θ \\le 1), (\\forall (θ : Seller), 0 < successProb θ) \\to (\\forall (θ : Seller), successProb θ < 1) \\to \\forall (θ : Seller) {a : ℝ}, 0 < a \\to a < 1 \\to (binaryRatingModel successProb hprob0 hprob1).rateFunction θ a = paperBernoulliKL a (successProb θ)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "binary_rating_model_rate_function_top_is_bernoulli_kl": {
-      "lean_statement_sha256": "1219b0a0615e3370f37c6267cedbed58cdeaaa20c2701e5409914d6f5a2417b6",
-      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to ℝ) (hprob0 : \\forall (θ : Seller), 0 \\le successProb θ) (hprob1 : \\forall (θ : Seller), successProb θ \\le 1), (\\forall (θ : Seller), 0 < successProb θ) \\to (\\forall (θ : Seller), successProb θ < 1) \\to \\forall (θ : Seller) {a : ℝ}, 0 < a \\to a < 1 \\to (binaryRatingModel successProb hprob0 hprob1).rateFunctionTop θ a = ↑(paperBernoulliKL a (successProb θ))",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "binary_rating_pairwise_rate_objective_top_is_threshold_kl_rate": {
-      "lean_statement_sha256": "2858d9dbf6ba708e0862f121ca5e4f291e67d62ea8a6c1cbd9234faeb96725b2",
-      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to ℝ) (hprob0 : \\forall (θ : Seller), 0 \\le successProb θ) (hprob1 : \\forall (θ : Seller), successProb θ \\le 1), (\\forall (θ : Seller), 0 < successProb θ) \\to (\\forall (θ : Seller), successProb θ < 1) \\to \\forall (sampleRate : Seller \\to ℝ) (hi lo : Seller) {a : ℝ}, 0 < a \\to a < 1 \\to (binaryRatingModel successProb hprob0 hprob1).pairwiseRateObjectiveTop sampleRate hi lo a = ↑(twoBernoulliThresholdRate (sampleRate hi) (sampleRate lo) (successProb hi) (successProb lo) a)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "binary_rating_pairwise_threshold_rate_top_is_closed_weighted_rate": {
-      "lean_statement_sha256": "3cf08c10df89c0425e92453c79656200a86344cd0ac1125f53b122abed3782c5",
-      "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to ℝ) (hprob0 : \\forall (θ : Seller), 0 \\le successProb θ) (hprob1 : \\forall (θ : Seller), successProb θ \\le 1), (\\forall (θ : Seller), 0 < successProb θ) \\to (\\forall (θ : Seller), successProb θ < 1) \\to \\forall (sampleRate : Seller \\to ℝ) (hi lo : Seller), 0 < sampleRate hi \\to 0 < sampleRate lo \\to sampleRate hi + sampleRate lo \\ne 0 \\to pairwiseSellerThresholdRateTop (binaryRatingModel successProb hprob0 hprob1) sampleRate hi lo = ↑(weightedBernoulliClosedThresholdRate (sampleRate hi) (sampleRate lo) (successProb hi) (successProb lo))",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC5_uniform_doubled_endpoint_levels": {
-      "lean_statement_sha256": "2be675bcd06e3aad8f33008d00b6a9f20fab8afcad6b0f8d7bbea4ef2c86d2c4",
-      "tex_statement": "{m : ℕ} (oldLevels : Fin (m + 2) \\to ℝ) = uniformDoubledEndpointLevels oldLevels",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC5_uniform_doubled_endpoint_levels_even": {
-      "lean_statement_sha256": "2f32201de4a7c88d345f96f28db616c45fdcf6b6e14252153f2564a4571794e5",
-      "tex_statement": "\\forall {m : ℕ} (oldLevels : Fin (m + 2) \\to ℝ) (i : Fin (m + 2)), lemmaC5_uniform_doubled_endpoint_levels oldLevels ⟨2 * ↑i, ⋯⟩ = oldLevels i",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC5_uniform_doubled_endpoint_levels_first_odd": {
-      "lean_statement_sha256": "574a9ed2d6091f7973846354af4d3ae3f55daeb78dc9756adc20641a2a6f5455",
-      "tex_statement": "\\forall {m : ℕ} (oldLevels : Fin (m + 2) \\to ℝ), lemmaC5_uniform_doubled_endpoint_levels oldLevels ⟨1, ⋯⟩ = bernoulliFirstEndpointEqualSplit (oldLevels (adjacentHighIndex firstAdjacentIndex))",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC5_uniform_doubled_endpoint_levels_last_odd": {
-      "lean_statement_sha256": "b512ca90a2a7718e86620b545f7706c4b12db30dfd0d7446353890c19d35c7bd",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall (oldLevels : Fin (m + 2) \\to ℝ), lemmaC5_uniform_doubled_endpoint_levels oldLevels ⟨2 * m + 1, ⋯⟩ = bernoulliLastEndpointEqualSplit (oldLevels (adjacentLowIndex lastAdjacentIndex))",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC5_uniform_doubled_endpoint_levels_equalizes": {
-      "lean_statement_sha256": "3876a258e597862be4545f651090cef0ddfe144550569b0c5893afe2cfe53fb5",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall {oldLevels : Fin (m + 2) \\to ℝ}, BinaryEndpointLevelVector oldLevels \\to (BinaryEndpointAwareAdjacentRatesEqualize oldLevels fun x  =>  1) \\to BinaryEndpointAwareAdjacentRatesEqualize (lemmaC5_uniform_doubled_endpoint_levels oldLevels) fun x  =>  1",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "paper_corollaryC2_uniform_equalized_last_rate_tendsto_zero": {
-      "lean_statement_sha256": "23f3cdcff6329df71ac9b211d4fc023e7e5ffe3d7590dba7cf216b0118575f8e",
-      "tex_statement": "\\forall (levels : (N : ℕ) \\to Fin (N + 1 + 2) \\to ℝ), (\\forall (N : ℕ), BinaryEndpointLevelVector (levels N)) \\to (\\forall (N : ℕ), BinaryEndpointAwareAdjacentRatesEqualize (levels N) fun x  =>  1) \\to Tendsto (fun N  =>  binaryEndpointAwareAdjacentRate (levels N) (fun x  =>  1) lastAdjacentIndex) atTop (nhds 0)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "paper_corollaryC2_uniform_equalized_adjacent_mesh_tendsto_zero": {
-      "lean_statement_sha256": "4fb3f24b9a324c66bc187747033a7c838a12082cf52c8f27e05af25f0e70dd6a",
-      "tex_statement": "\\forall (levels : (N : ℕ) \\to Fin (N + 1 + 2) \\to ℝ), (\\forall (N : ℕ), BinaryEndpointLevelVector (levels N)) \\to (\\forall (N : ℕ), BinaryEndpointAwareAdjacentRatesEqualize (levels N) fun x  =>  1) \\to Tendsto (fun N  =>  binaryEndpointAdjacentMaxWidth (levels N)) atTop (nhds 0)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC6_penultimate_level_ge_one_sub_inv_of_width_minimal": {
-      "lean_statement_sha256": "9ecc80fc07c347a0b61ce549bb4f7e70693b3e5c4ef6940b9de8105357281c18",
-      "tex_statement": "\\forall {m : ℕ} {levels : Fin (m + 2) \\to ℝ}, BinaryEndpointLevelVector levels \\to (\\forall (i : Fin (m + 1)), levels (adjacentHighIndex lastAdjacentIndex) - levels (adjacentLowIndex lastAdjacentIndex) \\le levels (adjacentHighIndex i) - levels (adjacentLowIndex i)) \\to 1 - 1 / ↑(m + 1) \\le levels (adjacentLowIndex lastAdjacentIndex)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC6_uniform_penultimate_level_ge_one_sub_inv_of_equalized_rates": {
-      "lean_statement_sha256": "784f95aed6deae26c709f6ffa2ba5287c7f806ebcb0d7b221d1a2419603173ff",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to ℝ}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to 1 - 1 / ↑(m + 1) \\le levels (adjacentLowIndex lastAdjacentIndex)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "theorem32_rate_loss_le_of_nested_bisection_width_minimal": {
-      "lean_statement_sha256": "53c8622cfe123cf92870cc417a38b0681496dfff9ca2316c9c96bc9f39139925",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall (optimal returned sampleRate : Fin (m + 2) \\to ℝ) {rStar gLast tFirstStar firstLower delta eps : ℝ}, 0 < gLast \\to 0 \\le eps \\to BinaryEndpointLevelVector optimal \\to (\\forall (i : Fin (m + 1)), optimal (adjacentHighIndex lastAdjacentIndex) - optimal (adjacentLowIndex lastAdjacentIndex) \\le optimal (adjacentHighIndex i) - optimal (adjacentLowIndex i)) \\to 0 < firstLower \\to firstLower \\le tFirstStar \\to delta = eps / (gLast * ((1 - 1 / ↑(m + 1))⁻¹ + firstLower⁻¹)) \\to (\\forall (i : Fin (m + 1)), binaryEndpointAwareAdjacentRate optimal sampleRate i = rStar) \\to rStar - gLast * log ((optimal (adjacentLowIndex lastAdjacentIndex) + delta) / optimal (adjacentLowIndex lastAdjacentIndex)) \\le binaryEndpointAwareAdjacentRate returned sampleRate lastAdjacentIndex \\to (\\forall (i : Fin (m + 1)), binaryEndpointAwareAdjacentRate returned sampleRate lastAdjacentIndex - gLast * log ((tFirstStar + delta) / tFirstStar) \\le binaryEndpointAwareAdjacentRate returned sampleRate i) \\to binaryEndpointAwareAdjacentRateObjective optimal sampleRate - binaryEndpointAwareAdjacentRateObjective returned sampleRate \\le eps",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC7_uniform_refined_last_rate_ge_one_fifth": {
-      "lean_statement_sha256": "ca357a1183d8bdbac8c28125983fb8c063b723a45ab73cc62cc4078d06c7a466",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to ℝ}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to \\forall {refinedLastLow : ℝ}, refinedLastLow = (1 + √(levels (adjacentLowIndex lastAdjacentIndex))) / 2 \\to 1 / 5 * binaryEndpointAwareAdjacentRate levels (fun x  =>  1) lastAdjacentIndex \\le -log refinedLastLow",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC7_uniform_refined_objective_rate_ge_one_fifth": {
-      "lean_statement_sha256": "c958073a5fc4d0eadc37d83833d7ce802273f64bf7b70ab0246d8b0e43cc24d9",
-      "tex_statement": "\\forall {mOld mNew : ℕ}, 0 < mOld \\to 0 < mNew \\to \\forall {oldLevels : Fin (mOld + 2) \\to ℝ} {newLevels : Fin (mNew + 2) \\to ℝ}, BinaryEndpointLevelVector oldLevels \\to BinaryEndpointLevelVector newLevels \\to (BinaryEndpointAwareAdjacentRatesEqualize oldLevels fun x  =>  1) \\to (BinaryEndpointAwareAdjacentRatesEqualize newLevels fun x  =>  1) \\to newLevels (adjacentLowIndex lastAdjacentIndex) = (1 + √(oldLevels (adjacentLowIndex lastAdjacentIndex))) / 2 \\to (1 / 5 * binaryEndpointAwareAdjacentRateObjective oldLevels fun x  =>  1) \\le binaryEndpointAwareAdjacentRateObjective newLevels fun x  =>  1",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC7_uniform_doubled_objective_rate_ge_one_fifth_old_objective": {
-      "lean_statement_sha256": "8a7c52993a084623e02697fd1812e4bb8f4c27aba1d2a7baa6b775f8e76c8d20",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall {oldLevels : Fin (m + 2) \\to ℝ}, BinaryEndpointLevelVector oldLevels \\to (BinaryEndpointAwareAdjacentRatesEqualize oldLevels fun x  =>  1) \\to (1 / 5 * binaryEndpointAwareAdjacentRateObjective oldLevels fun x  =>  1) \\le binaryEndpointAwareAdjacentRateObjective (lemmaC5_uniform_doubled_endpoint_levels oldLevels) fun x  =>  1",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC8_uniform_first_level_ge_half_of_first_rate_lower": {
-      "lean_statement_sha256": "3b7b9f17a5054322465aa17661a35446581cf6fa96e246b0ad63b700944ffeee",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to ℝ}, BinaryEndpointLevelVector levels \\to \\forall {lower : ℝ}, 0 \\le lower \\to lower \\le 1 \\to lower \\le binaryEndpointAwareAdjacentRate levels (fun x  =>  1) firstAdjacentIndex \\to lower / 2 \\le levels (adjacentHighIndex firstAdjacentIndex)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC8_uniform_first_level_ge_half_of_equalized_last_rate_lower": {
-      "lean_statement_sha256": "aa7f207b93486637a8af9a71063167ab776b1dc0d2f797ce7d38749cde30361b",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to ℝ}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to \\forall {lower : ℝ}, 0 \\le lower \\to lower \\le 1 \\to lower \\le binaryEndpointAwareAdjacentRate levels (fun x  =>  1) lastAdjacentIndex \\to lower / 2 \\le levels (adjacentHighIndex firstAdjacentIndex)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC8_uniform_first_level_ge_half_of_equalized_objective_rate_lower": {
-      "lean_statement_sha256": "85fdd09e5c3a2ac011f5d789b7bc262fdae1415c3a272aa45c098dd7630e019f",
-      "tex_statement": "\\forall {m : ℕ}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to ℝ}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to \\forall {lower : ℝ}, 0 \\le lower \\to lower \\le 1 \\to (lower \\le binaryEndpointAwareAdjacentRateObjective levels fun x  =>  1) \\to lower / 2 \\le levels (adjacentHighIndex firstAdjacentIndex)",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC9_nested_bisection_operation_count_le_stepBound": {
-      "lean_statement_sha256": "09a5b3c031495df7a29c5c6bd1227ca70caf55b6d3116b921d43da5067389b7b",
-      "tex_statement": "\\forall {M L outerSteps innerSteps : ℕ}, outerSteps \\le L + 1 \\to innerSteps \\le L \\to nestedBisectionOperationCount M outerSteps innerSteps \\le nestedBisectionStepBound M L",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "lemmaC9_nested_bisection_operation_count_le_mul_succ_sq": {
-      "lean_statement_sha256": "08841729e791806b4a60955c1fd7c374a27343816f0e18af3148a202cbc6730f",
-      "tex_statement": "\\forall {M L outerSteps innerSteps : ℕ}, 0 < M \\to outerSteps \\le L + 1 \\to innerSteps \\le L \\to nestedBisectionOperationCount M outerSteps innerSteps \\le M * (L + 1) ^ 2",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
+    "paper_theorem31_two_stage_lexicographic_optimality": {
+      "lean_statement_sha256": "6e18d979be15c5b528fb66fe8286f9652f412f5af0c0155c9d8b427d505c8db8",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {Design : Type u_1} (feasible : Design \\to Prop) (limitingValue rate : Design \\to \u211d) (candidate : Design), IsMaximizerOn feasible limitingValue candidate \\to (\\forall (alternative : Design), feasible alternative \\to limitingValue alternative = limitingValue candidate \\to rate alternative \\le rate candidate) \\to IsLexicographicMaximizerOn feasible limitingValue rate candidate",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paper_theorem32_runtime_isBigO_of_eventually_runtime_real_log_quadratic_le": {
       "lean_statement_sha256": "a308001c148bf6d31e26eeb91b2d1136d84e0c0ff4ae36dd48b8f2d28a458d67",
-      "tex_statement": "\\forall {\\alpha : Type u_1} {l : Filter \\alpha} {M : ℕ} {runtime runtimeLog : \\alpha \\to ℝ}, (\\forallᶠ (t : \\alpha) in l, 0 \\le runtime t) \\to (\\forallᶠ (t : \\alpha) in l, runtime t \\le ↑M * runtimeLog t ^ 2) \\to runtime =O[l] fun t  =>  ↑M * runtimeLog t ^ 2",
-      "comment": "Added because this declaration is now part of the GJ19 source-to-Lean coverage review surface.",
-      "validated_at": "2026-06-29T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {\\alpha : Type u_1} {l : Filter \\alpha} {M : \u2115} {runtime runtimeLog : \\alpha \\to \u211d}, (\\forall\u1da0 (t : \\alpha) in l, 0 \\le runtime t) \\to (\\forall\u1da0 (t : \\alpha) in l, runtime t \\le \u2191M * runtimeLog t ^ 2) \\to runtime =O[l] fun t  =>  \u2191M * runtimeLog t ^ 2",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_theoremB1_uniform_subsequence_principle_to_of_quantile_floor_tendstoUniformlyOn_geometric_mesh": {
+      "lean_statement_sha256": "d9145e2bf0ea1f55c19854b727c45423ccbf8f4f032b94ac8f807350c2643573",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall (betaSeq quantileSeq : \u2115 \\to \u211d \\to \u211d) (quantileLimit : \u211d \\to \u211d) (levels : (m : \u2115) \\to Fin (m + 2) \\to \u211d) (levelIndex : (m : \u2115) \\to \u211d \\to Fin (m + 2)), (\\forall (m : \u2115) (\u03b8 : \u211d), betaSeq (m + 2) \u03b8 = levels m (levelIndex m \u03b8)) \\to (\\forall (m : \u2115), IsMaximizerOn BinaryEndpointLevelVector (fun xs  =>  binaryEndpointAwareAdjacentRateObjective xs fun x  =>  1) (levels m)) \\to (\\forall (m : \u2115), \\forall \u03b8 \\in Icc 0 1, \u2191(levelIndex m \u03b8) = min \u230a\u2191(m + 2) * quantileSeq (m + 2) \u03b8\u230b\u208a (m + 1)) \\to (\\forall (m : \u2115), \\forall \u03b8 \\in Icc 0 1, quantileSeq (m + 2) \u03b8 \\in Icc 0 1) \\to TendstoUniformlyOn quantileSeq quantileLimit atTop (Icc 0 1) \\to theoremB1UniformOptimalSubsequencePrincipleTo betaSeq quantileSeq quantileLimit",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf": {
+      "lean_statement_sha256": "18e9d8ff9c7bceeca1d49c2c2a22eba02bc8e578fe108ab250ae890a979b9b49",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] (\\mu : Measure \\Omega) [IsFiniteMeasure \\mu] (weight : \\Omega \\to \u211d) (phiSeq : \u2115 \\to \\Omega \\to \u211d) (phi : \\Omega \\to \u211d) {rate W : \u211d}, (\\forall (k : \u2115), Integrable (fun x  =>  weight x * exp (-\u2191k * phiSeq k x)) \\mu) \\to 0 < W \\to (\\forall\u1d50 (x : \\Omega) \u2202\\mu, 0 \\le weight x) \\to (\\forall\u1d50 (x : \\Omega) \u2202\\mu, weight x \\le W) \\to HasAEEssentialInfimum \\mu phi rate \\to HasPositiveWeightNearAEEssentialInfimum \\mu weight phi rate \\to (\\forall \\epsilon > 0, \\forall\u1da0 (k : \u2115) in atTop, \\forall (x : \\Omega), |phiSeq k x - phi x| \\le \\epsilon) \\to HasExponentialRate (fun k  =>  \\int (x : \\Omega), weight x * exp (-\u2191k * phiSeq k x) \u2202\\mu) rate",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "theorem31_adjacent_binary_rate_formula": {
+      "lean_statement_sha256": "aa3d0de7a31f3f004d69c0e2e8724b558da132097e068b7c78fb099cd1711266",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "(gHi gLo tHi tLo : \u211d) : paperAdjacentBinaryRatingRate gHi gLo tHi tLo = sInf (Set.range fun a : \u211d  =>  gHi * paperBernoulliKL a tHi + gLo * paperBernoulliKL a tLo)",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "theorem31_adjacent_binary_rate_top_formula": {
+      "lean_statement_sha256": "a8895bb5ca27b9ce08bc38ed8634dfbf61c2b6a591bf3537b3ccda96524d1a13",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "(gHi gLo tHi tLo : \u211d) : paperAdjacentBinaryRatingRateTop gHi gLo tHi tLo = sInf (Set.range fun a : \u211d  =>  withTopRealScale gHi (paperBernoulliKLTop a tHi) + withTopRealScale gLo (paperBernoulliKLTop a tLo))",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "theorem32_exists_grid_depth_rate_loss_and_runtime_le_of_nested_bisection_uniform_doubled_closed_run_calculated_grid_low_bisection_upper_one_sub_grid_early_exact_return_of_eps_pos": {
+      "lean_statement_sha256": "7a7a56ba25b384b67afa6fe77cbdf1c012a9fb0f6a33e4e915a9a0579e27e37d",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m M : \u2115}, 0 < m \\to \\forall (oldLevels : Fin (m + 2) \\to \u211d) {eps : \u211d}, 0 < eps \\to BinaryEndpointLevelVector oldLevels \\to (BinaryEndpointAwareAdjacentRatesEqualize oldLevels fun x  =>  1) \\to \\exists grid, 0 < grid \\land grid < (1 / 5 * binaryEndpointAwareAdjacentRateObjective oldLevels fun x  =>  1) / 2 \\land \\exists L, have optimal := uniformDoubledEndpointLevels oldLevels; have levelTarget := optimal (adjacentLowIndex lastAdjacentIndex); have lastLow := (realBisectionRun (realBisectionAboveTarget levelTarget) (L + 1) (1 - 1 / \u2191(2 * m + 1 + 1)) (1 - grid)).2; have tFirst := optimal (adjacentHighIndex firstAdjacentIndex); have target := -log lastLow; have gridReturned := theorem32BackwardGridLowBisectionLevels (2 * m + 1) L grid tFirst target lastLow; have returned := if levelTarget = lastLow then optimal else gridReturned; ((binaryEndpointAwareAdjacentRateObjective optimal fun x  =>  1) - binaryEndpointAwareAdjacentRateObjective returned fun x  =>  1) \\le eps \\land nestedBisectionOperationCount M (L + 1) L \\le nestedBisectionStepBound M L",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "theorem32_rate_loss_le_of_nested_bisection_width_minimal": {
+      "lean_statement_sha256": "53c8622cfe123cf92870cc417a38b0681496dfff9ca2316c9c96bc9f39139925",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall (optimal returned sampleRate : Fin (m + 2) \\to \u211d) {rStar gLast tFirstStar firstLower delta eps : \u211d}, 0 < gLast \\to 0 \\le eps \\to BinaryEndpointLevelVector optimal \\to (\\forall (i : Fin (m + 1)), optimal (adjacentHighIndex lastAdjacentIndex) - optimal (adjacentLowIndex lastAdjacentIndex) \\le optimal (adjacentHighIndex i) - optimal (adjacentLowIndex i)) \\to 0 < firstLower \\to firstLower \\le tFirstStar \\to delta = eps / (gLast * ((1 - 1 / \u2191(m + 1))\u207b\u00b9 + firstLower\u207b\u00b9)) \\to (\\forall (i : Fin (m + 1)), binaryEndpointAwareAdjacentRate optimal sampleRate i = rStar) \\to rStar - gLast * log ((optimal (adjacentLowIndex lastAdjacentIndex) + delta) / optimal (adjacentLowIndex lastAdjacentIndex)) \\le binaryEndpointAwareAdjacentRate returned sampleRate lastAdjacentIndex \\to (\\forall (i : Fin (m + 1)), binaryEndpointAwareAdjacentRate returned sampleRate lastAdjacentIndex - gLast * log ((tFirstStar + delta) / tFirstStar) \\le binaryEndpointAwareAdjacentRate returned sampleRate i) \\to binaryEndpointAwareAdjacentRateObjective optimal sampleRate - binaryEndpointAwareAdjacentRateObjective returned sampleRate \\le eps",
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "GJ19OptimalBinaryRatingSystems",
+  "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+  "schema": 1,
+  "translated_at": "2026-06-29T18:08:26Z",
+  "translator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

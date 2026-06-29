@@ -5,6 +5,10 @@ This helper is intentionally conservative.  It only marks a source item
 `covered` when its canonical key or alias exactly matches a current dashboard
 row.  Everything else is left `uncertain` so a separate LLM/source-reading pass
 can decide whether it is covered, partially covered, missing, or out of scope.
+Do not use this exact-key scaffold to justify omitting source-visible
+definitions, examples, remarks, propositions, theorems/corollaries, or
+main-text lemmas for compactness; those should be represented by dashboard rows
+before closeout unless explicitly outside the paper target.
 """
 
 from __future__ import annotations
@@ -46,7 +50,8 @@ def seed_payload(folder: Path, validator: str, validator_type: str) -> dict[str,
             judgment = "uncertain"
             reason = (
                 "No exact source-key/alias match to a current dashboard row. "
-                "Requires independent source-to-row review."
+                "Requires independent source-to-row review; compactness alone "
+                "is not a reason to scope out source-visible named material."
             )
             review_rows = []
         coverage[key] = {
@@ -63,7 +68,7 @@ def seed_payload(folder: Path, validator: str, validator_type: str) -> dict[str,
     return {
         "schema": 1,
         "paper": folder.name,
-        "prompt_version": "paper-coverage-v1-source-inventory-to-review-surface",
+        "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
         "audit_kind": "exact_key_scaffold",
         "source_grounded": False,
         "seed_scaffold": True,

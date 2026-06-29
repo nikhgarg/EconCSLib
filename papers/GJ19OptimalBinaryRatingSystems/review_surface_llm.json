@@ -1,0 +1,12 @@
+{
+  "judgment": "passes",
+  "paper": "GJ19OptimalBinaryRatingSystems",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: the dashboard favors source-visible, LLM-legible paper claims over compactness; named definitions, examples, remarks, propositions, theorems, corollaries, and main-text lemmas are exposed as review rows rather than hidden as support-only declarations.",
+  "review_rows": 56,
+  "review_surface_sha256": "34d5a4d9078a492ffa7738bb19255bb557149454bfc7a9fb4f0f65c1b00d0dbe",
+  "schema": 1,
+  "validated_at": "2026-06-29T21:25:00Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
+}

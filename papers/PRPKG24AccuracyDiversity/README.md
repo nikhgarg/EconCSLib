@@ -48,9 +48,15 @@ Proposition 2 is formalized for the paper's homogeneity conclusion: Lean proves
 the corrected finite `O(1/N)` bound `(2m+1)/N` and the downstream asymptotic
 sequence consequence. The PDF's printed sharper finite constant `(m+1)/n`
 appears to miss a factor of 2; this is recorded as a source finite-constant
-deviation, not as an open downstream formalization boundary. Lemma D.1(i)'s
-printed sign convention is likewise documented as a source deviation; the
-downstream Theorem 1 routes are proved directly.
+deviation, not as an open downstream formalization boundary. The automated
+statement judge records Proposition 2 as a semantic mismatch because of this
+finite-constant correction, and the human override treats it as a source-quality
+note rather than a paper-level caveat. Lemma D.1(i) has a likely printed sign
+or convention mismatch: its literal sign convention conflicts with the proof
+route and downstream exponential-decay application, so Lean uses the
+source-consistent positive-rate/decay convention. The downstream Theorem 1
+routes are proved directly, so this is documented as a source-quality note
+rather than as an open proof boundary.
 
 ## Central Theorem File
 

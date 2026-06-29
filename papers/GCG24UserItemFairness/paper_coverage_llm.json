@@ -1,402 +1,783 @@
 {
-  "schema": 1,
-  "paper": "GCG24UserItemFairness",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "7b8804a6b49701df80a221768b40a020384abddb24085a57225b7106ed054200",
-  "review_surface_sha256": "9544cf87c3c5df70b79590a4c86c35c28a812f6fb9e46849658910b6953491c4",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard audit refreshed after expanding the review surface for source-visible definitions, examples, remarks, propositions, and appendix theorem/lemma targets.",
   "items": {
     "assumption_positive_recommendation_utilities": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_positive_recommendation_utilities",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The source model uses strictly positive recommendation utilities. This covers Proposition 2's symmetric model and Theorem 3's two opposing-type models. The dashboard row `assumption_positive_recommendation_utilities` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_positive_recommendation_utilities"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The source model uses strictly positive recommendation utilities. This covers Proposition 2's symmetric model and Theorem 3's two opposing-type models. The dashboard row `assumption_positive_recommendation_utilities` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: The source model uses strictly positive recommendation utilities. This covers Proposition 2's symmetric model and Theorem 3's two opposing-type models.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_positive_recommendation_utilities`.",
-      "statement_sha256": "7df1d492603de76d333677307fb8192444ceef682f21bfc5105402a73d56161f",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "7df1d492603de76d333677307fb8192444ceef682f21bfc5105402a73d56161f",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem3_first_half_alpha_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem3_first_half_alpha_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 first-half domain: `alpha` moves toward the balanced population from below. The dashboard row `assumption_theorem3_first_half_alpha_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem3_first_half_alpha_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 first-half domain: `alpha` moves toward the balanced population from below. The dashboard row `assumption_theorem3_first_half_alpha_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 3 first-half domain: `alpha` moves toward the balanced population from below.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem3_first_half_alpha_domain`.",
-      "statement_sha256": "5542be96c7180d6fcf3a8a5240480e3c3194b28e153c6ce7b2a002ad8845c0c5",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5542be96c7180d6fcf3a8a5240480e3c3194b28e153c6ce7b2a002ad8845c0c5",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem3_opposing_type_model": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem3_opposing_type_model",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 compares two instances of the opposing two-type source model with the same positive, strictly decreasing value vector. The dashboard row `assumption_theorem3_opposing_type_model` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem3_opposing_type_model"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 compares two instances of the opposing two-type source model with the same positive, strictly decreasing value vector. The dashboard row `assumption_theorem3_opposing_type_model` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 3 compares two instances of the opposing two-type source model with the same positive, strictly decreasing value vector.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem3_opposing_type_model`.",
-      "statement_sha256": "5664b37343712d659ce8b3bdcc21e5a097e148bd7f86569f3448c37932ca3590",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5664b37343712d659ce8b3bdcc21e5a097e148bd7f86569f3448c37932ca3590",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem3_second_half_alpha_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem3_second_half_alpha_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 second-half domain: `alpha` moves away from the balanced population above `1 / 2`. The dashboard row `assumption_theorem3_second_half_alpha_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem3_second_half_alpha_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3 second-half domain: `alpha` moves away from the balanced population above `1 / 2`. The dashboard row `assumption_theorem3_second_half_alpha_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 3 second-half domain: `alpha` moves away from the balanced population above `1 / 2`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem3_second_half_alpha_domain`.",
-      "statement_sha256": "3f0f49da4e57fc7980a12c0a312c8601fb19aa0cbd64951149f1faeb7b773a14",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3f0f49da4e57fc7980a12c0a312c8601fb19aa0cbd64951149f1faeb7b773a14",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem4_at_least_three_items": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem4_at_least_three_items",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The Theorem 4 construction uses at least three items. The dashboard row `assumption_theorem4_at_least_three_items` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem4_at_least_three_items"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The Theorem 4 construction uses at least three items. The dashboard row `assumption_theorem4_at_least_three_items` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: The Theorem 4 construction uses at least three items.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem4_at_least_three_items`.",
-      "statement_sha256": "5882509e4fa7c9d0cc4b97c7b0d6731ed1e6a73e75b496c88e022f2dbbaddd0b",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5882509e4fa7c9d0cc4b97c7b0d6731ed1e6a73e75b496c88e022f2dbbaddd0b",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem4_cold_start_type_wiring": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem4_cold_start_type_wiring",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4's cold-start row is the estimated third type, whose true type is one of the two opposing source rows. The dashboard row `assumption_theorem4_cold_start_type_wiring` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem4_cold_start_type_wiring"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4's cold-start row is the estimated third type, whose true type is one of the two opposing source rows. The dashboard row `assumption_theorem4_cold_start_type_wiring` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 4's cold-start row is the estimated third type, whose true type is one of the two opposing source rows.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem4_cold_start_type_wiring`.",
-      "statement_sha256": "b270b9b4067340ede5e0f4b0b33bd7c0b8c3c51b22cacec8cad57fb8ed2153df",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "b270b9b4067340ede5e0f4b0b33bd7c0b8c3c51b22cacec8cad57fb8ed2153df",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem4_displayed_reduced_models": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem4_displayed_reduced_models",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4 fixes the true two-type model and the three-type estimated model through the displayed reduced matrices. The dashboard row `assumption_theorem4_displayed_reduced_models` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem4_displayed_reduced_models"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4 fixes the true two-type model and the three-type estimated model through the displayed reduced matrices. The dashboard row `assumption_theorem4_displayed_reduced_models` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 4 fixes the true two-type model and the three-type estimated model through the displayed reduced matrices.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem4_displayed_reduced_models`.",
-      "statement_sha256": "90ee0c13ae490d7abf8441dd0dfcd0af8707e9ffde12896767cec4fa07192296",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "90ee0c13ae490d7abf8441dd0dfcd0af8707e9ffde12896767cec4fa07192296",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem4_estimated_model_reduction": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem4_estimated_model_reduction",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The Theorem 4 estimated model is represented by the three-type reduction witness. The dashboard row `assumption_theorem4_estimated_model_reduction` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem4_estimated_model_reduction"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The Theorem 4 estimated model is represented by the three-type reduction witness. The dashboard row `assumption_theorem4_estimated_model_reduction` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: The Theorem 4 estimated model is represented by the three-type reduction witness.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem4_estimated_model_reduction`.",
-      "statement_sha256": "7e6a228415188519013bd7bc083e98e966b2073a30d13e108a7474f49b0b22d1",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "7e6a228415188519013bd7bc083e98e966b2073a30d13e108a7474f49b0b22d1",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem4_parameter_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem4_parameter_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4 parameter domain for the arbitrary-large misestimation conclusion. The dashboard row `assumption_theorem4_parameter_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem4_parameter_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4 parameter domain for the arbitrary-large misestimation conclusion. The dashboard row `assumption_theorem4_parameter_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 4 parameter domain for the arbitrary-large misestimation conclusion.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem4_parameter_domain`.",
-      "statement_sha256": "a79dbc0fecd8a8b07f013e0f2b78331312bf06b11fb31fd96a99a9bb047d2d82",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a79dbc0fecd8a8b07f013e0f2b78331312bf06b11fb31fd96a99a9bb047d2d82",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_theorem4_true_model_reduction": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_theorem4_true_model_reduction",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The Theorem 4 true model is represented by the two-type reduction witness. The dashboard row `assumption_theorem4_true_model_reduction` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_theorem4_true_model_reduction"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The Theorem 4 true model is represented by the two-type reduction witness. The dashboard row `assumption_theorem4_true_model_reduction` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: The Theorem 4 true model is represented by the two-type reduction witness.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_theorem4_true_model_reduction`.",
-      "statement_sha256": "ed5ea5b62c2dcc2c4f6829cd09a89edb64b71d47fc5cfc535bd3289e74a33331",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ed5ea5b62c2dcc2c4f6829cd09a89edb64b71d47fc5cfc535bd3289e74a33331",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "itemFairness": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "itemFairness",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Item fairness objective for a recommendation policy. The dashboard row `itemFairness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "itemFairness"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Item fairness objective for a recommendation policy. The dashboard row `itemFairness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. direct source text. Source inventory item: Item fairness objective for a recommendation policy.",
-      "dashboard_evidence": "Current human-dashboard row(s): `itemFairness`.",
-      "statement_sha256": "33293e96310e105bd6fec0014c6be2201cbc87adf916a6ba8eb2c1160af9c035",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "33293e96310e105bd6fec0014c6be2201cbc87adf916a6ba8eb2c1160af9c035",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "itemNormalizer": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "itemNormalizer",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Item normalizer `sum_i w_ij`. The dashboard row `itemNormalizer` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "itemNormalizer"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Item normalizer `sum_i w_ij`. The dashboard row `itemNormalizer` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Item normalizer `sum_i w_ij`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `itemNormalizer`.",
-      "statement_sha256": "a28eefc743aff0491d8fdeed109051d158cb91b55005fabd7b55f05853445239",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a28eefc743aff0491d8fdeed109051d158cb91b55005fabd7b55f05853445239",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "normalizedItemUtility": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "normalizedItemUtility",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Normalized item utility `I_j(rho)`. The dashboard row `normalizedItemUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "normalizedItemUtility"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Normalized item utility `I_j(rho)`. The dashboard row `normalizedItemUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Normalized item utility `I_j(rho)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `normalizedItemUtility`.",
-      "statement_sha256": "5558c5f6a543dae12e74d50dfac167a71822fb7552e47b40d78c070e9d338fac",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5558c5f6a543dae12e74d50dfac167a71822fb7552e47b40d78c070e9d338fac",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "normalizedUserUtility": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "normalizedUserUtility",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Normalized user utility `U_i(rho)`. The dashboard row `normalizedUserUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "normalizedUserUtility"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Normalized user utility `U_i(rho)`. The dashboard row `normalizedUserUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Normalized user utility `U_i(rho)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `normalizedUserUtility`.",
-      "statement_sha256": "5272b1acf4be25fc6cd30c35af3674ee93e9044308083d0cf095a5774e19ba90",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5272b1acf4be25fc6cd30c35af3674ee93e9044308083d0cf095a5774e19ba90",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "priceOfFairness": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "priceOfFairness",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Price of maximal item fairness. The dashboard row `priceOfFairness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "priceOfFairness"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Price of maximal item fairness. The dashboard row `priceOfFairness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Price of maximal item fairness.",
-      "dashboard_evidence": "Current human-dashboard row(s): `priceOfFairness`.",
-      "statement_sha256": "a6ae8d25f4aaea36d7fbc47ad6841fcbc63c9093eb6b5d392ab7dd3b9ebef5f0",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a6ae8d25f4aaea36d7fbc47ad6841fcbc63c9093eb6b5d392ab7dd3b9ebef5f0",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "priceOfFairnessAt": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "priceOfFairnessAt",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Price of fairness at item-fairness level `gamma`. The dashboard row `priceOfFairnessAt` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "priceOfFairnessAt"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Price of fairness at item-fairness level `gamma`. The dashboard row `priceOfFairnessAt` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Price of fairness at item-fairness level `gamma`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `priceOfFairnessAt`.",
-      "statement_sha256": "f3ca0fe5bd37a42676c5500eb1af9469770c225b683598cee97fea79c7f9a438",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f3ca0fe5bd37a42676c5500eb1af9469770c225b683598cee97fea79c7f9a438",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "priceOfMisestimation": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "priceOfMisestimation",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Price of misestimation for a policy selected on an estimated utility matrix. The dashboard row `priceOfMisestimation` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "priceOfMisestimation"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Price of misestimation for a policy selected on an estimated utility matrix. The dashboard row `priceOfMisestimation` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Price of misestimation for a policy selected on an estimated utility matrix.",
-      "dashboard_evidence": "Current human-dashboard row(s): `priceOfMisestimation`.",
-      "statement_sha256": "8018e297ec11e0e5d0c068b9fbce6b8a1d9c983bb99d93ce20e00cab949035ac",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8018e297ec11e0e5d0c068b9fbce6b8a1d9c983bb99d93ce20e00cab949035ac",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "proposition1_symmetric_lp_reduction": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "proposition1_symmetric_lp_reduction",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 1: symmetric LP reduction. Type-symmetric original optima are represented by reduced type-level policies. The dashboard row `proposition1_symmetric_lp_reduction` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "proposition1_symmetric_lp_reduction"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 1: symmetric LP reduction. Type-symmetric original optima are represented by reduced type-level policies. The dashboard row `proposition1_symmetric_lp_reduction` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Proposition 1: symmetric LP reduction. Type-symmetric original optima are represented by reduced type-level policies.",
-      "dashboard_evidence": "Current human-dashboard row(s): `proposition1_symmetric_lp_reduction`.",
-      "statement_sha256": "9545dea0253babdd26264bdec0571f264e3778226d2586304328e4f64b1b8e54",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9545dea0253babdd26264bdec0571f264e3778226d2586304328e4f64b1b8e54",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "proposition2_symmetric_optimum_exists": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "proposition2_symmetric_optimum_exists",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 2: under positive utilities, a type-symmetric optimal policy exists for the maximal item-fairness problem. The dashboard row `proposition2_symmetric_optimum_exists` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "proposition2_symmetric_optimum_exists"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 2: under positive utilities, a type-symmetric optimal policy exists for the maximal item-fairness problem. The dashboard row `proposition2_symmetric_optimum_exists` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Proposition 2: under positive utilities, a type-symmetric optimal policy exists for the maximal item-fairness problem.",
-      "dashboard_evidence": "Current human-dashboard row(s): `proposition2_symmetric_optimum_exists`.",
-      "statement_sha256": "adb04518baccfd55b42eb0e1cd933b95e11eb86eabc90a4e590d719280389152",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "adb04518baccfd55b42eb0e1cd933b95e11eb86eabc90a4e590d719280389152",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "rawItemUtility": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "rawItemUtility",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Raw item utility `sum_i w_ij rho_ij`. The dashboard row `rawItemUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "rawItemUtility"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Raw item utility `sum_i w_ij rho_ij`. The dashboard row `rawItemUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Raw item utility `sum_i w_ij rho_ij`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `rawItemUtility`.",
-      "statement_sha256": "1253ab0544be45a10d0f4a10a3122169d6869c46e088fca2a2e3d9b65a176c8d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1253ab0544be45a10d0f4a10a3122169d6869c46e088fca2a2e3d9b65a176c8d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "rawUserUtility": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "rawUserUtility",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Raw user utility `sum_j w_ij rho_ij`. The dashboard row `rawUserUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "rawUserUtility"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Raw user utility `sum_j w_ij rho_ij`. The dashboard row `rawUserUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Raw user utility `sum_j w_ij rho_ij`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `rawUserUtility`.",
-      "statement_sha256": "c2bd95d2c66f2e54bf5346b6917153ffd6f4453cba20220b0089781f9faa2bf3",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "c2bd95d2c66f2e54bf5346b6917153ffd6f4453cba20220b0089781f9faa2bf3",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "recommendationUtility": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "recommendationUtility",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Recommendation utility matrix `w_{ij}` for users and items. The dashboard row `recommendationUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "recommendationUtility"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Recommendation utility matrix `w_{ij}` for users and items. The dashboard row `recommendationUtility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Recommendation utility matrix `w_{ij}` for users and items.",
-      "dashboard_evidence": "Current human-dashboard row(s): `recommendationUtility`.",
-      "statement_sha256": "96af48ff285ec8cd385ea2e7d4021abcdac91cc00040c98a202db54b55b3cd78",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "96af48ff285ec8cd385ea2e7d4021abcdac91cc00040c98a202db54b55b3cd78",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "solvesProblemOne": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "solvesProblemOne",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Problem 1: a policy maximizes user fairness subject to item-fairness level `gamma`. The dashboard row `solvesProblemOne` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "solvesProblemOne"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Problem 1: a policy maximizes user fairness subject to item-fairness level `gamma`. The dashboard row `solvesProblemOne` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Problem 1: a policy maximizes user fairness subject to item-fairness level `gamma`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `solvesProblemOne`.",
+      "source_grounded": true,
       "statement_sha256": "bad163b2e34dc1d773a153f09f9bff413193ae963cf09a51da6ea4133412fc96",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_appendix_lemmas_1_to_17_wrapped": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "These appendix lemmas are proof-support material rather than standalone public dashboard targets. The current review surface exposes the paper-facing definitions/propositions/theorems and records the appendix lemmas as wrapped support.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Appendix Lemmas 1--17 in source text; flagged by source-grounding audit as not separate inventory rows.. Appendix Lemmas 1--17 are source-visible supporting lemmas; the validation report says their content is used through theorem/proof wrappers rather than exposed as individual dashboard rows.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "4e07aa1daff63cdbccfc4bfa2a550e23e619ae34894b92ffb8440c50429c4be9",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_appendix_c_lemma1_item_fairness_positive": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_c_lemma1_item_fairness_positive",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_c_lemma1_item_fairness_positive"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_c_lemma1_item_fairness_positive at Appendix C, Lemma 1: Appendix C, Lemma 1: the optimal item-fairness value is positive.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f2e6c6fb72f5b997f4762d6b70f4ccdf507117b40d275ea169d8f0c683d93152",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_example1_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "Example 1 is an illustrative source example. The public dashboard currently tracks the definitions, equations, problem statement, propositions, and theorem rows rather than this example as a separate proof target.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Example 1 in source text; flagged by source-grounding audit as omitted from dashboard inventory.. Source Example 1 is visible in the paper but is not currently represented as a separate dashboard target.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "cf8e78b5d8e590a0ac38d612978d787a0d581d45afd7d89817d04f7cb300bcc9",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_appendix_c_lemma2_item_fairness_lp_value": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_c_lemma2_item_fairness_lp_value",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_c_lemma2_item_fairness_lp_value"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_c_lemma2_item_fairness_lp_value at Appendix C, Lemma 2: Appendix C, Lemma 2: item-fairness LP value characterization.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2f8db1f8f29e89932843fbbb13d543c10b3621f498fe12734bbe0648620b825e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_d_lemma10_midpoint_candidate": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_d_lemma10_midpoint_candidate",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_d_lemma10_midpoint_candidate"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_d_lemma10_midpoint_candidate at Appendix D, Lemma 10: Appendix D, Lemma 10: midpoint candidate construction.",
+      "source_grounded": true,
+      "statement_sha256": "401f528fd99ad44b97f4517c68474e5c842650d4cce34209a2d8b0282dd95287",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_d_lemma11_denominator_monotonicity": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_d_lemma11_denominator_monotonicity",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_d_lemma11_denominator_monotonicity"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_d_lemma11_denominator_monotonicity at Appendix D, Lemma 11: Appendix D, Lemma 11: fixed-pivot denominator monotonicity.",
+      "source_grounded": true,
+      "statement_sha256": "0190d835d57ecab4f8e086ae44d32d9bed048d54b0e106fc9a0f44e888444cc6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_d_lemma3_unconstrained_baseline": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_d_lemma3_unconstrained_baseline",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_d_lemma3_unconstrained_baseline"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_d_lemma3_unconstrained_baseline at Appendix D, Lemma 3: Appendix D, Lemma 3: unconstrained user-fairness baseline.",
+      "source_grounded": true,
+      "statement_sha256": "0effbd35aab42c363ee8ce5d058c079ee6cd6b2175f778077b0aeb5545915a5a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_d_lemma4_problem6_structure": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_d_lemma4_problem6_structure",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_d_lemma4_problem6_structure"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_d_lemma4_problem6_structure at Appendix D, Lemma 4: Appendix D, Lemma 4: Problem 6 sparse-support structure.",
+      "source_grounded": true,
+      "statement_sha256": "242bc1e7bec25e64ca746d0aa6cb0f436623a928f51fd288befc214edfe9af8a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_d_lemma5_problem6_closed_form": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_d_lemma5_problem6_closed_form",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_d_lemma5_problem6_closed_form"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_d_lemma5_problem6_closed_form at Appendix D, Lemma 5: Appendix D, Lemma 5: Problem 6 closed-form value.",
+      "source_grounded": true,
+      "statement_sha256": "75748d3575cdb8e49c8786099b42b65a2d712de34ca51e37f12c223b494c75ca",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_d_lemma6_mirror_inverse_gap": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_d_lemma6_mirror_inverse_gap",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_d_lemma6_mirror_inverse_gap"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_d_lemma6_mirror_inverse_gap at Appendix D, Lemma 6: Appendix D, Lemma 6: mirror inverse-gap algebra.",
+      "source_grounded": true,
+      "statement_sha256": "173d8dba8a406780986ff946ab606d497ed4c6125ee35101930fb01b4895e6ed",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_d_lemma7_pivot_monotonicity": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_d_lemma7_pivot_monotonicity",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_d_lemma7_pivot_monotonicity"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_d_lemma7_pivot_monotonicity at Appendix D, Lemma 7: Appendix D, Lemma 7: pivot monotonicity.",
+      "source_grounded": true,
+      "statement_sha256": "e5fcbb236109e6377d5db40a773fda61d973874914b525e0300f86b9e4098c50",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_d_lemma8_selected_pivot_stitching": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_d_lemma8_selected_pivot_stitching",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_d_lemma8_selected_pivot_stitching"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_d_lemma8_selected_pivot_stitching at Appendix D, Lemma 8: Appendix D, Lemma 8: selected-pivot interval stitching.",
+      "source_grounded": true,
+      "statement_sha256": "9f2443673bee3259448457121a098f0b526b5847d0f4cdf1e7812367c82438b5",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_d_lemma9_pair_share_algebra": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_d_lemma9_pair_share_algebra",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_d_lemma9_pair_share_algebra"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_d_lemma9_pair_share_algebra at Appendix D, Lemma 9: Appendix D, Lemma 9: the q_j / pair-share algebra.",
+      "source_grounded": true,
+      "statement_sha256": "a75fc8c77b60f76d37fece4c9a11bfd8c3a430226386f712e91e4c21efff64a4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_e_lemma12_symmetrized_policy": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_e_lemma12_symmetrized_policy",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_e_lemma12_symmetrized_policy"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_e_lemma12_symmetrized_policy at Appendix E, Lemma 12: Appendix E, Lemma 12: symmetrized estimated policy optimality.",
+      "source_grounded": true,
+      "statement_sha256": "a843913db4d3729544e65fc1c1383faf052e37e4ea039b1b28897481074afaed",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_e_lemma13_pivot_support": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_e_lemma13_pivot_support",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_e_lemma13_pivot_support"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_e_lemma13_pivot_support at Appendix E, Lemma 13: Appendix E, Lemma 13: Problem 11 pivot-support shape.",
+      "source_grounded": true,
+      "statement_sha256": "cf816861cecdd6c6c22ba91bbfe588fe10ac673fafe5eff570a597223e3b95ad",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_e_lemma14_uniqueness": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_e_lemma14_uniqueness",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_e_lemma14_uniqueness"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_e_lemma14_uniqueness at Appendix E, Lemma 14: Appendix E, Lemma 14: Problem 11 uniqueness/equality-form policy shape.",
+      "source_grounded": true,
+      "statement_sha256": "c203facad23a5f240ea1232d92d69abac78c540e9a06dd616be8fd2c12301b0a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_e_lemma15_closed_formula": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_e_lemma15_closed_formula",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_e_lemma15_closed_formula"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_e_lemma15_closed_formula at Appendix E, Lemma 15: Appendix E, Lemma 15: Problem 11 closed-form lambda formula.",
+      "source_grounded": true,
+      "statement_sha256": "79ca01f5ed7351274f6fe6bb922248ee4423c9e1aba2d90f2e371a18310ae388",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_e_lemma16_midpoint_order_algebra": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_e_lemma16_midpoint_order_algebra",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_e_lemma16_midpoint_order_algebra"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_e_lemma16_midpoint_order_algebra at Appendix E, Lemma 16: Appendix E, Lemma 16: midpoint order algebra for pair shares.",
+      "source_grounded": true,
+      "statement_sha256": "6a7d84c1b1bd40655a47ba0d580262df3e35348ef6fc223dcbc46e41c216b4ed",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_appendix_e_lemma17_no_right_half_support": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_e_lemma17_no_right_half_support",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "appendix_e_lemma17_no_right_half_support"
+      ],
+      "source_evidence": "Source inventory entry source_appendix_e_lemma17_no_right_half_support at Appendix E, Lemma 17: Appendix E, Lemma 17: no right-half known-type support in Problem 11.",
+      "source_grounded": true,
+      "statement_sha256": "e1f331a5d0979666f3f22222b061d1be4a6b846831b5f7bffab1fdd20782b82c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_example1_diverse_item_fairness": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): example1_diverse_favorite_policy_item_fairness",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "example1_diverse_favorite_policy_item_fairness"
+      ],
+      "source_evidence": "Source inventory entry source_example1_diverse_item_fairness at Example 1: Example 1, diverse-preferences toy instance: the same favorite-item policy equalizes item utility at the displayed 10/11 normalized value.",
+      "source_grounded": true,
+      "statement_sha256": "776341db75346ed0369453df17f57be0bbb558e5be0ea1d15082241de43874fe",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_example1_diverse_user_fairness": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): example1_diverse_favorite_policy_user_fairness",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "example1_diverse_favorite_policy_user_fairness"
+      ],
+      "source_evidence": "Source inventory entry source_example1_diverse_user_fairness at Example 1: Example 1, diverse-preferences toy instance: recommending each user her favorite item gives maximal normalized user fairness.",
+      "source_grounded": true,
+      "statement_sha256": "3799b18441450840c61e42e3ce2475bea1c86ed039c0f33d5eb5e0c08c843c9b",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_example1_homogeneous_tradeoff": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): example1_homogeneous_tradeoff_bound",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "example1_homogeneous_tradeoff_bound"
+      ],
+      "source_evidence": "Source inventory entry source_example1_homogeneous_tradeoff at Example 1: Example 1, homogeneous-preferences algebra: the displayed bounds imply the linear normalized user/item fairness tradeoff Umin + Imin <= 1 + epsilon.",
+      "source_grounded": true,
+      "statement_sha256": "19f15f3971cd4ce9f44a60a92bc8b3f31b385cae2bbed309b8e0f463e2dd8946",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_price_decreases_first_half": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_price_decreases_first_half",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3, first half: in the opposing two-type model, increasing `alpha` toward `1 / 2` weakly decreases the price of fairness. The dashboard row `theorem3_price_decreases_first_half` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_price_decreases_first_half"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3, first half: in the opposing two-type model, increasing `alpha` toward `1 / 2` weakly decreases the price of fairness. The dashboard row `theorem3_price_decreases_first_half` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 3, first half: in the opposing two-type model, increasing `alpha` toward `1 / 2` weakly decreases the price of fairness.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_price_decreases_first_half`.",
-      "statement_sha256": "8f42d65db078f052e79250071be74a87bc66092f3f4a988e5f8d9c73794bfa72",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8f42d65db078f052e79250071be74a87bc66092f3f4a988e5f8d9c73794bfa72",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_price_increases_second_half": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_price_increases_second_half",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3, second half: in the opposing two-type model, increasing `alpha` away from `1 / 2` weakly increases the price of fairness. The dashboard row `theorem3_price_increases_second_half` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_price_increases_second_half"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3, second half: in the opposing two-type model, increasing `alpha` away from `1 / 2` weakly increases the price of fairness. The dashboard row `theorem3_price_increases_second_half` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 3, second half: in the opposing two-type model, increasing `alpha` away from `1 / 2` weakly increases the price of fairness.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_price_increases_second_half`.",
-      "statement_sha256": "9da1535a9ad0baf2aa279243a033a809e702e1467b89eb8addaf5335509a2e27",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9da1535a9ad0baf2aa279243a033a809e702e1467b89eb8addaf5335509a2e27",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem4_misestimation_tradeoff_typeOne": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem4_misestimation_tradeoff_typeOne",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4 final tradeoff for the second opposing true type. The dashboard row `theorem4_misestimation_tradeoff_typeOne` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem4_misestimation_tradeoff_typeOne"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4 final tradeoff for the second opposing true type. The dashboard row `theorem4_misestimation_tradeoff_typeOne` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 4 final tradeoff for the second opposing true type.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem4_misestimation_tradeoff_typeOne`.",
-      "statement_sha256": "80d4dac3c02df153f69a64c4f29e96666b66649bd20a32c9e448b91985a84a37",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "80d4dac3c02df153f69a64c4f29e96666b66649bd20a32c9e448b91985a84a37",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem4_misestimation_tradeoff_typeZero": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem4_misestimation_tradeoff_typeZero",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4 final tradeoff, cold-start user whose true row is the first opposing type: without fairness the misestimation price is at most `1/2`, while with maximal item fairness some estimated optimum has misestimation price above `1 - eps`. The dashboard row `theorem4_misestimation_tradeoff_typeZero` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem4_misestimation_tradeoff_typeZero"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4 final tradeoff, cold-start user whose true row is the first opposing type: without fairness the misestimation price is at most `1/2`, while with maximal item fairness some estimated optimum has misestimation price above `1 - eps`. The dashboard row `theorem4_misestimation_tradeoff_typeZero` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Source inventory item: Theorem 4 final tradeoff, cold-start user whose true row is the first opposing type: without fairness the misestimation price is at most `1/2`, while with maximal item fairness some estimated optimum has misestimation price above `1 - eps`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem4_misestimation_tradeoff_typeZero`.",
-      "statement_sha256": "90b77559fe33772813a5155c9dab24fc0a112a8e8588c544ea35830e8576f2ba",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "90b77559fe33772813a5155c9dab24fc0a112a8e8588c544ea35830e8576f2ba",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "userFairness": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "userFairness",
+      "reason": "The source item is the paper-facing statement/formula summarized as: User fairness objective for a recommendation policy. The dashboard row `userFairness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "userFairness"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: User fairness objective for a recommendation policy. The dashboard row `userFairness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. direct source text. Source inventory item: User fairness objective for a recommendation policy.",
-      "dashboard_evidence": "Current human-dashboard row(s): `userFairness`.",
-      "statement_sha256": "8d00cff82ed9a713b0db59d36d23510cf6d2dc11ae14ff1ca95601768bd87cf8",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8d00cff82ed9a713b0db59d36d23510cf6d2dc11ae14ff1ca95601768bd87cf8",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "GCG24UserItemFairness",
+  "paper_statement_inventory_sha256": "242c9126315bcc9c0e7e93510d115ee1ac617fec0f2270a7c59f14494fca4ac5",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "2491fef1e5f7db6eaba3ff313dccc9943dbfb92e0411da51084ec50937317f1f",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T20:39:31Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

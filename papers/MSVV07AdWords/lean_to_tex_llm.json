@@ -1,366 +1,275 @@
 {
-  "comment": "Digest metadata refreshed against the current dashboard statement surface.",
-  "generated_at": "2026-06-28T01:10:04Z",
-  "generator": "gpt-5-codex",
-  "generator_type": "model",
+  "comment": "Regenerated context-free Lean-to-TeX drafts for semantic statement rejudge; every visible binder/hypothesis remains part of the translated surface.",
   "items": {
-    "assumption_alive_bidder_predicate": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "d37a8c90909b564293e75b5200f3b2bf79df2692ef378b4e78313832069f6c7e",
-      "paper_statement_sha256": "3b0a1826c4539f2f9f941dceb20bbc206bccbf95100a21f56c71dafef08d6016",
-      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to (Advertiser \\to Query \\to Prop) \\to Prop"
-    },
-    "assumption_availability_predicate": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "746a3b369cafd54d2d4b3bf1fe6ce188bfea78e8a658cac66ba72afa152b5b1d",
-      "paper_statement_sha256": "bfb815a62b980fecd8d9ac3a45ec8e6d21a2b5542f37d60af4d292d97dbea45d",
-      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to (Advertiser \\to Query \\to Prop) \\to Prop"
-    },
-    "assumption_click_through_rates_probability_bounds": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "5ab1425d44c28ff155b70bf907fe7f937bba0eba14d92362513e29322464ae4e",
-      "paper_statement_sha256": "7a0fb02cc79cc22c687d7e7e46897c1063236b89ab75fd783aefac8676787c05",
-      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to (Advertiser \\to Query \\to \u211d) \\to Prop"
-    },
-    "assumption_epsilon_range": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "9a415c0a07dcd9b82c248d695dc0e87c9979174a4e5dd189847ada5f7290b24d",
-      "paper_statement_sha256": "360154d67328df44ba93cad3001809016db0fdc0f7fddc68c1b8678092eebd1a",
-      "tex_statement": "\u211d \\to Prop"
-    },
-    "assumption_full_distinct_query_history": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "e1ee23f57e293330666a87e6da2e9e0f21139b810b669d6158bb96cd349cb9a4",
-      "paper_statement_sha256": "a9427c9c88776554dc04eff73b60e316c6c1eaaf0914548c550dc331626fb186",
-      "tex_statement": "{Query : Type u_1} \\to [Fintype Query] \\to [DecidableEq Query] \\to List Query \\to Prop"
-    },
-    "assumption_next_highest_alive_small_bids": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "9ca937dc76e75cf7e3c6d9efd8a2a15b139b27586934a1fe6f446a720abff300",
-      "paper_statement_sha256": "b2fba3c7c00b6fdb40b8943cc7011e93c39b05b92116f473a8ea983b19265fe4",
-      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Advertiser] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to (alive : Advertiser \\to Query \\to Prop) \\to [(a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] \\to \u211d \\to Prop"
-    },
-    "assumption_next_highest_all_small_bids": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "cff7b53c743d78817016f9258956e35a995a8314372f4dcc68569a41cb5e4625",
-      "paper_statement_sha256": "05752b5434ad13a3c9b194a115d6e6299ed25d12296dde169511ba4a8809e3de",
-      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Advertiser] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to \u211d \\to Prop"
-    },
-    "assumption_nonnegative_bids": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "6255c44bdec8f4c297db663af78075785d495e84fbc3e7468983791ab9266426",
-      "paper_statement_sha256": "a9f975a1a8857dfaa905fa26de2cee2e4b1eb046a037e5523b33e1d988c1a913",
-      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to PaperInstance Advertiser Query \\to Prop"
-    },
-    "assumption_weighted_bids_nonnegative_weights": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "04da6e1bfd2b3b729b093adba3867f04cda582a41369e6dbd88859f5e7ac3625",
-      "paper_statement_sha256": "645a7c482ead29387e90a584e6a97c8b240c31776ee750e05c5cce359d3d6d69",
-      "tex_statement": "{Advertiser : Type u_1} \\to (Advertiser \\to \u211d) \\to Prop"
-    },
-    "assumption_weighted_effective_small_bids": {
-      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
-      "generated_at": "2026-06-28T01:10:04Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "8163b4d71102286e01d8d1cd12703775153004fb683fd93229c8b46770670d21",
-      "paper_statement_sha256": "584cfacc3de4c457741d2afced347f3858ae8c9c72f7992099667980116f86d7",
-      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to PaperInstance Advertiser Query \\to (Advertiser \\to \u211d) \\to \u211d \\to Prop"
-    },
     "paperBalanceScore_formula": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "14ca2b7409a0453b7781c8f2d84fd263ae098d5e6429fe3f5fc3fa80b1038546",
-      "paper_statement_sha256": "395e6b48a20abb93d38cce0930c49a9cc2f510ce2105fb863becfe2c5a96b283",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query), paperBalanceScore I A a q = bid a q * paperTradeoff (paperSpend I A a / budget a)",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperCanAssign_iff": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "b62735ef732ac02b840647b1f77ffbdda2c8c2545975ce16f0d8572cc28c8bbd",
-      "paper_statement_sha256": "98cffece1bde6f6efd2b1153e551f6e614333c7db1c12d9c4b56ec68f4657fb9",
+      "lean_statement_sha256": "7579e406b05cb53dd152eab225a7507aa1f66b86e5e104df586018111b19650b",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser), paperCanAssign I A q a \\iff paperSpend I A a + bid a q \\le budget a",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperFeasible_iff": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "c297aae2cffdfd7832360db3b612bfb1f001a3d67519b6b0183aabbcc37b8877",
-      "paper_statement_sha256": "84a5fe99aababc80ecd00e2c252421d680e319f952f0adf037bbd223ee3cb074",
+      "lean_statement_sha256": "60335f0b8d975fa0fd6ce5ec6021ac2d0a7b5fe616880e83f60f0556e9ecf51f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query), paperFeasible I A \\iff \\forall (a : Advertiser), paperSpend I A a \\le budget a",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperFractionalFeasible_iff": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "b9458701706a129dc6382ea1193a12dc5c38a2a1f238566063117530ee5f3695",
-      "paper_statement_sha256": "30b1d8c5b0b7272347145d8c625b169cdd1bf815f3b8612c5aafc0f991e77757",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] (I : PaperInstance Advertiser Query) (x : Advertiser \\to Query \\to \u211d), PaperFractionalFeasible I x \\iff (\\forall (a : Advertiser) (q : Query), 0 \\le x a q) \\land (\\forall (q : Query), \\sum a, x a q \\le 1) \\land \\forall (a : Advertiser), \\sum q, bid a q * x a q \\le budget a",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperFractionalRevenue_formula": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "67e7748b313ca961acb123d4deeda4b59f73d8ae760064a7da2fb4dae680ddd4",
-      "paper_statement_sha256": "bdf1fec1c513c39f77df8cbd8fca620740f722133c854462f56f05d93a6e9edc",
+      "lean_statement_sha256": "34350affe920424bcbf8f1fe915f1019abf6df5e0779b7fd8e537cf9ebd673d5",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] (I : PaperInstance Advertiser Query) (x : Advertiser \\to Query \\to \u211d), paperFractionalRevenue I x = \\sum q, \\sum a, bid a q * x a q",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperIsBalanceChoice_iff": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "4519bfd238746e99b56a2b7d12267f21228eda340270e25902a31814854863a5",
-      "paper_statement_sha256": "ab3798bd7530de0f5f6c6aceeb5eeec0966583f716e0c2bd3ce841b989ff5466",
+      "lean_statement_sha256": "350d66678cff4cf8ada7a28bb93ff83f4099102746e08f789556bd18bd0a5825",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] [inst_2 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser), paperIsBalanceChoice I A q a \\iff paperCanAssign I A q a \\land \\forall (b : Advertiser), paperCanAssign I A q b \\to paperBalanceScore I A b q \\le paperBalanceScore I A a q",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperMsvvRatio_formula": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "db7f070c9d174ec417e98b1658f5c6388a2ed6091d405c751526f3432ba88c9a",
-      "paper_statement_sha256": "bae4213b720d54fee7ec2f69ed3345a0673d8475b229def8645e72d2a34ce2be",
+      "lean_statement_sha256": "0dad2735b53871db0fac0c2da3198e1043e3734d1ab5a852163c6cb407a134e1",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "paperMsvvRatio = 1 - 1 / exp 1",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperRevenue_formula": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "770290f36a35f523d2eeffabc440bbe31d22dadf80a6fd0eab60d1b9e6e05fe7",
-      "paper_statement_sha256": "e1136bfc18a7f30dbc3c28bc27f06aa3432175aaaabd43d93e7342ebca0dd44d",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query), paperRevenue I A = \\sum q, match A q with | none  =>  0 | some a  =>  bid a q",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperSlotsPerPageDistinct_iff": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "b687e201b3e81daa02b9e59d0da9d5eb586ea87d6ff4c9e9124e0fedaab6cba9",
-      "paper_statement_sha256": "0e08a36ecf5d6e882288355dbced62d86e8a097df24ff8475c6c18fb1bdc89f2",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (Slot : Query \\to Type u_3) (A : PaperAssignment Advertiser ((q : Query) \u00d7 Slot q)), paperSlotsPerPageDistinct Slot A \\iff \\forall (q : Query) (s\u2081 s\u2082 : Slot q) (a : Advertiser), A \u27e8q, s\u2081\u27e9 = some a \\to A \u27e8q, s\u2082\u27e9 = some a \\to s\u2081 = s\u2082",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperSmallBidsLimitFamily_fields": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "9808943f59d0bbc823a7478f8f60b41353e651e0d847067808ea05da3cbdebcd",
-      "paper_statement_sha256": "a61e6108077101f066d3ef40fc50ed5e4310e41bdd5022434569e66913e4f572",
+      "lean_statement_sha256": "672fb596eb77c9f9beebad6ca6c80aceff4603bc63a2ce93c96935c1da2079c8",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : DecidableEq Advertiser] (F : PaperSmallBidsLimitFamily Advertiser), (\\forall (k : \u2115), NonnegativeBids (instanceAt k)) \\land (\\forall (k : \u2115), PositiveBudgets (instanceAt k)) \\land (\\forall (k : \u2115), 0 < \\sum q, maxBidForQuery (instanceAt k) q) \\land (\\forall (delta : \u211d), 0 < delta \\to \\exists N, \\forall (k : \u2115), N \\le k \\to paperSmallBids (instanceAt k) (min 1 (delta / ((exp 1 + 1) * \\sum q, maxBidForQuery (instanceAt k) q)))) \\land SeqTendsTo (fun k  =>  offlineOptimumValue (instanceAt k) \u22ef) optLimit \\land SeqTendsTo (fun k  =>  revenue (instanceAt k) (runAssignment (instanceAt k) (balanceChoiceRule (instanceAt k)) (finRange (queryCount k)))) revenueLimit",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperSmallBids_iff": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "e03a9cebd719cfb96d10291a6ce1458fcda851fff0c7cff4b2e78bd4a78e1d82",
-      "paper_statement_sha256": "be4f216a813324ae2e1b48bc861859dfe40be6c346fd10f63c33e806aff49666",
+      "lean_statement_sha256": "c3f543828b4962a85c559e78dc2431231d9daf4d8555c636aaa4c90293225fb2",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (I : PaperInstance Advertiser Query) (epsilon : \u211d), paperSmallBids I epsilon \\iff \\forall (a : Advertiser) (q : Query), bid a q \\le epsilon * budget a",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperSpend_formula": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "c735bac78aede432dc556c38056b95fdc5693ad6c3e9ff622dc83b64775a38b7",
-      "paper_statement_sha256": "b248d226d731f63ea15fa2a5aef4ec1b2c19e5300c61cc9e62568980c983ba6f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (a : Advertiser), paperSpend I A a = \\sum q, match A q with | none  =>  0 | some a'  =>  if a' = a then bid a q else 0",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paperTradeoff_formula": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "7942dc0bcf2f23f87418d9c03aa85463da15408b47ccfccae366e43bdbbf748f",
-      "paper_statement_sha256": "5c4792e13a51e446b4ee1337b88bd8da79c53e5297cd6244d37c5ffc2adfe0d7",
+      "lean_statement_sha256": "37c6ed0998fa6953d269672c9844e72938966a99d37e0c6ddf469559097f7dd1",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall (s : \u211d), paperTradeoff s = 1 - exp (s - 1)",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "section4_lemma1_balance_pays_no_later_slab": {
+      "lean_statement_sha256": "0da0f9d610a5728a90271f27ac2f18217667b0ccb8dbb3edd608e14b7ab1a07f",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\text{Equal bids and the Balance choice inequality imply the chosen slab is no later than the OPT type.}",
+      "translated_at": "2026-06-29T21:25:00Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "section4_lemma2_factor_revealing_lp_constraint": {
+      "lean_statement_sha256": "0be05e69401c96ea964ea0ef565085633f688860fc10f662c7cb0326787150fd",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\text{Prefix-cover accounting and the beta-prefix identity imply the factor-revealing LP row constraint.}",
+      "translated_at": "2026-06-29T21:25:00Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "section4_lemma3_factor_revealing_lp_optimality": {
+      "lean_statement_sha256": "435960d9b7f88619c2b38aaf828697d91180b332244fe11b514543466ef697c3",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\operatorname{SeqTendsTo}\\bigl(k \\mapsto N(1-1/k)^k,\\; N/e\\bigr)",
+      "translated_at": "2026-06-29T21:25:00Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "section5_lemma4_dual_optimal_from_primal_dual_match": {
+      "lean_statement_sha256": "e675d997674618c1c776b0f22f4504786bd1560f7ee4f8cdec831c808825f0ba",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\text{Weak duality plus matching feasible primal/dual objectives certifies dual optimality.}",
+      "translated_at": "2026-06-29T21:25:00Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "section5_lemma5_tradeoff_rhs_eq_base_add_delta": {
+      "lean_statement_sha256": "982e884452526c70f981d0060111bef3ff5110468aa8065ea2118e465e00b0c9",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\text{The tradeoff-revealing LP row equals the base right side plus the paper delta term.}",
+      "translated_at": "2026-06-29T21:25:00Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "section5_lemma6_per_query_tradeoff": {
+      "lean_statement_sha256": "c2762381677b696fbdf7f5e0d10cd0d0b7f83638e92b20a55a1c47b1fb3164cc",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\text{Antitone tradeoff weights and the Balance choice inequality imply the per-query ALG/OPT tradeoff.}",
+      "translated_at": "2026-06-29T21:25:00Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "section5_lemma7_weighted_perturbation_bound": {
+      "lean_statement_sha256": "40dc8222d07d1de07add77ab899a6378c9b1a6ab9ea48df0a8dfbff232e824f3",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+      "tex_statement": "\\sum_i \\psi_i(\\alpha_i-\\beta_i) \\le \\text{finalSlabError}",
+      "translated_at": "2026-06-29T21:25:00Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "section6_availability_theorem8_finite_explicit_error": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "f788eb8f27f8061902cf5c5a1b455efa821c4984df327f18c5a6aaa959453d8c",
-      "paper_statement_sha256": "88b8baa33c95123b42403f2316fc2603669de65deedacd69e9e17011f674eee5",
+      "lean_statement_sha256": "5eb3668a8c66bcdd155735ecd87608bdacf31c13b27c8c69f6a26b601293c22c",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (available : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (available a q)], NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withAvailability I available).offlineOptimumValue \u22ef \\le (withAvailability I available).revenue ((withAvailability I available).runAssignment (withAvailability I available).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAvailability I available).maxBidForQuery q",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "section6_click_through_rates_theorem8_finite_explicit_error": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "a32eb56f53df120ae6d7db86da97771528b8aa9020aa3d28dc2eef88e1b070ab",
-      "paper_statement_sha256": "3242b4c2b841018f4caa8b266783484d163c9979e21352a9a2631a86f3413055",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (ctr : Advertiser \\to Query \\to \u211d), (\\forall (a : Advertiser) (q : Query), 0 \\le ctr a q) \\to (\\forall (a : Advertiser) (q : Query), ctr a q \\le 1) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withClickThroughRates I ctr).offlineOptimumValue \u22ef \\le (withClickThroughRates I ctr).revenue ((withClickThroughRates I ctr).runAssignment (withClickThroughRates I ctr).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withClickThroughRates I ctr).maxBidForQuery q",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "16ee595f179dd7b80dc18a9fd88e479fe97a41a145fc8ace388074970faa896a",
-      "paper_statement_sha256": "320d032d558c848ce0c2b01e27cd6456b2c677481c31ba37f171d13462bdc88b",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * offlineOptimumValue I \u22ef \\le paperRevenue I (runAssignment I (balanceChoiceRule I) history) + epsilon * (exp 1 + 1) * \\sum q, maxBidForQuery I q",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "section6_next_highest_bid_alive_formula": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "1c5bd9de49c28fb6f994ad654135a75567be7cbf8b7783c60f4f2c6601def41e",
-      "paper_statement_sha256": "14664b15d69f57fde448d0b1f1d670f90b5444130b7ccc65cb39c72fff66d9de",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (alive : Advertiser \\to Query \\to Prop) [inst_2 : (a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] (a : Advertiser) (q : Query), section6_next_highest_bid_alive I alive a q = have others := {b \\in erase a | alive b q}; if h : Nonempty then max 0 (sup' h fun b  =>  bid b q) else 0",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "section6_next_highest_bid_alive_theorem8_finite_explicit_error": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "cdb07b57afa5e453b72108d8ff3d005896a77eed003b58429421c7588e20fbb4",
-      "paper_statement_sha256": "55ca76afa4e54230f54a60e91983500c520433d1aea8a7e83924350672f83860",
+      "lean_statement_sha256": "22f20b3a8953cf646bd5c222d11e1b1ee07c3fb77cf7b52d0ea4390737618e57",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (alive : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), section6_next_highest_bid_alive I alive a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I (section6_next_highest_bid_alive I alive)).offlineOptimumValue \u22ef \\le paperRevenue (withEffectiveBids I (section6_next_highest_bid_alive I alive)) ((withEffectiveBids I (section6_next_highest_bid_alive I alive)).runAssignment (withEffectiveBids I (section6_next_highest_bid_alive I alive)).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I (section6_next_highest_bid_alive I alive)).maxBidForQuery q",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "section6_next_highest_bid_all_formula": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "6c9c5172069f96f2b855663a03fa95669a0c4ccf94a70d5fc5b3326d4cd77fcc",
-      "paper_statement_sha256": "a330f887a9b31810e6b6787523a24c5bd65f1fad6369fe494b4d97fdad73f6b6",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (a : Advertiser) (q : Query), section6_next_highest_bid_all I a q = have others := erase a; if h : Nonempty then max 0 (sup' h fun b  =>  bid b q) else 0",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "section6_next_highest_bid_all_theorem8_finite_explicit_error": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "463d007c596d083b101774ec9ad805b1baa52d78474190bc1ce07d983dd55ce0",
-      "paper_statement_sha256": "25f32ef9eb013b7a135229db4b374ce8b7e53e1e5fd5194275b5bc71ed0f7529",
+      "lean_statement_sha256": "2fdbbee4b32828961eef3abb585780cdac78695a2d39daaf772334cacb86720d",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), section6_next_highest_bid_all I a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I (section6_next_highest_bid_all I)).offlineOptimumValue \u22ef \\le paperRevenue (withEffectiveBids I (section6_next_highest_bid_all I)) ((withEffectiveBids I (section6_next_highest_bid_all I)).runAssignment (withEffectiveBids I (section6_next_highest_bid_all I)).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I (section6_next_highest_bid_all I)).maxBidForQuery q",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "section6_page_top_balance_theorem8_finite_explicit_error": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "31782a82f8350758ed9f56da93b0fea2548c72e4fa8df4e22d5f6bd06ffb9b82",
-      "paper_statement_sha256": "816ba031fca719556c9fdfee8cdb93ef747d2f1b35704d20db90a87a5f4e2b62",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (slots : Query \\to \u2115), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * pageOfflineOptimumValue I slots \u22ef \\le pageRevenue I (runPageAssignment I slots (pageTopBalanceRule I slots) history) + epsilon * (exp 1 + 1) * pageHistoryMaxBidSum I slots history",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "10a15a2a6cc9d7256611f76539acd3413340a95649ef9d132f8228ed1b036310",
-      "paper_statement_sha256": "3b3261240cd78c6ddc8fd3e0bfcf9ff3aa0bf6a72b402ff8373d8f2a4b7a2786",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (weight : Advertiser \\to \u211d), (\\forall (a : Advertiser), 0 \\le weight a) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), weight a * bid a q \\le epsilon * budget a) \\to paperMsvvRatio * (withAdvertiserWeights I weight).offlineOptimumValue \u22ef \\le (withAdvertiserWeights I weight).revenue ((withAdvertiserWeights I weight).runAssignment (withAdvertiserWeights I weight).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAdvertiserWeights I weight).maxBidForQuery q",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem8_balance_msvv_competitive_of_small_bids_limit_family": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "95a72f34c9dc6c29a1df0b42d84c394487c38f6103ffa71095a65231d3028e4c",
-      "paper_statement_sha256": "c36a32652a591b11ed6ae6e2602f25af2be4842faed7114a07f06ed515e919e0",
+      "lean_statement_sha256": "13f9676b65d7c8c90edb4653345429e9af8f1c35e483934a79e2ac1aae3077fe",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Advertiser : Type u_1} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : DecidableEq Advertiser] (F : PaperSmallBidsLimitFamily Advertiser), paperMsvvRatio * optLimit \\le revenueLimit",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem9CappedNormalizedRevenue_formula": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "678ffe679e6e92959efdc698df435c88565396438d9c66e792fd72dbc6e4f47e",
-      "paper_statement_sha256": "de391faeaf871b6c249041a67762cc90ffcbe3a13fa53c04f01fd1aded20f3b6",
+      "lean_statement_sha256": "096f80d9a7054decb3a819ae9217a7285016ecfa66f73b1c73e5ac2b04a8765a",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall (N : \u2115) (algorithm : theorem9IntegralPrefixAlgorithm N) (permutation : Perm (Fin N)), theorem9CappedNormalizedRevenue N algorithm permutation = (\\sum bidder, min 1 (\\sum round, prefixAllocation algorithm (theorem9ObservedPrefix N permutation round) round (permutation bidder))) / \u2191N",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem9HardDistribution_uniform": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
-      "lean_statement_sha256": "caf95346946ff591e04b886fc32f300a3d1f36034b791fdd1121a0410d5dcd2c",
-      "paper_statement_sha256": "2b3473368866d77a76e7e22749d15e2594fe9bca42d02a10670cb160c775473a",
+      "lean_statement_sha256": "33efe7295a20b956bbb0b84549e27d5edae84a80891d3eac758d9cd971734dc4",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall (N : \u2115), theorem9HardDistribution N = uniformPermutationDistribution N",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem9_no_randomized_online_algorithm_beats_msvv_ratio": {
-      "comment": "Digest metadata refreshed against the source declaration text; TeX text preserved.",
-      "generated_at": "2026-06-13T21:43:40Z",
-      "generator": "gpt-5-codex",
-      "generator_type": "model",
       "lean_statement_sha256": "62755f7019c00d1e6686eb38a244b32c490a9149a6221b5d6e6836412480feb3",
-      "paper_statement_sha256": "6cd6d9e9638b593a3d6f4c1300a90ff539e79afb2455bcbf213d678b36b59a7d",
+      "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall (delta : \u211d), 0 < delta \\to \\exists N0, \\forall (N : \u2115), N0 \\le N \\to \\forall (randomizedAlgorithm : theorem9RandomizedOnlineAlgorithm N), \\lnot\\forall (permutation : Perm (Fin N)), paperMsvvRatio + delta < pmfExp randomizedAlgorithm fun algorithm  =>  theorem9CappedNormalizedRevenue N algorithm permutation",
-      "validated_at": "2026-06-29T07:14:13Z"
+      "translated_at": "2026-06-29T18:08:26Z",
+      "translator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
   },
   "paper": "MSVV07AdWords",
-  "prompt_summary": [
-    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
-    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
-    "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
-  ],
-  "prompt_version": "lean-to-tex-v2-strict-context-free",
-  "schema": 1
+  "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+  "schema": 1,
+  "translated_at": "2026-06-29T18:08:26Z",
+  "translator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

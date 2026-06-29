@@ -1,107 +1,127 @@
 {
-  "schema": 1,
-  "paper": "GS62CollegeAdmissions",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "5c5d99b14c6ca01ec4251bf41c9635d15c58727d1e232fe6d0a8700c9a9324c6",
-  "review_surface_sha256": "58790df1c9c0d51c9e2e0700278d3be663faeed4340424445042607599de23cf",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
     "applicantOptimalStableMarriage": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "applicantOptimalStableMarriage",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Applicant/proposer optimal stable marriage: every proposer weakly prefers this stable marriage to any other stable marriage. The dashboard row `applicantOptimalStableMarriage` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "applicantOptimalStableMarriage"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Applicant/proposer optimal stable marriage: every proposer weakly prefers this stable marriage to any other stable marriage. The dashboard row `applicantOptimalStableMarriage` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Gale-Shapley 1962 from prior source audit; no redistributable local source text tracked in this repo. Source inventory item: Applicant/proposer optimal stable marriage: every proposer weakly prefers this stable marriage to any other stable marriage.",
-      "dashboard_evidence": "Current human-dashboard row(s): `applicantOptimalStableMarriage`.",
-      "statement_sha256": "ef3667040636fe2adb4d0e0b1262ebb3e49f4910cbc9af25504ac7b44c21757e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ef3667040636fe2adb4d0e0b1262ebb3e49f4910cbc9af25504ac7b44c21757e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "college_admissions_stable_assignment_exists": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "college_admissions_stable_assignment_exists",
+      "reason": "The source item is the paper-facing statement/formula summarized as: College-admissions theorem: finite applicants and colleges with arbitrary quotas and applicant/college utilities admit a stable many-to-one assignment. The dashboard row `college_admissions_stable_assignment_exists` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "college_admissions_stable_assignment_exists"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: College-admissions theorem: finite applicants and colleges with arbitrary quotas and applicant/college utilities admit a stable many-to-one assignment. The dashboard row `college_admissions_stable_assignment_exists` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Gale-Shapley 1962 from prior source audit; no redistributable local source text tracked in this repo. Source inventory item: College-admissions theorem: finite applicants and colleges with arbitrary quotas and applicant/college utilities admit a stable many-to-one assignment.",
-      "dashboard_evidence": "Current human-dashboard row(s): `college_admissions_stable_assignment_exists`.",
-      "statement_sha256": "c5b6b154030e8b9835926d0f73662296c20c7fa2ee27ad5eff826522ab731c7e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "c5b6b154030e8b9835926d0f73662296c20c7fa2ee27ad5eff826522ab731c7e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "completeMarriage": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "completeMarriage",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Complete marriage: every participant is matched. The dashboard row `completeMarriage` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "completeMarriage"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Complete marriage: every participant is matched. The dashboard row `completeMarriage` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Gale-Shapley 1962 from prior source audit; no redistributable local source text tracked in this repo. Source inventory item: Complete marriage: every participant is matched.",
-      "dashboard_evidence": "Current human-dashboard row(s): `completeMarriage`.",
-      "statement_sha256": "8de216e58e249b7f4ed25bb821e21031e530d92b1f68df9b2fee3c39c30ad7ea",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8de216e58e249b7f4ed25bb821e21031e530d92b1f68df9b2fee3c39c30ad7ea",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "stableMarriage": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "stableMarriage",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Stable marriage: individual rationality for both sides and no blocking pair. The dashboard row `stableMarriage` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "stableMarriage"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Stable marriage: individual rationality for both sides and no blocking pair. The dashboard row `stableMarriage` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Gale-Shapley 1962 from prior source audit; no redistributable local source text tracked in this repo. Source inventory item: Stable marriage: individual rationality for both sides and no blocking pair.",
-      "dashboard_evidence": "Current human-dashboard row(s): `stableMarriage`.",
-      "statement_sha256": "bb38fb8823aa7c84d187190b3cbf079ece3deeef7f3f0316110e9241064fcd98",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "bb38fb8823aa7c84d187190b3cbf079ece3deeef7f3f0316110e9241064fcd98",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "strictMarriageDomain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "strictMarriageDomain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Strict marriage domain: both sides have strict preferences and every possible man-woman pair is acceptable. The dashboard row `strictMarriageDomain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "strictMarriageDomain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Strict marriage domain: both sides have strict preferences and every possible man-woman pair is acceptable. The dashboard row `strictMarriageDomain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Gale-Shapley 1962 from prior source audit; no redistributable local source text tracked in this repo. Source inventory item: Strict marriage domain: both sides have strict preferences and every possible man-woman pair is acceptable.",
-      "dashboard_evidence": "Current human-dashboard row(s): `strictMarriageDomain`.",
-      "statement_sha256": "6050f7957d7e8956cee1412ee5f51097d2ed262f75e71ff2e5b9ca3b47aa4c9a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6050f7957d7e8956cee1412ee5f51097d2ed262f75e71ff2e5b9ca3b47aa4c9a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_stable_marriage_exists": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_stable_marriage_exists",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1: on the strict equal-cardinality marriage domain, a stable complete marriage exists. The dashboard row `theorem1_stable_marriage_exists` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_stable_marriage_exists"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1: on the strict equal-cardinality marriage domain, a stable complete marriage exists. The dashboard row `theorem1_stable_marriage_exists` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Gale-Shapley 1962 from prior source audit; no redistributable local source text tracked in this repo. direct paper statement. Source inventory item: Theorem 1: on the strict equal-cardinality marriage domain, a stable complete marriage exists.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_stable_marriage_exists`.",
-      "statement_sha256": "e36348b35e1cf1b6ed110dca15eea4979fd3bd8c30106288fb07dec27dca185c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e36348b35e1cf1b6ed110dca15eea4979fd3bd8c30106288fb07dec27dca185c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_applicant_optimality": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2_applicant_optimality",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2: on the finite equal-cardinality strict marriage domain, the applicant-proposing deferred-acceptance assignment is complete and applicant-optimal among stable assignments. The dashboard row `theorem2_applicant_optimality` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2_applicant_optimality"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2: on the finite equal-cardinality strict marriage domain, the applicant-proposing deferred-acceptance assignment is complete and applicant-optimal among stable assignments. The dashboard row `theorem2_applicant_optimality` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Gale-Shapley 1962 from prior source audit; no redistributable local source text tracked in this repo. direct paper statement. Source inventory item: Theorem 2: on the finite equal-cardinality strict marriage domain, the applicant-proposing deferred-acceptance assignment is complete and applicant-optimal among stable assignments.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_applicant_optimality`.",
-      "statement_sha256": "04750f18e782d3d38540ca8e90ebb63baa06ebf0dfb99cebc8ce185611016c04",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "04750f18e782d3d38540ca8e90ebb63baa06ebf0dfb99cebc8ce185611016c04",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "GS62CollegeAdmissions",
+  "paper_statement_inventory_sha256": "5c5d99b14c6ca01ec4251bf41c9635d15c58727d1e232fe6d0a8700c9a9324c6",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "58790df1c9c0d51c9e2e0700278d3be663faeed4340424445042607599de23cf",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

@@ -108,7 +108,11 @@
       "statement": "-\nTheorem 1 / Appendix Theorem 2, preferred source-assumption factorization\nform: given a homogeneous Poisson process via mathlib Poisson increment laws\nplus Condition 1/2 source assumptions, any observed zero/one/multi-report\nwindow case has likelihood equal to a rate-independent residual times the\nPoisson count PMF.",
       "source_url": "https://arxiv.org/pdf/2204.08620; published article: https://doi.org/10.1038/s43588-023-00572-6",
       "source_location": "Main text Theorem 1 likelihood decomposition",
-      "aliases": []
+      "aliases": [
+        "Theorem2PrimitiveSourceModel",
+        "assumption_theorem2_poisson_process_and_conditions",
+        "theorem2_poisson_process_and_condition_semantics"
+      ]
     },
     "theorem1_likelihood_product_decomposition_from_poisson_increment_laws": {
       "statement": "-\nTheorem 1 finite-product form from mathlib Poisson increment laws: under the\npaper's homogeneous Poisson process plus Condition 1/2 source assumptions, a\nfinite product of observed zero/one/multi-report window cases collapses to one\ntotal-count Poisson PMF, up to a rate-independent residual.",

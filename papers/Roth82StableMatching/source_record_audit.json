@@ -1,0 +1,1065 @@
+{
+  "boundary_input_count": 0,
+  "boundary_input_items": [],
+  "configured_review_row_count": 29,
+  "expected_field_judgment_keys": [],
+  "expected_input_judgment_keys": [],
+  "import_module": "Roth82StableMatching.PaperInterface",
+  "lean_check": {
+    "command": "lake build Roth82StableMatching.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "Roth82StableMatching.PaperInterface.preferenceProfile.{u, v} (M : Type u) (W : Type v) : Type (max u v)\n'Roth82StableMatching.PaperInterface.preferenceProfile' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.completeMarriageOutcome.{u_1, u_2} {M : Type u_1} {W : Type u_2}\n  (mu : EconCSLib.Matching.Assignment M W) : Prop\n'Roth82StableMatching.PaperInterface.completeMarriageOutcome' does not depend on any axioms\nRoth82StableMatching.PaperInterface.stable.{u_1, u_2} {M : Type u_1} {W : Type u_2} (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) (mu : EconCSLib.Matching.Assignment M W) : Prop\n'Roth82StableMatching.PaperInterface.stable' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.strictMarriageDomain.{u_1, u_2} {M : Type u_1} {W : Type u_2} (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) : Prop\n'Roth82StableMatching.PaperInterface.strictMarriageDomain' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.stableOutcomes.{u_1, u_2} {M : Type u_1} {W : Type u_2} (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) : Set (EconCSLib.Matching.Assignment M W)\n'Roth82StableMatching.PaperInterface.stableOutcomes' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.menOptimal.{u_1, u_2} {M : Type u_1} {W : Type u_2} (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) (mu : EconCSLib.Matching.Assignment M W) : Prop\n'Roth82StableMatching.PaperInterface.menOptimal' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.womenOptimal.{u_1, u_2} {M : Type u_1} {W : Type u_2} (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) (mu : EconCSLib.Matching.Assignment M W) : Prop\n'Roth82StableMatching.PaperInterface.womenOptimal' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.possibleForMan.{u_1, u_2} {M : Type u_1} {W : Type u_2} (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) (m : M) (w : W) : Prop\n'Roth82StableMatching.PaperInterface.possibleForMan' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.stableMatchingProcedure.{u_1, u_2} {M : Type u_1} {W : Type u_2}\n  (mechanism : (M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 EconCSLib.Matching.Assignment M W) : Prop\n'Roth82StableMatching.PaperInterface.stableMatchingProcedure' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.truthfulForAllAgents.{u_1, u_2} {M : Type u_1} {W : Type u_2} [DecidableEq M]\n  [DecidableEq W] (mechanism : (M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 EconCSLib.Matching.Assignment M W) : Prop\n'Roth82StableMatching.PaperInterface.truthfulForAllAgents' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.menDeferredAcceptance.{u_1, u_2} {M : Type u_1} {W : Type u_2} [Fintype M]\n  [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) :\n  EconCSLib.Matching.Assignment M W\n'Roth82StableMatching.PaperInterface.menDeferredAcceptance' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.womenDeferredAcceptance.{u_1, u_2} {M : Type u_1} {W : Type u_2} [Fintype M]\n  [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) :\n  EconCSLib.Matching.Assignment M W\n'Roth82StableMatching.PaperInterface.womenDeferredAcceptance' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.paretoOptimal.{u_1, u_2} {M : Type u_1} {W : Type u_2} (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) (mu : EconCSLib.Matching.Assignment M W) : Prop\n'Roth82StableMatching.PaperInterface.paretoOptimal' depends on axioms: [propext, Classical.choice, Quot.sound]\nRoth82StableMatching.PaperInterface.efficientMatchingProcedure.{u_1, u_2} {M : Type u_1} {W : Type u_2}\n  (mechanism : (M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 EconCSLib.Matching.Assignment M W) : Prop\n'Roth82StableMatching.PaperInterface.efficientMatchingProcedure' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.serialDictatorshipMechanism_matches {n : \u2115} (val_m val_w : Fin n \u2192 Fin n \u2192 \u211d)\n  (m w : Fin n) :\n  (PaperInterface.serialDictatorshipMechanism val_m val_w).m_match m = some ((paper_serial_dictatorship_perm val_m) m) \u2227\n    (PaperInterface.serialDictatorshipMechanism val_m val_w).w_match w =\n      some ((Equiv.symm (paper_serial_dictatorship_perm val_m)) w)\n'Roth82StableMatching.PaperInterface.serialDictatorshipMechanism_matches' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.manReportStrictlyRanksPartnerFirst.{u_1} {W : Type u_1} (report_m : W \u2192 \u211d)\n  (partner : Option W) : Prop\n'Roth82StableMatching.PaperInterface.manReportStrictlyRanksPartnerFirst' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.reportMisrepresentsKthChoice.{u_1} {A : Type u_1} [Fintype A] [DecidableEq A]\n  (true_score report_score : A \u2192 \u211d) (k : \u2115) : Prop\n'Roth82StableMatching.PaperInterface.reportMisrepresentsKthChoice' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.theorem1_stable_complete_outcome_exists_on_strict_marriage_domain.{u_1, u_2}\n  {M : Type u_1} {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) (hcard : Fintype.card M = Fintype.card W)\n  (hdomain : PaperInterface.strictMarriageDomain val_m val_w) :\n  \u2203 mu, PaperInterface.stable val_m val_w mu \u2227 PaperInterface.completeMarriageOutcome mu\n'Roth82StableMatching.PaperInterface.theorem1_stable_complete_outcome_exists_on_strict_marriage_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.theorem2_optimal_stable_outcomes_on_strict_marriage_domain.{u_1, u_2} {M : Type u_1}\n  {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n  (hdomain : PaperInterface.strictMarriageDomain val_m val_w) :\n  (\u2203 mu, PaperInterface.menOptimal val_m val_w mu) \u2227 \u2203 nu, PaperInterface.womenOptimal val_m val_w nu\n'Roth82StableMatching.PaperInterface.theorem2_optimal_stable_outcomes_on_strict_marriage_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.theorem4_serial_dictatorship_constructed {n : \u2115} :\n  (\u2200 (val_m val_w : Fin n \u2192 Fin n \u2192 \u211d),\n      (\u2200 (m w w' : Fin n), val_m m w = val_m m w' \u2192 w = w') \u2192\n        PaperInterface.paretoOptimal val_m val_w (PaperInterface.serialDictatorshipMechanism val_m val_w)) \u2227\n    (\u2200 (val_m val_w : Fin n \u2192 Fin n \u2192 \u211d),\n        (\u2200 (m w w' : Fin n), val_m m w = val_m m w' \u2192 w = w') \u2192\n          \u2200 (m : Fin n) (report_m : Fin n \u2192 \u211d),\n            (match (PaperInterface.serialDictatorshipMechanism (Function.update val_m m report_m) val_w).m_match m with\n              | none => 0\n              | some w => val_m m w) \u2264\n              match (PaperInterface.serialDictatorshipMechanism val_m val_w).m_match m with\n              | none => 0\n              | some w => val_m m w) \u2227\n      \u2200 (val_m val_w : Fin n \u2192 Fin n \u2192 \u211d) (w : Fin n) (report_w : Fin n \u2192 \u211d),\n        (match (PaperInterface.serialDictatorshipMechanism val_m (Function.update val_w w report_w)).w_match w with\n          | none => 0\n          | some m => val_w w m) \u2264\n          match (PaperInterface.serialDictatorshipMechanism val_m val_w).w_match w with\n          | none => 0\n          | some m => val_w w m\n'Roth82StableMatching.PaperInterface.theorem4_serial_dictatorship_constructed' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.theorem5_optimal_side_truthful_on_strict_domain_of_card_eq.{u_1, u_2} {M : Type u_1}\n  {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) :\n  Fintype.card M = Fintype.card W \u2192\n    PaperInterface.strictMarriageDomain val_m val_w \u2192\n      (\u2200 (m : M) (report_m : W \u2192 \u211d),\n          (match (PaperInterface.menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m with\n            | none => 0\n            | some w => val_m m w) \u2264\n            match (PaperInterface.menDeferredAcceptance val_m val_w).m_match m with\n            | none => 0\n            | some w => val_m m w) \u2227\n        \u2200 (w : W) (report_w : M \u2192 \u211d),\n          (match (PaperInterface.womenDeferredAcceptance val_m (Function.update val_w w report_w)).w_match w with\n            | none => 0\n            | some m => val_w w m) \u2264\n            match (PaperInterface.womenDeferredAcceptance val_m val_w).w_match w with\n            | none => 0\n            | some m => val_w w m\n'Roth82StableMatching.PaperInterface.theorem5_optimal_side_truthful_on_strict_domain_of_card_eq' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.corollary5_1_no_need_to_misrepresent_first_choice.{u_1, u_2} {M : Type u_1}\n  {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] [Nonempty M] [Nonempty W] :\n  (\u2200 (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d),\n      PaperInterface.strictMarriageDomain val_m val_w \u2192\n        \u2200 (w : W) (report_w : M \u2192 \u211d),\n          \u2203 report_w',\n            (\u2200 (mstar : M),\n                (\u2200 (m : M), m \u2260 mstar \u2192 val_w w m < val_w w mstar) \u2192\n                  \u2200 (m : M), m \u2260 mstar \u2192 report_w' m < report_w' mstar) \u2227\n              (match (PaperInterface.menDeferredAcceptance val_m (Function.update val_w w report_w)).w_match w with\n                | none => 0\n                | some m => val_w w m) \u2264\n                match (PaperInterface.menDeferredAcceptance val_m (Function.update val_w w report_w')).w_match w with\n                | none => 0\n                | some m => val_w w m) \u2227\n    \u2200 (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d),\n      PaperInterface.strictMarriageDomain val_m val_w \u2192\n        \u2200 (m : M) (report_m : W \u2192 \u211d),\n          \u2203 report_m',\n            (\u2200 (wstar : W),\n                (\u2200 (w : W), w \u2260 wstar \u2192 val_m m w < val_m m wstar) \u2192\n                  \u2200 (w : W), w \u2260 wstar \u2192 report_m' w < report_m' wstar) \u2227\n              (match (PaperInterface.womenDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m with\n                | none => 0\n                | some w => val_m m w) \u2264\n                match (PaperInterface.womenDeferredAcceptance (Function.update val_m m report_m') val_w).m_match m with\n                | none => 0\n                | some w => val_m m w\n'Roth82StableMatching.PaperInterface.corollary5_1_no_need_to_misrepresent_first_choice' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.lemma1_strict_simple_misrepresentation_same_partner.{u_1, u_2} {M : Type u_1}\n  {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) (m : M)\n  (report_m simple_report_m : W \u2192 \u211d) (wstar : W)\n  (hdomainSimple : PaperInterface.strictMarriageDomain (Function.update val_m m simple_report_m) val_w)\n  (hyPartner : (PaperInterface.menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m = some wstar)\n  (hfirst : \u2200 (w : W), w \u2260 wstar \u2192 simple_report_m w < simple_report_m wstar) :\n  (PaperInterface.menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m =\n    (PaperInterface.menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m\n'Roth82StableMatching.PaperInterface.lemma1_strict_simple_misrepresentation_same_partner' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain.{u_1, u_2}\n  {M : Type u_1} {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) (m : M) (simple_report_m : W \u2192 \u211d) (ystar : W) (hcard : Fintype.card M = Fintype.card W)\n  (hdomain : PaperInterface.strictMarriageDomain val_m val_w)\n  (hdomainReport : PaperInterface.strictMarriageDomain (Function.update val_m m simple_report_m) val_w)\n  (hy : (PaperInterface.menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m = some ystar)\n  (hweakM :\n    (match (PaperInterface.menDeferredAcceptance val_m val_w).m_match m with\n      | none => 0\n      | some w => val_m m w) \u2264\n      match (PaperInterface.menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m with\n      | none => 0\n      | some w => val_m m w)\n  (hfirst : PaperInterface.manReportStrictlyRanksPartnerFirst simple_report_m (some ystar)) (m' : M) :\n  (match (PaperInterface.menDeferredAcceptance val_m val_w).m_match m' with\n    | none => 0\n    | some w => val_m m' w) \u2264\n    match (PaperInterface.menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m' with\n    | none => 0\n    | some w => val_m m' w\n'Roth82StableMatching.PaperInterface.lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.PaperInterface.theorem6_weak_pareto_for_men_on_strict_marriage_domain.{u_1, u_2} {M : Type u_1}\n  {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] [Nonempty M] (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) (hcard : Fintype.card M = Fintype.card W)\n  (hdomain : PaperInterface.strictMarriageDomain val_m val_w) :\n  \u00ac\u2203 nu,\n      PaperInterface.completeMarriageOutcome nu \u2227\n        \u2200 (m : M),\n          (match (PaperInterface.menDeferredAcceptance val_m val_w).m_match m with\n            | none => 0\n            | some w => val_m m w) <\n            match nu.m_match m with\n            | none => 0\n            | some w => val_m m w\n'Roth82StableMatching.PaperInterface.theorem6_weak_pareto_for_men_on_strict_marriage_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nRoth82StableMatching.assumption_equal_cardinality.{u_1, u_2} {M : Type u_1} {W : Type u_2} [Fintype M] [Fintype W] :\n  Prop\n'Roth82StableMatching.assumption_equal_cardinality' depends on axioms: [propext, Quot.sound]\nRoth82StableMatching.assumption_simple_report_ranks_partner_first.{u_1} {W : Type u_1} (simple_report_m : W \u2192 \u211d)\n  (wstar : W) : Prop\n'Roth82StableMatching.assumption_simple_report_ranks_partner_first' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: Roth82StableMatching\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"lean_source_declaration\": \"def preferenceProfile (M : Type u) (W : Type v) : Type (max u v) :=\\n  (M \\u2192 W \\u2192 \\u211d) \\u00d7 (W \\u2192 M \\u2192 \\u211d)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"preferenceProfile\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M\",\n        \"type\": \"Type u\"\n      },\n      {\n        \"names\": \"W\",\n        \"type\": \"Type v\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def completeMarriageOutcome {M W : Type*} (mu : Assignment M W) : Prop :=\\n  (\\u2200 m, \\u2203 w, mu.m_match m = some w) \\u2227\\n    (\\u2200 w, \\u2203 m, mu.w_match w = some m)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"completeMarriageOutcome\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"mu\",\n        \"type\": \"Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def stable {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (mu : Assignment M W) : Prop :=\\n  (\\u2200 m, 0 \\u2264 (match mu.m_match m with\\n    | none => 0\\n    | some w => val_m m w)) \\u2227\\n    (\\u2200 w, 0 \\u2264 (match mu.w_match w with\\n      | none => 0\\n      | some m => val_w w m)) \\u2227\\n      (\\u2200 m w,\\n        (match mu.m_match m with\\n          | none => 0\\n          | some w' => val_m m w') < val_m m w \\u2192\\n        val_w w m \\u2264\\n          (match mu.w_match w with\\n            | none => 0\\n            | some m' => val_w w m'))\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"stable\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"mu\",\n        \"type\": \"Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def strictMarriageDomain {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d) : Prop :=\\n  (\\u2200 m w w', val_m m w = val_m m w' \\u2192 w = w') \\u2227\\n    (\\u2200 w m m', val_w w m = val_w w m' \\u2192 m = m') \\u2227\\n      (\\u2200 m w, 0 < val_m m w) \\u2227\\n        (\\u2200 w m, 0 < val_w w m)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"strictMarriageDomain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def stableOutcomes {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d) : Set (Assignment M W) :=\\n  {mu | stable val_m val_w mu}\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"stableOutcomes\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def menOptimal {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (mu : Assignment M W) : Prop :=\\n  stable val_m val_w mu \\u2227\\n    \\u2200 mu', stable val_m val_w mu' \\u2192\\n      \\u2200 m, (match mu'.m_match m with\\n        | none => 0\\n        | some w => val_m m w) \\u2264\\n        (match mu.m_match m with\\n          | none => 0\\n          | some w => val_m m w)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"menOptimal\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"mu\",\n        \"type\": \"Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def womenOptimal {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (mu : Assignment M W) : Prop :=\\n  stable val_m val_w mu \\u2227\\n    \\u2200 mu', stable val_m val_w mu' \\u2192\\n      \\u2200 w, (match mu'.w_match w with\\n        | none => 0\\n        | some m => val_w w m) \\u2264\\n        (match mu.w_match w with\\n          | none => 0\\n          | some m => val_w w m)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"womenOptimal\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"mu\",\n        \"type\": \"Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def possibleForMan {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d) (m : M) (w : W) : Prop :=\\n  \\u2203 mu, stable val_m val_w mu \\u2227 mu.m_match m = some w\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"possibleForMan\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"m\",\n        \"type\": \"M\"\n      },\n      {\n        \"names\": \"w\",\n        \"type\": \"W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def stableMatchingProcedure {M W : Type*}\\n    (mechanism : (M \\u2192 W \\u2192 \\u211d) \\u2192 (W \\u2192 M \\u2192 \\u211d) \\u2192 Assignment M W) : Prop :=\\n  \\u2200 val_m val_w,\\n    (\\u2200 m w w', val_m m w = val_m m w' \\u2192 w = w') \\u2192\\n      (\\u2200 w m m', val_w w m = val_w w m' \\u2192 m = m') \\u2192\\n        stable val_m val_w (mechanism val_m val_w)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"stableMatchingProcedure\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"mechanism\",\n        \"type\": \"(M \\u2192 W \\u2192 \\u211d) \\u2192 (W \\u2192 M \\u2192 \\u211d) \\u2192 Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def truthfulForAllAgents {M W : Type*} [DecidableEq M] [DecidableEq W]\\n    (mechanism : (M \\u2192 W \\u2192 \\u211d) \\u2192 (W \\u2192 M \\u2192 \\u211d) \\u2192 Assignment M W) : Prop :=\\n  (\\u2200 val_m val_w,\\n    (\\u2200 m w w', val_m m w = val_m m w' \\u2192 w = w') \\u2192\\n      (\\u2200 w m m', val_w w m = val_w w m' \\u2192 m = m') \\u2192\\n        \\u2200 m report_m,\\n          (\\u2200 i w w', ((Function.update val_m m report_m) i) w =\\n              ((Function.update val_m m report_m) i) w' \\u2192 w = w') \\u2192\\n            (match (mechanism (Function.update val_m m report_m) val_w).m_match m with\\n              | none => 0\\n              | some w => val_m m w) \\u2264\\n            (match (mechanism val_m val_w).m_match m with\\n              | none => 0\\n              | some w => val_m m w)) \\u2227\\n    (\\u2200 val_m val_w,\\n      (\\u2200 m w w', val_m m w = val_m m w' \\u2192 w = w') \\u2192\\n        (\\u2200 w m m', val_w w m = val_w w m' \\u2192 m = m') \\u2192\\n          \\u2200 w report_w,\\n            (\\u2200 j m m', ((Function.update val_w w report_w) j) m =\\n                ((Function.update val_w w report_w) j) m' \\u2192 m = m') \\u2192\\n              (match (mechanism val_m (Function.update val_w w report_w)).w_match w with\\n                | none => 0\\n                | some m => val_w w m) \\u2264\\n              (match (mechanism val_m val_w).w_match w with\\n                | none => 0\\n                | some m => val_w w m))\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"truthfulForAllAgents\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"mechanism\",\n        \"type\": \"(M \\u2192 W \\u2192 \\u211d) \\u2192 (W \\u2192 M \\u2192 \\u211d) \\u2192 Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"noncomputable def menDeferredAcceptance\\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d) : Assignment M W :=\\n  deferredAcceptance val_m val_w\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"menDeferredAcceptance\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"noncomputable def womenDeferredAcceptance\\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d) : Assignment M W :=\\n  (deferredAcceptance (M := W) (W := M) val_w val_m).swap\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"womenDeferredAcceptance\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def paretoOptimal {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (mu : Assignment M W) : Prop :=\\n  completeMarriageOutcome mu \\u2227\\n    \\u00ac \\u2203 nu, completeMarriageOutcome nu \\u2227\\n      (\\u2200 m, (match mu.m_match m with\\n          | none => 0\\n          | some w => val_m m w) \\u2264\\n        (match nu.m_match m with\\n          | none => 0\\n          | some w => val_m m w)) \\u2227\\n      (\\u2200 w, (match mu.w_match w with\\n          | none => 0\\n          | some m => val_w w m) \\u2264\\n        (match nu.w_match w with\\n          | none => 0\\n          | some m => val_w w m)) \\u2227\\n      ((\\u2203 m, (match mu.m_match m with\\n          | none => 0\\n          | some w => val_m m w) <\\n        (match nu.m_match m with\\n          | none => 0\\n          | some w => val_m m w)) \\u2228\\n      (\\u2203 w, (match mu.w_match w with\\n          | none => 0\\n          | some m => val_w w m) <\\n        (match nu.w_match w with\\n          | none => 0\\n          | some m => val_w w m)))\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paretoOptimal\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"mu\",\n        \"type\": \"Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def efficientMatchingProcedure {M W : Type*}\\n    (mechanism : (M \\u2192 W \\u2192 \\u211d) \\u2192 (W \\u2192 M \\u2192 \\u211d) \\u2192 Assignment M W) : Prop :=\\n  \\u2200 val_m val_w, paretoOptimal val_m val_w (mechanism val_m val_w)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"efficientMatchingProcedure\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"mechanism\",\n        \"type\": \"(M \\u2192 W \\u2192 \\u211d) \\u2192 (W \\u2192 M \\u2192 \\u211d) \\u2192 Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem serialDictatorshipMechanism_matches {n : \\u2115}\\n    (val_m : Fin n \\u2192 Fin n \\u2192 \\u211d) (val_w : Fin n \\u2192 Fin n \\u2192 \\u211d)\\n    (m w : Fin n) :\\n    (serialDictatorshipMechanism val_m val_w).m_match m =\\n        some (paper_serial_dictatorship_perm val_m m) \\u2227\\n      (serialDictatorshipMechanism val_m val_w).w_match w =\\n        some ((paper_serial_dictatorship_perm val_m).symm w) := by\\n  exact \\u27e8rfl, rfl\\u27e9\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"serialDictatorshipMechanism_matches\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"Fin n \\u2192 Fin n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"Fin n \\u2192 Fin n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"m w\",\n        \"type\": \"Fin n\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def manReportStrictlyRanksPartnerFirst {W : Type*} (report_m : W \\u2192 \\u211d)\\n    (partner : Option W) : Prop :=\\n  match partner with\\n  | none => \\u2200 w, report_m w < 0\\n  | some wstar => \\u2200 w, w \\u2260 wstar \\u2192 report_m w < report_m wstar\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"manReportStrictlyRanksPartnerFirst\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"report_m\",\n        \"type\": \"W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"partner\",\n        \"type\": \"Option W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def reportMisrepresentsKthChoice {A : Type*} [Fintype A] [DecidableEq A]\\n    (true_score report_score : A \\u2192 \\u211d) (k : \\u2115) : Prop :=\\n  \\u2203 a,\\n    ((Finset.univ : Finset A).filter fun b => true_score a < true_score b).card + 1 = k \\u2227\\n      ((Finset.univ : Finset A).filter fun b => report_score a < report_score b).card + 1 \\u2260 k\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"reportMisrepresentsKthChoice\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"A\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"true_score report_score\",\n        \"type\": \"A \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"k\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem1_stable_complete_outcome_exists_on_strict_marriage_domain\\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (hcard : Fintype.card M = Fintype.card W)\\n    (hdomain : strictMarriageDomain val_m val_w) :\\n    \\u2203 mu : Assignment M W, stable val_m val_w mu \\u2227 completeMarriageOutcome mu := by\\n  simpa [strictMarriageDomain, stable, completeMarriageOutcome,\\n    paper_strict_marriage_domain, paper_is_stable, paper_is_complete_matching,\\n    paper_matching_valM, paper_matching_valW] using\\n    paper_roth82_theorem1_stable_complete_outcome_exists_on_strict_marriage_domain\\n      val_m val_w hcard hdomain\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem1_stable_complete_outcome_exists_on_strict_marriage_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hcard\",\n        \"type\": \"Fintype.card M = Fintype.card W\"\n      },\n      {\n        \"names\": \"hdomain\",\n        \"type\": \"strictMarriageDomain val_m val_w\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem2_optimal_stable_outcomes_on_strict_marriage_domain\\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (hdomain : strictMarriageDomain val_m val_w) :\\n    (\\u2203 mu : Assignment M W, menOptimal val_m val_w mu) \\u2227\\n      (\\u2203 nu : Assignment M W, womenOptimal val_m val_w nu) := by\\n  simpa [menOptimal, womenOptimal, stable, strictMarriageDomain,\\n    paper_is_men_optimal, paper_is_women_optimal, paper_is_stable,\\n    paper_matching_valM, paper_matching_valW, paper_strict_marriage_domain] using\\n    paper_roth82_theorem2_optimal_stable_outcomes_on_strict_marriage_domain\\n      val_m val_w hdomain\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem2_optimal_stable_outcomes_on_strict_marriage_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hdomain\",\n        \"type\": \"strictMarriageDomain val_m val_w\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem4_serial_dictatorship_constructed {n : \\u2115} :\\n    (\\u2200 val_m val_w,\\n      (\\u2200 m w w', val_m m w = val_m m w' \\u2192 w = w') \\u2192\\n        paretoOptimal val_m val_w\\n          (serialDictatorshipMechanism (n := n) val_m val_w)) \\u2227\\n      (\\u2200 val_m val_w,\\n        (\\u2200 m w w', val_m m w = val_m m w' \\u2192 w = w') \\u2192\\n          \\u2200 m report_m,\\n            (match (serialDictatorshipMechanism (n := n)\\n                (Function.update val_m m report_m) val_w).m_match m with\\n              | none => 0\\n              | some w => val_m m w) \\u2264\\n            (match (serialDictatorshipMechanism (n := n) val_m val_w).m_match m with\\n              | none => 0\\n              | some w => val_m m w)) \\u2227\\n      (\\u2200 val_m val_w w report_w,\\n        (match (serialDictatorshipMechanism (n := n) val_m\\n            (Function.update val_w w report_w)).w_match w with\\n          | none => 0\\n          | some m => val_w w m) \\u2264\\n        (match (serialDictatorshipMechanism (n := n) val_m val_w).w_match w with\\n          | none => 0\\n          | some m => val_w w m)) := by\\n  simpa [serialDictatorshipMechanism, paretoOptimal, completeMarriageOutcome,\\n    paper_efficient_matching_procedure_on_strict_men,\\n    paper_truthful_for_men_on_strict_men, paper_truthful_for_women,\\n    paper_men_strict_preferences, paper_is_pareto_optimal,\\n    paper_pareto_improves, paper_pareto_dominates, paper_is_complete_matching,\\n    paper_matching_valM, paper_matching_valW] using\\n    paper_roth82_theorem4_serial_dictatorship_constructed (n := n)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem4_serial_dictatorship_constructed\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem5_optimal_side_truthful_on_strict_domain_of_card_eq\\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] :\\n    \\u2200 (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d),\\n      Fintype.card M = Fintype.card W \\u2192\\n        strictMarriageDomain val_m val_w \\u2192\\n          (\\u2200 (m : M) (report_m : W \\u2192 \\u211d),\\n            (match (menDeferredAcceptance\\n                (Function.update val_m m report_m) val_w).m_match m with\\n              | none => 0\\n              | some w => val_m m w) \\u2264\\n            (match (menDeferredAcceptance val_m val_w).m_match m with\\n              | none => 0\\n              | some w => val_m m w)) \\u2227\\n          (\\u2200 (w : W) (report_w : M \\u2192 \\u211d),\\n            (match (womenDeferredAcceptance val_m\\n                (Function.update val_w w report_w)).w_match w with\\n              | none => 0\\n              | some m => val_w w m) \\u2264\\n            (match (womenDeferredAcceptance val_m val_w).w_match w with\\n              | none => 0\\n              | some m => val_w w m)) := by\\n  simpa [strictMarriageDomain, menDeferredAcceptance, womenDeferredAcceptance,\\n    paper_women_deferredAcceptance, paper_strict_marriage_domain,\\n    paper_matching_valM, paper_matching_valW] using\\n    (paper_roth82_theorem5_optimal_side_truthful_on_strict_domain_of_card_eq\\n      (M := M) (W := W))\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem5_optimal_side_truthful_on_strict_domain_of_card_eq\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem corollary5_1_no_need_to_misrepresent_first_choice\\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\\n    [Nonempty M] [Nonempty W] :\\n    (\\u2200 val_m val_w, strictMarriageDomain val_m val_w \\u2192\\n      \\u2200 (w : W) (report_w : M \\u2192 \\u211d), \\u2203 report_w' : M \\u2192 \\u211d,\\n        (\\u2200 mstar, (\\u2200 m, m \\u2260 mstar \\u2192 val_w w m < val_w w mstar) \\u2192\\n          \\u2200 m, m \\u2260 mstar \\u2192 report_w' m < report_w' mstar) \\u2227\\n          (match (menDeferredAcceptance val_m\\n              (Function.update val_w w report_w)).w_match w with\\n            | none => 0\\n            | some m => val_w w m) \\u2264\\n          (match (menDeferredAcceptance val_m\\n              (Function.update val_w w report_w')).w_match w with\\n            | none => 0\\n            | some m => val_w w m)) \\u2227\\n      (\\u2200 val_m val_w, strictMarriageDomain val_m val_w \\u2192\\n        \\u2200 (m : M) (report_m : W \\u2192 \\u211d), \\u2203 report_m' : W \\u2192 \\u211d,\\n          (\\u2200 wstar, (\\u2200 w, w \\u2260 wstar \\u2192 val_m m w < val_m m wstar) \\u2192\\n            \\u2200 w, w \\u2260 wstar \\u2192 report_m' w < report_m' wstar) \\u2227\\n            (match (womenDeferredAcceptance\\n                (Function.update val_m m report_m) val_w).m_match m with\\n              | none => 0\\n              | some w => val_m m w) \\u2264\\n            (match (womenDeferredAcceptance\\n                (Function.update val_m m report_m') val_w).m_match m with\\n              | none => 0\\n              | some w => val_m m w)) := by\\n  constructor\\n  \\u00b7 simpa [menDeferredAcceptance, strictMarriageDomain,\\n      paper_no_need_to_misrepresent_first_choice_for_women_on_strict_domain,\\n      paper_woman_report_preserves_first_choice,\\n      paper_is_strict_top_choice_for_woman, paper_woman_weakly_prefers_outcome,\\n      paper_strict_marriage_domain, paper_matching_valW] using\\n      paper_roth82_corollary5_1_no_need_to_misrepresent_first_choice_on_strict_domain\\n        (M := M) (W := W)\\n  \\u00b7 simpa [womenDeferredAcceptance, strictMarriageDomain,\\n      paper_no_need_to_misrepresent_first_choice_for_men_on_strict_domain,\\n      paper_man_report_preserves_first_choice, paper_is_strict_top_choice_for_man,\\n      paper_man_weakly_prefers_outcome, paper_strict_marriage_domain,\\n      paper_matching_valM, paper_women_deferredAcceptance] using\\n      paper_roth82_corollary5_1_role_reversed_no_need_to_misrepresent_first_choice_on_strict_domain\\n        (M := M) (W := W)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"corollary5_1_no_need_to_misrepresent_first_choice\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem lemma1_strict_simple_misrepresentation_same_partner\\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d) (m : M)\\n    (report_m simple_report_m : W \\u2192 \\u211d) (wstar : W)\\n    (hdomainSimple :\\n      strictMarriageDomain (Function.update val_m m simple_report_m) val_w)\\n    (hyPartner :\\n      (menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m =\\n        some wstar)\\n    (hfirst : \\u2200 w, w \\u2260 wstar \\u2192 simple_report_m w < simple_report_m wstar) :\\n    (menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m =\\n      (menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m := by\\n  simpa [menDeferredAcceptance, strictMarriageDomain, paper_strict_marriage_domain] using\\n    paper_roth82_lemma1_strict_simple_misrepresentation_same_partner\\n      val_m val_w m report_m simple_report_m wstar hdomainSimple hyPartner hfirst\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"lemma1_strict_simple_misrepresentation_same_partner\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"m\",\n        \"type\": \"M\"\n      },\n      {\n        \"names\": \"report_m simple_report_m\",\n        \"type\": \"W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"wstar\",\n        \"type\": \"W\"\n      },\n      {\n        \"names\": \"hdomainSimple\",\n        \"type\": \"strictMarriageDomain (Function.update val_m m simple_report_m) val_w\"\n      },\n      {\n        \"names\": \"hyPartner\",\n        \"type\": \"(menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m = some wstar\"\n      },\n      {\n        \"names\": \"hfirst\",\n        \"type\": \"\\u2200 w, w \\u2260 wstar \\u2192 simple_report_m w < simple_report_m wstar\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain\\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (m : M) (simple_report_m : W \\u2192 \\u211d) (ystar : W)\\n    (hcard : Fintype.card M = Fintype.card W)\\n    (hdomain : strictMarriageDomain val_m val_w)\\n    (hdomainReport :\\n      strictMarriageDomain\\n        (Function.update val_m m simple_report_m) val_w)\\n    (hy :\\n      (menDeferredAcceptance\\n        (Function.update val_m m simple_report_m) val_w).m_match m =\\n          some ystar)\\n    (hweakM :\\n      (match (menDeferredAcceptance val_m val_w).m_match m with\\n        | none => 0\\n        | some w => val_m m w) \\u2264\\n      (match (menDeferredAcceptance\\n          (Function.update val_m m simple_report_m) val_w).m_match m with\\n        | none => 0\\n        | some w => val_m m w))\\n    (hfirst : manReportStrictlyRanksPartnerFirst simple_report_m (some ystar)) :\\n    \\u2200 m',\\n      (match (menDeferredAcceptance val_m val_w).m_match m' with\\n        | none => 0\\n        | some w => val_m m' w) \\u2264\\n      (match (menDeferredAcceptance\\n          (Function.update val_m m simple_report_m) val_w).m_match m' with\\n        | none => 0\\n        | some w => val_m m' w) := by\\n  simpa [menDeferredAcceptance, strictMarriageDomain, paper_strict_marriage_domain,\\n    paper_man_weakly_prefers_outcome, manReportStrictlyRanksPartnerFirst,\\n    paper_man_report_strictly_ranks_partner_first, paper_matching_valM] using\\n    paper_roth82_lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain\\n      val_m val_w m simple_report_m ystar hcard hdomain hdomainReport hy hweakM hfirst\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"m\",\n        \"type\": \"M\"\n      },\n      {\n        \"names\": \"simple_report_m\",\n        \"type\": \"W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"ystar\",\n        \"type\": \"W\"\n      },\n      {\n        \"names\": \"hcard\",\n        \"type\": \"Fintype.card M = Fintype.card W\"\n      },\n      {\n        \"names\": \"hdomain\",\n        \"type\": \"strictMarriageDomain val_m val_w\"\n      },\n      {\n        \"names\": \"hdomainReport\",\n        \"type\": \"strictMarriageDomain (Function.update val_m m simple_report_m) val_w\"\n      },\n      {\n        \"names\": \"hy\",\n        \"type\": \"(menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m = some ystar\"\n      },\n      {\n        \"names\": \"hweakM\",\n        \"type\": \"(match (menDeferredAcceptance val_m val_w).m_match m with | none => 0 | some w => val_m m w) \\u2264 (match (menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m with | none => 0 | some w => val_m m w)\"\n      },\n      {\n        \"names\": \"hfirst\",\n        \"type\": \"manReportStrictlyRanksPartnerFirst simple_report_m (some ystar)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem6_weak_pareto_for_men_on_strict_marriage_domain\\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\\n    [Nonempty M]\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (hcard : Fintype.card M = Fintype.card W)\\n    (hdomain : strictMarriageDomain val_m val_w) :\\n    \\u00ac \\u2203 nu : Assignment M W, completeMarriageOutcome nu \\u2227\\n      \\u2200 m, (match (menDeferredAcceptance val_m val_w).m_match m with\\n        | none => 0\\n        | some w => val_m m w) <\\n        (match nu.m_match m with\\n          | none => 0\\n          | some w => val_m m w) := by\\n  simpa [menDeferredAcceptance, completeMarriageOutcome,\\n    paper_weakly_pareto_optimal_for_men, paper_strictly_better_for_all_men,\\n    paper_is_complete_matching, paper_matching_valM, strictMarriageDomain,\\n    paper_strict_marriage_domain] using\\n    paper_roth82_theorem6_on_strict_marriage_domain\\n      val_m val_w hcard hdomain\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem6_weak_pareto_for_men_on_strict_marriage_domain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hcard\",\n        \"type\": \"Fintype.card M = Fintype.card W\"\n      },\n      {\n        \"names\": \"hdomain\",\n        \"type\": \"strictMarriageDomain val_m val_w\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_equal_cardinality {M W : Type*}\\n    [Fintype M] [Fintype W] : Prop :=\\n  Fintype.card M = Fintype.card W\\n\\n   \\n                                                                           \\n                                          \\n  \\n-- audit-premise: hfirst : \\u2200 w, w \\u2260 wstar \\u2192 simple_report_m w < simple_report_m wstar\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_equal_cardinality\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_simple_report_ranks_partner_first {W : Type*}\\n    (simple_report_m : W \\u2192 \\u211d) (wstar : W) : Prop :=\\n  \\u2200 w, w \\u2260 wstar \\u2192 simple_report_m w < simple_report_m wstar\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_simple_report_ranks_partner_first\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"simple_report_m\",\n        \"type\": \"W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"wstar\",\n        \"type\": \"W\"\n      }\n    ]\n  }\n]",
+  "paper": "Roth82StableMatching",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/Roth82StableMatching",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 0,
+  "recursive_field_items": [],
+  "review_row_count": 29,
+  "row_visible_inputs": {
+    "assumption_equal_cardinality": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      }
+    ],
+    "assumption_simple_report_ranks_partner_first": [
+      {
+        "names": "W",
+        "type": "Type*"
+      },
+      {
+        "names": "simple_report_m",
+        "type": "W \u2192 \u211d"
+      },
+      {
+        "names": "wstar",
+        "type": "W"
+      }
+    ],
+    "completeMarriageOutcome": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "mu",
+        "type": "Assignment M W"
+      }
+    ],
+    "corollary5_1_no_need_to_misrepresent_first_choice": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      }
+    ],
+    "efficientMatchingProcedure": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "mechanism",
+        "type": "(M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 Assignment M W"
+      }
+    ],
+    "lemma1_strict_simple_misrepresentation_same_partner": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "m",
+        "type": "M"
+      },
+      {
+        "names": "report_m simple_report_m",
+        "type": "W \u2192 \u211d"
+      },
+      {
+        "names": "wstar",
+        "type": "W"
+      },
+      {
+        "names": "hdomainSimple",
+        "type": "strictMarriageDomain (Function.update val_m m simple_report_m) val_w"
+      },
+      {
+        "names": "hyPartner",
+        "type": "(menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m = some wstar"
+      },
+      {
+        "names": "hfirst",
+        "type": "\u2200 w, w \u2260 wstar \u2192 simple_report_m w < simple_report_m wstar"
+      }
+    ],
+    "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "m",
+        "type": "M"
+      },
+      {
+        "names": "simple_report_m",
+        "type": "W \u2192 \u211d"
+      },
+      {
+        "names": "ystar",
+        "type": "W"
+      },
+      {
+        "names": "hcard",
+        "type": "Fintype.card M = Fintype.card W"
+      },
+      {
+        "names": "hdomain",
+        "type": "strictMarriageDomain val_m val_w"
+      },
+      {
+        "names": "hdomainReport",
+        "type": "strictMarriageDomain (Function.update val_m m simple_report_m) val_w"
+      },
+      {
+        "names": "hy",
+        "type": "(menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m = some ystar"
+      },
+      {
+        "names": "hweakM",
+        "type": "(match (menDeferredAcceptance val_m val_w).m_match m with | none => 0 | some w => val_m m w) \u2264 (match (menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m with | none => 0 | some w => val_m m w)"
+      },
+      {
+        "names": "hfirst",
+        "type": "manReportStrictlyRanksPartnerFirst simple_report_m (some ystar)"
+      }
+    ],
+    "manReportStrictlyRanksPartnerFirst": [
+      {
+        "names": "W",
+        "type": "Type*"
+      },
+      {
+        "names": "report_m",
+        "type": "W \u2192 \u211d"
+      },
+      {
+        "names": "partner",
+        "type": "Option W"
+      }
+    ],
+    "menDeferredAcceptance": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      }
+    ],
+    "menOptimal": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "mu",
+        "type": "Assignment M W"
+      }
+    ],
+    "paretoOptimal": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "mu",
+        "type": "Assignment M W"
+      }
+    ],
+    "possibleForMan": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "m",
+        "type": "M"
+      },
+      {
+        "names": "w",
+        "type": "W"
+      }
+    ],
+    "preferenceProfile": [
+      {
+        "names": "M",
+        "type": "Type u"
+      },
+      {
+        "names": "W",
+        "type": "Type v"
+      }
+    ],
+    "reportMisrepresentsKthChoice": [
+      {
+        "names": "A",
+        "type": "Type*"
+      },
+      {
+        "names": "true_score report_score",
+        "type": "A \u2192 \u211d"
+      },
+      {
+        "names": "k",
+        "type": "\u2115"
+      }
+    ],
+    "serialDictatorshipMechanism_matches": [
+      {
+        "names": "n",
+        "type": "\u2115"
+      },
+      {
+        "names": "val_m",
+        "type": "Fin n \u2192 Fin n \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "Fin n \u2192 Fin n \u2192 \u211d"
+      },
+      {
+        "names": "m w",
+        "type": "Fin n"
+      }
+    ],
+    "stable": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "mu",
+        "type": "Assignment M W"
+      }
+    ],
+    "stableMatchingProcedure": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "mechanism",
+        "type": "(M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 Assignment M W"
+      }
+    ],
+    "stableOutcomes": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      }
+    ],
+    "strictMarriageDomain": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      }
+    ],
+    "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "hcard",
+        "type": "Fintype.card M = Fintype.card W"
+      },
+      {
+        "names": "hdomain",
+        "type": "strictMarriageDomain val_m val_w"
+      }
+    ],
+    "theorem2_optimal_stable_outcomes_on_strict_marriage_domain": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "hdomain",
+        "type": "strictMarriageDomain val_m val_w"
+      }
+    ],
+    "theorem3_no_stable_truthful_procedure_on_strict_profiles": [],
+    "theorem4_serial_dictatorship_constructed": [
+      {
+        "names": "n",
+        "type": "\u2115"
+      }
+    ],
+    "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      }
+    ],
+    "theorem6_weak_pareto_for_men_on_strict_marriage_domain": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "hcard",
+        "type": "Fintype.card M = Fintype.card W"
+      },
+      {
+        "names": "hdomain",
+        "type": "strictMarriageDomain val_m val_w"
+      }
+    ],
+    "theorem7_arbitrary_k_on_strict_profiles": [],
+    "truthfulForAllAgents": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "mechanism",
+        "type": "(M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 Assignment M W"
+      }
+    ],
+    "womenDeferredAcceptance": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      }
+    ],
+    "womenOptimal": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "mu",
+        "type": "Assignment M W"
+      }
+    ]
+  },
+  "rows_with_record_premises": [],
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "def preferenceProfile (M : Type u) (W : Type v) : Type (max u v) :=\n  (M \u2192 W \u2192 \u211d) \u00d7 (W \u2192 M \u2192 \u211d)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "preferenceProfile",
+      "visible_inputs": [
+        {
+          "names": "M",
+          "type": "Type u"
+        },
+        {
+          "names": "W",
+          "type": "Type v"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def completeMarriageOutcome {M W : Type*} (mu : Assignment M W) : Prop :=\n  (\u2200 m, \u2203 w, mu.m_match m = some w) \u2227\n    (\u2200 w, \u2203 m, mu.w_match w = some m)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "completeMarriageOutcome",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "mu",
+          "type": "Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def stable {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (mu : Assignment M W) : Prop :=\n  (\u2200 m, 0 \u2264 (match mu.m_match m with\n    | none => 0\n    | some w => val_m m w)) \u2227\n    (\u2200 w, 0 \u2264 (match mu.w_match w with\n      | none => 0\n      | some m => val_w w m)) \u2227\n      (\u2200 m w,\n        (match mu.m_match m with\n          | none => 0\n          | some w' => val_m m w') < val_m m w \u2192\n        val_w w m \u2264\n          (match mu.w_match w with\n            | none => 0\n            | some m' => val_w w m'))",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "stable",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "mu",
+          "type": "Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def strictMarriageDomain {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) : Prop :=\n  (\u2200 m w w', val_m m w = val_m m w' \u2192 w = w') \u2227\n    (\u2200 w m m', val_w w m = val_w w m' \u2192 m = m') \u2227\n      (\u2200 m w, 0 < val_m m w) \u2227\n        (\u2200 w m, 0 < val_w w m)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "strictMarriageDomain",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def stableOutcomes {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) : Set (Assignment M W) :=\n  {mu | stable val_m val_w mu}",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "stableOutcomes",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def menOptimal {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (mu : Assignment M W) : Prop :=\n  stable val_m val_w mu \u2227\n    \u2200 mu', stable val_m val_w mu' \u2192\n      \u2200 m, (match mu'.m_match m with\n        | none => 0\n        | some w => val_m m w) \u2264\n        (match mu.m_match m with\n          | none => 0\n          | some w => val_m m w)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "menOptimal",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "mu",
+          "type": "Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def womenOptimal {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (mu : Assignment M W) : Prop :=\n  stable val_m val_w mu \u2227\n    \u2200 mu', stable val_m val_w mu' \u2192\n      \u2200 w, (match mu'.w_match w with\n        | none => 0\n        | some m => val_w w m) \u2264\n        (match mu.w_match w with\n          | none => 0\n          | some m => val_w w m)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "womenOptimal",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "mu",
+          "type": "Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def possibleForMan {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) (m : M) (w : W) : Prop :=\n  \u2203 mu, stable val_m val_w mu \u2227 mu.m_match m = some w",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "possibleForMan",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "m",
+          "type": "M"
+        },
+        {
+          "names": "w",
+          "type": "W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def stableMatchingProcedure {M W : Type*}\n    (mechanism : (M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 Assignment M W) : Prop :=\n  \u2200 val_m val_w,\n    (\u2200 m w w', val_m m w = val_m m w' \u2192 w = w') \u2192\n      (\u2200 w m m', val_w w m = val_w w m' \u2192 m = m') \u2192\n        stable val_m val_w (mechanism val_m val_w)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "stableMatchingProcedure",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "mechanism",
+          "type": "(M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def truthfulForAllAgents {M W : Type*} [DecidableEq M] [DecidableEq W]\n    (mechanism : (M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 Assignment M W) : Prop :=\n  (\u2200 val_m val_w,\n    (\u2200 m w w', val_m m w = val_m m w' \u2192 w = w') \u2192\n      (\u2200 w m m', val_w w m = val_w w m' \u2192 m = m') \u2192\n        \u2200 m report_m,\n          (\u2200 i w w', ((Function.update val_m m report_m) i) w =\n              ((Function.update val_m m report_m) i) w' \u2192 w = w') \u2192\n            (match (mechanism (Function.update val_m m report_m) val_w).m_match m with\n              | none => 0\n              | some w => val_m m w) \u2264\n            (match (mechanism val_m val_w).m_match m with\n              | none => 0\n              | some w => val_m m w)) \u2227\n    (\u2200 val_m val_w,\n      (\u2200 m w w', val_m m w = val_m m w' \u2192 w = w') \u2192\n        (\u2200 w m m', val_w w m = val_w w m' \u2192 m = m') \u2192\n          \u2200 w report_w,\n            (\u2200 j m m', ((Function.update val_w w report_w) j) m =\n                ((Function.update val_w w report_w) j) m' \u2192 m = m') \u2192\n              (match (mechanism val_m (Function.update val_w w report_w)).w_match w with\n                | none => 0\n                | some m => val_w w m) \u2264\n              (match (mechanism val_m val_w).w_match w with\n                | none => 0\n                | some m => val_w w m))",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "truthfulForAllAgents",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "mechanism",
+          "type": "(M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "noncomputable def menDeferredAcceptance\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) : Assignment M W :=\n  deferredAcceptance val_m val_w",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "menDeferredAcceptance",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "noncomputable def womenDeferredAcceptance\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) : Assignment M W :=\n  (deferredAcceptance (M := W) (W := M) val_w val_m).swap",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "womenDeferredAcceptance",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def paretoOptimal {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (mu : Assignment M W) : Prop :=\n  completeMarriageOutcome mu \u2227\n    \u00ac \u2203 nu, completeMarriageOutcome nu \u2227\n      (\u2200 m, (match mu.m_match m with\n          | none => 0\n          | some w => val_m m w) \u2264\n        (match nu.m_match m with\n          | none => 0\n          | some w => val_m m w)) \u2227\n      (\u2200 w, (match mu.w_match w with\n          | none => 0\n          | some m => val_w w m) \u2264\n        (match nu.w_match w with\n          | none => 0\n          | some m => val_w w m)) \u2227\n      ((\u2203 m, (match mu.m_match m with\n          | none => 0\n          | some w => val_m m w) <\n        (match nu.m_match m with\n          | none => 0\n          | some w => val_m m w)) \u2228\n      (\u2203 w, (match mu.w_match w with\n          | none => 0\n          | some m => val_w w m) <\n        (match nu.w_match w with\n          | none => 0\n          | some m => val_w w m)))",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paretoOptimal",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "mu",
+          "type": "Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def efficientMatchingProcedure {M W : Type*}\n    (mechanism : (M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 Assignment M W) : Prop :=\n  \u2200 val_m val_w, paretoOptimal val_m val_w (mechanism val_m val_w)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "efficientMatchingProcedure",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "mechanism",
+          "type": "(M \u2192 W \u2192 \u211d) \u2192 (W \u2192 M \u2192 \u211d) \u2192 Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem serialDictatorshipMechanism_matches {n : \u2115}\n    (val_m : Fin n \u2192 Fin n \u2192 \u211d) (val_w : Fin n \u2192 Fin n \u2192 \u211d)\n    (m w : Fin n) :\n    (serialDictatorshipMechanism val_m val_w).m_match m =\n        some (paper_serial_dictatorship_perm val_m m) \u2227\n      (serialDictatorshipMechanism val_m val_w).w_match w =\n        some ((paper_serial_dictatorship_perm val_m).symm w) := by\n  exact \u27e8rfl, rfl\u27e9",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "serialDictatorshipMechanism_matches",
+      "visible_inputs": [
+        {
+          "names": "n",
+          "type": "\u2115"
+        },
+        {
+          "names": "val_m",
+          "type": "Fin n \u2192 Fin n \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "Fin n \u2192 Fin n \u2192 \u211d"
+        },
+        {
+          "names": "m w",
+          "type": "Fin n"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def manReportStrictlyRanksPartnerFirst {W : Type*} (report_m : W \u2192 \u211d)\n    (partner : Option W) : Prop :=\n  match partner with\n  | none => \u2200 w, report_m w < 0\n  | some wstar => \u2200 w, w \u2260 wstar \u2192 report_m w < report_m wstar",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "manReportStrictlyRanksPartnerFirst",
+      "visible_inputs": [
+        {
+          "names": "W",
+          "type": "Type*"
+        },
+        {
+          "names": "report_m",
+          "type": "W \u2192 \u211d"
+        },
+        {
+          "names": "partner",
+          "type": "Option W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def reportMisrepresentsKthChoice {A : Type*} [Fintype A] [DecidableEq A]\n    (true_score report_score : A \u2192 \u211d) (k : \u2115) : Prop :=\n  \u2203 a,\n    ((Finset.univ : Finset A).filter fun b => true_score a < true_score b).card + 1 = k \u2227\n      ((Finset.univ : Finset A).filter fun b => report_score a < report_score b).card + 1 \u2260 k",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "reportMisrepresentsKthChoice",
+      "visible_inputs": [
+        {
+          "names": "A",
+          "type": "Type*"
+        },
+        {
+          "names": "true_score report_score",
+          "type": "A \u2192 \u211d"
+        },
+        {
+          "names": "k",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem1_stable_complete_outcome_exists_on_strict_marriage_domain\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (hcard : Fintype.card M = Fintype.card W)\n    (hdomain : strictMarriageDomain val_m val_w) :\n    \u2203 mu : Assignment M W, stable val_m val_w mu \u2227 completeMarriageOutcome mu := by\n  simpa [strictMarriageDomain, stable, completeMarriageOutcome,\n    paper_strict_marriage_domain, paper_is_stable, paper_is_complete_matching,\n    paper_matching_valM, paper_matching_valW] using\n    paper_roth82_theorem1_stable_complete_outcome_exists_on_strict_marriage_domain\n      val_m val_w hcard hdomain",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "hcard",
+          "type": "Fintype.card M = Fintype.card W"
+        },
+        {
+          "names": "hdomain",
+          "type": "strictMarriageDomain val_m val_w"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem2_optimal_stable_outcomes_on_strict_marriage_domain\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (hdomain : strictMarriageDomain val_m val_w) :\n    (\u2203 mu : Assignment M W, menOptimal val_m val_w mu) \u2227\n      (\u2203 nu : Assignment M W, womenOptimal val_m val_w nu) := by\n  simpa [menOptimal, womenOptimal, stable, strictMarriageDomain,\n    paper_is_men_optimal, paper_is_women_optimal, paper_is_stable,\n    paper_matching_valM, paper_matching_valW, paper_strict_marriage_domain] using\n    paper_roth82_theorem2_optimal_stable_outcomes_on_strict_marriage_domain\n      val_m val_w hdomain",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem2_optimal_stable_outcomes_on_strict_marriage_domain",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "hdomain",
+          "type": "strictMarriageDomain val_m val_w"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem4_serial_dictatorship_constructed {n : \u2115} :\n    (\u2200 val_m val_w,\n      (\u2200 m w w', val_m m w = val_m m w' \u2192 w = w') \u2192\n        paretoOptimal val_m val_w\n          (serialDictatorshipMechanism (n := n) val_m val_w)) \u2227\n      (\u2200 val_m val_w,\n        (\u2200 m w w', val_m m w = val_m m w' \u2192 w = w') \u2192\n          \u2200 m report_m,\n            (match (serialDictatorshipMechanism (n := n)\n                (Function.update val_m m report_m) val_w).m_match m with\n              | none => 0\n              | some w => val_m m w) \u2264\n            (match (serialDictatorshipMechanism (n := n) val_m val_w).m_match m with\n              | none => 0\n              | some w => val_m m w)) \u2227\n      (\u2200 val_m val_w w report_w,\n        (match (serialDictatorshipMechanism (n := n) val_m\n            (Function.update val_w w report_w)).w_match w with\n          | none => 0\n          | some m => val_w w m) \u2264\n        (match (serialDictatorshipMechanism (n := n) val_m val_w).w_match w with\n          | none => 0\n          | some m => val_w w m)) := by\n  simpa [serialDictatorshipMechanism, paretoOptimal, completeMarriageOutcome,\n    paper_efficient_matching_procedure_on_strict_men,\n    paper_truthful_for_men_on_strict_men, paper_truthful_for_women,\n    paper_men_strict_preferences, paper_is_pareto_optimal,\n    paper_pareto_improves, paper_pareto_dominates, paper_is_complete_matching,\n    paper_matching_valM, paper_matching_valW] using\n    paper_roth82_theorem4_serial_dictatorship_constructed (n := n)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem4_serial_dictatorship_constructed",
+      "visible_inputs": [
+        {
+          "names": "n",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem5_optimal_side_truthful_on_strict_domain_of_card_eq\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] :\n    \u2200 (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d),\n      Fintype.card M = Fintype.card W \u2192\n        strictMarriageDomain val_m val_w \u2192\n          (\u2200 (m : M) (report_m : W \u2192 \u211d),\n            (match (menDeferredAcceptance\n                (Function.update val_m m report_m) val_w).m_match m with\n              | none => 0\n              | some w => val_m m w) \u2264\n            (match (menDeferredAcceptance val_m val_w).m_match m with\n              | none => 0\n              | some w => val_m m w)) \u2227\n          (\u2200 (w : W) (report_w : M \u2192 \u211d),\n            (match (womenDeferredAcceptance val_m\n                (Function.update val_w w report_w)).w_match w with\n              | none => 0\n              | some m => val_w w m) \u2264\n            (match (womenDeferredAcceptance val_m val_w).w_match w with\n              | none => 0\n              | some m => val_w w m)) := by\n  simpa [strictMarriageDomain, menDeferredAcceptance, womenDeferredAcceptance,\n    paper_women_deferredAcceptance, paper_strict_marriage_domain,\n    paper_matching_valM, paper_matching_valW] using\n    (paper_roth82_theorem5_optimal_side_truthful_on_strict_domain_of_card_eq\n      (M := M) (W := W))",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem corollary5_1_no_need_to_misrepresent_first_choice\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\n    [Nonempty M] [Nonempty W] :\n    (\u2200 val_m val_w, strictMarriageDomain val_m val_w \u2192\n      \u2200 (w : W) (report_w : M \u2192 \u211d), \u2203 report_w' : M \u2192 \u211d,\n        (\u2200 mstar, (\u2200 m, m \u2260 mstar \u2192 val_w w m < val_w w mstar) \u2192\n          \u2200 m, m \u2260 mstar \u2192 report_w' m < report_w' mstar) \u2227\n          (match (menDeferredAcceptance val_m\n              (Function.update val_w w report_w)).w_match w with\n            | none => 0\n            | some m => val_w w m) \u2264\n          (match (menDeferredAcceptance val_m\n              (Function.update val_w w report_w')).w_match w with\n            | none => 0\n            | some m => val_w w m)) \u2227\n      (\u2200 val_m val_w, strictMarriageDomain val_m val_w \u2192\n        \u2200 (m : M) (report_m : W \u2192 \u211d), \u2203 report_m' : W \u2192 \u211d,\n          (\u2200 wstar, (\u2200 w, w \u2260 wstar \u2192 val_m m w < val_m m wstar) \u2192\n            \u2200 w, w \u2260 wstar \u2192 report_m' w < report_m' wstar) \u2227\n            (match (womenDeferredAcceptance\n                (Function.update val_m m report_m) val_w).m_match m with\n              | none => 0\n              | some w => val_m m w) \u2264\n            (match (womenDeferredAcceptance\n                (Function.update val_m m report_m') val_w).m_match m with\n              | none => 0\n              | some w => val_m m w)) := by\n  constructor\n  \u00b7 simpa [menDeferredAcceptance, strictMarriageDomain,\n      paper_no_need_to_misrepresent_first_choice_for_women_on_strict_domain,\n      paper_woman_report_preserves_first_choice,\n      paper_is_strict_top_choice_for_woman, paper_woman_weakly_prefers_outcome,\n      paper_strict_marriage_domain, paper_matching_valW] using\n      paper_roth82_corollary5_1_no_need_to_misrepresent_first_choice_on_strict_domain\n        (M := M) (W := W)\n  \u00b7 simpa [womenDeferredAcceptance, strictMarriageDomain,\n      paper_no_need_to_misrepresent_first_choice_for_men_on_strict_domain,\n      paper_man_report_preserves_first_choice, paper_is_strict_top_choice_for_man,\n      paper_man_weakly_prefers_outcome, paper_strict_marriage_domain,\n      paper_matching_valM, paper_women_deferredAcceptance] using\n      paper_roth82_corollary5_1_role_reversed_no_need_to_misrepresent_first_choice_on_strict_domain\n        (M := M) (W := W)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "corollary5_1_no_need_to_misrepresent_first_choice",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem lemma1_strict_simple_misrepresentation_same_partner\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) (m : M)\n    (report_m simple_report_m : W \u2192 \u211d) (wstar : W)\n    (hdomainSimple :\n      strictMarriageDomain (Function.update val_m m simple_report_m) val_w)\n    (hyPartner :\n      (menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m =\n        some wstar)\n    (hfirst : \u2200 w, w \u2260 wstar \u2192 simple_report_m w < simple_report_m wstar) :\n    (menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m =\n      (menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m := by\n  simpa [menDeferredAcceptance, strictMarriageDomain, paper_strict_marriage_domain] using\n    paper_roth82_lemma1_strict_simple_misrepresentation_same_partner\n      val_m val_w m report_m simple_report_m wstar hdomainSimple hyPartner hfirst",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "lemma1_strict_simple_misrepresentation_same_partner",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "m",
+          "type": "M"
+        },
+        {
+          "names": "report_m simple_report_m",
+          "type": "W \u2192 \u211d"
+        },
+        {
+          "names": "wstar",
+          "type": "W"
+        },
+        {
+          "names": "hdomainSimple",
+          "type": "strictMarriageDomain (Function.update val_m m simple_report_m) val_w"
+        },
+        {
+          "names": "hyPartner",
+          "type": "(menDeferredAcceptance (Function.update val_m m report_m) val_w).m_match m = some wstar"
+        },
+        {
+          "names": "hfirst",
+          "type": "\u2200 w, w \u2260 wstar \u2192 simple_report_m w < simple_report_m wstar"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (m : M) (simple_report_m : W \u2192 \u211d) (ystar : W)\n    (hcard : Fintype.card M = Fintype.card W)\n    (hdomain : strictMarriageDomain val_m val_w)\n    (hdomainReport :\n      strictMarriageDomain\n        (Function.update val_m m simple_report_m) val_w)\n    (hy :\n      (menDeferredAcceptance\n        (Function.update val_m m simple_report_m) val_w).m_match m =\n          some ystar)\n    (hweakM :\n      (match (menDeferredAcceptance val_m val_w).m_match m with\n        | none => 0\n        | some w => val_m m w) \u2264\n      (match (menDeferredAcceptance\n          (Function.update val_m m simple_report_m) val_w).m_match m with\n        | none => 0\n        | some w => val_m m w))\n    (hfirst : manReportStrictlyRanksPartnerFirst simple_report_m (some ystar)) :\n    \u2200 m',\n      (match (menDeferredAcceptance val_m val_w).m_match m' with\n        | none => 0\n        | some w => val_m m' w) \u2264\n      (match (menDeferredAcceptance\n          (Function.update val_m m simple_report_m) val_w).m_match m' with\n        | none => 0\n        | some w => val_m m' w) := by\n  simpa [menDeferredAcceptance, strictMarriageDomain, paper_strict_marriage_domain,\n    paper_man_weakly_prefers_outcome, manReportStrictlyRanksPartnerFirst,\n    paper_man_report_strictly_ranks_partner_first, paper_matching_valM] using\n    paper_roth82_lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain\n      val_m val_w m simple_report_m ystar hcard hdomain hdomainReport hy hweakM hfirst",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "m",
+          "type": "M"
+        },
+        {
+          "names": "simple_report_m",
+          "type": "W \u2192 \u211d"
+        },
+        {
+          "names": "ystar",
+          "type": "W"
+        },
+        {
+          "names": "hcard",
+          "type": "Fintype.card M = Fintype.card W"
+        },
+        {
+          "names": "hdomain",
+          "type": "strictMarriageDomain val_m val_w"
+        },
+        {
+          "names": "hdomainReport",
+          "type": "strictMarriageDomain (Function.update val_m m simple_report_m) val_w"
+        },
+        {
+          "names": "hy",
+          "type": "(menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m = some ystar"
+        },
+        {
+          "names": "hweakM",
+          "type": "(match (menDeferredAcceptance val_m val_w).m_match m with | none => 0 | some w => val_m m w) \u2264 (match (menDeferredAcceptance (Function.update val_m m simple_report_m) val_w).m_match m with | none => 0 | some w => val_m m w)"
+        },
+        {
+          "names": "hfirst",
+          "type": "manReportStrictlyRanksPartnerFirst simple_report_m (some ystar)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem6_weak_pareto_for_men_on_strict_marriage_domain\n    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]\n    [Nonempty M]\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (hcard : Fintype.card M = Fintype.card W)\n    (hdomain : strictMarriageDomain val_m val_w) :\n    \u00ac \u2203 nu : Assignment M W, completeMarriageOutcome nu \u2227\n      \u2200 m, (match (menDeferredAcceptance val_m val_w).m_match m with\n        | none => 0\n        | some w => val_m m w) <\n        (match nu.m_match m with\n          | none => 0\n          | some w => val_m m w) := by\n  simpa [menDeferredAcceptance, completeMarriageOutcome,\n    paper_weakly_pareto_optimal_for_men, paper_strictly_better_for_all_men,\n    paper_is_complete_matching, paper_matching_valM, strictMarriageDomain,\n    paper_strict_marriage_domain] using\n    paper_roth82_theorem6_on_strict_marriage_domain\n      val_m val_w hcard hdomain",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem6_weak_pareto_for_men_on_strict_marriage_domain",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "hcard",
+          "type": "Fintype.card M = Fintype.card W"
+        },
+        {
+          "names": "hdomain",
+          "type": "strictMarriageDomain val_m val_w"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_equal_cardinality {M W : Type*}\n    [Fintype M] [Fintype W] : Prop :=\n  Fintype.card M = Fintype.card W\n\n   \n                                                                           \n                                          \n  \n-- audit-premise: hfirst : \u2200 w, w \u2260 wstar \u2192 simple_report_m w < simple_report_m wstar",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_equal_cardinality",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_simple_report_ranks_partner_first {W : Type*}\n    (simple_report_m : W \u2192 \u211d) (wstar : W) : Prop :=\n  \u2200 w, w \u2260 wstar \u2192 simple_report_m w < simple_report_m wstar",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_simple_report_ranks_partner_first",
+      "visible_inputs": [
+        {
+          "names": "W",
+          "type": "Type*"
+        },
+        {
+          "names": "simple_report_m",
+          "type": "W \u2192 \u211d"
+        },
+        {
+          "names": "wstar",
+          "type": "W"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "040a5053c46a3f8bc262d92f44ece47cce8fc721cc2abc65b8ae9cb5e6941bb0",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": [
+    "serialDictatorshipMechanism"
+  ]
+}

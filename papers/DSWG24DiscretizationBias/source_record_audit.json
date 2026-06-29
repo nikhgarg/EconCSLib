@@ -1,0 +1,1695 @@
+{
+  "boundary_input_count": 0,
+  "boundary_input_items": [],
+  "configured_review_row_count": 41,
+  "expected_field_judgment_keys": [],
+  "expected_input_judgment_keys": [],
+  "import_module": "DSWG24DiscretizationBias.PaperInterface",
+  "lean_check": {
+    "command": "lake build DSWG24DiscretizationBias.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "DSWG24DiscretizationBias.PaperInterface.prior.{u_1, u_2} {X : Type u_1} {Y : Type u_2} [Fintype X] [DecidableEq X]\n  [Fintype Y] [DecidableEq Y] (\u03bc : PMF (X \u00d7 Y)) (y : Y) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.prior' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.marginalLabelShare {N K : \u2115} (decision : Fin N \u2192 Fin K) (y : Fin K) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.marginalLabelShare' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.aggregatePosterior {N K : \u2115} (q : Fin N \u2192 Fin K \u2192 \u211d) (y : Fin K) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.aggregatePosterior' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.bias {N K : \u2115} (decision : Fin N \u2192 Fin K) (pref : Fin K \u2192 \u211d) (y : Fin K) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.bias' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.fidelity {N K : \u2115} (decision : Fin N \u2192 Fin K) (pref : Fin K \u2192 \u211d) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.fidelity' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.classifierMAE.{u_1, u_2} {X : Type u_1} {Y : Type u_2} [Fintype X]\n  [DecidableEq X] [Fintype Y] [DecidableEq Y] (\u03bc : PMF (X \u00d7 Y)) (q : X \u2192 Y \u2192 \u211d) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.classifierMAE' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.continuousMarginalLabelShare.{u_1, u_2} {X : Type u_1} {Y : Type u_2}\n  [MeasurableSpace X] [DecidableEq Y] (\u03bc : MeasureTheory.Measure X) (rule : X \u2192 Y) (y : Y) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.continuousMarginalLabelShare' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.continuousAggregatePosterior.{u_1, u_2} {X : Type u_1} {Y : Type u_2}\n  [MeasurableSpace X] (\u03bc : MeasureTheory.Measure X) (q : X \u2192 Y \u2192 \u211d) (y : Y) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.continuousAggregatePosterior' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.continuousBias.{u_1, u_2} {X : Type u_1} {Y : Type u_2} [MeasurableSpace X]\n  [DecidableEq Y] (\u03bc : MeasureTheory.Measure X) (rule : X \u2192 Y) (pref : Y \u2192 \u211d) (y : Y) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.continuousBias' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.continuousAggregateBias.{u_1, u_2} {X : Type u_1} {Y : Type u_2}\n  [MeasurableSpace X] [DecidableEq Y] (\u03bc : MeasureTheory.Measure X) (q : X \u2192 Y \u2192 \u211d) (rule : X \u2192 Y) (y : Y) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.continuousAggregateBias' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.continuousClassifierMAE.{u_1, u_2} {X : Type u_1} {Y : Type u_2}\n  [MeasurableSpace X] [Fintype Y] (\u03bc : MeasureTheory.Measure X) (q : X \u2192 Y \u2192 \u211d) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.continuousClassifierMAE' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.continuousJointPriorBias.{u_1, u_2} {X : Type u_1} {Y : Type u_2}\n  [MeasurableSpace (X \u00d7 Y)] [DecidableEq Y] (\u03bc : MeasureTheory.Measure (X \u00d7 Y)) (rule : X \u2192 Y) (y : Y) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.continuousJointPriorBias' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.continuousJointClassifierMAE.{u_1, u_2} {X : Type u_1} {Y : Type u_2}\n  [MeasurableSpace (X \u00d7 Y)] [Fintype Y] (\u03bc : MeasureTheory.Measure (X \u00d7 Y)) (q : X \u2192 Y \u2192 \u211d) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.continuousJointClassifierMAE' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.posteriorSimplex.{u_1, u_2} {X : Type u_1} {Y : Type u_2} [Fintype Y]\n  (q : X \u2192 Y \u2192 \u211d) : Prop\n'DSWG24DiscretizationBias.PaperInterface.posteriorSimplex' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.isArgmaxRule.{u_1, u_2} {X : Type u_1} {Y : Type u_2} (q : X \u2192 Y \u2192 \u211d)\n  (rule : X \u2192 Y) : Prop\n'DSWG24DiscretizationBias.PaperInterface.isArgmaxRule' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.calibrated.{u_1, u_2} {X : Type u_1} {Y : Type u_2} [MeasurableSpace (X \u00d7 Y)]\n  [DecidableEq Y] (\u03bc : MeasureTheory.Measure (X \u00d7 Y)) (q : X \u2192 Y \u2192 \u211d) : Prop\n'DSWG24DiscretizationBias.PaperInterface.calibrated' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.objective.{u_1} {N K : \u2115} {\u03c3 : Type u_1} (\u03b3 : \u211d)\n  (posterior : \u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d) (fidelityTerm : \u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d) (xs : \u03c3) (decision : Fin N \u2192 Fin K) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.objective' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.expectedObjective.{u_1, u_2} {\u03c9 : Type u_1} {\u03c3 : Type u_2} {N K : \u2115} [NeZero K]\n  (expect : (\u03c9 \u2192 \u211d) \u2192 \u211d) (observedDataset : \u03c9 \u2192 \u03c3) (trueLabels : \u03c9 \u2192 Fin N \u2192 Fin K) (\u03b3 : \u211d)\n  (fidelityTerm : \u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d) (rule : \u03c3 \u2192 Fin N \u2192 Fin K) : \u211d\n'DSWG24DiscretizationBias.PaperInterface.expectedObjective' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.sourceSa.{u_1, u_2} {X : Type u_1} {Y : Type u_2} (q : X \u2192 Y \u2192 \u211d) (z : Y) :\n  Set X\n'DSWG24DiscretizationBias.PaperInterface.sourceSa' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.sourceSb.{u_1, u_2} {X : Type u_1} {Y : Type u_2} [Fintype Y] (q : X \u2192 Y \u2192 \u211d)\n  (z : Y) : Set X\n'DSWG24DiscretizationBias.PaperInterface.sourceSb' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.sourceSc.{u_1, u_2} {X : Type u_1} {Y : Type u_2} [Fintype Y] (q : X \u2192 Y \u2192 \u211d)\n  (z : Y) : Set X\n'DSWG24DiscretizationBias.PaperInterface.sourceSc' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.sourceSd.{u_1, u_2} {X : Type u_1} {Y : Type u_2} [Fintype Y] (q : X \u2192 Y \u2192 \u211d)\n  (z : Y) : Set X\n'DSWG24DiscretizationBias.PaperInterface.sourceSd' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.sourceSe.{u_1, u_2} {X : Type u_1} {Y : Type u_2} (q : X \u2192 Y \u2192 \u211d) (z : Y) :\n  Set X\n'DSWG24DiscretizationBias.PaperInterface.sourceSe' depends on axioms: [propext, Classical.choice, Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.theorem1i_no_information_bias.{u_1, u_2} {X : Type u_1} {Y : Type u_2}\n  [Fintype X] [DecidableEq X] [Nonempty X] [Fintype Y] [DecidableEq Y] (\u03bc : PMF (X \u00d7 Y)) (q : X \u2192 Y \u2192 \u211d) (z y : Y)\n  (hnoInformation : \u2200 (x : X) (a : Y), q x a = PaperInterface.prior \u03bc a)\n  (hplurality : \u2200 (a : Y), PaperInterface.prior \u03bc a \u2264 PaperInterface.prior \u03bc z) :\n  (Finite.paperBias \u03bc (fun x => z) (PaperInterface.prior \u03bc) y =\n      if z = y then 1 - PaperInterface.prior \u03bc y else -PaperInterface.prior \u03bc y) \u2227\n    Finite.paperBias \u03bc (fun x => z) (Finite.paperAggregatePosterior \u03bc q) y =\n      if z = y then 1 - PaperInterface.prior \u03bc y else -PaperInterface.prior \u03bc y\n'DSWG24DiscretizationBias.PaperInterface.theorem1i_no_information_bias' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.theorem1ii_perfect_classifier_zero_bias.{u_1, u_2} {X : Type u_1} {Y : Type u_2}\n  [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y] (\u03bc : PMF (X \u00d7 Y)) (rule : X \u2192 Y)\n  (htruth : \u2200 (xy : X \u00d7 Y), rule xy.1 = xy.2) (y : Y) : Finite.paperBias \u03bc rule (PaperInterface.prior \u03bc) y = 0\n'DSWG24DiscretizationBias.PaperInterface.theorem1ii_perfect_classifier_zero_bias' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.theorem1iii_argmax_bias_le_mae.{u_1, u_2} {X : Type u_1} {Y : Type u_2}\n  [MeasurableSpace X] [MeasurableSpace Y] [MeasurableSingletonClass Y] [Fintype Y] [DecidableEq Y]\n  (\u03bc : MeasureTheory.Measure (X \u00d7 Y)) [MeasureTheory.IsFiniteMeasure \u03bc] (q : X \u2192 Y \u2192 \u211d) (argmaxRule : X \u2192 Y) (y : Y)\n  (hrule : Measurable argmaxRule) (hargmax : PaperInterface.isArgmaxRule q argmaxRule)\n  (hsimplex : PaperInterface.posteriorSimplex q) (hscore : \u2200 (y : Y), Measurable fun xy => q xy.1 y)\n  (hcal : PaperInterface.calibrated \u03bc q) :\n  PaperInterface.continuousJointPriorBias \u03bc argmaxRule y \u2264 PaperInterface.continuousJointClassifierMAE \u03bc q\n'DSWG24DiscretizationBias.PaperInterface.theorem1iii_argmax_bias_le_mae' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.theorem2i_joint_rule_exists.{u_1, u_2} {\u03c9 : Type u_1} {\u03c3 : Type u_2} {N K : \u2115}\n  [NeZero K] (hK : 2 \u2264 K) (hNK : K < N) (expect : (\u03c9 \u2192 \u211d) \u2192 \u211d)\n  (hlin : EconCSLib.Decision.FiniteLinearExpectation expect) (observedDataset : \u03c9 \u2192 \u03c3) (trueLabels : \u03c9 \u2192 Fin N \u2192 Fin K)\n  (\u03b3 : \u211d) (posterior : \u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d) (fidelityTerm : \u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d)\n  (hbayesRow :\n    \u2200 (i : Fin N) (choose : \u03c3 \u2192 Fin K),\n      (expect fun x => if choose (observedDataset x) = trueLabels x i then 1 else 0) =\n        expect fun x => posterior (observedDataset x) i (choose (observedDataset x))) :\n  \u2203 optRule,\n    \u2200 (rule : \u03c3 \u2192 Fin N \u2192 Fin K),\n      PaperInterface.expectedObjective expect observedDataset trueLabels \u03b3 fidelityTerm rule \u2264\n        PaperInterface.expectedObjective expect observedDataset trueLabels \u03b3 fidelityTerm optRule\n'DSWG24DiscretizationBias.PaperInterface.theorem2i_joint_rule_exists' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.theorem2ii_argmax_accuracy_maximizing.{u_1, u_2} {\u03c9 : Type u_1} {\u03c3 : Type u_2}\n  {N K : \u2115} [NeZero K] (hK : 2 \u2264 K) (hNK : K < N) (expect : (\u03c9 \u2192 \u211d) \u2192 \u211d)\n  (hlin : EconCSLib.Decision.FiniteLinearExpectation expect) (observedDataset : \u03c9 \u2192 \u03c3) (trueLabels : \u03c9 \u2192 Fin N \u2192 Fin K)\n  (posterior : \u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d) {decisionRule argmaxRule : \u03c3 \u2192 Fin N \u2192 Fin K}\n  (hargmax : \u2200 (xs : \u03c3), EconCSLib.Decision.IsPointwiseMax (posterior xs) (argmaxRule xs))\n  (hbayesRow :\n    \u2200 (i : Fin N) (choose : \u03c3 \u2192 Fin K),\n      (expect fun x => if choose (observedDataset x) = trueLabels x i then 1 else 0) =\n        expect fun x => posterior (observedDataset x) i (choose (observedDataset x))) :\n  EconCSLib.Decision.expectedDecisionAccuracy expect observedDataset trueLabels decisionRule \u2264\n    EconCSLib.Decision.expectedDecisionAccuracy expect observedDataset trueLabels argmaxRule\n'DSWG24DiscretizationBias.PaperInterface.theorem2ii_argmax_accuracy_maximizing' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.theorem2iii_non_argmax_not_pareto.{u_1} {X : Type u_1} [Fintype X]\n  [DecidableEq X] {N K : \u2115} (\u03bc : PMF X) (posterior : X \u2192 Fin K \u2192 \u211d) (pref : Fin K \u2192 \u211d) (rule argmaxRule : X \u2192 Fin K)\n  (hdisagree : 0 < EconCSLib.pmfProb \u03bc fun x => rule x \u2260 argmaxRule x) (hNpos : 0 < N)\n  (hpref_nonneg : \u2200 (y : Fin K), 0 \u2264 pref y) (hpref_sum : \u2211 y, pref y = 1)\n  (hnontrivial : \u2200 (y : Fin K), 1 / \u2191N \u2264 pref y)\n  (hweak_argmax : \u2200 (x : X) (y : Fin K), posterior x y \u2264 posterior x (argmaxRule x)) :\n  \u00acPareto.ParetoOptimal\n      (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N) fun s =>\n        Theorem2iii.sampledPosterior posterior s)\n      (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) fun s =>\n      Theorem2iii.sampledDecision rule s\n'DSWG24DiscretizationBias.PaperInterface.theorem2iii_non_argmax_not_pareto' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.theorem2iii_weighted_objective_maximizer_agrees_argmax.{u_1} {X : Type u_1}\n  [Fintype X] [DecidableEq X] {N K : \u2115} (\u03bc : PMF X) (posterior : X \u2192 Fin K \u2192 \u211d) (pref : Fin K \u2192 \u211d)\n  (rule argmaxRule : X \u2192 Fin K) {\u03b3 : \u211d} (h\u03b3nonneg : 0 \u2264 \u03b3) (h\u03b3lt : \u03b3 < 1) (hNpos : 0 < N)\n  (hpref_nonneg : \u2200 (y : Fin K), 0 \u2264 pref y) (hpref_sum : \u2211 y, pref y = 1)\n  (hnontrivial : \u2200 (y : Fin K), 1 / \u2191N \u2264 pref y)\n  (hweak_argmax : \u2200 (x : X) (y : Fin K), posterior x y \u2264 posterior x (argmaxRule x))\n  (hmax :\n    \u2200 (other : (Fin N \u2192 X) \u2192 Fin N \u2192 Fin K),\n      Pareto.weightedObjective \u03b3\n          (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N) fun s =>\n            Theorem2iii.sampledPosterior posterior s)\n          (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) other \u2264\n        Pareto.weightedObjective \u03b3\n          (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N) fun s =>\n            Theorem2iii.sampledPosterior posterior s)\n          (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) fun s =>\n          Theorem2iii.sampledDecision rule s) :\n  (EconCSLib.pmfProb \u03bc fun x => rule x \u2260 argmaxRule x) = 0\n'DSWG24DiscretizationBias.PaperInterface.theorem2iii_weighted_objective_maximizer_agrees_argmax' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nDSWG24DiscretizationBias.PaperInterface.theorem2iii_strict_disagreement_not_weighted_objective_maximizer.{u_1}\n  {X : Type u_1} [Fintype X] [DecidableEq X] {N K : \u2115} (\u03bc : PMF X) (posterior : X \u2192 Fin K \u2192 \u211d) (pref : Fin K \u2192 \u211d)\n  (rule argmaxRule : X \u2192 Fin K) {\u03b3 : \u211d} (h\u03b3pos : 0 < \u03b3) (h\u03b3le : \u03b3 \u2264 1)\n  (hdisagree : 0 < EconCSLib.pmfProb \u03bc fun x => rule x \u2260 argmaxRule x) (hNpos : 0 < N)\n  (hpref_nonneg : \u2200 (y : Fin K), 0 \u2264 pref y) (hpref_sum : \u2211 y, pref y = 1)\n  (hnontrivial : \u2200 (y : Fin K), 1 / \u2191N \u2264 pref y)\n  (hstrict_argmax : \u2200 (x : X), rule x \u2260 argmaxRule x \u2192 posterior x (rule x) < posterior x (argmaxRule x)) :\n  \u00ac\u2200 (other : (Fin N \u2192 X) \u2192 Fin N \u2192 Fin K),\n      Pareto.weightedObjective \u03b3\n          (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N) fun s =>\n            Theorem2iii.sampledPosterior posterior s)\n          (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) other \u2264\n        Pareto.weightedObjective \u03b3\n          (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N) fun s =>\n            Theorem2iii.sampledPosterior posterior s)\n          (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) fun s =>\n          Theorem2iii.sampledDecision rule s\n'DSWG24DiscretizationBias.PaperInterface.theorem2iii_strict_disagreement_not_weighted_objective_maximizer' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: DSWG24DiscretizationBias\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"lean_source_declaration\": \"def prior [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]\\n    (\\u03bc : PMF (X \\u00d7 Y)) (y : Y) : \\u211d :=\\n  ((Finite.labelMarginal \\u03bc) y).toReal\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"prior\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"PMF (X \\u00d7 Y)\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def marginalLabelShare {N K : \\u2115} (decision : Fin N \\u2192 Fin K) (y : Fin K) : \\u211d :=\\n  (\\u2211 i : Fin N, if decision i = y then (1 : \\u211d) else 0) / (N : \\u211d)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"marginalLabelShare\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"decision\",\n        \"type\": \"Fin N \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Fin K\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def aggregatePosterior {N K : \\u2115} (q : Fin N \\u2192 Fin K \\u2192 \\u211d) (y : Fin K) : \\u211d :=\\n  (\\u2211 i : Fin N, q i y) / (N : \\u211d)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"aggregatePosterior\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"Fin N \\u2192 Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Fin K\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def bias {N K : \\u2115} (decision : Fin N \\u2192 Fin K) (pref : Fin K \\u2192 \\u211d) (y : Fin K) : \\u211d :=\\n  marginalLabelShare decision y - pref y\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"bias\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"decision\",\n        \"type\": \"Fin N \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"pref\",\n        \"type\": \"Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Fin K\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def fidelity {N K : \\u2115} (decision : Fin N \\u2192 Fin K) (pref : Fin K \\u2192 \\u211d) : \\u211d :=\\n  -\\u2211 y : Fin K, |bias decision pref y|\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"fidelity\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"decision\",\n        \"type\": \"Fin N \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"pref\",\n        \"type\": \"Fin K \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def classifierMAE [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]\\n    (\\u03bc : PMF (X \\u00d7 Y)) (q : X \\u2192 Y \\u2192 \\u211d) : \\u211d :=\\n  EconCSLib.pmfExp (Finite.featureMarginal \\u03bc)\\n    (fun x => \\u2211 y : Y, q x y * (1 - q x y))\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"classifierMAE\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"PMF (X \\u00d7 Y)\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def continuousMarginalLabelShare {X Y : Type*} [MeasurableSpace X] [DecidableEq Y]\\n    (\\u03bc : Measure X) (rule : X \\u2192 Y) (y : Y) : \\u211d :=\\n  \\u222b x, (if rule x = y then (1 : \\u211d) else 0) \\u2202\\u03bc\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"continuousMarginalLabelShare\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"Measure X\"\n      },\n      {\n        \"names\": \"rule\",\n        \"type\": \"X \\u2192 Y\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def continuousAggregatePosterior {X Y : Type*} [MeasurableSpace X]\\n    (\\u03bc : Measure X) (q : X \\u2192 Y \\u2192 \\u211d) (y : Y) : \\u211d :=\\n  \\u222b x, q x y \\u2202\\u03bc\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"continuousAggregatePosterior\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"Measure X\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def continuousBias {X Y : Type*} [MeasurableSpace X] [DecidableEq Y]\\n    (\\u03bc : Measure X) (rule : X \\u2192 Y) (pref : Y \\u2192 \\u211d) (y : Y) : \\u211d :=\\n  continuousMarginalLabelShare \\u03bc rule y - pref y\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"continuousBias\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"Measure X\"\n      },\n      {\n        \"names\": \"rule\",\n        \"type\": \"X \\u2192 Y\"\n      },\n      {\n        \"names\": \"pref\",\n        \"type\": \"Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def continuousAggregateBias {X Y : Type*} [MeasurableSpace X] [DecidableEq Y]\\n    (\\u03bc : Measure X) (q : X \\u2192 Y \\u2192 \\u211d) (rule : X \\u2192 Y) (y : Y) : \\u211d :=\\n  continuousMarginalLabelShare \\u03bc rule y - continuousAggregatePosterior \\u03bc q y\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"continuousAggregateBias\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"Measure X\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"rule\",\n        \"type\": \"X \\u2192 Y\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def continuousClassifierMAE {X Y : Type*} [MeasurableSpace X] [Fintype Y]\\n    (\\u03bc : Measure X) (q : X \\u2192 Y \\u2192 \\u211d) : \\u211d :=\\n  \\u222b x, \\u2211 y : Y, q x y * (1 - q x y) \\u2202\\u03bc\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"continuousClassifierMAE\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"Measure X\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def continuousJointPriorBias {X Y : Type*} [MeasurableSpace (X \\u00d7 Y)]\\n    [DecidableEq Y] (\\u03bc : Measure (X \\u00d7 Y)) (rule : X \\u2192 Y) (y : Y) : \\u211d :=\\n  (\\u222b xy, (if rule xy.1 = y then (1 : \\u211d) else 0) \\u2202\\u03bc) -\\n    \\u222b xy, (if xy.2 = y then (1 : \\u211d) else 0) \\u2202\\u03bc\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"continuousJointPriorBias\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"Measure (X \\u00d7 Y)\"\n      },\n      {\n        \"names\": \"rule\",\n        \"type\": \"X \\u2192 Y\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def continuousJointClassifierMAE {X Y : Type*} [MeasurableSpace (X \\u00d7 Y)]\\n    [Fintype Y] (\\u03bc : Measure (X \\u00d7 Y)) (q : X \\u2192 Y \\u2192 \\u211d) : \\u211d :=\\n  \\u222b xy, \\u2211 y : Y, q xy.1 y * (1 - q xy.1 y) \\u2202\\u03bc\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"continuousJointClassifierMAE\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"Measure (X \\u00d7 Y)\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def posteriorSimplex {X Y : Type*} [Fintype Y] (q : X \\u2192 Y \\u2192 \\u211d) : Prop :=\\n  (\\u2200 x, (\\u2211 y : Y, q x y) = 1) \\u2227\\n    (\\u2200 x y, 0 \\u2264 q x y) \\u2227\\n      (\\u2200 x y, q x y \\u2264 1)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"posteriorSimplex\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def isArgmaxRule {X Y : Type*} (q : X \\u2192 Y \\u2192 \\u211d) (rule : X \\u2192 Y) : Prop :=\\n  \\u2200 x y, q x y \\u2264 q x (rule x)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"isArgmaxRule\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"rule\",\n        \"type\": \"X \\u2192 Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def calibrated {X Y : Type*} [MeasurableSpace (X \\u00d7 Y)] [DecidableEq Y]\\n    (\\u03bc : Measure (X \\u00d7 Y)) (q : X \\u2192 Y \\u2192 \\u211d) : Prop := by\\n  classical\\n  exact\\n    \\u2200 (y : Y) (s : Set \\u211d), MeasurableSet s \\u2192\\n      (\\u222b xy, (if q xy.1 y \\u2208 s then\\n          if xy.2 = y then (1 : \\u211d) else 0\\n        else 0) \\u2202\\u03bc) =\\n        \\u222b xy, (if q xy.1 y \\u2208 s then q xy.1 y else 0) \\u2202\\u03bc\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"calibrated\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"Measure (X \\u00d7 Y)\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def objective {N K : \\u2115} {\\u03c3 : Type*}\\n    (\\u03b3 : \\u211d) (posterior : \\u03c3 \\u2192 Fin N \\u2192 Fin K \\u2192 \\u211d)\\n    (fidelityTerm : \\u03c3 \\u2192 (Fin N \\u2192 Fin K) \\u2192 \\u211d)\\n    (xs : \\u03c3) (decision : Fin N \\u2192 Fin K) : \\u211d :=\\n  \\u03b3 * EconCSLib.Decision.averageScore (posterior xs) decision +\\n    (1 - \\u03b3) * fidelityTerm xs decision\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"objective\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"\\u03c3\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03b3\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"posterior\",\n        \"type\": \"\\u03c3 \\u2192 Fin N \\u2192 Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"fidelityTerm\",\n        \"type\": \"\\u03c3 \\u2192 (Fin N \\u2192 Fin K) \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"xs\",\n        \"type\": \"\\u03c3\"\n      },\n      {\n        \"names\": \"decision\",\n        \"type\": \"Fin N \\u2192 Fin K\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def expectedObjective {\\u03c9 \\u03c3 : Type*} {N K : \\u2115} [NeZero K]\\n    (expect : (\\u03c9 \\u2192 \\u211d) \\u2192 \\u211d) (observedDataset : \\u03c9 \\u2192 \\u03c3)\\n    (trueLabels : \\u03c9 \\u2192 Fin N \\u2192 Fin K)\\n    (\\u03b3 : \\u211d) (fidelityTerm : \\u03c3 \\u2192 (Fin N \\u2192 Fin K) \\u2192 \\u211d)\\n    (rule : \\u03c3 \\u2192 Fin N \\u2192 Fin K) : \\u211d :=\\n  \\u03b3 * EconCSLib.Decision.expectedDecisionAccuracy\\n      expect observedDataset trueLabels rule +\\n    (1 - \\u03b3) * EconCSLib.Decision.expectedObjective\\n      expect observedDataset fidelityTerm rule\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"expectedObjective\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03c9 \\u03c3\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"expect\",\n        \"type\": \"(\\u03c9 \\u2192 \\u211d) \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"observedDataset\",\n        \"type\": \"\\u03c9 \\u2192 \\u03c3\"\n      },\n      {\n        \"names\": \"trueLabels\",\n        \"type\": \"\\u03c9 \\u2192 Fin N \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"\\u03b3\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"fidelityTerm\",\n        \"type\": \"\\u03c3 \\u2192 (Fin N \\u2192 Fin K) \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"rule\",\n        \"type\": \"\\u03c3 \\u2192 Fin N \\u2192 Fin K\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def sourceSa {X Y : Type*} (q : X \\u2192 Y \\u2192 \\u211d) (z : Y) : Set X :=\\n  {x | q x z = 1}\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"sourceSa\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"z\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def sourceSb {X Y : Type*} [Fintype Y] (q : X \\u2192 Y \\u2192 \\u211d) (z : Y) : Set X :=\\n  {x | (Fintype.card Y : \\u211d)\\u207b\\u00b9 < q x z \\u2227 q x z < 1}\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"sourceSb\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"z\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def sourceSc {X Y : Type*} [Fintype Y] (q : X \\u2192 Y \\u2192 \\u211d) (z : Y) : Set X :=\\n  {x | q x z = (Fintype.card Y : \\u211d)\\u207b\\u00b9}\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"sourceSc\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"z\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def sourceSd {X Y : Type*} [Fintype Y] (q : X \\u2192 Y \\u2192 \\u211d) (z : Y) : Set X :=\\n  {x | 0 < q x z \\u2227 q x z < (Fintype.card Y : \\u211d)\\u207b\\u00b9}\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"sourceSd\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"z\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def sourceSe {X Y : Type*} (q : X \\u2192 Y \\u2192 \\u211d) (z : Y) : Set X :=\\n  {x | q x z = 0}\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"sourceSe\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"z\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem1i_no_information_bias\\n    [Fintype X] [DecidableEq X] [Nonempty X]\\n    [Fintype Y] [DecidableEq Y]\\n    (\\u03bc : PMF (X \\u00d7 Y)) (q : X \\u2192 Y \\u2192 \\u211d) (z y : Y)\\n    (hnoInformation : \\u2200 x a, q x a = prior \\u03bc a)\\n    (hplurality : \\u2200 a, prior \\u03bc a \\u2264 prior \\u03bc z) :\\n    (Finite.paperBias \\u03bc (fun _ : X => z) (prior \\u03bc) y =\\n        if z = y then 1 - prior \\u03bc y else -prior \\u03bc y) \\u2227\\n      (Finite.paperBias \\u03bc (fun _ : X => z) (Finite.paperAggregatePosterior \\u03bc q) y =\\n        if z = y then 1 - prior \\u03bc y else -prior \\u03bc y) := by\\n  classical\\n  have hprior :\\n      Finite.paperBias \\u03bc (fun _ : X => z) (prior \\u03bc) y =\\n        if z = y then 1 - prior \\u03bc y else -prior \\u03bc y := by\\n    simpa [prior, Finite.paperBias, Finite.paperPrior,\\n      Finite.paperMarginalLabelShare] using\\n      (Finite.paper_theorem1i_no_information_prior_bias \\u03bc z y)\\n  have hagg : Finite.paperAggregatePosterior \\u03bc q y = prior \\u03bc y := by\\n    unfold Finite.paperAggregatePosterior\\n    have hfun : (fun x : X => q x y) = fun _ : X => prior \\u03bc y := by\\n      funext x\\n      exact hnoInformation x y\\n    rw [hfun]\\n    exact EconCSLib.pmfExp_const (Finite.featureMarginal \\u03bc) (prior \\u03bc y)\\n  exact \\u27e8hprior, by simpa [Finite.paperBias, hagg] using hprior\\u27e9\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem1i_no_information_bias\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"PMF (X \\u00d7 Y)\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"z y\",\n        \"type\": \"Y\"\n      },\n      {\n        \"names\": \"hnoInformation\",\n        \"type\": \"\\u2200 x a, q x a = prior \\u03bc a\"\n      },\n      {\n        \"names\": \"hplurality\",\n        \"type\": \"\\u2200 a, prior \\u03bc a \\u2264 prior \\u03bc z\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem1ii_perfect_classifier_zero_bias\\n    [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]\\n    (\\u03bc : PMF (X \\u00d7 Y)) (rule : X \\u2192 Y)\\n    (htruth : \\u2200 xy : X \\u00d7 Y, rule xy.1 = xy.2) (y : Y) :\\n    Finite.paperBias \\u03bc rule (prior \\u03bc) y = 0 := by\\n  simpa [prior, Finite.paperBias, Finite.paperPrior,\\n    Finite.paperMarginalLabelShare] using\\n    (Finite.paper_theorem1ii_perfect_classifier_prior_bias_zero \\u03bc rule htruth y)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem1ii_perfect_classifier_zero_bias\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"PMF (X \\u00d7 Y)\"\n      },\n      {\n        \"names\": \"rule\",\n        \"type\": \"X \\u2192 Y\"\n      },\n      {\n        \"names\": \"htruth\",\n        \"type\": \"\\u2200 xy : X \\u00d7 Y, rule xy.1 = xy.2\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Y\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem1iii_argmax_bias_le_mae\\n    {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]\\n    [MeasurableSingletonClass Y] [Fintype Y] [DecidableEq Y]\\n    (\\u03bc : Measure (X \\u00d7 Y)) [IsFiniteMeasure \\u03bc]\\n    (q : X \\u2192 Y \\u2192 \\u211d) (argmaxRule : X \\u2192 Y) (y : Y)\\n    (hrule : Measurable argmaxRule)\\n    (hargmax : isArgmaxRule q argmaxRule)\\n    (hsimplex : posteriorSimplex q)\\n    (hscore : \\u2200 y : Y, Measurable (fun xy : X \\u00d7 Y => q xy.1 y))\\n    (hcal : calibrated \\u03bc q) :\\n    continuousJointPriorBias \\u03bc argmaxRule y \\u2264\\n      continuousJointClassifierMAE \\u03bc q := by\\n  have hcal' : ContinuousTheorem1.ContinuousCalibration \\u03bc q := by\\n    simpa [calibrated, ContinuousTheorem1.ContinuousCalibration] using hcal\\n  simpa [continuousJointPriorBias, continuousJointClassifierMAE,\\n    isArgmaxRule, posteriorSimplex, calibrated,\\n    ContinuousTheorem1.ContinuousCalibration,\\n    ContinuousTheorem1.continuousJointPriorBias,\\n    ContinuousTheorem1.continuousJointClassifierMAE,\\n    Finite.paperConditionalMAE] using\\n    (ContinuousTheorem1.paper_theorem1iii_continuous_joint_prior_bias_le_mae_of_continuousCalibration_finite_simplex\\n      \\u03bc q argmaxRule y hrule hargmax hsimplex.1 hsimplex.2.1 hscore hcal')\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem1iii_argmax_bias_le_mae\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X Y\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"Measure (X \\u00d7 Y)\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"X \\u2192 Y \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"argmaxRule\",\n        \"type\": \"X \\u2192 Y\"\n      },\n      {\n        \"names\": \"y\",\n        \"type\": \"Y\"\n      },\n      {\n        \"names\": \"hrule\",\n        \"type\": \"Measurable argmaxRule\"\n      },\n      {\n        \"names\": \"hargmax\",\n        \"type\": \"isArgmaxRule q argmaxRule\"\n      },\n      {\n        \"names\": \"hsimplex\",\n        \"type\": \"posteriorSimplex q\"\n      },\n      {\n        \"names\": \"hscore\",\n        \"type\": \"\\u2200 y : Y, Measurable (fun xy : X \\u00d7 Y => q xy.1 y)\"\n      },\n      {\n        \"names\": \"hcal\",\n        \"type\": \"calibrated \\u03bc q\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem2i_joint_rule_exists\\n    {\\u03c9 \\u03c3 : Type*} {N K : \\u2115} [NeZero K]\\n    (hK : 2 \\u2264 K) (hNK : K < N)\\n    (expect : (\\u03c9 \\u2192 \\u211d) \\u2192 \\u211d)\\n    (hlin : EconCSLib.Decision.FiniteLinearExpectation expect)\\n    (observedDataset : \\u03c9 \\u2192 \\u03c3)\\n    (trueLabels : \\u03c9 \\u2192 Fin N \\u2192 Fin K)\\n    (\\u03b3 : \\u211d) (posterior : \\u03c3 \\u2192 Fin N \\u2192 Fin K \\u2192 \\u211d)\\n    (fidelityTerm : \\u03c3 \\u2192 (Fin N \\u2192 Fin K) \\u2192 \\u211d)\\n    (hbayesRow : \\u2200 i (choose : \\u03c3 \\u2192 Fin K),\\n      expect (fun x =>\\n          if choose (observedDataset x) = trueLabels x i then (1 : \\u211d) else 0) =\\n        expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))) :\\n    \\u2203 optRule : \\u03c3 \\u2192 Fin N \\u2192 Fin K,\\n      \\u2200 rule : \\u03c3 \\u2192 Fin N \\u2192 Fin K,\\n        expectedObjective expect observedDataset trueLabels \\u03b3 fidelityTerm rule \\u2264\\n          expectedObjective expect observedDataset trueLabels \\u03b3 fidelityTerm optRule := by\\n  simpa [expectedObjective, paperExpectedONObjective] using\\n    (paper_theorem2i_joint_optimization_rule_exists\\n      hK hNK expect hlin observedDataset trueLabels \\u03b3 posterior fidelityTerm hbayesRow)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem2i_joint_rule_exists\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03c9 \\u03c3\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"hK\",\n        \"type\": \"2 \\u2264 K\"\n      },\n      {\n        \"names\": \"hNK\",\n        \"type\": \"K < N\"\n      },\n      {\n        \"names\": \"expect\",\n        \"type\": \"(\\u03c9 \\u2192 \\u211d) \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hlin\",\n        \"type\": \"EconCSLib.Decision.FiniteLinearExpectation expect\"\n      },\n      {\n        \"names\": \"observedDataset\",\n        \"type\": \"\\u03c9 \\u2192 \\u03c3\"\n      },\n      {\n        \"names\": \"trueLabels\",\n        \"type\": \"\\u03c9 \\u2192 Fin N \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"\\u03b3\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"posterior\",\n        \"type\": \"\\u03c3 \\u2192 Fin N \\u2192 Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"fidelityTerm\",\n        \"type\": \"\\u03c3 \\u2192 (Fin N \\u2192 Fin K) \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hbayesRow\",\n        \"type\": \"\\u2200 i (choose : \\u03c3 \\u2192 Fin K), expect (fun x => if choose (observedDataset x) = trueLabels x i then (1 : \\u211d) else 0) = expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem2ii_argmax_accuracy_maximizing\\n    {\\u03c9 \\u03c3 : Type*} {N K : \\u2115} [NeZero K]\\n    (hK : 2 \\u2264 K) (hNK : K < N)\\n    (expect : (\\u03c9 \\u2192 \\u211d) \\u2192 \\u211d)\\n    (hlin : EconCSLib.Decision.FiniteLinearExpectation expect)\\n    (observedDataset : \\u03c9 \\u2192 \\u03c3)\\n    (trueLabels : \\u03c9 \\u2192 Fin N \\u2192 Fin K)\\n    (posterior : \\u03c3 \\u2192 Fin N \\u2192 Fin K \\u2192 \\u211d)\\n    {decisionRule argmaxRule : \\u03c3 \\u2192 Fin N \\u2192 Fin K}\\n    (hargmax :\\n      \\u2200 xs, EconCSLib.Decision.IsPointwiseMax (posterior xs) (argmaxRule xs))\\n    (hbayesRow : \\u2200 i (choose : \\u03c3 \\u2192 Fin K),\\n      expect (fun x =>\\n          if choose (observedDataset x) = trueLabels x i then (1 : \\u211d) else 0) =\\n        expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))) :\\n    EconCSLib.Decision.expectedDecisionAccuracy\\n        expect observedDataset trueLabels decisionRule \\u2264\\n      EconCSLib.Decision.expectedDecisionAccuracy\\n        expect observedDataset trueLabels argmaxRule := by\\n  exact paper_theorem2ii_argmax_expected_accuracy_maximizing\\n    hK hNK expect hlin observedDataset trueLabels posterior hargmax hbayesRow\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem2ii_argmax_accuracy_maximizing\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03c9 \\u03c3\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"hK\",\n        \"type\": \"2 \\u2264 K\"\n      },\n      {\n        \"names\": \"hNK\",\n        \"type\": \"K < N\"\n      },\n      {\n        \"names\": \"expect\",\n        \"type\": \"(\\u03c9 \\u2192 \\u211d) \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hlin\",\n        \"type\": \"EconCSLib.Decision.FiniteLinearExpectation expect\"\n      },\n      {\n        \"names\": \"observedDataset\",\n        \"type\": \"\\u03c9 \\u2192 \\u03c3\"\n      },\n      {\n        \"names\": \"trueLabels\",\n        \"type\": \"\\u03c9 \\u2192 Fin N \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"posterior\",\n        \"type\": \"\\u03c3 \\u2192 Fin N \\u2192 Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"decisionRule argmaxRule\",\n        \"type\": \"\\u03c3 \\u2192 Fin N \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"hargmax\",\n        \"type\": \"\\u2200 xs, EconCSLib.Decision.IsPointwiseMax (posterior xs) (argmaxRule xs)\"\n      },\n      {\n        \"names\": \"hbayesRow\",\n        \"type\": \"\\u2200 i (choose : \\u03c3 \\u2192 Fin K), expect (fun x => if choose (observedDataset x) = trueLabels x i then (1 : \\u211d) else 0) = expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem2iii_non_argmax_not_pareto\\n    {X : Type*} [Fintype X] [DecidableEq X] {N K : \\u2115}\\n    (\\u03bc : PMF X) (posterior : X \\u2192 Fin K \\u2192 \\u211d) (pref : Fin K \\u2192 \\u211d)\\n    (rule argmaxRule : X \\u2192 Fin K)\\n    (hdisagree :\\n      0 < EconCSLib.pmfProb \\u03bc (fun x : X => rule x \\u2260 argmaxRule x))\\n    (hNpos : 0 < N)\\n    (hpref_nonneg : \\u2200 y, 0 \\u2264 pref y)\\n    (hpref_sum : (\\u2211 y : Fin K, pref y) = 1)\\n    (hnontrivial : \\u2200 y : Fin K, 1 / (N : \\u211d) \\u2264 pref y)\\n    (hweak_argmax : \\u2200 x y, posterior x y \\u2264 posterior x (argmaxRule x)) :\\n    \\u00ac Pareto.ParetoOptimal\\n      (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \\u03bc N)\\n        (fun s => Theorem2iii.sampledPosterior posterior s))\\n      (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \\u03bc N) pref)\\n      (fun s => Theorem2iii.sampledDecision rule s) := by\\n  exact\\n    Theorem2iii.paper_theorem2iii_not_expected_pareto_of_independent_rule_disagrees_pos\\n      \\u03bc posterior pref rule argmaxRule hdisagree hNpos hpref_nonneg hpref_sum\\n      hnontrivial hweak_argmax\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem2iii_non_argmax_not_pareto\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"PMF X\"\n      },\n      {\n        \"names\": \"posterior\",\n        \"type\": \"X \\u2192 Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"pref\",\n        \"type\": \"Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"rule argmaxRule\",\n        \"type\": \"X \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"hdisagree\",\n        \"type\": \"0 < EconCSLib.pmfProb \\u03bc (fun x : X => rule x \\u2260 argmaxRule x)\"\n      },\n      {\n        \"names\": \"hNpos\",\n        \"type\": \"0 < N\"\n      },\n      {\n        \"names\": \"hpref_nonneg\",\n        \"type\": \"\\u2200 y, 0 \\u2264 pref y\"\n      },\n      {\n        \"names\": \"hpref_sum\",\n        \"type\": \"(\\u2211 y : Fin K, pref y) = 1\"\n      },\n      {\n        \"names\": \"hnontrivial\",\n        \"type\": \"\\u2200 y : Fin K, 1 / (N : \\u211d) \\u2264 pref y\"\n      },\n      {\n        \"names\": \"hweak_argmax\",\n        \"type\": \"\\u2200 x y, posterior x y \\u2264 posterior x (argmaxRule x)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem2iii_weighted_objective_maximizer_agrees_argmax\\n    {X : Type*} [Fintype X] [DecidableEq X] {N K : \\u2115}\\n    (\\u03bc : PMF X) (posterior : X \\u2192 Fin K \\u2192 \\u211d) (pref : Fin K \\u2192 \\u211d)\\n    (rule argmaxRule : X \\u2192 Fin K)\\n    {\\u03b3 : \\u211d} (h\\u03b3nonneg : 0 \\u2264 \\u03b3) (h\\u03b3lt : \\u03b3 < 1)\\n    (hNpos : 0 < N)\\n    (hpref_nonneg : \\u2200 y, 0 \\u2264 pref y)\\n    (hpref_sum : (\\u2211 y : Fin K, pref y) = 1)\\n    (hnontrivial : \\u2200 y : Fin K, 1 / (N : \\u211d) \\u2264 pref y)\\n    (hweak_argmax : \\u2200 x y, posterior x y \\u2264 posterior x (argmaxRule x))\\n    (hmax :\\n      \\u2200 other : (Fin N \\u2192 X) \\u2192 Fin N \\u2192 Fin K,\\n        Pareto.weightedObjective \\u03b3\\n            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \\u03bc N)\\n              (fun s => Theorem2iii.sampledPosterior posterior s))\\n            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \\u03bc N) pref) other \\u2264\\n          Pareto.weightedObjective \\u03b3\\n            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \\u03bc N)\\n              (fun s => Theorem2iii.sampledPosterior posterior s))\\n            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \\u03bc N) pref)\\n            (fun s => Theorem2iii.sampledDecision rule s)) :\\n    EconCSLib.pmfProb \\u03bc (fun x : X => rule x \\u2260 argmaxRule x) = 0 := by\\n  classical\\n  by_contra hzero\\n  have hp_ne : EconCSLib.pmfProb \\u03bc (fun x : X => rule x \\u2260 argmaxRule x) \\u2260 0 :=\\n    hzero\\n  have hnonneg :\\n      0 \\u2264 EconCSLib.pmfProb \\u03bc (fun x : X => rule x \\u2260 argmaxRule x) :=\\n    EconCSLib.pmfProb_nonneg \\u03bc (fun x : X => rule x \\u2260 argmaxRule x)\\n  have hpos : 0 < EconCSLib.pmfProb \\u03bc (fun x : X => rule x \\u2260 argmaxRule x) :=\\n    lt_of_le_of_ne hnonneg hp_ne.symm\\n  exact\\n    (Theorem2iii.paper_theorem2iii_not_expected_weightedObjective_maximizer_of_independent_rule_disagrees_pos\\n      \\u03bc posterior pref rule argmaxRule h\\u03b3nonneg h\\u03b3lt hpos hNpos\\n      hpref_nonneg hpref_sum hnontrivial hweak_argmax) hmax\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem2iii_weighted_objective_maximizer_agrees_argmax\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"PMF X\"\n      },\n      {\n        \"names\": \"posterior\",\n        \"type\": \"X \\u2192 Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"pref\",\n        \"type\": \"Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"rule argmaxRule\",\n        \"type\": \"X \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"\\u03b3\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"h\\u03b3nonneg\",\n        \"type\": \"0 \\u2264 \\u03b3\"\n      },\n      {\n        \"names\": \"h\\u03b3lt\",\n        \"type\": \"\\u03b3 < 1\"\n      },\n      {\n        \"names\": \"hNpos\",\n        \"type\": \"0 < N\"\n      },\n      {\n        \"names\": \"hpref_nonneg\",\n        \"type\": \"\\u2200 y, 0 \\u2264 pref y\"\n      },\n      {\n        \"names\": \"hpref_sum\",\n        \"type\": \"(\\u2211 y : Fin K, pref y) = 1\"\n      },\n      {\n        \"names\": \"hnontrivial\",\n        \"type\": \"\\u2200 y : Fin K, 1 / (N : \\u211d) \\u2264 pref y\"\n      },\n      {\n        \"names\": \"hweak_argmax\",\n        \"type\": \"\\u2200 x y, posterior x y \\u2264 posterior x (argmaxRule x)\"\n      },\n      {\n        \"names\": \"hmax\",\n        \"type\": \"\\u2200 other : (Fin N \\u2192 X) \\u2192 Fin N \\u2192 Fin K, Pareto.weightedObjective \\u03b3 (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \\u03bc N) (fun s => Theorem2iii.sampledPosterior posterior s)) (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \\u03bc N) pref) other \\u2264 Pareto.weightedObjective \\u03b3 (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \\u03bc N) (fun s => Theorem2iii.sampledPosterior posterior s)) (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \\u03bc N) pref) (fun s => Theorem2iii.sampledDecision rule s)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem2iii_strict_disagreement_not_weighted_objective_maximizer\\n    {X : Type*} [Fintype X] [DecidableEq X] {N K : \\u2115}\\n    (\\u03bc : PMF X) (posterior : X \\u2192 Fin K \\u2192 \\u211d) (pref : Fin K \\u2192 \\u211d)\\n    (rule argmaxRule : X \\u2192 Fin K)\\n    {\\u03b3 : \\u211d} (h\\u03b3pos : 0 < \\u03b3) (h\\u03b3le : \\u03b3 \\u2264 1)\\n    (hdisagree :\\n      0 < EconCSLib.pmfProb \\u03bc (fun x : X => rule x \\u2260 argmaxRule x))\\n    (hNpos : 0 < N)\\n    (hpref_nonneg : \\u2200 y, 0 \\u2264 pref y)\\n    (hpref_sum : (\\u2211 y : Fin K, pref y) = 1)\\n    (hnontrivial : \\u2200 y : Fin K, 1 / (N : \\u211d) \\u2264 pref y)\\n    (hstrict_argmax :\\n      \\u2200 x, rule x \\u2260 argmaxRule x \\u2192\\n        posterior x (rule x) < posterior x (argmaxRule x)) :\\n    \\u00ac \\u2200 other : (Fin N \\u2192 X) \\u2192 Fin N \\u2192 Fin K,\\n        Pareto.weightedObjective \\u03b3\\n            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \\u03bc N)\\n              (fun s => Theorem2iii.sampledPosterior posterior s))\\n            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \\u03bc N) pref) other \\u2264\\n          Pareto.weightedObjective \\u03b3\\n            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \\u03bc N)\\n              (fun s => Theorem2iii.sampledPosterior posterior s))\\n            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \\u03bc N) pref)\\n            (fun s => Theorem2iii.sampledDecision rule s) := by\\n  exact\\n    Theorem2iii.paper_theorem2iii_not_expected_weightedObjective_maximizer_of_independent_rule_disagrees_pos_strict_argmax\\n      \\u03bc posterior pref rule argmaxRule h\\u03b3pos h\\u03b3le hdisagree hNpos hpref_nonneg\\n      hpref_sum hnontrivial hstrict_argmax\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem2iii_strict_disagreement_not_weighted_objective_maximizer\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"X\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"N K\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"\\u03bc\",\n        \"type\": \"PMF X\"\n      },\n      {\n        \"names\": \"posterior\",\n        \"type\": \"X \\u2192 Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"pref\",\n        \"type\": \"Fin K \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"rule argmaxRule\",\n        \"type\": \"X \\u2192 Fin K\"\n      },\n      {\n        \"names\": \"\\u03b3\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"h\\u03b3pos\",\n        \"type\": \"0 < \\u03b3\"\n      },\n      {\n        \"names\": \"h\\u03b3le\",\n        \"type\": \"\\u03b3 \\u2264 1\"\n      },\n      {\n        \"names\": \"hdisagree\",\n        \"type\": \"0 < EconCSLib.pmfProb \\u03bc (fun x : X => rule x \\u2260 argmaxRule x)\"\n      },\n      {\n        \"names\": \"hNpos\",\n        \"type\": \"0 < N\"\n      },\n      {\n        \"names\": \"hpref_nonneg\",\n        \"type\": \"\\u2200 y, 0 \\u2264 pref y\"\n      },\n      {\n        \"names\": \"hpref_sum\",\n        \"type\": \"(\\u2211 y : Fin K, pref y) = 1\"\n      },\n      {\n        \"names\": \"hnontrivial\",\n        \"type\": \"\\u2200 y : Fin K, 1 / (N : \\u211d) \\u2264 pref y\"\n      },\n      {\n        \"names\": \"hstrict_argmax\",\n        \"type\": \"\\u2200 x, rule x \\u2260 argmaxRule x \\u2192 posterior x (rule x) < posterior x (argmaxRule x)\"\n      }\n    ]\n  }\n]",
+  "paper": "DSWG24DiscretizationBias",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/DSWG24DiscretizationBias",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 0,
+  "recursive_field_items": [],
+  "review_row_count": 41,
+  "row_visible_inputs": {
+    "aggregatePosterior": [
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "q",
+        "type": "Fin N \u2192 Fin K \u2192 \u211d"
+      },
+      {
+        "names": "y",
+        "type": "Fin K"
+      }
+    ],
+    "assumption_theorem1_argmax_rule_measurable": [],
+    "assumption_theorem1_calibrated_classifier": [],
+    "assumption_theorem1_no_information_case": [],
+    "assumption_theorem1_perfect_classifier": [],
+    "assumption_theorem1_plurality_argmax_class": [],
+    "assumption_theorem2_at_least_two_classes": [],
+    "assumption_theorem2_more_rows_than_classes": [],
+    "assumption_theorem2_positive_sample_count": [],
+    "assumption_theorem2_reference_nonnegative": [],
+    "bias": [
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "decision",
+        "type": "Fin N \u2192 Fin K"
+      },
+      {
+        "names": "pref",
+        "type": "Fin K \u2192 \u211d"
+      },
+      {
+        "names": "y",
+        "type": "Fin K"
+      }
+    ],
+    "calibrated": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03bc",
+        "type": "Measure (X \u00d7 Y)"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      }
+    ],
+    "classifierMAE": [
+      {
+        "names": "\u03bc",
+        "type": "PMF (X \u00d7 Y)"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      }
+    ],
+    "continuousAggregateBias": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03bc",
+        "type": "Measure X"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "rule",
+        "type": "X \u2192 Y"
+      },
+      {
+        "names": "y",
+        "type": "Y"
+      }
+    ],
+    "continuousAggregatePosterior": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03bc",
+        "type": "Measure X"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "y",
+        "type": "Y"
+      }
+    ],
+    "continuousBias": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03bc",
+        "type": "Measure X"
+      },
+      {
+        "names": "rule",
+        "type": "X \u2192 Y"
+      },
+      {
+        "names": "pref",
+        "type": "Y \u2192 \u211d"
+      },
+      {
+        "names": "y",
+        "type": "Y"
+      }
+    ],
+    "continuousClassifierMAE": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03bc",
+        "type": "Measure X"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      }
+    ],
+    "continuousJointClassifierMAE": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03bc",
+        "type": "Measure (X \u00d7 Y)"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      }
+    ],
+    "continuousJointPriorBias": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03bc",
+        "type": "Measure (X \u00d7 Y)"
+      },
+      {
+        "names": "rule",
+        "type": "X \u2192 Y"
+      },
+      {
+        "names": "y",
+        "type": "Y"
+      }
+    ],
+    "continuousMarginalLabelShare": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03bc",
+        "type": "Measure X"
+      },
+      {
+        "names": "rule",
+        "type": "X \u2192 Y"
+      },
+      {
+        "names": "y",
+        "type": "Y"
+      }
+    ],
+    "expectedObjective": [
+      {
+        "names": "\u03c9 \u03c3",
+        "type": "Type*"
+      },
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "expect",
+        "type": "(\u03c9 \u2192 \u211d) \u2192 \u211d"
+      },
+      {
+        "names": "observedDataset",
+        "type": "\u03c9 \u2192 \u03c3"
+      },
+      {
+        "names": "trueLabels",
+        "type": "\u03c9 \u2192 Fin N \u2192 Fin K"
+      },
+      {
+        "names": "\u03b3",
+        "type": "\u211d"
+      },
+      {
+        "names": "fidelityTerm",
+        "type": "\u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d"
+      },
+      {
+        "names": "rule",
+        "type": "\u03c3 \u2192 Fin N \u2192 Fin K"
+      }
+    ],
+    "fidelity": [
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "decision",
+        "type": "Fin N \u2192 Fin K"
+      },
+      {
+        "names": "pref",
+        "type": "Fin K \u2192 \u211d"
+      }
+    ],
+    "isArgmaxRule": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "rule",
+        "type": "X \u2192 Y"
+      }
+    ],
+    "marginalLabelShare": [
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "decision",
+        "type": "Fin N \u2192 Fin K"
+      },
+      {
+        "names": "y",
+        "type": "Fin K"
+      }
+    ],
+    "objective": [
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "\u03c3",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03b3",
+        "type": "\u211d"
+      },
+      {
+        "names": "posterior",
+        "type": "\u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d"
+      },
+      {
+        "names": "fidelityTerm",
+        "type": "\u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d"
+      },
+      {
+        "names": "xs",
+        "type": "\u03c3"
+      },
+      {
+        "names": "decision",
+        "type": "Fin N \u2192 Fin K"
+      }
+    ],
+    "posteriorSimplex": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      }
+    ],
+    "prior": [
+      {
+        "names": "\u03bc",
+        "type": "PMF (X \u00d7 Y)"
+      },
+      {
+        "names": "y",
+        "type": "Y"
+      }
+    ],
+    "sourceSa": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "z",
+        "type": "Y"
+      }
+    ],
+    "sourceSb": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "z",
+        "type": "Y"
+      }
+    ],
+    "sourceSc": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "z",
+        "type": "Y"
+      }
+    ],
+    "sourceSd": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "z",
+        "type": "Y"
+      }
+    ],
+    "sourceSe": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "z",
+        "type": "Y"
+      }
+    ],
+    "theorem1i_no_information_bias": [
+      {
+        "names": "\u03bc",
+        "type": "PMF (X \u00d7 Y)"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "z y",
+        "type": "Y"
+      },
+      {
+        "names": "hnoInformation",
+        "type": "\u2200 x a, q x a = prior \u03bc a"
+      },
+      {
+        "names": "hplurality",
+        "type": "\u2200 a, prior \u03bc a \u2264 prior \u03bc z"
+      }
+    ],
+    "theorem1ii_perfect_classifier_zero_bias": [
+      {
+        "names": "\u03bc",
+        "type": "PMF (X \u00d7 Y)"
+      },
+      {
+        "names": "rule",
+        "type": "X \u2192 Y"
+      },
+      {
+        "names": "htruth",
+        "type": "\u2200 xy : X \u00d7 Y, rule xy.1 = xy.2"
+      },
+      {
+        "names": "y",
+        "type": "Y"
+      }
+    ],
+    "theorem1iii_argmax_bias_le_mae": [
+      {
+        "names": "X Y",
+        "type": "Type*"
+      },
+      {
+        "names": "\u03bc",
+        "type": "Measure (X \u00d7 Y)"
+      },
+      {
+        "names": "q",
+        "type": "X \u2192 Y \u2192 \u211d"
+      },
+      {
+        "names": "argmaxRule",
+        "type": "X \u2192 Y"
+      },
+      {
+        "names": "y",
+        "type": "Y"
+      },
+      {
+        "names": "hrule",
+        "type": "Measurable argmaxRule"
+      },
+      {
+        "names": "hargmax",
+        "type": "isArgmaxRule q argmaxRule"
+      },
+      {
+        "names": "hsimplex",
+        "type": "posteriorSimplex q"
+      },
+      {
+        "names": "hscore",
+        "type": "\u2200 y : Y, Measurable (fun xy : X \u00d7 Y => q xy.1 y)"
+      },
+      {
+        "names": "hcal",
+        "type": "calibrated \u03bc q"
+      }
+    ],
+    "theorem1iii_tight_binary_example": [],
+    "theorem2i_joint_rule_exists": [
+      {
+        "names": "\u03c9 \u03c3",
+        "type": "Type*"
+      },
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "hK",
+        "type": "2 \u2264 K"
+      },
+      {
+        "names": "hNK",
+        "type": "K < N"
+      },
+      {
+        "names": "expect",
+        "type": "(\u03c9 \u2192 \u211d) \u2192 \u211d"
+      },
+      {
+        "names": "hlin",
+        "type": "EconCSLib.Decision.FiniteLinearExpectation expect"
+      },
+      {
+        "names": "observedDataset",
+        "type": "\u03c9 \u2192 \u03c3"
+      },
+      {
+        "names": "trueLabels",
+        "type": "\u03c9 \u2192 Fin N \u2192 Fin K"
+      },
+      {
+        "names": "\u03b3",
+        "type": "\u211d"
+      },
+      {
+        "names": "posterior",
+        "type": "\u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d"
+      },
+      {
+        "names": "fidelityTerm",
+        "type": "\u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d"
+      },
+      {
+        "names": "hbayesRow",
+        "type": "\u2200 i (choose : \u03c3 \u2192 Fin K), expect (fun x => if choose (observedDataset x) = trueLabels x i then (1 : \u211d) else 0) = expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))"
+      }
+    ],
+    "theorem2ii_argmax_accuracy_maximizing": [
+      {
+        "names": "\u03c9 \u03c3",
+        "type": "Type*"
+      },
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "hK",
+        "type": "2 \u2264 K"
+      },
+      {
+        "names": "hNK",
+        "type": "K < N"
+      },
+      {
+        "names": "expect",
+        "type": "(\u03c9 \u2192 \u211d) \u2192 \u211d"
+      },
+      {
+        "names": "hlin",
+        "type": "EconCSLib.Decision.FiniteLinearExpectation expect"
+      },
+      {
+        "names": "observedDataset",
+        "type": "\u03c9 \u2192 \u03c3"
+      },
+      {
+        "names": "trueLabels",
+        "type": "\u03c9 \u2192 Fin N \u2192 Fin K"
+      },
+      {
+        "names": "posterior",
+        "type": "\u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d"
+      },
+      {
+        "names": "decisionRule argmaxRule",
+        "type": "\u03c3 \u2192 Fin N \u2192 Fin K"
+      },
+      {
+        "names": "hargmax",
+        "type": "\u2200 xs, EconCSLib.Decision.IsPointwiseMax (posterior xs) (argmaxRule xs)"
+      },
+      {
+        "names": "hbayesRow",
+        "type": "\u2200 i (choose : \u03c3 \u2192 Fin K), expect (fun x => if choose (observedDataset x) = trueLabels x i then (1 : \u211d) else 0) = expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))"
+      }
+    ],
+    "theorem2iii_non_argmax_not_pareto": [
+      {
+        "names": "X",
+        "type": "Type*"
+      },
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "\u03bc",
+        "type": "PMF X"
+      },
+      {
+        "names": "posterior",
+        "type": "X \u2192 Fin K \u2192 \u211d"
+      },
+      {
+        "names": "pref",
+        "type": "Fin K \u2192 \u211d"
+      },
+      {
+        "names": "rule argmaxRule",
+        "type": "X \u2192 Fin K"
+      },
+      {
+        "names": "hdisagree",
+        "type": "0 < EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x)"
+      },
+      {
+        "names": "hNpos",
+        "type": "0 < N"
+      },
+      {
+        "names": "hpref_nonneg",
+        "type": "\u2200 y, 0 \u2264 pref y"
+      },
+      {
+        "names": "hpref_sum",
+        "type": "(\u2211 y : Fin K, pref y) = 1"
+      },
+      {
+        "names": "hnontrivial",
+        "type": "\u2200 y : Fin K, 1 / (N : \u211d) \u2264 pref y"
+      },
+      {
+        "names": "hweak_argmax",
+        "type": "\u2200 x y, posterior x y \u2264 posterior x (argmaxRule x)"
+      }
+    ],
+    "theorem2iii_strict_disagreement_not_weighted_objective_maximizer": [
+      {
+        "names": "X",
+        "type": "Type*"
+      },
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "\u03bc",
+        "type": "PMF X"
+      },
+      {
+        "names": "posterior",
+        "type": "X \u2192 Fin K \u2192 \u211d"
+      },
+      {
+        "names": "pref",
+        "type": "Fin K \u2192 \u211d"
+      },
+      {
+        "names": "rule argmaxRule",
+        "type": "X \u2192 Fin K"
+      },
+      {
+        "names": "\u03b3",
+        "type": "\u211d"
+      },
+      {
+        "names": "h\u03b3pos",
+        "type": "0 < \u03b3"
+      },
+      {
+        "names": "h\u03b3le",
+        "type": "\u03b3 \u2264 1"
+      },
+      {
+        "names": "hdisagree",
+        "type": "0 < EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x)"
+      },
+      {
+        "names": "hNpos",
+        "type": "0 < N"
+      },
+      {
+        "names": "hpref_nonneg",
+        "type": "\u2200 y, 0 \u2264 pref y"
+      },
+      {
+        "names": "hpref_sum",
+        "type": "(\u2211 y : Fin K, pref y) = 1"
+      },
+      {
+        "names": "hnontrivial",
+        "type": "\u2200 y : Fin K, 1 / (N : \u211d) \u2264 pref y"
+      },
+      {
+        "names": "hstrict_argmax",
+        "type": "\u2200 x, rule x \u2260 argmaxRule x \u2192 posterior x (rule x) < posterior x (argmaxRule x)"
+      }
+    ],
+    "theorem2iii_weighted_objective_maximizer_agrees_argmax": [
+      {
+        "names": "X",
+        "type": "Type*"
+      },
+      {
+        "names": "N K",
+        "type": "\u2115"
+      },
+      {
+        "names": "\u03bc",
+        "type": "PMF X"
+      },
+      {
+        "names": "posterior",
+        "type": "X \u2192 Fin K \u2192 \u211d"
+      },
+      {
+        "names": "pref",
+        "type": "Fin K \u2192 \u211d"
+      },
+      {
+        "names": "rule argmaxRule",
+        "type": "X \u2192 Fin K"
+      },
+      {
+        "names": "\u03b3",
+        "type": "\u211d"
+      },
+      {
+        "names": "h\u03b3nonneg",
+        "type": "0 \u2264 \u03b3"
+      },
+      {
+        "names": "h\u03b3lt",
+        "type": "\u03b3 < 1"
+      },
+      {
+        "names": "hNpos",
+        "type": "0 < N"
+      },
+      {
+        "names": "hpref_nonneg",
+        "type": "\u2200 y, 0 \u2264 pref y"
+      },
+      {
+        "names": "hpref_sum",
+        "type": "(\u2211 y : Fin K, pref y) = 1"
+      },
+      {
+        "names": "hnontrivial",
+        "type": "\u2200 y : Fin K, 1 / (N : \u211d) \u2264 pref y"
+      },
+      {
+        "names": "hweak_argmax",
+        "type": "\u2200 x y, posterior x y \u2264 posterior x (argmaxRule x)"
+      },
+      {
+        "names": "hmax",
+        "type": "\u2200 other : (Fin N \u2192 X) \u2192 Fin N \u2192 Fin K, Pareto.weightedObjective \u03b3 (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N) (fun s => Theorem2iii.sampledPosterior posterior s)) (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) other \u2264 Pareto.weightedObjective \u03b3 (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N) (fun s => Theorem2iii.sampledPosterior posterior s)) (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) (fun s => Theorem2iii.sampledDecision rule s)"
+      }
+    ]
+  },
+  "rows_with_record_premises": [],
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "def prior [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]\n    (\u03bc : PMF (X \u00d7 Y)) (y : Y) : \u211d :=\n  ((Finite.labelMarginal \u03bc) y).toReal",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "prior",
+      "visible_inputs": [
+        {
+          "names": "\u03bc",
+          "type": "PMF (X \u00d7 Y)"
+        },
+        {
+          "names": "y",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def marginalLabelShare {N K : \u2115} (decision : Fin N \u2192 Fin K) (y : Fin K) : \u211d :=\n  (\u2211 i : Fin N, if decision i = y then (1 : \u211d) else 0) / (N : \u211d)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "marginalLabelShare",
+      "visible_inputs": [
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "decision",
+          "type": "Fin N \u2192 Fin K"
+        },
+        {
+          "names": "y",
+          "type": "Fin K"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def aggregatePosterior {N K : \u2115} (q : Fin N \u2192 Fin K \u2192 \u211d) (y : Fin K) : \u211d :=\n  (\u2211 i : Fin N, q i y) / (N : \u211d)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "aggregatePosterior",
+      "visible_inputs": [
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "q",
+          "type": "Fin N \u2192 Fin K \u2192 \u211d"
+        },
+        {
+          "names": "y",
+          "type": "Fin K"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def bias {N K : \u2115} (decision : Fin N \u2192 Fin K) (pref : Fin K \u2192 \u211d) (y : Fin K) : \u211d :=\n  marginalLabelShare decision y - pref y",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "bias",
+      "visible_inputs": [
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "decision",
+          "type": "Fin N \u2192 Fin K"
+        },
+        {
+          "names": "pref",
+          "type": "Fin K \u2192 \u211d"
+        },
+        {
+          "names": "y",
+          "type": "Fin K"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def fidelity {N K : \u2115} (decision : Fin N \u2192 Fin K) (pref : Fin K \u2192 \u211d) : \u211d :=\n  -\u2211 y : Fin K, |bias decision pref y|",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "fidelity",
+      "visible_inputs": [
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "decision",
+          "type": "Fin N \u2192 Fin K"
+        },
+        {
+          "names": "pref",
+          "type": "Fin K \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def classifierMAE [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]\n    (\u03bc : PMF (X \u00d7 Y)) (q : X \u2192 Y \u2192 \u211d) : \u211d :=\n  EconCSLib.pmfExp (Finite.featureMarginal \u03bc)\n    (fun x => \u2211 y : Y, q x y * (1 - q x y))",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "classifierMAE",
+      "visible_inputs": [
+        {
+          "names": "\u03bc",
+          "type": "PMF (X \u00d7 Y)"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def continuousMarginalLabelShare {X Y : Type*} [MeasurableSpace X] [DecidableEq Y]\n    (\u03bc : Measure X) (rule : X \u2192 Y) (y : Y) : \u211d :=\n  \u222b x, (if rule x = y then (1 : \u211d) else 0) \u2202\u03bc",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "continuousMarginalLabelShare",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03bc",
+          "type": "Measure X"
+        },
+        {
+          "names": "rule",
+          "type": "X \u2192 Y"
+        },
+        {
+          "names": "y",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def continuousAggregatePosterior {X Y : Type*} [MeasurableSpace X]\n    (\u03bc : Measure X) (q : X \u2192 Y \u2192 \u211d) (y : Y) : \u211d :=\n  \u222b x, q x y \u2202\u03bc",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "continuousAggregatePosterior",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03bc",
+          "type": "Measure X"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "y",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def continuousBias {X Y : Type*} [MeasurableSpace X] [DecidableEq Y]\n    (\u03bc : Measure X) (rule : X \u2192 Y) (pref : Y \u2192 \u211d) (y : Y) : \u211d :=\n  continuousMarginalLabelShare \u03bc rule y - pref y",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "continuousBias",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03bc",
+          "type": "Measure X"
+        },
+        {
+          "names": "rule",
+          "type": "X \u2192 Y"
+        },
+        {
+          "names": "pref",
+          "type": "Y \u2192 \u211d"
+        },
+        {
+          "names": "y",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def continuousAggregateBias {X Y : Type*} [MeasurableSpace X] [DecidableEq Y]\n    (\u03bc : Measure X) (q : X \u2192 Y \u2192 \u211d) (rule : X \u2192 Y) (y : Y) : \u211d :=\n  continuousMarginalLabelShare \u03bc rule y - continuousAggregatePosterior \u03bc q y",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "continuousAggregateBias",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03bc",
+          "type": "Measure X"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "rule",
+          "type": "X \u2192 Y"
+        },
+        {
+          "names": "y",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def continuousClassifierMAE {X Y : Type*} [MeasurableSpace X] [Fintype Y]\n    (\u03bc : Measure X) (q : X \u2192 Y \u2192 \u211d) : \u211d :=\n  \u222b x, \u2211 y : Y, q x y * (1 - q x y) \u2202\u03bc",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "continuousClassifierMAE",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03bc",
+          "type": "Measure X"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def continuousJointPriorBias {X Y : Type*} [MeasurableSpace (X \u00d7 Y)]\n    [DecidableEq Y] (\u03bc : Measure (X \u00d7 Y)) (rule : X \u2192 Y) (y : Y) : \u211d :=\n  (\u222b xy, (if rule xy.1 = y then (1 : \u211d) else 0) \u2202\u03bc) -\n    \u222b xy, (if xy.2 = y then (1 : \u211d) else 0) \u2202\u03bc",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "continuousJointPriorBias",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03bc",
+          "type": "Measure (X \u00d7 Y)"
+        },
+        {
+          "names": "rule",
+          "type": "X \u2192 Y"
+        },
+        {
+          "names": "y",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def continuousJointClassifierMAE {X Y : Type*} [MeasurableSpace (X \u00d7 Y)]\n    [Fintype Y] (\u03bc : Measure (X \u00d7 Y)) (q : X \u2192 Y \u2192 \u211d) : \u211d :=\n  \u222b xy, \u2211 y : Y, q xy.1 y * (1 - q xy.1 y) \u2202\u03bc",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "continuousJointClassifierMAE",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03bc",
+          "type": "Measure (X \u00d7 Y)"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def posteriorSimplex {X Y : Type*} [Fintype Y] (q : X \u2192 Y \u2192 \u211d) : Prop :=\n  (\u2200 x, (\u2211 y : Y, q x y) = 1) \u2227\n    (\u2200 x y, 0 \u2264 q x y) \u2227\n      (\u2200 x y, q x y \u2264 1)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "posteriorSimplex",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def isArgmaxRule {X Y : Type*} (q : X \u2192 Y \u2192 \u211d) (rule : X \u2192 Y) : Prop :=\n  \u2200 x y, q x y \u2264 q x (rule x)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "isArgmaxRule",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "rule",
+          "type": "X \u2192 Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def calibrated {X Y : Type*} [MeasurableSpace (X \u00d7 Y)] [DecidableEq Y]\n    (\u03bc : Measure (X \u00d7 Y)) (q : X \u2192 Y \u2192 \u211d) : Prop := by\n  classical\n  exact\n    \u2200 (y : Y) (s : Set \u211d), MeasurableSet s \u2192\n      (\u222b xy, (if q xy.1 y \u2208 s then\n          if xy.2 = y then (1 : \u211d) else 0\n        else 0) \u2202\u03bc) =\n        \u222b xy, (if q xy.1 y \u2208 s then q xy.1 y else 0) \u2202\u03bc",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "calibrated",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03bc",
+          "type": "Measure (X \u00d7 Y)"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def objective {N K : \u2115} {\u03c3 : Type*}\n    (\u03b3 : \u211d) (posterior : \u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d)\n    (fidelityTerm : \u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d)\n    (xs : \u03c3) (decision : Fin N \u2192 Fin K) : \u211d :=\n  \u03b3 * EconCSLib.Decision.averageScore (posterior xs) decision +\n    (1 - \u03b3) * fidelityTerm xs decision",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "objective",
+      "visible_inputs": [
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "\u03c3",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03b3",
+          "type": "\u211d"
+        },
+        {
+          "names": "posterior",
+          "type": "\u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d"
+        },
+        {
+          "names": "fidelityTerm",
+          "type": "\u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d"
+        },
+        {
+          "names": "xs",
+          "type": "\u03c3"
+        },
+        {
+          "names": "decision",
+          "type": "Fin N \u2192 Fin K"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def expectedObjective {\u03c9 \u03c3 : Type*} {N K : \u2115} [NeZero K]\n    (expect : (\u03c9 \u2192 \u211d) \u2192 \u211d) (observedDataset : \u03c9 \u2192 \u03c3)\n    (trueLabels : \u03c9 \u2192 Fin N \u2192 Fin K)\n    (\u03b3 : \u211d) (fidelityTerm : \u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d)\n    (rule : \u03c3 \u2192 Fin N \u2192 Fin K) : \u211d :=\n  \u03b3 * EconCSLib.Decision.expectedDecisionAccuracy\n      expect observedDataset trueLabels rule +\n    (1 - \u03b3) * EconCSLib.Decision.expectedObjective\n      expect observedDataset fidelityTerm rule",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "expectedObjective",
+      "visible_inputs": [
+        {
+          "names": "\u03c9 \u03c3",
+          "type": "Type*"
+        },
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "expect",
+          "type": "(\u03c9 \u2192 \u211d) \u2192 \u211d"
+        },
+        {
+          "names": "observedDataset",
+          "type": "\u03c9 \u2192 \u03c3"
+        },
+        {
+          "names": "trueLabels",
+          "type": "\u03c9 \u2192 Fin N \u2192 Fin K"
+        },
+        {
+          "names": "\u03b3",
+          "type": "\u211d"
+        },
+        {
+          "names": "fidelityTerm",
+          "type": "\u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d"
+        },
+        {
+          "names": "rule",
+          "type": "\u03c3 \u2192 Fin N \u2192 Fin K"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def sourceSa {X Y : Type*} (q : X \u2192 Y \u2192 \u211d) (z : Y) : Set X :=\n  {x | q x z = 1}",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "sourceSa",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "z",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def sourceSb {X Y : Type*} [Fintype Y] (q : X \u2192 Y \u2192 \u211d) (z : Y) : Set X :=\n  {x | (Fintype.card Y : \u211d)\u207b\u00b9 < q x z \u2227 q x z < 1}",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "sourceSb",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "z",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def sourceSc {X Y : Type*} [Fintype Y] (q : X \u2192 Y \u2192 \u211d) (z : Y) : Set X :=\n  {x | q x z = (Fintype.card Y : \u211d)\u207b\u00b9}",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "sourceSc",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "z",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def sourceSd {X Y : Type*} [Fintype Y] (q : X \u2192 Y \u2192 \u211d) (z : Y) : Set X :=\n  {x | 0 < q x z \u2227 q x z < (Fintype.card Y : \u211d)\u207b\u00b9}",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "sourceSd",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "z",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def sourceSe {X Y : Type*} (q : X \u2192 Y \u2192 \u211d) (z : Y) : Set X :=\n  {x | q x z = 0}",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "sourceSe",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "z",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem1i_no_information_bias\n    [Fintype X] [DecidableEq X] [Nonempty X]\n    [Fintype Y] [DecidableEq Y]\n    (\u03bc : PMF (X \u00d7 Y)) (q : X \u2192 Y \u2192 \u211d) (z y : Y)\n    (hnoInformation : \u2200 x a, q x a = prior \u03bc a)\n    (hplurality : \u2200 a, prior \u03bc a \u2264 prior \u03bc z) :\n    (Finite.paperBias \u03bc (fun _ : X => z) (prior \u03bc) y =\n        if z = y then 1 - prior \u03bc y else -prior \u03bc y) \u2227\n      (Finite.paperBias \u03bc (fun _ : X => z) (Finite.paperAggregatePosterior \u03bc q) y =\n        if z = y then 1 - prior \u03bc y else -prior \u03bc y) := by\n  classical\n  have hprior :\n      Finite.paperBias \u03bc (fun _ : X => z) (prior \u03bc) y =\n        if z = y then 1 - prior \u03bc y else -prior \u03bc y := by\n    simpa [prior, Finite.paperBias, Finite.paperPrior,\n      Finite.paperMarginalLabelShare] using\n      (Finite.paper_theorem1i_no_information_prior_bias \u03bc z y)\n  have hagg : Finite.paperAggregatePosterior \u03bc q y = prior \u03bc y := by\n    unfold Finite.paperAggregatePosterior\n    have hfun : (fun x : X => q x y) = fun _ : X => prior \u03bc y := by\n      funext x\n      exact hnoInformation x y\n    rw [hfun]\n    exact EconCSLib.pmfExp_const (Finite.featureMarginal \u03bc) (prior \u03bc y)\n  exact \u27e8hprior, by simpa [Finite.paperBias, hagg] using hprior\u27e9",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem1i_no_information_bias",
+      "visible_inputs": [
+        {
+          "names": "\u03bc",
+          "type": "PMF (X \u00d7 Y)"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "z y",
+          "type": "Y"
+        },
+        {
+          "names": "hnoInformation",
+          "type": "\u2200 x a, q x a = prior \u03bc a"
+        },
+        {
+          "names": "hplurality",
+          "type": "\u2200 a, prior \u03bc a \u2264 prior \u03bc z"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem1ii_perfect_classifier_zero_bias\n    [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]\n    (\u03bc : PMF (X \u00d7 Y)) (rule : X \u2192 Y)\n    (htruth : \u2200 xy : X \u00d7 Y, rule xy.1 = xy.2) (y : Y) :\n    Finite.paperBias \u03bc rule (prior \u03bc) y = 0 := by\n  simpa [prior, Finite.paperBias, Finite.paperPrior,\n    Finite.paperMarginalLabelShare] using\n    (Finite.paper_theorem1ii_perfect_classifier_prior_bias_zero \u03bc rule htruth y)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem1ii_perfect_classifier_zero_bias",
+      "visible_inputs": [
+        {
+          "names": "\u03bc",
+          "type": "PMF (X \u00d7 Y)"
+        },
+        {
+          "names": "rule",
+          "type": "X \u2192 Y"
+        },
+        {
+          "names": "htruth",
+          "type": "\u2200 xy : X \u00d7 Y, rule xy.1 = xy.2"
+        },
+        {
+          "names": "y",
+          "type": "Y"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem1iii_argmax_bias_le_mae\n    {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]\n    [MeasurableSingletonClass Y] [Fintype Y] [DecidableEq Y]\n    (\u03bc : Measure (X \u00d7 Y)) [IsFiniteMeasure \u03bc]\n    (q : X \u2192 Y \u2192 \u211d) (argmaxRule : X \u2192 Y) (y : Y)\n    (hrule : Measurable argmaxRule)\n    (hargmax : isArgmaxRule q argmaxRule)\n    (hsimplex : posteriorSimplex q)\n    (hscore : \u2200 y : Y, Measurable (fun xy : X \u00d7 Y => q xy.1 y))\n    (hcal : calibrated \u03bc q) :\n    continuousJointPriorBias \u03bc argmaxRule y \u2264\n      continuousJointClassifierMAE \u03bc q := by\n  have hcal' : ContinuousTheorem1.ContinuousCalibration \u03bc q := by\n    simpa [calibrated, ContinuousTheorem1.ContinuousCalibration] using hcal\n  simpa [continuousJointPriorBias, continuousJointClassifierMAE,\n    isArgmaxRule, posteriorSimplex, calibrated,\n    ContinuousTheorem1.ContinuousCalibration,\n    ContinuousTheorem1.continuousJointPriorBias,\n    ContinuousTheorem1.continuousJointClassifierMAE,\n    Finite.paperConditionalMAE] using\n    (ContinuousTheorem1.paper_theorem1iii_continuous_joint_prior_bias_le_mae_of_continuousCalibration_finite_simplex\n      \u03bc q argmaxRule y hrule hargmax hsimplex.1 hsimplex.2.1 hscore hcal')",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem1iii_argmax_bias_le_mae",
+      "visible_inputs": [
+        {
+          "names": "X Y",
+          "type": "Type*"
+        },
+        {
+          "names": "\u03bc",
+          "type": "Measure (X \u00d7 Y)"
+        },
+        {
+          "names": "q",
+          "type": "X \u2192 Y \u2192 \u211d"
+        },
+        {
+          "names": "argmaxRule",
+          "type": "X \u2192 Y"
+        },
+        {
+          "names": "y",
+          "type": "Y"
+        },
+        {
+          "names": "hrule",
+          "type": "Measurable argmaxRule"
+        },
+        {
+          "names": "hargmax",
+          "type": "isArgmaxRule q argmaxRule"
+        },
+        {
+          "names": "hsimplex",
+          "type": "posteriorSimplex q"
+        },
+        {
+          "names": "hscore",
+          "type": "\u2200 y : Y, Measurable (fun xy : X \u00d7 Y => q xy.1 y)"
+        },
+        {
+          "names": "hcal",
+          "type": "calibrated \u03bc q"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem2i_joint_rule_exists\n    {\u03c9 \u03c3 : Type*} {N K : \u2115} [NeZero K]\n    (hK : 2 \u2264 K) (hNK : K < N)\n    (expect : (\u03c9 \u2192 \u211d) \u2192 \u211d)\n    (hlin : EconCSLib.Decision.FiniteLinearExpectation expect)\n    (observedDataset : \u03c9 \u2192 \u03c3)\n    (trueLabels : \u03c9 \u2192 Fin N \u2192 Fin K)\n    (\u03b3 : \u211d) (posterior : \u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d)\n    (fidelityTerm : \u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d)\n    (hbayesRow : \u2200 i (choose : \u03c3 \u2192 Fin K),\n      expect (fun x =>\n          if choose (observedDataset x) = trueLabels x i then (1 : \u211d) else 0) =\n        expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))) :\n    \u2203 optRule : \u03c3 \u2192 Fin N \u2192 Fin K,\n      \u2200 rule : \u03c3 \u2192 Fin N \u2192 Fin K,\n        expectedObjective expect observedDataset trueLabels \u03b3 fidelityTerm rule \u2264\n          expectedObjective expect observedDataset trueLabels \u03b3 fidelityTerm optRule := by\n  simpa [expectedObjective, paperExpectedONObjective] using\n    (paper_theorem2i_joint_optimization_rule_exists\n      hK hNK expect hlin observedDataset trueLabels \u03b3 posterior fidelityTerm hbayesRow)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem2i_joint_rule_exists",
+      "visible_inputs": [
+        {
+          "names": "\u03c9 \u03c3",
+          "type": "Type*"
+        },
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "hK",
+          "type": "2 \u2264 K"
+        },
+        {
+          "names": "hNK",
+          "type": "K < N"
+        },
+        {
+          "names": "expect",
+          "type": "(\u03c9 \u2192 \u211d) \u2192 \u211d"
+        },
+        {
+          "names": "hlin",
+          "type": "EconCSLib.Decision.FiniteLinearExpectation expect"
+        },
+        {
+          "names": "observedDataset",
+          "type": "\u03c9 \u2192 \u03c3"
+        },
+        {
+          "names": "trueLabels",
+          "type": "\u03c9 \u2192 Fin N \u2192 Fin K"
+        },
+        {
+          "names": "\u03b3",
+          "type": "\u211d"
+        },
+        {
+          "names": "posterior",
+          "type": "\u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d"
+        },
+        {
+          "names": "fidelityTerm",
+          "type": "\u03c3 \u2192 (Fin N \u2192 Fin K) \u2192 \u211d"
+        },
+        {
+          "names": "hbayesRow",
+          "type": "\u2200 i (choose : \u03c3 \u2192 Fin K), expect (fun x => if choose (observedDataset x) = trueLabels x i then (1 : \u211d) else 0) = expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem2ii_argmax_accuracy_maximizing\n    {\u03c9 \u03c3 : Type*} {N K : \u2115} [NeZero K]\n    (hK : 2 \u2264 K) (hNK : K < N)\n    (expect : (\u03c9 \u2192 \u211d) \u2192 \u211d)\n    (hlin : EconCSLib.Decision.FiniteLinearExpectation expect)\n    (observedDataset : \u03c9 \u2192 \u03c3)\n    (trueLabels : \u03c9 \u2192 Fin N \u2192 Fin K)\n    (posterior : \u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d)\n    {decisionRule argmaxRule : \u03c3 \u2192 Fin N \u2192 Fin K}\n    (hargmax :\n      \u2200 xs, EconCSLib.Decision.IsPointwiseMax (posterior xs) (argmaxRule xs))\n    (hbayesRow : \u2200 i (choose : \u03c3 \u2192 Fin K),\n      expect (fun x =>\n          if choose (observedDataset x) = trueLabels x i then (1 : \u211d) else 0) =\n        expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))) :\n    EconCSLib.Decision.expectedDecisionAccuracy\n        expect observedDataset trueLabels decisionRule \u2264\n      EconCSLib.Decision.expectedDecisionAccuracy\n        expect observedDataset trueLabels argmaxRule := by\n  exact paper_theorem2ii_argmax_expected_accuracy_maximizing\n    hK hNK expect hlin observedDataset trueLabels posterior hargmax hbayesRow",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem2ii_argmax_accuracy_maximizing",
+      "visible_inputs": [
+        {
+          "names": "\u03c9 \u03c3",
+          "type": "Type*"
+        },
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "hK",
+          "type": "2 \u2264 K"
+        },
+        {
+          "names": "hNK",
+          "type": "K < N"
+        },
+        {
+          "names": "expect",
+          "type": "(\u03c9 \u2192 \u211d) \u2192 \u211d"
+        },
+        {
+          "names": "hlin",
+          "type": "EconCSLib.Decision.FiniteLinearExpectation expect"
+        },
+        {
+          "names": "observedDataset",
+          "type": "\u03c9 \u2192 \u03c3"
+        },
+        {
+          "names": "trueLabels",
+          "type": "\u03c9 \u2192 Fin N \u2192 Fin K"
+        },
+        {
+          "names": "posterior",
+          "type": "\u03c3 \u2192 Fin N \u2192 Fin K \u2192 \u211d"
+        },
+        {
+          "names": "decisionRule argmaxRule",
+          "type": "\u03c3 \u2192 Fin N \u2192 Fin K"
+        },
+        {
+          "names": "hargmax",
+          "type": "\u2200 xs, EconCSLib.Decision.IsPointwiseMax (posterior xs) (argmaxRule xs)"
+        },
+        {
+          "names": "hbayesRow",
+          "type": "\u2200 i (choose : \u03c3 \u2192 Fin K), expect (fun x => if choose (observedDataset x) = trueLabels x i then (1 : \u211d) else 0) = expect (fun x => posterior (observedDataset x) i (choose (observedDataset x)))"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem2iii_non_argmax_not_pareto\n    {X : Type*} [Fintype X] [DecidableEq X] {N K : \u2115}\n    (\u03bc : PMF X) (posterior : X \u2192 Fin K \u2192 \u211d) (pref : Fin K \u2192 \u211d)\n    (rule argmaxRule : X \u2192 Fin K)\n    (hdisagree :\n      0 < EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x))\n    (hNpos : 0 < N)\n    (hpref_nonneg : \u2200 y, 0 \u2264 pref y)\n    (hpref_sum : (\u2211 y : Fin K, pref y) = 1)\n    (hnontrivial : \u2200 y : Fin K, 1 / (N : \u211d) \u2264 pref y)\n    (hweak_argmax : \u2200 x y, posterior x y \u2264 posterior x (argmaxRule x)) :\n    \u00ac Pareto.ParetoOptimal\n      (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N)\n        (fun s => Theorem2iii.sampledPosterior posterior s))\n      (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref)\n      (fun s => Theorem2iii.sampledDecision rule s) := by\n  exact\n    Theorem2iii.paper_theorem2iii_not_expected_pareto_of_independent_rule_disagrees_pos\n      \u03bc posterior pref rule argmaxRule hdisagree hNpos hpref_nonneg hpref_sum\n      hnontrivial hweak_argmax",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem2iii_non_argmax_not_pareto",
+      "visible_inputs": [
+        {
+          "names": "X",
+          "type": "Type*"
+        },
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "\u03bc",
+          "type": "PMF X"
+        },
+        {
+          "names": "posterior",
+          "type": "X \u2192 Fin K \u2192 \u211d"
+        },
+        {
+          "names": "pref",
+          "type": "Fin K \u2192 \u211d"
+        },
+        {
+          "names": "rule argmaxRule",
+          "type": "X \u2192 Fin K"
+        },
+        {
+          "names": "hdisagree",
+          "type": "0 < EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x)"
+        },
+        {
+          "names": "hNpos",
+          "type": "0 < N"
+        },
+        {
+          "names": "hpref_nonneg",
+          "type": "\u2200 y, 0 \u2264 pref y"
+        },
+        {
+          "names": "hpref_sum",
+          "type": "(\u2211 y : Fin K, pref y) = 1"
+        },
+        {
+          "names": "hnontrivial",
+          "type": "\u2200 y : Fin K, 1 / (N : \u211d) \u2264 pref y"
+        },
+        {
+          "names": "hweak_argmax",
+          "type": "\u2200 x y, posterior x y \u2264 posterior x (argmaxRule x)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem2iii_weighted_objective_maximizer_agrees_argmax\n    {X : Type*} [Fintype X] [DecidableEq X] {N K : \u2115}\n    (\u03bc : PMF X) (posterior : X \u2192 Fin K \u2192 \u211d) (pref : Fin K \u2192 \u211d)\n    (rule argmaxRule : X \u2192 Fin K)\n    {\u03b3 : \u211d} (h\u03b3nonneg : 0 \u2264 \u03b3) (h\u03b3lt : \u03b3 < 1)\n    (hNpos : 0 < N)\n    (hpref_nonneg : \u2200 y, 0 \u2264 pref y)\n    (hpref_sum : (\u2211 y : Fin K, pref y) = 1)\n    (hnontrivial : \u2200 y : Fin K, 1 / (N : \u211d) \u2264 pref y)\n    (hweak_argmax : \u2200 x y, posterior x y \u2264 posterior x (argmaxRule x))\n    (hmax :\n      \u2200 other : (Fin N \u2192 X) \u2192 Fin N \u2192 Fin K,\n        Pareto.weightedObjective \u03b3\n            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N)\n              (fun s => Theorem2iii.sampledPosterior posterior s))\n            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) other \u2264\n          Pareto.weightedObjective \u03b3\n            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N)\n              (fun s => Theorem2iii.sampledPosterior posterior s))\n            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref)\n            (fun s => Theorem2iii.sampledDecision rule s)) :\n    EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x) = 0 := by\n  classical\n  by_contra hzero\n  have hp_ne : EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x) \u2260 0 :=\n    hzero\n  have hnonneg :\n      0 \u2264 EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x) :=\n    EconCSLib.pmfProb_nonneg \u03bc (fun x : X => rule x \u2260 argmaxRule x)\n  have hpos : 0 < EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x) :=\n    lt_of_le_of_ne hnonneg hp_ne.symm\n  exact\n    (Theorem2iii.paper_theorem2iii_not_expected_weightedObjective_maximizer_of_independent_rule_disagrees_pos\n      \u03bc posterior pref rule argmaxRule h\u03b3nonneg h\u03b3lt hpos hNpos\n      hpref_nonneg hpref_sum hnontrivial hweak_argmax) hmax",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem2iii_weighted_objective_maximizer_agrees_argmax",
+      "visible_inputs": [
+        {
+          "names": "X",
+          "type": "Type*"
+        },
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "\u03bc",
+          "type": "PMF X"
+        },
+        {
+          "names": "posterior",
+          "type": "X \u2192 Fin K \u2192 \u211d"
+        },
+        {
+          "names": "pref",
+          "type": "Fin K \u2192 \u211d"
+        },
+        {
+          "names": "rule argmaxRule",
+          "type": "X \u2192 Fin K"
+        },
+        {
+          "names": "\u03b3",
+          "type": "\u211d"
+        },
+        {
+          "names": "h\u03b3nonneg",
+          "type": "0 \u2264 \u03b3"
+        },
+        {
+          "names": "h\u03b3lt",
+          "type": "\u03b3 < 1"
+        },
+        {
+          "names": "hNpos",
+          "type": "0 < N"
+        },
+        {
+          "names": "hpref_nonneg",
+          "type": "\u2200 y, 0 \u2264 pref y"
+        },
+        {
+          "names": "hpref_sum",
+          "type": "(\u2211 y : Fin K, pref y) = 1"
+        },
+        {
+          "names": "hnontrivial",
+          "type": "\u2200 y : Fin K, 1 / (N : \u211d) \u2264 pref y"
+        },
+        {
+          "names": "hweak_argmax",
+          "type": "\u2200 x y, posterior x y \u2264 posterior x (argmaxRule x)"
+        },
+        {
+          "names": "hmax",
+          "type": "\u2200 other : (Fin N \u2192 X) \u2192 Fin N \u2192 Fin K, Pareto.weightedObjective \u03b3 (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N) (fun s => Theorem2iii.sampledPosterior posterior s)) (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) other \u2264 Pareto.weightedObjective \u03b3 (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N) (fun s => Theorem2iii.sampledPosterior posterior s)) (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) (fun s => Theorem2iii.sampledDecision rule s)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem2iii_strict_disagreement_not_weighted_objective_maximizer\n    {X : Type*} [Fintype X] [DecidableEq X] {N K : \u2115}\n    (\u03bc : PMF X) (posterior : X \u2192 Fin K \u2192 \u211d) (pref : Fin K \u2192 \u211d)\n    (rule argmaxRule : X \u2192 Fin K)\n    {\u03b3 : \u211d} (h\u03b3pos : 0 < \u03b3) (h\u03b3le : \u03b3 \u2264 1)\n    (hdisagree :\n      0 < EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x))\n    (hNpos : 0 < N)\n    (hpref_nonneg : \u2200 y, 0 \u2264 pref y)\n    (hpref_sum : (\u2211 y : Fin K, pref y) = 1)\n    (hnontrivial : \u2200 y : Fin K, 1 / (N : \u211d) \u2264 pref y)\n    (hstrict_argmax :\n      \u2200 x, rule x \u2260 argmaxRule x \u2192\n        posterior x (rule x) < posterior x (argmaxRule x)) :\n    \u00ac \u2200 other : (Fin N \u2192 X) \u2192 Fin N \u2192 Fin K,\n        Pareto.weightedObjective \u03b3\n            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N)\n              (fun s => Theorem2iii.sampledPosterior posterior s))\n            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref) other \u2264\n          Pareto.weightedObjective \u03b3\n            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF \u03bc N)\n              (fun s => Theorem2iii.sampledPosterior posterior s))\n            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF \u03bc N) pref)\n            (fun s => Theorem2iii.sampledDecision rule s) := by\n  exact\n    Theorem2iii.paper_theorem2iii_not_expected_weightedObjective_maximizer_of_independent_rule_disagrees_pos_strict_argmax\n      \u03bc posterior pref rule argmaxRule h\u03b3pos h\u03b3le hdisagree hNpos hpref_nonneg\n      hpref_sum hnontrivial hstrict_argmax",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem2iii_strict_disagreement_not_weighted_objective_maximizer",
+      "visible_inputs": [
+        {
+          "names": "X",
+          "type": "Type*"
+        },
+        {
+          "names": "N K",
+          "type": "\u2115"
+        },
+        {
+          "names": "\u03bc",
+          "type": "PMF X"
+        },
+        {
+          "names": "posterior",
+          "type": "X \u2192 Fin K \u2192 \u211d"
+        },
+        {
+          "names": "pref",
+          "type": "Fin K \u2192 \u211d"
+        },
+        {
+          "names": "rule argmaxRule",
+          "type": "X \u2192 Fin K"
+        },
+        {
+          "names": "\u03b3",
+          "type": "\u211d"
+        },
+        {
+          "names": "h\u03b3pos",
+          "type": "0 < \u03b3"
+        },
+        {
+          "names": "h\u03b3le",
+          "type": "\u03b3 \u2264 1"
+        },
+        {
+          "names": "hdisagree",
+          "type": "0 < EconCSLib.pmfProb \u03bc (fun x : X => rule x \u2260 argmaxRule x)"
+        },
+        {
+          "names": "hNpos",
+          "type": "0 < N"
+        },
+        {
+          "names": "hpref_nonneg",
+          "type": "\u2200 y, 0 \u2264 pref y"
+        },
+        {
+          "names": "hpref_sum",
+          "type": "(\u2211 y : Fin K, pref y) = 1"
+        },
+        {
+          "names": "hnontrivial",
+          "type": "\u2200 y : Fin K, 1 / (N : \u211d) \u2264 pref y"
+        },
+        {
+          "names": "hstrict_argmax",
+          "type": "\u2200 x, rule x \u2260 argmaxRule x \u2192 posterior x (rule x) < posterior x (argmaxRule x)"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "a30edc74092bae610a838e9942dde4dc577ba0cb40c3f0c5f9c38eee5d101f9b",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": []
+}

@@ -41,7 +41,8 @@
   "review_surface": {
     "assumption_names": [
       "assumption_conditions_c123",
-      "assumption_ssgm_convergence_theorem"
+      "assumption_ssgm_convergence_theorem",
+      "assumption_expected_subgradient_theorem"
     ],
     "assumption_policy": "source-plus-proof-boundary",
     "assumption_source_file": "papers/GKGMM19IterativeLocalVoting/Assumptions.lean",
@@ -157,11 +158,15 @@
       "c3_product_density_coordinate_noncollision_ae",
       "definition2_weighted_euclidean_utilities_formula",
       "definition3_decomposable_utilities_formula",
+      "dlcdBudgetUtility",
+      "paper_definition4_dlcd_formula",
       "theorem1_lp_normed_dual_cases",
       "theorem2_modelB_holder_dual_norms",
       "proposition1_weighted_euclidean_l2",
       "proposition2_decomposable_linf_medians",
-      "theorem3_statement_of_full_sampled_projected_source_semantics_univ"
+      "theorem3_statement_of_full_sampled_projected_source_semantics_univ",
+      "appendix_theorem4_expected_subgradient_boundary",
+      "appendix_theorem5_ssgm_convergence_boundary"
     ],
     "llm_assumption_review": {
       "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/assumption_match_llm.json",
@@ -177,7 +182,8 @@
       "surface_warning_threshold": 120
     },
     "proof_boundary_names": [
-      "assumption_ssgm_convergence_theorem"
+      "assumption_ssgm_convergence_theorem",
+      "assumption_expected_subgradient_theorem"
     ],
     "slices": [
       {

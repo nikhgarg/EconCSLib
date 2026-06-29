@@ -1,315 +1,383 @@
 {
-  "schema": 1,
-  "paper": "LG21TestOptionalPolicies",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T06:57:12Z",
-  "comment": "Source-grounded source-to-dashboard judgments preserved; review-surface digest refreshed against the current public dashboard rows.",
-  "paper_statement_inventory_sha256": "84f0fb72574f7426d1f91ec310ac72ccfac8d352d06d283ab29c02621c0cb2ce",
-  "review_surface_sha256": "aeb0bb6872a67b1b167841c17be6260f1b437c644caffc680c9bcdde53f02b0f",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
     "assumption_observed_access_source_equilibria": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_observed_access_source_equilibria",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Observed-access endpoints are stated for source equilibria in both policy regimes. The dashboard row `assumption_observed_access_source_equilibria` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_observed_access_source_equilibria"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Observed-access endpoints are stated for source equilibria in both policy regimes. The dashboard row `assumption_observed_access_source_equilibria` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Observed-access endpoints are stated for source equilibria in both policy regimes.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_observed_access_source_equilibria`.",
-      "statement_sha256": "f7fad69b363a3173d9d4eaea00bc7b8be959c22751868240c90dc3deffe3a06d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f7fad69b363a3173d9d4eaea00bc7b8be959c22751868240c90dc3deffe3a06d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_positive_gaussian_domain_conditions": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_positive_gaussian_domain_conditions",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Positive Gaussian/domain quantities used by the observed-access endpoints. The dashboard row `assumption_positive_gaussian_domain_conditions` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_positive_gaussian_domain_conditions"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Positive Gaussian/domain quantities used by the observed-access endpoints. The dashboard row `assumption_positive_gaussian_domain_conditions` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Positive Gaussian/domain quantities used by the observed-access endpoints.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_positive_gaussian_domain_conditions`.",
-      "statement_sha256": "d76e0c559b8cdb44c59c8b3a088a4c39e78c298fd4c61960b86d103db3cd99e4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d76e0c559b8cdb44c59c8b3a088a4c39e78c298fd4c61960b86d103db3cd99e4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_section3_access_fraction_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_section3_access_fraction_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Section 3 assumes an interior access/non-reporting mixture share. The dashboard row `assumption_section3_access_fraction_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_section3_access_fraction_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Section 3 assumes an interior access/non-reporting mixture share. The dashboard row `assumption_section3_access_fraction_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Section 3 assumes an interior access/non-reporting mixture share.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_section3_access_fraction_domain`.",
-      "statement_sha256": "9e1d45ac677985559f5a8d5e0498c9c898477bbb3be1f181ba451d64c44dca8c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9e1d45ac677985559f5a8d5e0498c9c898477bbb3be1f181ba451d64c44dca8c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_section3_source_equilibrium_instances": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_section3_source_equilibrium_instances",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source-equilibrium hypotheses used by the Section 3 fairness-impossibility routes. The dashboard row `assumption_section3_source_equilibrium_instances` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_section3_source_equilibrium_instances"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source-equilibrium hypotheses used by the Section 3 fairness-impossibility routes. The dashboard row `assumption_section3_source_equilibrium_instances` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Source-equilibrium hypotheses used by the Section 3 fairness-impossibility routes.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_section3_source_equilibrium_instances`.",
-      "statement_sha256": "a354f9d3b3e2e52c4e857039517770afb9e1a1cc81b14201ec570157315c1a29",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a354f9d3b3e2e52c4e857039517770afb9e1a1cc81b14201ec570157315c1a29",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_section3_threshold_decision_shapes": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_section3_threshold_decision_shapes",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Threshold-shaped reporting/taking rules used in the Section 3 unraveling proof. The dashboard row `assumption_section3_threshold_decision_shapes` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_section3_threshold_decision_shapes"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Threshold-shaped reporting/taking rules used in the Section 3 unraveling proof. The dashboard row `assumption_section3_threshold_decision_shapes` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Threshold-shaped reporting/taking rules used in the Section 3 unraveling proof.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_section3_threshold_decision_shapes`.",
-      "statement_sha256": "d4bfa0631822289d5577046f7c65e054deed977f62ca62fceab8ba70bccb8d57",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d4bfa0631822289d5577046f7c65e054deed977f62ca62fceab8ba70bccb8d57",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_section3_zero_positive_event_blank_branch": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_section3_zero_positive_event_blank_branch",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Zero-positive-reporter/taker branches are treated as already test-blank. The dashboard row `assumption_section3_zero_positive_event_blank_branch` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_section3_zero_positive_event_blank_branch"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Zero-positive-reporter/taker branches are treated as already test-blank. The dashboard row `assumption_section3_zero_positive_event_blank_branch` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Zero-positive-reporter/taker branches are treated as already test-blank.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_section3_zero_positive_event_blank_branch`.",
-      "statement_sha256": "2fcc53dd55d05bef0eff22def047bf907ef622e3b5fda9bf0c7a55436e7c6bcc",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2fcc53dd55d05bef0eff22def047bf907ef622e3b5fda9bf0c7a55436e7c6bcc",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_source_model_event_and_consistency_predicates": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_source_model_event_and_consistency_predicates",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Source event and estimation-consistency predicates used by Section 3 and observed-access source models. The dashboard row `assumption_source_model_event_and_consistency_predicates` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_source_model_event_and_consistency_predicates"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Source event and estimation-consistency predicates used by Section 3 and observed-access source models. The dashboard row `assumption_source_model_event_and_consistency_predicates` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. Source inventory item: Source event and estimation-consistency predicates used by Section 3 and observed-access source models.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_source_model_event_and_consistency_predicates`.",
-      "statement_sha256": "19a66635e3f2c8a6c94a20a0edd739fb5c54b4744a4ae671c6dd573e22bacb59",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "19a66635e3f2c8a6c94a20a0edd739fb5c54b4744a4ae671c6dd573e22bacb59",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition1_source_equilibrium": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition1_source_equilibrium",
+      "reason": "The source item is the paper-facing statement/formula summarized as: A source equilibrium consists of feasible access decisions, best-response utility maximization among feasible actions in every student information state, and estimation consistency. The dashboard row `definition1_source_equilibrium` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition1_source_equilibrium"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: A source equilibrium consists of feasible access decisions, best-response utility maximization among feasible actions in every student information state, and estimation consistency. The dashboard row `definition1_source_equilibrium` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: A source equilibrium consists of feasible access decisions, best-response utility maximization among feasible actions in every student information state, and estimation consistency.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition1_source_equilibrium`.",
-      "statement_sha256": "36ea303dc955c586865ddfd840f6bd308383f4f179c1cdf00b728b67998a739c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "36ea303dc955c586865ddfd840f6bd308383f4f179c1cdf00b728b67998a739c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition2_latent_skill_fair": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition2_latent_skill_fair",
+      "reason": "The source item is the paper-facing statement/formula summarized as: A policy surface is latent-skill fair when, in every equilibrium, applicants with the same latent skill and base group receive the same estimate law whether or not they have access. The dashboard row `definition2_latent_skill_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition2_latent_skill_fair"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: A policy surface is latent-skill fair when, in every equilibrium, applicants with the same latent skill and base group receive the same estimate law whether or not they have access. The dashboard row `definition2_latent_skill_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: A policy surface is latent-skill fair when, in every equilibrium, applicants with the same latent skill and base group receive the same estimate law whether or not they have access.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition2_latent_skill_fair`.",
-      "statement_sha256": "2fe7c2312b62e740fdbe94e06102567d7305a0a949c987d679b187e2d185fac4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2fe7c2312b62e740fdbe94e06102567d7305a0a949c987d679b187e2d185fac4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition3_observable_fair": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition3_observable_fair",
+      "reason": "The source item is the paper-facing statement/formula summarized as: A policy surface is observably fair when, in every equilibrium and base group, the access and no-access observable estimate laws are equal. The dashboard row `definition3_observable_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition3_observable_fair"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: A policy surface is observably fair when, in every equilibrium and base group, the access and no-access observable estimate laws are equal. The dashboard row `definition3_observable_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: A policy surface is observably fair when, in every equilibrium and base group, the access and no-access observable estimate laws are equal.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition3_observable_fair`.",
-      "statement_sha256": "b431affd238566e48028aef8149dadcdf6abfe0e7571ba588f89f992c49ed3fa",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "b431affd238566e48028aef8149dadcdf6abfe0e7571ba588f89f992c49ed3fa",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition4_demographic_fair": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition4_demographic_fair",
+      "reason": "The source item is the paper-facing statement/formula summarized as: A policy surface is demographically fair when, in every equilibrium, the demographic access and no-access estimate laws are equal. The dashboard row `definition4_demographic_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition4_demographic_fair"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: A policy surface is demographically fair when, in every equilibrium, the demographic access and no-access estimate laws are equal. The dashboard row `definition4_demographic_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: A policy surface is demographically fair when, in every equilibrium, the demographic access and no-access estimate laws are equal.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition4_demographic_fair`.",
-      "statement_sha256": "2cd0115d3a9c73dc13e2ac9ff5969b07a8abab8c3938dcbb7d5a28bcd0e1bb86",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2cd0115d3a9c73dc13e2ac9ff5969b07a8abab8c3938dcbb7d5a28bcd0e1bb86",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition5_test_blank": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition5_test_blank",
+      "reason": "The source item is the paper-facing statement/formula summarized as: A policy surface is test-blank when, in every equilibrium, base group, and test value, the base-only estimate equals the full-feature estimate. The dashboard row `definition5_test_blank` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition5_test_blank"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: A policy surface is test-blank when, in every equilibrium, base group, and test value, the base-only estimate equals the full-feature estimate. The dashboard row `definition5_test_blank` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: A policy surface is test-blank when, in every equilibrium, base group, and test value, the base-only estimate equals the full-feature estimate.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition5_test_blank`.",
-      "statement_sha256": "32d55c13143d62e410148f3a139fa82fa67c36e1a31564501ebae3565ab3aa06",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "32d55c13143d62e410148f3a139fa82fa67c36e1a31564501ebae3565ab3aa06",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition6_resampling_policy": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition6_resampling_policy",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The resampling policy uses the resampling experiment's conditional signal-given-base kernel. The dashboard row `definition6_resampling_policy` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition6_resampling_policy"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The resampling policy uses the resampling experiment's conditional signal-given-base kernel. The dashboard row `definition6_resampling_policy` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: The resampling policy uses the resampling experiment's conditional signal-given-base kernel.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition6_resampling_policy`.",
-      "statement_sha256": "ca49374e3b8fd7069fb48d88d6bd8f515322eda8b18f89690dc40884ced4d8f8",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ca49374e3b8fd7069fb48d88d6bd8f515322eda8b18f89690dc40884ced4d8f8",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma4_1_observed_access_strategy_proofness": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma4_1_observed_access_strategy_proofness",
+      "reason": "The source item is the paper-facing statement/formula summarized as: With observed access and a positive test scale, the fully specified optional-reporting and report-required source equilibria choose take-and-report in every student information state, giving the strategy-proofness step. The dashboard row `lemma4_1_observed_access_strategy_proofness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma4_1_observed_access_strategy_proofness"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: With observed access and a positive test scale, the fully specified optional-reporting and report-required source equilibria choose take-and-report in every student information state, giving the strategy-proofness step. The dashboard row `lemma4_1_observed_access_strategy_proofness` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: With observed access and a positive test scale, the fully specified optional-reporting and report-required source equilibria choose take-and-report in every student information state, giving the strategy-proofness step.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma4_1_observed_access_strategy_proofness`.",
-      "statement_sha256": "58dacc6c3421198ccfd999188f101c7a6e85489771fb2df6b220879ad039c48d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "58dacc6c3421198ccfd999188f101c7a6e85489771fb2df6b220879ad039c48d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "proposition4_2_bayesian_access_estimates_not_latent_skill_fair": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "proposition4_2_bayesian_access_estimates_not_latent_skill_fair",
+      "reason": "The source item is the paper-facing statement/formula summarized as: For the fully specified observed-access source equilibria, any positive-slope base-indexed one-test posterior-law surface chooses take-and-report in every information state and is not latent-skill fair. The dashboard row `proposition4_2_bayesian_access_estimates_not_latent_skill_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "proposition4_2_bayesian_access_estimates_not_latent_skill_fair"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: For the fully specified observed-access source equilibria, any positive-slope base-indexed one-test posterior-law surface chooses take-and-report in every information state and is not latent-skill fair. The dashboard row `proposition4_2_bayesian_access_estimates_not_latent_skill_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: For the fully specified observed-access source equilibria, any positive-slope base-indexed one-test posterior-law surface chooses take-and-report in every information state and is not latent-skill fair.",
-      "dashboard_evidence": "Current human-dashboard row(s): `proposition4_2_bayesian_access_estimates_not_latent_skill_fair`.",
-      "statement_sha256": "09c482cfc978d3691a7c1c1af8dcd916cd7ff16d14cd09349dc48250587410cb",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "09c482cfc978d3691a7c1c1af8dcd916cd7ff16d14cd09349dc48250587410cb",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "proposition4_3_bayesian_optimal_not_observable_or_demographic_fair": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "proposition4_3_bayesian_optimal_not_observable_or_demographic_fair",
+      "reason": "The source item is the paper-facing statement/formula summarized as: For the fully specified observed-access source equilibria, any base-mixed extra-signal posterior-law surface with positive extra-noise variance chooses take-and-report in every information state and is not observable fair or demographic... The dashboard row `proposition4_3_bayesian_optimal_not_observable_or_demographic_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "proposition4_3_bayesian_optimal_not_observable_or_demographic_fair"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: For the fully specified observed-access source equilibria, any base-mixed extra-signal posterior-law surface with positive extra-noise variance chooses take-and-report in every information state and is not observable fair or demographic... The dashboard row `proposition4_3_bayesian_optimal_not_observable_or_demographic_fair` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: For the fully specified observed-access source equilibria, any base-mixed extra-signal posterior-law surface with positive extra-noise variance chooses take-and-report in every information state and is not observable fair or demographic fair.",
-      "dashboard_evidence": "Current human-dashboard row(s): `proposition4_3_bayesian_optimal_not_observable_or_demographic_fair`.",
-      "statement_sha256": "9c39580d0c46e25511cfcf428b024e178620d5bb6b8f0f4c65786805a2778c47",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9c39580d0c46e25511cfcf428b024e178620d5bb6b8f0f4c65786805a2778c47",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_1_optional_reporting": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_1_optional_reporting",
+      "reason": "The source item is the paper-facing statement/formula summarized as: In the hidden-access optional-reporting source model, when access fractions are below one, every source equilibrium has strategic withholding: everyone takes the test, some base-score pair is not reported, reporting is cutoff-shaped with... The dashboard row `theorem3_1_optional_reporting` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_1_optional_reporting"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: In the hidden-access optional-reporting source model, when access fractions are below one, every source equilibrium has strategic withholding: everyone takes the test, some base-score pair is not reported, reporting is cutoff-shaped with... The dashboard row `theorem3_1_optional_reporting` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: In the hidden-access optional-reporting source model, when access fractions are below one, every source equilibrium has strategic withholding: everyone takes the test, some base-score pair is not reported, reporting is cutoff-shaped within each base group,...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_1_optional_reporting`.",
-      "statement_sha256": "349723cf146d52f95c1ee3228beb543e91f71edccc8b8b07784969d6fe2af2a5",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "349723cf146d52f95c1ee3228beb543e91f71edccc8b8b07784969d6fe2af2a5",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_1_report_required": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_1_report_required",
+      "reason": "The source item is the paper-facing statement/formula summarized as: In the hidden-access report-required source model with positive slopes and access fractions below one, every source equilibrium has strategic withholding: some base-skill pair does not take the test, taking is cutoff-shaped within each b... The dashboard row `theorem3_1_report_required` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_1_report_required"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: In the hidden-access report-required source model with positive slopes and access fractions below one, every source equilibrium has strategic withholding: some base-skill pair does not take the test, taking is cutoff-shaped within each b... The dashboard row `theorem3_1_report_required` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: In the hidden-access report-required source model with positive slopes and access fractions below one, every source equilibrium has strategic withholding: some base-skill pair does not take the test, taking is cutoff-shaped within each base group, and the b...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_1_report_required`.",
-      "statement_sha256": "90642c650d4461a29fdf6a0a816c55dae1f912915ad94f4d26e2e1285ea19fbb",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "90642c650d4461a29fdf6a0a816c55dae1f912915ad94f4d26e2e1285ea19fbb",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_2_optional_reporting_fairness_impossibility": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_2_optional_reporting_fairness_impossibility",
+      "reason": "The source item is the paper-facing statement/formula summarized as: In the optional-reporting source model, under source-equilibrium, threshold-reporting, and the no-reporter-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-b... The dashboard row `theorem3_2_optional_reporting_fairness_impossibility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_2_optional_reporting_fairness_impossibility"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: In the optional-reporting source model, under source-equilibrium, threshold-reporting, and the no-reporter-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-b... The dashboard row `theorem3_2_optional_reporting_fairness_impossibility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: In the optional-reporting source model, under source-equilibrium, threshold-reporting, and the no-reporter-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-blankness.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_2_optional_reporting_fairness_impossibility`.",
-      "statement_sha256": "d23bb9ce84d40bbaed3089a7ecb8209a68c7097cf6aaab46a064fecaf214a670",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d23bb9ce84d40bbaed3089a7ecb8209a68c7097cf6aaab46a064fecaf214a670",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_2_optional_reporting_no_test_relevance": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_2_optional_reporting_no_test_relevance",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Under the same optional-reporting hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ. The dashboard row `theorem3_2_optional_reporting_no_test_relevance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_2_optional_reporting_no_test_relevance"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Under the same optional-reporting hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ. The dashboard row `theorem3_2_optional_reporting_no_test_relevance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: Under the same optional-reporting hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_2_optional_reporting_no_test_relevance`.",
-      "statement_sha256": "baa4c54e753fe7cc057e55c97e243a8492fb92f00f08b1e69ccfb39d0a0d4801",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "baa4c54e753fe7cc057e55c97e243a8492fb92f00f08b1e69ccfb39d0a0d4801",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_2_report_required_fairness_impossibility": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_2_report_required_fairness_impossibility",
+      "reason": "The source item is the paper-facing statement/formula summarized as: In the report-required source model, under source-equilibrium, threshold-taking, and the no-taker-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-blankness. The dashboard row `theorem3_2_report_required_fairness_impossibility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_2_report_required_fairness_impossibility"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: In the report-required source model, under source-equilibrium, threshold-taking, and the no-taker-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-blankness. The dashboard row `theorem3_2_report_required_fairness_impossibility` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: In the report-required source model, under source-equilibrium, threshold-taking, and the no-taker-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-blankness.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_2_report_required_fairness_impossibility`.",
-      "statement_sha256": "5074c5e6533e11c847fe0169947f37aea3c6f6d2184694e065c0e25a4ebd9c75",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "5074c5e6533e11c847fe0169947f37aea3c6f6d2184694e065c0e25a4ebd9c75",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_2_report_required_no_test_relevance": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_2_report_required_no_test_relevance",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Under the same report-required hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ. The dashboard row `theorem3_2_report_required_no_test_relevance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_2_report_required_no_test_relevance"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Under the same report-required hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ. The dashboard row `theorem3_2_report_required_no_test_relevance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: Under the same report-required hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_2_report_required_no_test_relevance`.",
-      "statement_sha256": "379ca410e0c2bbde401e29649b5643743f61f96457fef75cad4ae54512eece57",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "379ca410e0c2bbde401e29649b5643743f61f96457fef75cad4ae54512eece57",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem4_4_resampling_policy": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem4_4_resampling_policy",
+      "reason": "The source item is the paper-facing statement/formula summarized as: For every resampling experiment, the fully specified observed-access source equilibria choose take-and-report in every information state, and the access-estimate and resampling-estimate kernels are observable fair and demographic fair wi... The dashboard row `theorem4_4_resampling_policy` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem4_4_resampling_policy"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: For every resampling experiment, the fully specified observed-access source equilibria choose take-and-report in every information state, and the access-estimate and resampling-estimate kernels are observable fair and demographic fair wi... The dashboard row `theorem4_4_resampling_policy` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LG21TestOptionalPolicies.txt and paper-local SOURCE_AUDIT.md. direct source text. Source inventory item: For every resampling experiment, the fully specified observed-access source equilibria choose take-and-report in every information state, and the access-estimate and resampling-estimate kernels are observable fair and demographic fair with respect to the ba...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem4_4_resampling_policy`.",
-      "statement_sha256": "245fa24ceb8729acdcc658d182917ed48b5f4f8e526a4d01a5937472eda228d1",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "245fa24ceb8729acdcc658d182917ed48b5f4f8e526a4d01a5937472eda228d1",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "LG21TestOptionalPolicies",
+  "paper_statement_inventory_sha256": "84f0fb72574f7426d1f91ec310ac72ccfac8d352d06d283ab29c02621c0cb2ce",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "aeb0bb6872a67b1b167841c17be6260f1b437c644caffc680c9bcdde53f02b0f",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

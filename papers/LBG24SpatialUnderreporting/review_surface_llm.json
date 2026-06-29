@@ -1,0 +1,12 @@
+{
+  "judgment": "passes",
+  "paper": "LBG24SpatialUnderreporting",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: current dashboard rows are paper-facing definitions, assumptions, theorem endpoints, or explicitly documented partial/source-version boundaries; helper-only rows remain outside the compact dashboard surface.",
+  "review_rows": 27,
+  "review_surface_sha256": "8fe7b21a37618a707be9a0c53113c3c51d265389fab06ac07bf332610260eb06",
+  "schema": 1,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
+}

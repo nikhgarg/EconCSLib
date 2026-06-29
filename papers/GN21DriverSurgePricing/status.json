@@ -1,45 +1,37 @@
 {
-  "schema": 1,
-  "id": "GN21DriverSurgePricing",
-  "title": "Driver Surge Pricing",
-  "authors": "Nikhil Garg and Hamid Nazerzadeh",
-  "source_version": "Management Science 2022 / arXiv v4, 2021",
-  "build_target": "lake build GN21DriverSurgePricing",
-  "status": "formalized",
-  "main_caveat": "",
-  "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
-  "human_review": {
-    "reviewed_rows": 0,
-    "total_rows": 34,
-    "stale_rows": 0,
-    "mismatch_rows": 0,
-    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
-  },
-  "paper_interface": {
-    "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-    "line_count": 379,
-    "declaration_rows": 24,
-    "review_rows": 34,
-    "oversized": false,
-    "maintainability_issue": null,
-    "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
-    "proof_interface_line_count": 5534
-  },
   "artifacts": {
-    "readme": "papers/GN21DriverSurgePricing/README.md",
-    "paper_interface": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-    "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
+    "assumptions": "papers/GN21DriverSurgePricing/Assumptions.lean",
     "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf",
+    "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
+    "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+    "paper_interface": "papers/GN21DriverSurgePricing/PaperInterface.lean",
     "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean",
-    "source_text": "papers/GN21DriverSurgePricing/source.txt",
-    "assumptions": "papers/GN21DriverSurgePricing/Assumptions.lean"
+    "readme": "papers/GN21DriverSurgePricing/README.md",
+    "source_text": "papers/GN21DriverSurgePricing/source.txt"
   },
+  "authors": "Nikhil Garg and Hamid Nazerzadeh",
+  "build_target": "lake build GN21DriverSurgePricing",
+  "human_review": {
+    "mismatch_rows": 0,
+    "reviewed_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs",
+    "stale_rows": 0,
+    "total_rows": 34
+  },
+  "id": "GN21DriverSurgePricing",
+  "main_caveat": "",
+  "paper_interface": {
+    "declaration_rows": 24,
+    "line_count": 379,
+    "maintainability_issue": null,
+    "oversized": false,
+    "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+    "proof_interface_line_count": 5534,
+    "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
+    "review_rows": 34
+  },
+  "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
   "review_surface": {
-    "source_file": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-    "assumption_source_file": "papers/GN21DriverSurgePricing/Assumptions.lean",
-    "llm_assumption_review": "papers/GN21DriverSurgePricing/assumption_match_llm.json",
-    "assumption_policy": "strict",
     "assumption_names": [
       "assumption_affine_single_state_parameter_domain",
       "assumption_single_state_defined_reward_domain",
@@ -52,6 +44,8 @@
       "assumption_nonsurge_derivative_source_bounds",
       "assumption_theorem3_source_data_domain"
     ],
+    "assumption_policy": "strict",
+    "assumption_source_file": "papers/GN21DriverSurgePricing/Assumptions.lean",
     "include_names": [
       "review_definition_single_state_ic",
       "review_definition_dynamic_ic",
@@ -65,6 +59,8 @@
       "review_lemma2_switch_probability_formula",
       "review_lemma3_measured_time_fraction_formula",
       "review_remark1_switch_probability_per_time_strictAntiOn",
+      "review_remark2_structured_scaled_earning_algebra",
+      "review_remark2_structured_derivative_kernel_algebra",
       "review_remark3_switch_probability_per_time_tendsto_at_zero",
       "review_remark4_switch_time_minus_switch_probability_nonneg",
       "review_lemma5_fixed_response_policy_form",
@@ -78,10 +74,10 @@
       "review_theorem4_structural_policy_representatives",
       "review_theorem3_defined_reward_source_statement"
     ],
+    "llm_assumption_review": "papers/GN21DriverSurgePricing/assumption_match_llm.json",
     "slices": [
       {
         "id": "all",
-        "title": "All source-facing review rows",
         "names": [
           "review_definition_single_state_ic",
           "review_definition_dynamic_ic",
@@ -107,8 +103,14 @@
           "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
           "review_theorem4_structural_policy_representatives",
           "review_theorem3_defined_reward_source_statement"
-        ]
+        ],
+        "title": "All source-facing review rows"
       }
-    ]
-  }
+    ],
+    "source_file": "papers/GN21DriverSurgePricing/PaperInterface.lean"
+  },
+  "schema": 1,
+  "source_version": "Management Science 2022 / arXiv v4, 2021",
+  "status": "formalized",
+  "title": "Driver Surge Pricing"
 }

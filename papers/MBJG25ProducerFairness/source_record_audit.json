@@ -1,0 +1,1135 @@
+{
+  "boundary_input_count": 24,
+  "boundary_input_items": [
+    {
+      "input": {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_weak_decrease.hshape : assumption_positive_prior_shape alpha beta",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_weak_decrease\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_nonnegative q)\n    (hq1 : assumption_quality_at_most_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q \u2264\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_weak_decrease\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_weak_decrease"
+    },
+    {
+      "input": {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_weak_decrease.ht : assumption_positive_time t",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_weak_decrease\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_nonnegative q)\n    (hq1 : assumption_quality_at_most_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q \u2264\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_weak_decrease\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_weak_decrease"
+    },
+    {
+      "input": {
+        "names": "hq0",
+        "type": "assumption_quality_nonnegative q"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_weak_decrease.hq0 : assumption_quality_nonnegative q",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_weak_decrease\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_nonnegative q)\n    (hq1 : assumption_quality_at_most_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q \u2264\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_weak_decrease\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_weak_decrease"
+    },
+    {
+      "input": {
+        "names": "hq1",
+        "type": "assumption_quality_at_most_one q"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_weak_decrease.hq1 : assumption_quality_at_most_one q",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_weak_decrease\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_nonnegative q)\n    (hq1 : assumption_quality_at_most_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q \u2264\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_weak_decrease\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_weak_decrease"
+    },
+    {
+      "input": {
+        "names": "hetaLow_nonneg",
+        "type": "assumption_prior_strength_nonnegative etaLow"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_weak_decrease.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_weak_decrease\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_nonnegative q)\n    (hq1 : assumption_quality_at_most_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q \u2264\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_weak_decrease\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_weak_decrease"
+    },
+    {
+      "input": {
+        "names": "heta_le",
+        "type": "assumption_prior_strength_weak_order etaLow etaHigh"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_weak_decrease.heta_le : assumption_prior_strength_weak_order etaLow etaHigh",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_weak_decrease\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_nonnegative q)\n    (hq1 : assumption_quality_at_most_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q \u2264\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_weak_decrease\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_weak_decrease"
+    },
+    {
+      "input": {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_strict_decrease_interior.hshape : assumption_positive_prior_shape alpha beta",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_strict_decrease_interior\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_positive q)\n    (hq1 : assumption_quality_lt_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q <\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_strict_decrease_interior\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_strict_decrease_interior"
+    },
+    {
+      "input": {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_strict_decrease_interior.ht : assumption_positive_time t",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_strict_decrease_interior\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_positive q)\n    (hq1 : assumption_quality_lt_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q <\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_strict_decrease_interior\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_strict_decrease_interior"
+    },
+    {
+      "input": {
+        "names": "hq0",
+        "type": "assumption_quality_positive q"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_strict_decrease_interior.hq0 : assumption_quality_positive q",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_strict_decrease_interior\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_positive q)\n    (hq1 : assumption_quality_lt_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q <\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_strict_decrease_interior\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_strict_decrease_interior"
+    },
+    {
+      "input": {
+        "names": "hq1",
+        "type": "assumption_quality_lt_one q"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_strict_decrease_interior.hq1 : assumption_quality_lt_one q",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_strict_decrease_interior\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_positive q)\n    (hq1 : assumption_quality_lt_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q <\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_strict_decrease_interior\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_strict_decrease_interior"
+    },
+    {
+      "input": {
+        "names": "hetaLow_nonneg",
+        "type": "assumption_prior_strength_nonnegative etaLow"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_strict_decrease_interior.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_strict_decrease_interior\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_positive q)\n    (hq1 : assumption_quality_lt_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q <\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_strict_decrease_interior\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_strict_decrease_interior"
+    },
+    {
+      "input": {
+        "names": "heta_lt",
+        "type": "assumption_prior_strength_strict_order etaLow etaHigh"
+      },
+      "judgment_key": "paper_facing_theorem3_1_variance_strict_decrease_interior.heta_lt : assumption_prior_strength_strict_order etaLow etaHigh",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_strict_decrease_interior\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_positive q)\n    (hq1 : assumption_quality_lt_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q <\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_strict_decrease_interior\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_variance_strict_decrease_interior"
+    },
+    {
+      "input": {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      "judgment_key": "paper_facing_theorem3_1_squared_bias_nondecreasing.hshape : assumption_positive_prior_shape alpha beta",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_squared_bias_nondecreasing\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_squared_bias alpha beta etaLow t q \u2264\n      paper_squared_bias alpha beta etaHigh t q := by\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_1_squared_bias_nondecreasing\n      hshape ht hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_squared_bias_nondecreasing"
+    },
+    {
+      "input": {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      },
+      "judgment_key": "paper_facing_theorem3_1_squared_bias_nondecreasing.ht : assumption_positive_time t",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_squared_bias_nondecreasing\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_squared_bias alpha beta etaLow t q \u2264\n      paper_squared_bias alpha beta etaHigh t q := by\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_1_squared_bias_nondecreasing\n      hshape ht hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_squared_bias_nondecreasing"
+    },
+    {
+      "input": {
+        "names": "hetaLow_nonneg",
+        "type": "assumption_prior_strength_nonnegative etaLow"
+      },
+      "judgment_key": "paper_facing_theorem3_1_squared_bias_nondecreasing.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_squared_bias_nondecreasing\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_squared_bias alpha beta etaLow t q \u2264\n      paper_squared_bias alpha beta etaHigh t q := by\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_1_squared_bias_nondecreasing\n      hshape ht hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_squared_bias_nondecreasing"
+    },
+    {
+      "input": {
+        "names": "heta_le",
+        "type": "assumption_prior_strength_weak_order etaLow etaHigh"
+      },
+      "judgment_key": "paper_facing_theorem3_1_squared_bias_nondecreasing.heta_le : assumption_prior_strength_weak_order etaLow etaHigh",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_squared_bias_nondecreasing\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_squared_bias alpha beta etaLow t q \u2264\n      paper_squared_bias alpha beta etaHigh t q := by\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_1_squared_bias_nondecreasing\n      hshape ht hetaLow_nonneg heta_le",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_1_squared_bias_nondecreasing"
+    },
+    {
+      "input": {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      "judgment_key": "paper_facing_theorem3_2_squared_bias_convex_in_quality.hshape : assumption_positive_prior_shape alpha beta",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_squared_bias_convex_in_quality\n    {alpha beta eta t : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\n    (ht : assumption_positive_time t) :\n    EconCSLib.Statistics.JensenConvex\n      (fun q => paper_squared_bias alpha beta eta t q) := by\n  have hden_pos : 0 < eta * alpha + eta * beta + t := by\n    calc\n      0 < eta * (alpha + beta) + t :=\n        add_pos_of_nonneg_of_pos\n          (mul_nonneg heta_nonneg hshape.le) ht\n      _ = eta * alpha + eta * beta + t := by ring\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_2_squared_bias_convex_in_quality (ne_of_gt hden_pos)",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_2_squared_bias_convex_in_quality"
+    },
+    {
+      "input": {
+        "names": "heta_nonneg",
+        "type": "assumption_prior_strength_nonnegative eta"
+      },
+      "judgment_key": "paper_facing_theorem3_2_squared_bias_convex_in_quality.heta_nonneg : assumption_prior_strength_nonnegative eta",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_squared_bias_convex_in_quality\n    {alpha beta eta t : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\n    (ht : assumption_positive_time t) :\n    EconCSLib.Statistics.JensenConvex\n      (fun q => paper_squared_bias alpha beta eta t q) := by\n  have hden_pos : 0 < eta * alpha + eta * beta + t := by\n    calc\n      0 < eta * (alpha + beta) + t :=\n        add_pos_of_nonneg_of_pos\n          (mul_nonneg heta_nonneg hshape.le) ht\n      _ = eta * alpha + eta * beta + t := by ring\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_2_squared_bias_convex_in_quality (ne_of_gt hden_pos)",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_2_squared_bias_convex_in_quality"
+    },
+    {
+      "input": {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      },
+      "judgment_key": "paper_facing_theorem3_2_squared_bias_convex_in_quality.ht : assumption_positive_time t",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_squared_bias_convex_in_quality\n    {alpha beta eta t : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\n    (ht : assumption_positive_time t) :\n    EconCSLib.Statistics.JensenConvex\n      (fun q => paper_squared_bias alpha beta eta t q) := by\n  have hden_pos : 0 < eta * alpha + eta * beta + t := by\n    calc\n      0 < eta * (alpha + beta) + t :=\n        add_pos_of_nonneg_of_pos\n          (mul_nonneg heta_nonneg hshape.le) ht\n      _ = eta * alpha + eta * beta + t := by ring\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_2_squared_bias_convex_in_quality (ne_of_gt hden_pos)",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_2_squared_bias_convex_in_quality"
+    },
+    {
+      "input": {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      "judgment_key": "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.hshape : assumption_positive_prior_shape alpha beta",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\n    {alpha beta eta t : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\n    (ht : assumption_positive_time t) :\n    EconCSLib.Statistics.GlobalMinAt\n      (fun q => paper_squared_bias alpha beta eta t q)\n      (alpha / (alpha + beta)) := by\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_2_squared_bias_global_min_at_prior_mean\n      hshape heta_nonneg ht",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean"
+    },
+    {
+      "input": {
+        "names": "heta_nonneg",
+        "type": "assumption_prior_strength_nonnegative eta"
+      },
+      "judgment_key": "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.heta_nonneg : assumption_prior_strength_nonnegative eta",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\n    {alpha beta eta t : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\n    (ht : assumption_positive_time t) :\n    EconCSLib.Statistics.GlobalMinAt\n      (fun q => paper_squared_bias alpha beta eta t q)\n      (alpha / (alpha + beta)) := by\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_2_squared_bias_global_min_at_prior_mean\n      hshape heta_nonneg ht",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean"
+    },
+    {
+      "input": {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      },
+      "judgment_key": "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.ht : assumption_positive_time t",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\n    {alpha beta eta t : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\n    (ht : assumption_positive_time t) :\n    EconCSLib.Statistics.GlobalMinAt\n      (fun q => paper_squared_bias alpha beta eta t q)\n      (alpha / (alpha + beta)) := by\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_2_squared_bias_global_min_at_prior_mean\n      hshape heta_nonneg ht",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean"
+    },
+    {
+      "input": {
+        "names": "ht",
+        "type": "assumption_nonnegative_time t"
+      },
+      "judgment_key": "paper_facing_theorem3_2_variance_concave_in_quality.ht : assumption_nonnegative_time t",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_variance_concave_in_quality\n    {alpha beta eta t : \u211d}\n    (ht : assumption_nonnegative_time t) :\n    EconCSLib.Statistics.JensenConcave\n      (fun q => paper_variance alpha beta eta t q) := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_2_variance_concave_in_quality\n      (alpha := alpha) (beta := beta) (eta := eta) ht",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_2_variance_concave_in_quality"
+    },
+    {
+      "input": {
+        "names": "ht",
+        "type": "assumption_nonnegative_time t"
+      },
+      "judgment_key": "paper_facing_theorem3_2_variance_global_max_at_half.ht : assumption_nonnegative_time t",
+      "kind": "boundary_premise",
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_variance_global_max_at_half\n    {alpha beta eta t : \u211d}\n    (ht : assumption_nonnegative_time t) :\n    EconCSLib.Statistics.GlobalMaxAt\n      (fun q => paper_variance alpha beta eta t q)\n      (1 / 2) := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_2_variance_global_max_at_half\n      (alpha := alpha) (beta := beta) (eta := eta) ht",
+      "required_check": "This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.",
+      "row": "paper_facing_theorem3_2_variance_global_max_at_half"
+    }
+  ],
+  "configured_review_row_count": 27,
+  "expected_field_judgment_keys": [],
+  "expected_input_judgment_keys": [
+    "paper_facing_theorem3_1_squared_bias_nondecreasing.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow",
+    "paper_facing_theorem3_1_squared_bias_nondecreasing.heta_le : assumption_prior_strength_weak_order etaLow etaHigh",
+    "paper_facing_theorem3_1_squared_bias_nondecreasing.hshape : assumption_positive_prior_shape alpha beta",
+    "paper_facing_theorem3_1_squared_bias_nondecreasing.ht : assumption_positive_time t",
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow",
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.heta_lt : assumption_prior_strength_strict_order etaLow etaHigh",
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.hq0 : assumption_quality_positive q",
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.hq1 : assumption_quality_lt_one q",
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.hshape : assumption_positive_prior_shape alpha beta",
+    "paper_facing_theorem3_1_variance_strict_decrease_interior.ht : assumption_positive_time t",
+    "paper_facing_theorem3_1_variance_weak_decrease.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow",
+    "paper_facing_theorem3_1_variance_weak_decrease.heta_le : assumption_prior_strength_weak_order etaLow etaHigh",
+    "paper_facing_theorem3_1_variance_weak_decrease.hq0 : assumption_quality_nonnegative q",
+    "paper_facing_theorem3_1_variance_weak_decrease.hq1 : assumption_quality_at_most_one q",
+    "paper_facing_theorem3_1_variance_weak_decrease.hshape : assumption_positive_prior_shape alpha beta",
+    "paper_facing_theorem3_1_variance_weak_decrease.ht : assumption_positive_time t",
+    "paper_facing_theorem3_2_squared_bias_convex_in_quality.heta_nonneg : assumption_prior_strength_nonnegative eta",
+    "paper_facing_theorem3_2_squared_bias_convex_in_quality.hshape : assumption_positive_prior_shape alpha beta",
+    "paper_facing_theorem3_2_squared_bias_convex_in_quality.ht : assumption_positive_time t",
+    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.heta_nonneg : assumption_prior_strength_nonnegative eta",
+    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.hshape : assumption_positive_prior_shape alpha beta",
+    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.ht : assumption_positive_time t",
+    "paper_facing_theorem3_2_variance_concave_in_quality.ht : assumption_nonnegative_time t",
+    "paper_facing_theorem3_2_variance_global_max_at_half.ht : assumption_nonnegative_time t"
+  ],
+  "import_module": "MBJG25ProducerFairness.PaperInterface",
+  "lean_check": {
+    "command": "lake build MBJG25ProducerFairness.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "MBJG25ProducerFairness.paper_posterior_mean (alpha beta eta t q_v : \u211d) : \u211d\n'MBJG25ProducerFairness.paper_posterior_mean' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.paper_bias (alpha beta eta t q_v : \u211d) : \u211d\n'MBJG25ProducerFairness.paper_bias' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.paper_variance (alpha beta eta t q_v : \u211d) : \u211d\n'MBJG25ProducerFairness.paper_variance' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.paper_squared_bias (alpha beta eta t q_v : \u211d) : \u211d\n'MBJG25ProducerFairness.paper_squared_bias' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.paper_facing_theorem3_1_variance_weak_decrease {alpha beta t q etaLow etaHigh : \u211d}\n  (hshape : assumption_positive_prior_shape alpha beta) (ht : assumption_positive_time t)\n  (hq0 : assumption_quality_nonnegative q) (hq1 : assumption_quality_at_most_one q)\n  (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n  (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n  paper_variance alpha beta etaHigh t q \u2264 paper_variance alpha beta etaLow t q\n'MBJG25ProducerFairness.paper_facing_theorem3_1_variance_weak_decrease' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_theorem3_1_variance_strict_decrease_interior {alpha beta t q etaLow etaHigh : \u211d}\n  (hshape : assumption_positive_prior_shape alpha beta) (ht : assumption_positive_time t)\n  (hq0 : assumption_quality_positive q) (hq1 : assumption_quality_lt_one q)\n  (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n  (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\n  paper_variance alpha beta etaHigh t q < paper_variance alpha beta etaLow t q\n'MBJG25ProducerFairness.paper_facing_theorem3_1_variance_strict_decrease_interior' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_theorem3_1_squared_bias_nondecreasing {alpha beta t q etaLow etaHigh : \u211d}\n  (hshape : assumption_positive_prior_shape alpha beta) (ht : assumption_positive_time t)\n  (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n  (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n  paper_squared_bias alpha beta etaLow t q \u2264 paper_squared_bias alpha beta etaHigh t q\n'MBJG25ProducerFairness.paper_facing_theorem3_1_squared_bias_nondecreasing' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_theorem3_2_squared_bias_convex_in_quality {alpha beta eta t : \u211d}\n  (hshape : assumption_positive_prior_shape alpha beta) (heta_nonneg : assumption_prior_strength_nonnegative eta)\n  (ht : assumption_positive_time t) : EconCSLib.Statistics.JensenConvex fun q => paper_squared_bias alpha beta eta t q\n'MBJG25ProducerFairness.paper_facing_theorem3_2_squared_bias_convex_in_quality' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean {alpha beta eta t : \u211d}\n  (hshape : assumption_positive_prior_shape alpha beta) (heta_nonneg : assumption_prior_strength_nonnegative eta)\n  (ht : assumption_positive_time t) :\n  EconCSLib.Statistics.GlobalMinAt (fun q => paper_squared_bias alpha beta eta t q) (alpha / (alpha + beta))\n'MBJG25ProducerFairness.paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_theorem3_2_variance_concave_in_quality {alpha beta eta t : \u211d}\n  (ht : assumption_nonnegative_time t) : EconCSLib.Statistics.JensenConcave fun q => paper_variance alpha beta eta t q\n'MBJG25ProducerFairness.paper_facing_theorem3_2_variance_concave_in_quality' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_theorem3_2_variance_global_max_at_half {alpha beta eta t : \u211d}\n  (ht : assumption_nonnegative_time t) :\n  EconCSLib.Statistics.GlobalMaxAt (fun q => paper_variance alpha beta eta t q) (1 / 2)\n'MBJG25ProducerFairness.paper_facing_theorem3_2_variance_global_max_at_half' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero\n  (alpha beta t etaLow etaHigh : \u211d) : \u00acpaper_variance alpha beta etaHigh t 0 < paper_variance alpha beta etaLow t 0\n'MBJG25ProducerFairness.paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one\n  (alpha beta t etaLow etaHigh : \u211d) : \u00acpaper_variance alpha beta etaHigh t 1 < paper_variance alpha beta etaLow t 1\n'MBJG25ProducerFairness.paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_individual_producer_unfairness.{u_1} {V : Type u_1} [Fintype V] [DecidableEq V]\n  (selections lifespan q_v : V \u2192 \u211d) (q : \u211d) : \u211d\n'MBJG25ProducerFairness.paper_facing_individual_producer_unfairness' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_thompson_sampling_mechanism.{u_1} {V : Type u_1} [Fintype V] [DecidableEq V]\n  [Nonempty V] (belief : PMF (V \u2192 \u211d)) (policy : PMF V) : Prop\n'MBJG25ProducerFairness.paper_facing_thompson_sampling_mechanism' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.paper_facing_expected_regret.{u_1} {V : Type u_1} [Fintype V] [DecidableEq V] [Nonempty V]\n  (T : \u2115) (M : Fin T \u2192 Finset V) (h_nonempty : \u2200 (t : Fin T), (M t).Nonempty) (q : V \u2192 \u211d) (pi : Fin T \u2192 PMF V) : \u211d\n'MBJG25ProducerFairness.paper_facing_expected_regret' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.paper_facing_responsive_mse_decomposition.{u_1} {\u03b1 : Type u_1} [Fintype \u03b1] [DecidableEq \u03b1]\n  {alpha beta eta q_v : \u211d} (state_dist : PMF \u03b1) (N posterior_rating : \u03b1 \u2192 \u211d)\n  (h_cond_mean : \u2200 (s : \u03b1), posterior_rating s - q_v = paper_bias alpha beta eta (N s) q_v)\n  (h_cond_var :\n    \u2200 (s : \u03b1),\n      (posterior_rating s - q_v) ^ 2 - paper_bias alpha beta eta (N s) q_v ^ 2 =\n        paper_variance alpha beta eta (N s) q_v) :\n  (EconCSLib.pmfExp state_dist fun s => (posterior_rating s - q_v) ^ 2) =\n    (EconCSLib.pmfExp state_dist fun s => paper_squared_bias alpha beta eta (N s) q_v) +\n      EconCSLib.pmfExp state_dist fun s => paper_variance alpha beta eta (N s) q_v\n'MBJG25ProducerFairness.paper_facing_responsive_mse_decomposition' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.assumption_positive_prior_shape (alpha beta : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_positive_prior_shape' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.assumption_positive_time (t : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_positive_time' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.assumption_nonnegative_time (t : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_nonnegative_time' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.assumption_quality_nonnegative (q : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_quality_nonnegative' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.assumption_quality_at_most_one (q : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_quality_at_most_one' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.assumption_quality_positive (q : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_quality_positive' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.assumption_quality_lt_one (q : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_quality_lt_one' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.assumption_prior_strength_nonnegative (eta : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_prior_strength_nonnegative' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nMBJG25ProducerFairness.assumption_prior_strength_weak_order (etaLow etaHigh : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_prior_strength_weak_order' depends on axioms: [propext, Classical.choice, Quot.sound]\nMBJG25ProducerFairness.assumption_prior_strength_strict_order (etaLow etaHigh : \u211d) : Prop\n'MBJG25ProducerFairness.assumption_prior_strength_strict_order' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: MBJG25ProducerFairness\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"input\": {\n      \"names\": \"hshape\",\n      \"type\": \"assumption_positive_prior_shape alpha beta\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_weak_decrease.hshape : assumption_positive_prior_shape alpha beta\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_weak_decrease\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_nonnegative q)\\n    (hq1 : assumption_quality_at_most_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q \\u2264\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_weak_decrease\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_weak_decrease\"\n  },\n  {\n    \"input\": {\n      \"names\": \"ht\",\n      \"type\": \"assumption_positive_time t\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_weak_decrease.ht : assumption_positive_time t\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_weak_decrease\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_nonnegative q)\\n    (hq1 : assumption_quality_at_most_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q \\u2264\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_weak_decrease\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_weak_decrease\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hq0\",\n      \"type\": \"assumption_quality_nonnegative q\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_weak_decrease.hq0 : assumption_quality_nonnegative q\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_weak_decrease\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_nonnegative q)\\n    (hq1 : assumption_quality_at_most_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q \\u2264\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_weak_decrease\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_weak_decrease\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hq1\",\n      \"type\": \"assumption_quality_at_most_one q\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_weak_decrease.hq1 : assumption_quality_at_most_one q\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_weak_decrease\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_nonnegative q)\\n    (hq1 : assumption_quality_at_most_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q \\u2264\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_weak_decrease\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_weak_decrease\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hetaLow_nonneg\",\n      \"type\": \"assumption_prior_strength_nonnegative etaLow\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_weak_decrease.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_weak_decrease\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_nonnegative q)\\n    (hq1 : assumption_quality_at_most_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q \\u2264\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_weak_decrease\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_weak_decrease\"\n  },\n  {\n    \"input\": {\n      \"names\": \"heta_le\",\n      \"type\": \"assumption_prior_strength_weak_order etaLow etaHigh\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_weak_decrease.heta_le : assumption_prior_strength_weak_order etaLow etaHigh\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_weak_decrease\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_nonnegative q)\\n    (hq1 : assumption_quality_at_most_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q \\u2264\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_weak_decrease\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_weak_decrease\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hshape\",\n      \"type\": \"assumption_positive_prior_shape alpha beta\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_strict_decrease_interior.hshape : assumption_positive_prior_shape alpha beta\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_strict_decrease_interior\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_positive q)\\n    (hq1 : assumption_quality_lt_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q <\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_strict_decrease_interior\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_strict_decrease_interior\"\n  },\n  {\n    \"input\": {\n      \"names\": \"ht\",\n      \"type\": \"assumption_positive_time t\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_strict_decrease_interior.ht : assumption_positive_time t\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_strict_decrease_interior\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_positive q)\\n    (hq1 : assumption_quality_lt_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q <\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_strict_decrease_interior\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_strict_decrease_interior\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hq0\",\n      \"type\": \"assumption_quality_positive q\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_strict_decrease_interior.hq0 : assumption_quality_positive q\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_strict_decrease_interior\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_positive q)\\n    (hq1 : assumption_quality_lt_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q <\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_strict_decrease_interior\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_strict_decrease_interior\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hq1\",\n      \"type\": \"assumption_quality_lt_one q\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_strict_decrease_interior.hq1 : assumption_quality_lt_one q\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_strict_decrease_interior\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_positive q)\\n    (hq1 : assumption_quality_lt_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q <\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_strict_decrease_interior\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_strict_decrease_interior\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hetaLow_nonneg\",\n      \"type\": \"assumption_prior_strength_nonnegative etaLow\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_strict_decrease_interior.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_strict_decrease_interior\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_positive q)\\n    (hq1 : assumption_quality_lt_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q <\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_strict_decrease_interior\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_strict_decrease_interior\"\n  },\n  {\n    \"input\": {\n      \"names\": \"heta_lt\",\n      \"type\": \"assumption_prior_strength_strict_order etaLow etaHigh\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_variance_strict_decrease_interior.heta_lt : assumption_prior_strength_strict_order etaLow etaHigh\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_strict_decrease_interior\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_positive q)\\n    (hq1 : assumption_quality_lt_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q <\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_strict_decrease_interior\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_variance_strict_decrease_interior\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hshape\",\n      \"type\": \"assumption_positive_prior_shape alpha beta\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_squared_bias_nondecreasing.hshape : assumption_positive_prior_shape alpha beta\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_squared_bias_nondecreasing\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_squared_bias alpha beta etaLow t q \\u2264\\n      paper_squared_bias alpha beta etaHigh t q := by\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_1_squared_bias_nondecreasing\\n      hshape ht hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_squared_bias_nondecreasing\"\n  },\n  {\n    \"input\": {\n      \"names\": \"ht\",\n      \"type\": \"assumption_positive_time t\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_squared_bias_nondecreasing.ht : assumption_positive_time t\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_squared_bias_nondecreasing\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_squared_bias alpha beta etaLow t q \\u2264\\n      paper_squared_bias alpha beta etaHigh t q := by\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_1_squared_bias_nondecreasing\\n      hshape ht hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_squared_bias_nondecreasing\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hetaLow_nonneg\",\n      \"type\": \"assumption_prior_strength_nonnegative etaLow\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_squared_bias_nondecreasing.hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_squared_bias_nondecreasing\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_squared_bias alpha beta etaLow t q \\u2264\\n      paper_squared_bias alpha beta etaHigh t q := by\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_1_squared_bias_nondecreasing\\n      hshape ht hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_squared_bias_nondecreasing\"\n  },\n  {\n    \"input\": {\n      \"names\": \"heta_le\",\n      \"type\": \"assumption_prior_strength_weak_order etaLow etaHigh\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_1_squared_bias_nondecreasing.heta_le : assumption_prior_strength_weak_order etaLow etaHigh\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_squared_bias_nondecreasing\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_squared_bias alpha beta etaLow t q \\u2264\\n      paper_squared_bias alpha beta etaHigh t q := by\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_1_squared_bias_nondecreasing\\n      hshape ht hetaLow_nonneg heta_le\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_1_squared_bias_nondecreasing\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hshape\",\n      \"type\": \"assumption_positive_prior_shape alpha beta\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_2_squared_bias_convex_in_quality.hshape : assumption_positive_prior_shape alpha beta\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_squared_bias_convex_in_quality\\n    {alpha beta eta t : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\\n    (ht : assumption_positive_time t) :\\n    EconCSLib.Statistics.JensenConvex\\n      (fun q => paper_squared_bias alpha beta eta t q) := by\\n  have hden_pos : 0 < eta * alpha + eta * beta + t := by\\n    calc\\n      0 < eta * (alpha + beta) + t :=\\n        add_pos_of_nonneg_of_pos\\n          (mul_nonneg heta_nonneg hshape.le) ht\\n      _ = eta * alpha + eta * beta + t := by ring\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_2_squared_bias_convex_in_quality (ne_of_gt hden_pos)\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_2_squared_bias_convex_in_quality\"\n  },\n  {\n    \"input\": {\n      \"names\": \"heta_nonneg\",\n      \"type\": \"assumption_prior_strength_nonnegative eta\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_2_squared_bias_convex_in_quality.heta_nonneg : assumption_prior_strength_nonnegative eta\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_squared_bias_convex_in_quality\\n    {alpha beta eta t : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\\n    (ht : assumption_positive_time t) :\\n    EconCSLib.Statistics.JensenConvex\\n      (fun q => paper_squared_bias alpha beta eta t q) := by\\n  have hden_pos : 0 < eta * alpha + eta * beta + t := by\\n    calc\\n      0 < eta * (alpha + beta) + t :=\\n        add_pos_of_nonneg_of_pos\\n          (mul_nonneg heta_nonneg hshape.le) ht\\n      _ = eta * alpha + eta * beta + t := by ring\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_2_squared_bias_convex_in_quality (ne_of_gt hden_pos)\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_2_squared_bias_convex_in_quality\"\n  },\n  {\n    \"input\": {\n      \"names\": \"ht\",\n      \"type\": \"assumption_positive_time t\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_2_squared_bias_convex_in_quality.ht : assumption_positive_time t\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_squared_bias_convex_in_quality\\n    {alpha beta eta t : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\\n    (ht : assumption_positive_time t) :\\n    EconCSLib.Statistics.JensenConvex\\n      (fun q => paper_squared_bias alpha beta eta t q) := by\\n  have hden_pos : 0 < eta * alpha + eta * beta + t := by\\n    calc\\n      0 < eta * (alpha + beta) + t :=\\n        add_pos_of_nonneg_of_pos\\n          (mul_nonneg heta_nonneg hshape.le) ht\\n      _ = eta * alpha + eta * beta + t := by ring\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_2_squared_bias_convex_in_quality (ne_of_gt hden_pos)\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_2_squared_bias_convex_in_quality\"\n  },\n  {\n    \"input\": {\n      \"names\": \"hshape\",\n      \"type\": \"assumption_positive_prior_shape alpha beta\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.hshape : assumption_positive_prior_shape alpha beta\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\\n    {alpha beta eta t : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\\n    (ht : assumption_positive_time t) :\\n    EconCSLib.Statistics.GlobalMinAt\\n      (fun q => paper_squared_bias alpha beta eta t q)\\n      (alpha / (alpha + beta)) := by\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_2_squared_bias_global_min_at_prior_mean\\n      hshape heta_nonneg ht\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\"\n  },\n  {\n    \"input\": {\n      \"names\": \"heta_nonneg\",\n      \"type\": \"assumption_prior_strength_nonnegative eta\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.heta_nonneg : assumption_prior_strength_nonnegative eta\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\\n    {alpha beta eta t : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\\n    (ht : assumption_positive_time t) :\\n    EconCSLib.Statistics.GlobalMinAt\\n      (fun q => paper_squared_bias alpha beta eta t q)\\n      (alpha / (alpha + beta)) := by\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_2_squared_bias_global_min_at_prior_mean\\n      hshape heta_nonneg ht\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\"\n  },\n  {\n    \"input\": {\n      \"names\": \"ht\",\n      \"type\": \"assumption_positive_time t\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean.ht : assumption_positive_time t\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\\n    {alpha beta eta t : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\\n    (ht : assumption_positive_time t) :\\n    EconCSLib.Statistics.GlobalMinAt\\n      (fun q => paper_squared_bias alpha beta eta t q)\\n      (alpha / (alpha + beta)) := by\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_2_squared_bias_global_min_at_prior_mean\\n      hshape heta_nonneg ht\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\"\n  },\n  {\n    \"input\": {\n      \"names\": \"ht\",\n      \"type\": \"assumption_nonnegative_time t\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_2_variance_concave_in_quality.ht : assumption_nonnegative_time t\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_variance_concave_in_quality\\n    {alpha beta eta t : \\u211d}\\n    (ht : assumption_nonnegative_time t) :\\n    EconCSLib.Statistics.JensenConcave\\n      (fun q => paper_variance alpha beta eta t q) := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_2_variance_concave_in_quality\\n      (alpha := alpha) (beta := beta) (eta := eta) ht\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_2_variance_concave_in_quality\"\n  },\n  {\n    \"input\": {\n      \"names\": \"ht\",\n      \"type\": \"assumption_nonnegative_time t\"\n    },\n    \"judgment_key\": \"paper_facing_theorem3_2_variance_global_max_at_half.ht : assumption_nonnegative_time t\",\n    \"kind\": \"boundary_premise\",\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_variance_global_max_at_half\\n    {alpha beta eta t : \\u211d}\\n    (ht : assumption_nonnegative_time t) :\\n    EconCSLib.Statistics.GlobalMaxAt\\n      (fun q => paper_variance alpha beta eta t q)\\n      (1 / 2) := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_2_variance_global_max_at_half\\n      (alpha := alpha) (beta := beta) (eta := eta) ht\",\n    \"required_check\": \"This visible theorem input is boundary-shaped. It needs a specific source statement/primitive or a Lean-checked constructor from paper primitives; the source-looking predicate name is not evidence.\",\n    \"row\": \"paper_facing_theorem3_2_variance_global_max_at_half\"\n  },\n  {\n    \"lean_source_declaration\": \"noncomputable def paper_posterior_mean (alpha beta eta t q_v : \\u211d) : \\u211d :=\\n  (eta * alpha + t * q_v) / (eta * alpha + eta * beta + t)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_posterior_mean\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta eta t q_v\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"noncomputable def paper_bias (alpha beta eta t q_v : \\u211d) : \\u211d :=\\n  (eta * alpha + t * q_v) / (eta * alpha + eta * beta + t) - q_v\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_bias\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta eta t q_v\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"noncomputable def paper_variance (alpha beta eta t q_v : \\u211d) : \\u211d :=\\n  t * q_v * (1 - q_v) / (eta * alpha + eta * beta + t) ^ 2\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_variance\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta eta t q_v\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"noncomputable def paper_squared_bias (alpha beta eta t q_v : \\u211d) : \\u211d :=\\n  (paper_bias alpha beta eta t q_v) ^ 2\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_squared_bias\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta eta t q_v\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_weak_decrease\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_nonnegative q)\\n    (hq1 : assumption_quality_at_most_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q \\u2264\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_weak_decrease\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_theorem3_1_variance_weak_decrease\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta t q etaLow etaHigh\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hshape\",\n        \"type\": \"assumption_positive_prior_shape alpha beta\"\n      },\n      {\n        \"names\": \"ht\",\n        \"type\": \"assumption_positive_time t\"\n      },\n      {\n        \"names\": \"hq0\",\n        \"type\": \"assumption_quality_nonnegative q\"\n      },\n      {\n        \"names\": \"hq1\",\n        \"type\": \"assumption_quality_at_most_one q\"\n      },\n      {\n        \"names\": \"hetaLow_nonneg\",\n        \"type\": \"assumption_prior_strength_nonnegative etaLow\"\n      },\n      {\n        \"names\": \"heta_le\",\n        \"type\": \"assumption_prior_strength_weak_order etaLow etaHigh\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_strict_decrease_interior\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hq0 : assumption_quality_positive q)\\n    (hq1 : assumption_quality_lt_one q)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\\n    paper_variance alpha beta etaHigh t q <\\n      paper_variance alpha beta etaLow t q := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_strict_decrease_interior\\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_theorem3_1_variance_strict_decrease_interior\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta t q etaLow etaHigh\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hshape\",\n        \"type\": \"assumption_positive_prior_shape alpha beta\"\n      },\n      {\n        \"names\": \"ht\",\n        \"type\": \"assumption_positive_time t\"\n      },\n      {\n        \"names\": \"hq0\",\n        \"type\": \"assumption_quality_positive q\"\n      },\n      {\n        \"names\": \"hq1\",\n        \"type\": \"assumption_quality_lt_one q\"\n      },\n      {\n        \"names\": \"hetaLow_nonneg\",\n        \"type\": \"assumption_prior_strength_nonnegative etaLow\"\n      },\n      {\n        \"names\": \"heta_lt\",\n        \"type\": \"assumption_prior_strength_strict_order etaLow etaHigh\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_squared_bias_nondecreasing\\n    {alpha beta t q etaLow etaHigh : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (ht : assumption_positive_time t)\\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\\n    paper_squared_bias alpha beta etaLow t q \\u2264\\n      paper_squared_bias alpha beta etaHigh t q := by\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_1_squared_bias_nondecreasing\\n      hshape ht hetaLow_nonneg heta_le\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_theorem3_1_squared_bias_nondecreasing\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta t q etaLow etaHigh\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hshape\",\n        \"type\": \"assumption_positive_prior_shape alpha beta\"\n      },\n      {\n        \"names\": \"ht\",\n        \"type\": \"assumption_positive_time t\"\n      },\n      {\n        \"names\": \"hetaLow_nonneg\",\n        \"type\": \"assumption_prior_strength_nonnegative etaLow\"\n      },\n      {\n        \"names\": \"heta_le\",\n        \"type\": \"assumption_prior_strength_weak_order etaLow etaHigh\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_squared_bias_convex_in_quality\\n    {alpha beta eta t : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\\n    (ht : assumption_positive_time t) :\\n    EconCSLib.Statistics.JensenConvex\\n      (fun q => paper_squared_bias alpha beta eta t q) := by\\n  have hden_pos : 0 < eta * alpha + eta * beta + t := by\\n    calc\\n      0 < eta * (alpha + beta) + t :=\\n        add_pos_of_nonneg_of_pos\\n          (mul_nonneg heta_nonneg hshape.le) ht\\n      _ = eta * alpha + eta * beta + t := by ring\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_2_squared_bias_convex_in_quality (ne_of_gt hden_pos)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_theorem3_2_squared_bias_convex_in_quality\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta eta t\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hshape\",\n        \"type\": \"assumption_positive_prior_shape alpha beta\"\n      },\n      {\n        \"names\": \"heta_nonneg\",\n        \"type\": \"assumption_prior_strength_nonnegative eta\"\n      },\n      {\n        \"names\": \"ht\",\n        \"type\": \"assumption_positive_time t\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\\n    {alpha beta eta t : \\u211d}\\n    (hshape : assumption_positive_prior_shape alpha beta)\\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\\n    (ht : assumption_positive_time t) :\\n    EconCSLib.Statistics.GlobalMinAt\\n      (fun q => paper_squared_bias alpha beta eta t q)\\n      (alpha / (alpha + beta)) := by\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\\n    paper_theorem3_2_squared_bias_global_min_at_prior_mean\\n      hshape heta_nonneg ht\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta eta t\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hshape\",\n        \"type\": \"assumption_positive_prior_shape alpha beta\"\n      },\n      {\n        \"names\": \"heta_nonneg\",\n        \"type\": \"assumption_prior_strength_nonnegative eta\"\n      },\n      {\n        \"names\": \"ht\",\n        \"type\": \"assumption_positive_time t\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_variance_concave_in_quality\\n    {alpha beta eta t : \\u211d}\\n    (ht : assumption_nonnegative_time t) :\\n    EconCSLib.Statistics.JensenConcave\\n      (fun q => paper_variance alpha beta eta t q) := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_2_variance_concave_in_quality\\n      (alpha := alpha) (beta := beta) (eta := eta) ht\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_theorem3_2_variance_concave_in_quality\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta eta t\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"ht\",\n        \"type\": \"assumption_nonnegative_time t\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_2_variance_global_max_at_half\\n    {alpha beta eta t : \\u211d}\\n    (ht : assumption_nonnegative_time t) :\\n    EconCSLib.Statistics.GlobalMaxAt\\n      (fun q => paper_variance alpha beta eta t q)\\n      (1 / 2) := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_2_variance_global_max_at_half\\n      (alpha := alpha) (beta := beta) (eta := eta) ht\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_theorem3_2_variance_global_max_at_half\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta eta t\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"ht\",\n        \"type\": \"assumption_nonnegative_time t\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero\\n    (alpha beta t etaLow etaHigh : \\u211d) :\\n    \\u00ac paper_variance alpha beta etaHigh t 0 <\\n      paper_variance alpha beta etaLow t 0 := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero\\n      alpha beta t etaLow etaHigh\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta t etaLow etaHigh\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one\\n    (alpha beta t etaLow etaHigh : \\u211d) :\\n    \\u00ac paper_variance alpha beta etaHigh t 1 <\\n      paper_variance alpha beta etaLow t 1 := by\\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\\n    paper_theorem3_1_variance_strict_decrease_counterexample_quality_one\\n      alpha beta t etaLow etaHigh\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta t etaLow etaHigh\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"noncomputable def paper_facing_individual_producer_unfairness\\n    {V : Type*} [Fintype V] [DecidableEq V]\\n    (selections : V \\u2192 \\u211d)\\n    (lifespan : V \\u2192 \\u211d)\\n    (q_v : V \\u2192 \\u211d)\\n    (q : \\u211d) : \\u211d :=\\n  let S := Finset.univ.filter (fun v => q_v v = q)\\n  let selectionRate := fun v => selections v / lifespan v\\n  let meanSelectionRate :=\\n    if S.card = 0 then 0\\n    else (\\u2211 v \\u2208 S, selectionRate v) / (S.card : \\u211d)\\n  if S.card = 0 then 0\\n  else\\n    Real.sqrt\\n      ((\\u2211 v \\u2208 S, (selectionRate v - meanSelectionRate) ^ 2) /\\n        (S.card : \\u211d))\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_individual_producer_unfairness\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"V\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"selections\",\n        \"type\": \"V \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"lifespan\",\n        \"type\": \"V \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"q_v\",\n        \"type\": \"V \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def paper_facing_thompson_sampling_mechanism\\n    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]\\n    (belief : PMF (V \\u2192 \\u211d))\\n    (policy : PMF V) : Prop :=\\n  \\u2203 tie_breaker : (V \\u2192 \\u211d) \\u2192 V,\\n    (\\u2200 (profile : V \\u2192 \\u211d) (v : V), profile v \\u2264 profile (tie_breaker profile)) \\u2227\\n    policy = belief.bind (fun profile => PMF.pure (tie_breaker profile))\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_thompson_sampling_mechanism\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"V\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"belief\",\n        \"type\": \"PMF (V \\u2192 \\u211d)\"\n      },\n      {\n        \"names\": \"policy\",\n        \"type\": \"PMF V\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"noncomputable def paper_facing_expected_regret\\n    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]\\n    (T : \\u2115)\\n    (M : Fin T \\u2192 Finset V)\\n    (h_nonempty : \\u2200 t, (M t).Nonempty)\\n    (q : V \\u2192 \\u211d)\\n    (pi : (t : Fin T) \\u2192 PMF V) : \\u211d :=\\n  \\u2211 t : Fin T, ((M t).sup' (h_nonempty t) q - EconCSLib.pmfExp (pi t) q)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_expected_regret\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"V\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"T\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"Fin T \\u2192 Finset V\"\n      },\n      {\n        \"names\": \"h_nonempty\",\n        \"type\": \"\\u2200 t, (M t).Nonempty\"\n      },\n      {\n        \"names\": \"q\",\n        \"type\": \"V \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"pi\",\n        \"type\": \"(t : Fin T) \\u2192 PMF V\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem paper_facing_responsive_mse_decomposition\\n    {\\u03b1 : Type*} [Fintype \\u03b1] [DecidableEq \\u03b1]\\n    {alpha beta eta q_v : \\u211d}\\n    (state_dist : PMF \\u03b1)\\n    (N : \\u03b1 \\u2192 \\u211d)\\n    (posterior_rating : \\u03b1 \\u2192 \\u211d)\\n    (h_cond_mean : \\u2200 s,\\n      posterior_rating s - q_v =\\n      paper_bias alpha beta eta (N s) q_v)\\n    (h_cond_var : \\u2200 s,\\n      (posterior_rating s - q_v) ^ 2 -\\n      (paper_bias alpha beta eta (N s) q_v) ^ 2 =\\n      paper_variance alpha beta eta (N s) q_v) :\\n    EconCSLib.pmfExp state_dist (fun s => (posterior_rating s - q_v) ^ 2) =\\n      EconCSLib.pmfExp state_dist (fun s =>\\n        paper_squared_bias alpha beta eta (N s) q_v) +\\n      EconCSLib.pmfExp state_dist (fun s =>\\n        paper_variance alpha beta eta (N s) q_v) := by\\n  have h_mean_lib : \\u2200 s,\\n      posterior_rating s - q_v =\\n      EconCSLib.Statistics.priorWeightedBias alpha beta eta (N s) q_v := by\\n    intro s\\n    simpa [paper_bias, paper_posterior_mean,\\n      EconCSLib.Statistics.priorWeightedBias,\\n      EconCSLib.Statistics.priorWeightedPosteriorMean] using h_cond_mean s\\n  have h_var_lib : \\u2200 s,\\n      (posterior_rating s - q_v) ^ 2 -\\n      (EconCSLib.Statistics.priorWeightedBias alpha beta eta (N s) q_v) ^ 2 =\\n      EconCSLib.Statistics.priorWeightedVariance alpha beta eta (N s) q_v := by\\n    intro s\\n    simpa [paper_bias, paper_posterior_mean, paper_variance,\\n      EconCSLib.Statistics.priorWeightedBias,\\n      EconCSLib.Statistics.priorWeightedPosteriorMean,\\n      EconCSLib.Statistics.priorWeightedVariance] using h_cond_var s\\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean, paper_variance,\\n    EconCSLib.Statistics.priorWeightedSquaredBias,\\n    EconCSLib.Statistics.priorWeightedBias,\\n    EconCSLib.Statistics.priorWeightedPosteriorMean,\\n    EconCSLib.Statistics.priorWeightedVariance] using\\n    MBJG25ProducerFairness.Responsive.paper_responsive_mse_decomposition\\n      state_dist N posterior_rating h_mean_lib h_var_lib\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"paper_facing_responsive_mse_decomposition\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"\\u03b1\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"alpha beta eta q_v\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"state_dist\",\n        \"type\": \"PMF \\u03b1\"\n      },\n      {\n        \"names\": \"N\",\n        \"type\": \"\\u03b1 \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"posterior_rating\",\n        \"type\": \"\\u03b1 \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"h_cond_mean\",\n        \"type\": \"\\u2200 s, posterior_rating s - q_v = paper_bias alpha beta eta (N s) q_v\"\n      },\n      {\n        \"names\": \"h_cond_var\",\n        \"type\": \"\\u2200 s, (posterior_rating s - q_v) ^ 2 - (paper_bias alpha beta eta (N s) q_v) ^ 2 = paper_variance alpha beta eta (N s) q_v\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_positive_prior_shape (alpha beta : \\u211d) : Prop :=\\n  0 < alpha + beta\\n\\n                                                                                   \\n-- audit-premise: ht : 0 < t\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_positive_prior_shape\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"alpha beta\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_positive_time (t : \\u211d) : Prop :=\\n  0 < t\\n\\n                                                                                       \\n-- audit-premise: ht : 0 \\u2264 t\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_positive_time\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"t\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_nonnegative_time (t : \\u211d) : Prop :=\\n  0 \\u2264 t\\n\\n                                                                  \\n-- audit-premise: hq0 : 0 \\u2264 q\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_nonnegative_time\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"t\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_quality_nonnegative (q : \\u211d) : Prop :=\\n  0 \\u2264 q\\n\\n                                                                  \\n-- audit-premise: hq1 : q \\u2264 1\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_quality_nonnegative\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"q\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_quality_at_most_one (q : \\u211d) : Prop :=\\n  q \\u2264 1\\n\\n                                                                         \\n-- audit-premise: hq0 : 0 < q\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_quality_at_most_one\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"q\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_quality_positive (q : \\u211d) : Prop :=\\n  0 < q\\n\\n                                                                         \\n-- audit-premise: hq1 : q < 1\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_quality_positive\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"q\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_quality_lt_one (q : \\u211d) : Prop :=\\n  q < 1\\n\\n                                     \\n-- audit-premise: hetaLow_nonneg : 0 \\u2264 etaLow\\n-- audit-premise: heta_nonneg : 0 \\u2264 eta\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_quality_lt_one\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"q\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_prior_strength_nonnegative (eta : \\u211d) : Prop :=\\n  0 \\u2264 eta\\n\\n                                       \\n-- audit-premise: heta_le : etaLow \\u2264 etaHigh\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_prior_strength_nonnegative\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"eta\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_prior_strength_weak_order (etaLow etaHigh : \\u211d) : Prop :=\\n  etaLow \\u2264 etaHigh\\n\\n                                         \\n-- audit-premise: heta_lt : etaLow < etaHigh\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_prior_strength_weak_order\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"etaLow etaHigh\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_prior_strength_strict_order (etaLow etaHigh : \\u211d) : Prop :=\\n  etaLow < etaHigh\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_prior_strength_strict_order\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"etaLow etaHigh\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  }\n]",
+  "paper": "MBJG25ProducerFairness",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/MBJG25ProducerFairness",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 0,
+  "recursive_field_items": [],
+  "review_row_count": 27,
+  "row_visible_inputs": {
+    "assumption_nonnegative_time": [
+      {
+        "names": "t",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_positive_prior_shape": [
+      {
+        "names": "alpha beta",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_positive_time": [
+      {
+        "names": "t",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_prior_strength_nonnegative": [
+      {
+        "names": "eta",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_prior_strength_strict_order": [
+      {
+        "names": "etaLow etaHigh",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_prior_strength_weak_order": [
+      {
+        "names": "etaLow etaHigh",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_quality_at_most_one": [
+      {
+        "names": "q",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_quality_lt_one": [
+      {
+        "names": "q",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_quality_nonnegative": [
+      {
+        "names": "q",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_quality_positive": [
+      {
+        "names": "q",
+        "type": "\u211d"
+      }
+    ],
+    "paper_bias": [
+      {
+        "names": "alpha beta eta t q_v",
+        "type": "\u211d"
+      }
+    ],
+    "paper_facing_expected_regret": [
+      {
+        "names": "V",
+        "type": "Type*"
+      },
+      {
+        "names": "T",
+        "type": "\u2115"
+      },
+      {
+        "names": "M",
+        "type": "Fin T \u2192 Finset V"
+      },
+      {
+        "names": "h_nonempty",
+        "type": "\u2200 t, (M t).Nonempty"
+      },
+      {
+        "names": "q",
+        "type": "V \u2192 \u211d"
+      },
+      {
+        "names": "pi",
+        "type": "(t : Fin T) \u2192 PMF V"
+      }
+    ],
+    "paper_facing_individual_producer_unfairness": [
+      {
+        "names": "V",
+        "type": "Type*"
+      },
+      {
+        "names": "selections",
+        "type": "V \u2192 \u211d"
+      },
+      {
+        "names": "lifespan",
+        "type": "V \u2192 \u211d"
+      },
+      {
+        "names": "q_v",
+        "type": "V \u2192 \u211d"
+      },
+      {
+        "names": "q",
+        "type": "\u211d"
+      }
+    ],
+    "paper_facing_responsive_mse_decomposition": [
+      {
+        "names": "\u03b1",
+        "type": "Type*"
+      },
+      {
+        "names": "alpha beta eta q_v",
+        "type": "\u211d"
+      },
+      {
+        "names": "state_dist",
+        "type": "PMF \u03b1"
+      },
+      {
+        "names": "N",
+        "type": "\u03b1 \u2192 \u211d"
+      },
+      {
+        "names": "posterior_rating",
+        "type": "\u03b1 \u2192 \u211d"
+      },
+      {
+        "names": "h_cond_mean",
+        "type": "\u2200 s, posterior_rating s - q_v = paper_bias alpha beta eta (N s) q_v"
+      },
+      {
+        "names": "h_cond_var",
+        "type": "\u2200 s, (posterior_rating s - q_v) ^ 2 - (paper_bias alpha beta eta (N s) q_v) ^ 2 = paper_variance alpha beta eta (N s) q_v"
+      }
+    ],
+    "paper_facing_theorem3_1_squared_bias_nondecreasing": [
+      {
+        "names": "alpha beta t q etaLow etaHigh",
+        "type": "\u211d"
+      },
+      {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      },
+      {
+        "names": "hetaLow_nonneg",
+        "type": "assumption_prior_strength_nonnegative etaLow"
+      },
+      {
+        "names": "heta_le",
+        "type": "assumption_prior_strength_weak_order etaLow etaHigh"
+      }
+    ],
+    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one": [
+      {
+        "names": "alpha beta t etaLow etaHigh",
+        "type": "\u211d"
+      }
+    ],
+    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero": [
+      {
+        "names": "alpha beta t etaLow etaHigh",
+        "type": "\u211d"
+      }
+    ],
+    "paper_facing_theorem3_1_variance_strict_decrease_interior": [
+      {
+        "names": "alpha beta t q etaLow etaHigh",
+        "type": "\u211d"
+      },
+      {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      },
+      {
+        "names": "hq0",
+        "type": "assumption_quality_positive q"
+      },
+      {
+        "names": "hq1",
+        "type": "assumption_quality_lt_one q"
+      },
+      {
+        "names": "hetaLow_nonneg",
+        "type": "assumption_prior_strength_nonnegative etaLow"
+      },
+      {
+        "names": "heta_lt",
+        "type": "assumption_prior_strength_strict_order etaLow etaHigh"
+      }
+    ],
+    "paper_facing_theorem3_1_variance_weak_decrease": [
+      {
+        "names": "alpha beta t q etaLow etaHigh",
+        "type": "\u211d"
+      },
+      {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      },
+      {
+        "names": "hq0",
+        "type": "assumption_quality_nonnegative q"
+      },
+      {
+        "names": "hq1",
+        "type": "assumption_quality_at_most_one q"
+      },
+      {
+        "names": "hetaLow_nonneg",
+        "type": "assumption_prior_strength_nonnegative etaLow"
+      },
+      {
+        "names": "heta_le",
+        "type": "assumption_prior_strength_weak_order etaLow etaHigh"
+      }
+    ],
+    "paper_facing_theorem3_2_squared_bias_convex_in_quality": [
+      {
+        "names": "alpha beta eta t",
+        "type": "\u211d"
+      },
+      {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      {
+        "names": "heta_nonneg",
+        "type": "assumption_prior_strength_nonnegative eta"
+      },
+      {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      }
+    ],
+    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean": [
+      {
+        "names": "alpha beta eta t",
+        "type": "\u211d"
+      },
+      {
+        "names": "hshape",
+        "type": "assumption_positive_prior_shape alpha beta"
+      },
+      {
+        "names": "heta_nonneg",
+        "type": "assumption_prior_strength_nonnegative eta"
+      },
+      {
+        "names": "ht",
+        "type": "assumption_positive_time t"
+      }
+    ],
+    "paper_facing_theorem3_2_variance_concave_in_quality": [
+      {
+        "names": "alpha beta eta t",
+        "type": "\u211d"
+      },
+      {
+        "names": "ht",
+        "type": "assumption_nonnegative_time t"
+      }
+    ],
+    "paper_facing_theorem3_2_variance_global_max_at_half": [
+      {
+        "names": "alpha beta eta t",
+        "type": "\u211d"
+      },
+      {
+        "names": "ht",
+        "type": "assumption_nonnegative_time t"
+      }
+    ],
+    "paper_facing_thompson_sampling_mechanism": [
+      {
+        "names": "V",
+        "type": "Type*"
+      },
+      {
+        "names": "belief",
+        "type": "PMF (V \u2192 \u211d)"
+      },
+      {
+        "names": "policy",
+        "type": "PMF V"
+      }
+    ],
+    "paper_posterior_mean": [
+      {
+        "names": "alpha beta eta t q_v",
+        "type": "\u211d"
+      }
+    ],
+    "paper_squared_bias": [
+      {
+        "names": "alpha beta eta t q_v",
+        "type": "\u211d"
+      }
+    ],
+    "paper_variance": [
+      {
+        "names": "alpha beta eta t q_v",
+        "type": "\u211d"
+      }
+    ]
+  },
+  "rows_with_record_premises": [],
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "noncomputable def paper_posterior_mean (alpha beta eta t q_v : \u211d) : \u211d :=\n  (eta * alpha + t * q_v) / (eta * alpha + eta * beta + t)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_posterior_mean",
+      "visible_inputs": [
+        {
+          "names": "alpha beta eta t q_v",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "noncomputable def paper_bias (alpha beta eta t q_v : \u211d) : \u211d :=\n  (eta * alpha + t * q_v) / (eta * alpha + eta * beta + t) - q_v",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_bias",
+      "visible_inputs": [
+        {
+          "names": "alpha beta eta t q_v",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "noncomputable def paper_variance (alpha beta eta t q_v : \u211d) : \u211d :=\n  t * q_v * (1 - q_v) / (eta * alpha + eta * beta + t) ^ 2",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_variance",
+      "visible_inputs": [
+        {
+          "names": "alpha beta eta t q_v",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "noncomputable def paper_squared_bias (alpha beta eta t q_v : \u211d) : \u211d :=\n  (paper_bias alpha beta eta t q_v) ^ 2",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_squared_bias",
+      "visible_inputs": [
+        {
+          "names": "alpha beta eta t q_v",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_weak_decrease\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_nonnegative q)\n    (hq1 : assumption_quality_at_most_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q \u2264\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_weak_decrease\n      hshape ht hq0 hq1 hetaLow_nonneg heta_le",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_theorem3_1_variance_weak_decrease",
+      "visible_inputs": [
+        {
+          "names": "alpha beta t q etaLow etaHigh",
+          "type": "\u211d"
+        },
+        {
+          "names": "hshape",
+          "type": "assumption_positive_prior_shape alpha beta"
+        },
+        {
+          "names": "ht",
+          "type": "assumption_positive_time t"
+        },
+        {
+          "names": "hq0",
+          "type": "assumption_quality_nonnegative q"
+        },
+        {
+          "names": "hq1",
+          "type": "assumption_quality_at_most_one q"
+        },
+        {
+          "names": "hetaLow_nonneg",
+          "type": "assumption_prior_strength_nonnegative etaLow"
+        },
+        {
+          "names": "heta_le",
+          "type": "assumption_prior_strength_weak_order etaLow etaHigh"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_strict_decrease_interior\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hq0 : assumption_quality_positive q)\n    (hq1 : assumption_quality_lt_one q)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :\n    paper_variance alpha beta etaHigh t q <\n      paper_variance alpha beta etaLow t q := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_strict_decrease_interior\n      hshape ht hq0 hq1 hetaLow_nonneg heta_lt",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_theorem3_1_variance_strict_decrease_interior",
+      "visible_inputs": [
+        {
+          "names": "alpha beta t q etaLow etaHigh",
+          "type": "\u211d"
+        },
+        {
+          "names": "hshape",
+          "type": "assumption_positive_prior_shape alpha beta"
+        },
+        {
+          "names": "ht",
+          "type": "assumption_positive_time t"
+        },
+        {
+          "names": "hq0",
+          "type": "assumption_quality_positive q"
+        },
+        {
+          "names": "hq1",
+          "type": "assumption_quality_lt_one q"
+        },
+        {
+          "names": "hetaLow_nonneg",
+          "type": "assumption_prior_strength_nonnegative etaLow"
+        },
+        {
+          "names": "heta_lt",
+          "type": "assumption_prior_strength_strict_order etaLow etaHigh"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_squared_bias_nondecreasing\n    {alpha beta t q etaLow etaHigh : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (ht : assumption_positive_time t)\n    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)\n    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :\n    paper_squared_bias alpha beta etaLow t q \u2264\n      paper_squared_bias alpha beta etaHigh t q := by\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_1_squared_bias_nondecreasing\n      hshape ht hetaLow_nonneg heta_le",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_theorem3_1_squared_bias_nondecreasing",
+      "visible_inputs": [
+        {
+          "names": "alpha beta t q etaLow etaHigh",
+          "type": "\u211d"
+        },
+        {
+          "names": "hshape",
+          "type": "assumption_positive_prior_shape alpha beta"
+        },
+        {
+          "names": "ht",
+          "type": "assumption_positive_time t"
+        },
+        {
+          "names": "hetaLow_nonneg",
+          "type": "assumption_prior_strength_nonnegative etaLow"
+        },
+        {
+          "names": "heta_le",
+          "type": "assumption_prior_strength_weak_order etaLow etaHigh"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_squared_bias_convex_in_quality\n    {alpha beta eta t : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\n    (ht : assumption_positive_time t) :\n    EconCSLib.Statistics.JensenConvex\n      (fun q => paper_squared_bias alpha beta eta t q) := by\n  have hden_pos : 0 < eta * alpha + eta * beta + t := by\n    calc\n      0 < eta * (alpha + beta) + t :=\n        add_pos_of_nonneg_of_pos\n          (mul_nonneg heta_nonneg hshape.le) ht\n      _ = eta * alpha + eta * beta + t := by ring\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_2_squared_bias_convex_in_quality (ne_of_gt hden_pos)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_theorem3_2_squared_bias_convex_in_quality",
+      "visible_inputs": [
+        {
+          "names": "alpha beta eta t",
+          "type": "\u211d"
+        },
+        {
+          "names": "hshape",
+          "type": "assumption_positive_prior_shape alpha beta"
+        },
+        {
+          "names": "heta_nonneg",
+          "type": "assumption_prior_strength_nonnegative eta"
+        },
+        {
+          "names": "ht",
+          "type": "assumption_positive_time t"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean\n    {alpha beta eta t : \u211d}\n    (hshape : assumption_positive_prior_shape alpha beta)\n    (heta_nonneg : assumption_prior_strength_nonnegative eta)\n    (ht : assumption_positive_time t) :\n    EconCSLib.Statistics.GlobalMinAt\n      (fun q => paper_squared_bias alpha beta eta t q)\n      (alpha / (alpha + beta)) := by\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean] using\n    paper_theorem3_2_squared_bias_global_min_at_prior_mean\n      hshape heta_nonneg ht",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean",
+      "visible_inputs": [
+        {
+          "names": "alpha beta eta t",
+          "type": "\u211d"
+        },
+        {
+          "names": "hshape",
+          "type": "assumption_positive_prior_shape alpha beta"
+        },
+        {
+          "names": "heta_nonneg",
+          "type": "assumption_prior_strength_nonnegative eta"
+        },
+        {
+          "names": "ht",
+          "type": "assumption_positive_time t"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_variance_concave_in_quality\n    {alpha beta eta t : \u211d}\n    (ht : assumption_nonnegative_time t) :\n    EconCSLib.Statistics.JensenConcave\n      (fun q => paper_variance alpha beta eta t q) := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_2_variance_concave_in_quality\n      (alpha := alpha) (beta := beta) (eta := eta) ht",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_theorem3_2_variance_concave_in_quality",
+      "visible_inputs": [
+        {
+          "names": "alpha beta eta t",
+          "type": "\u211d"
+        },
+        {
+          "names": "ht",
+          "type": "assumption_nonnegative_time t"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_theorem3_2_variance_global_max_at_half\n    {alpha beta eta t : \u211d}\n    (ht : assumption_nonnegative_time t) :\n    EconCSLib.Statistics.GlobalMaxAt\n      (fun q => paper_variance alpha beta eta t q)\n      (1 / 2) := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_2_variance_global_max_at_half\n      (alpha := alpha) (beta := beta) (eta := eta) ht",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_theorem3_2_variance_global_max_at_half",
+      "visible_inputs": [
+        {
+          "names": "alpha beta eta t",
+          "type": "\u211d"
+        },
+        {
+          "names": "ht",
+          "type": "assumption_nonnegative_time t"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero\n    (alpha beta t etaLow etaHigh : \u211d) :\n    \u00ac paper_variance alpha beta etaHigh t 0 <\n      paper_variance alpha beta etaLow t 0 := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero\n      alpha beta t etaLow etaHigh",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero",
+      "visible_inputs": [
+        {
+          "names": "alpha beta t etaLow etaHigh",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one\n    (alpha beta t etaLow etaHigh : \u211d) :\n    \u00ac paper_variance alpha beta etaHigh t 1 <\n      paper_variance alpha beta etaLow t 1 := by\n  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using\n    paper_theorem3_1_variance_strict_decrease_counterexample_quality_one\n      alpha beta t etaLow etaHigh",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one",
+      "visible_inputs": [
+        {
+          "names": "alpha beta t etaLow etaHigh",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "noncomputable def paper_facing_individual_producer_unfairness\n    {V : Type*} [Fintype V] [DecidableEq V]\n    (selections : V \u2192 \u211d)\n    (lifespan : V \u2192 \u211d)\n    (q_v : V \u2192 \u211d)\n    (q : \u211d) : \u211d :=\n  let S := Finset.univ.filter (fun v => q_v v = q)\n  let selectionRate := fun v => selections v / lifespan v\n  let meanSelectionRate :=\n    if S.card = 0 then 0\n    else (\u2211 v \u2208 S, selectionRate v) / (S.card : \u211d)\n  if S.card = 0 then 0\n  else\n    Real.sqrt\n      ((\u2211 v \u2208 S, (selectionRate v - meanSelectionRate) ^ 2) /\n        (S.card : \u211d))",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_individual_producer_unfairness",
+      "visible_inputs": [
+        {
+          "names": "V",
+          "type": "Type*"
+        },
+        {
+          "names": "selections",
+          "type": "V \u2192 \u211d"
+        },
+        {
+          "names": "lifespan",
+          "type": "V \u2192 \u211d"
+        },
+        {
+          "names": "q_v",
+          "type": "V \u2192 \u211d"
+        },
+        {
+          "names": "q",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def paper_facing_thompson_sampling_mechanism\n    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]\n    (belief : PMF (V \u2192 \u211d))\n    (policy : PMF V) : Prop :=\n  \u2203 tie_breaker : (V \u2192 \u211d) \u2192 V,\n    (\u2200 (profile : V \u2192 \u211d) (v : V), profile v \u2264 profile (tie_breaker profile)) \u2227\n    policy = belief.bind (fun profile => PMF.pure (tie_breaker profile))",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_thompson_sampling_mechanism",
+      "visible_inputs": [
+        {
+          "names": "V",
+          "type": "Type*"
+        },
+        {
+          "names": "belief",
+          "type": "PMF (V \u2192 \u211d)"
+        },
+        {
+          "names": "policy",
+          "type": "PMF V"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "noncomputable def paper_facing_expected_regret\n    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]\n    (T : \u2115)\n    (M : Fin T \u2192 Finset V)\n    (h_nonempty : \u2200 t, (M t).Nonempty)\n    (q : V \u2192 \u211d)\n    (pi : (t : Fin T) \u2192 PMF V) : \u211d :=\n  \u2211 t : Fin T, ((M t).sup' (h_nonempty t) q - EconCSLib.pmfExp (pi t) q)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_expected_regret",
+      "visible_inputs": [
+        {
+          "names": "V",
+          "type": "Type*"
+        },
+        {
+          "names": "T",
+          "type": "\u2115"
+        },
+        {
+          "names": "M",
+          "type": "Fin T \u2192 Finset V"
+        },
+        {
+          "names": "h_nonempty",
+          "type": "\u2200 t, (M t).Nonempty"
+        },
+        {
+          "names": "q",
+          "type": "V \u2192 \u211d"
+        },
+        {
+          "names": "pi",
+          "type": "(t : Fin T) \u2192 PMF V"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem paper_facing_responsive_mse_decomposition\n    {\u03b1 : Type*} [Fintype \u03b1] [DecidableEq \u03b1]\n    {alpha beta eta q_v : \u211d}\n    (state_dist : PMF \u03b1)\n    (N : \u03b1 \u2192 \u211d)\n    (posterior_rating : \u03b1 \u2192 \u211d)\n    (h_cond_mean : \u2200 s,\n      posterior_rating s - q_v =\n      paper_bias alpha beta eta (N s) q_v)\n    (h_cond_var : \u2200 s,\n      (posterior_rating s - q_v) ^ 2 -\n      (paper_bias alpha beta eta (N s) q_v) ^ 2 =\n      paper_variance alpha beta eta (N s) q_v) :\n    EconCSLib.pmfExp state_dist (fun s => (posterior_rating s - q_v) ^ 2) =\n      EconCSLib.pmfExp state_dist (fun s =>\n        paper_squared_bias alpha beta eta (N s) q_v) +\n      EconCSLib.pmfExp state_dist (fun s =>\n        paper_variance alpha beta eta (N s) q_v) := by\n  have h_mean_lib : \u2200 s,\n      posterior_rating s - q_v =\n      EconCSLib.Statistics.priorWeightedBias alpha beta eta (N s) q_v := by\n    intro s\n    simpa [paper_bias, paper_posterior_mean,\n      EconCSLib.Statistics.priorWeightedBias,\n      EconCSLib.Statistics.priorWeightedPosteriorMean] using h_cond_mean s\n  have h_var_lib : \u2200 s,\n      (posterior_rating s - q_v) ^ 2 -\n      (EconCSLib.Statistics.priorWeightedBias alpha beta eta (N s) q_v) ^ 2 =\n      EconCSLib.Statistics.priorWeightedVariance alpha beta eta (N s) q_v := by\n    intro s\n    simpa [paper_bias, paper_posterior_mean, paper_variance,\n      EconCSLib.Statistics.priorWeightedBias,\n      EconCSLib.Statistics.priorWeightedPosteriorMean,\n      EconCSLib.Statistics.priorWeightedVariance] using h_cond_var s\n  simpa [paper_squared_bias, paper_bias, paper_posterior_mean, paper_variance,\n    EconCSLib.Statistics.priorWeightedSquaredBias,\n    EconCSLib.Statistics.priorWeightedBias,\n    EconCSLib.Statistics.priorWeightedPosteriorMean,\n    EconCSLib.Statistics.priorWeightedVariance] using\n    MBJG25ProducerFairness.Responsive.paper_responsive_mse_decomposition\n      state_dist N posterior_rating h_mean_lib h_var_lib",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "paper_facing_responsive_mse_decomposition",
+      "visible_inputs": [
+        {
+          "names": "\u03b1",
+          "type": "Type*"
+        },
+        {
+          "names": "alpha beta eta q_v",
+          "type": "\u211d"
+        },
+        {
+          "names": "state_dist",
+          "type": "PMF \u03b1"
+        },
+        {
+          "names": "N",
+          "type": "\u03b1 \u2192 \u211d"
+        },
+        {
+          "names": "posterior_rating",
+          "type": "\u03b1 \u2192 \u211d"
+        },
+        {
+          "names": "h_cond_mean",
+          "type": "\u2200 s, posterior_rating s - q_v = paper_bias alpha beta eta (N s) q_v"
+        },
+        {
+          "names": "h_cond_var",
+          "type": "\u2200 s, (posterior_rating s - q_v) ^ 2 - (paper_bias alpha beta eta (N s) q_v) ^ 2 = paper_variance alpha beta eta (N s) q_v"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_positive_prior_shape (alpha beta : \u211d) : Prop :=\n  0 < alpha + beta\n\n                                                                                   \n-- audit-premise: ht : 0 < t",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_positive_prior_shape",
+      "visible_inputs": [
+        {
+          "names": "alpha beta",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_positive_time (t : \u211d) : Prop :=\n  0 < t\n\n                                                                                       \n-- audit-premise: ht : 0 \u2264 t",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_positive_time",
+      "visible_inputs": [
+        {
+          "names": "t",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_nonnegative_time (t : \u211d) : Prop :=\n  0 \u2264 t\n\n                                                                  \n-- audit-premise: hq0 : 0 \u2264 q",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_nonnegative_time",
+      "visible_inputs": [
+        {
+          "names": "t",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_quality_nonnegative (q : \u211d) : Prop :=\n  0 \u2264 q\n\n                                                                  \n-- audit-premise: hq1 : q \u2264 1",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_quality_nonnegative",
+      "visible_inputs": [
+        {
+          "names": "q",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_quality_at_most_one (q : \u211d) : Prop :=\n  q \u2264 1\n\n                                                                         \n-- audit-premise: hq0 : 0 < q",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_quality_at_most_one",
+      "visible_inputs": [
+        {
+          "names": "q",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_quality_positive (q : \u211d) : Prop :=\n  0 < q\n\n                                                                         \n-- audit-premise: hq1 : q < 1",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_quality_positive",
+      "visible_inputs": [
+        {
+          "names": "q",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_quality_lt_one (q : \u211d) : Prop :=\n  q < 1\n\n                                     \n-- audit-premise: hetaLow_nonneg : 0 \u2264 etaLow\n-- audit-premise: heta_nonneg : 0 \u2264 eta",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_quality_lt_one",
+      "visible_inputs": [
+        {
+          "names": "q",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_prior_strength_nonnegative (eta : \u211d) : Prop :=\n  0 \u2264 eta\n\n                                       \n-- audit-premise: heta_le : etaLow \u2264 etaHigh",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_prior_strength_nonnegative",
+      "visible_inputs": [
+        {
+          "names": "eta",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_prior_strength_weak_order (etaLow etaHigh : \u211d) : Prop :=\n  etaLow \u2264 etaHigh\n\n                                         \n-- audit-premise: heta_lt : etaLow < etaHigh",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_prior_strength_weak_order",
+      "visible_inputs": [
+        {
+          "names": "etaLow etaHigh",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_prior_strength_strict_order (etaLow etaHigh : \u211d) : Prop :=\n  etaLow < etaHigh",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_prior_strength_strict_order",
+      "visible_inputs": [
+        {
+          "names": "etaLow etaHigh",
+          "type": "\u211d"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "507d4b5fca1313e797352ba35b72aa225e9d9dc8d92aaba95a20ae37d22404ef",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": []
+}

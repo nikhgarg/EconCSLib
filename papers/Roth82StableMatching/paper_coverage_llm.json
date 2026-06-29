@@ -1,393 +1,479 @@
 {
-  "schema": 1,
-  "paper": "Roth82StableMatching",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "0fef8b2f5688ee4d53c588662ede17ecdb11d0e6b68b77bea96a48ce9529ee43",
-  "review_surface_sha256": "8e729d5b22642eb79d020275d88a5f9f69b596cad412ecc711bcaa552e1b7ef7",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
     "assumption_equal_cardinality": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_equal_cardinality",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The source marriage-problem representation uses balanced one-to-one markets. This is the equal-size condition needed for complete strict-marriage endpoints. The dashboard row `assumption_equal_cardinality` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_equal_cardinality"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The source marriage-problem representation uses balanced one-to-one markets. This is the equal-size condition needed for complete strict-marriage endpoints. The dashboard row `assumption_equal_cardinality` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: The source marriage-problem representation uses balanced one-to-one markets. This is the equal-size condition needed for complete strict-marriage endpoints.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_equal_cardinality`.",
-      "statement_sha256": "9a4f3f9d23be486ca37b1374b2111ee77954e40547e192edc00199fd3ba0c0dc",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9a4f3f9d23be486ca37b1374b2111ee77954e40547e192edc00199fd3ba0c0dc",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_simple_report_ranks_partner_first": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "assumption_simple_report_ranks_partner_first",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Roth's Lemma 1 simple-misrepresentation route assumes the simplified report strictly ranks the obtained partner first. The dashboard row `assumption_simple_report_ranks_partner_first` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "assumption_simple_report_ranks_partner_first"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Roth's Lemma 1 simple-misrepresentation route assumes the simplified report strictly ranks the obtained partner first. The dashboard row `assumption_simple_report_ranks_partner_first` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Roth's Lemma 1 simple-misrepresentation route assumes the simplified report strictly ranks the obtained partner first.",
-      "dashboard_evidence": "Current human-dashboard row(s): `assumption_simple_report_ranks_partner_first`.",
-      "statement_sha256": "49b60764ab51ffad9a595994d5ed762573c9551e9972464940221ead2f7da861",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "49b60764ab51ffad9a595994d5ed762573c9551e9972464940221ead2f7da861",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "completeMarriageOutcome": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "completeMarriageOutcome",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Marriage-problem outcome: a complete one-to-one matching. The dashboard row `completeMarriageOutcome` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "completeMarriageOutcome"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Marriage-problem outcome: a complete one-to-one matching. The dashboard row `completeMarriageOutcome` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Marriage-problem outcome: a complete one-to-one matching.",
-      "dashboard_evidence": "Current human-dashboard row(s): `completeMarriageOutcome`.",
-      "statement_sha256": "0ff93d7989d45fe293c355a32e3857c9ae3c70f8f2e43b34a0cf64283e7abe0c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0ff93d7989d45fe293c355a32e3857c9ae3c70f8f2e43b34a0cf64283e7abe0c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "corollary5_1_no_need_to_misrepresent_first_choice": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "corollary5_1_no_need_to_misrepresent_first_choice",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 5.1: under each side-optimal DA procedure, the non-proposing side can match any report's outcome with a report preserving its true first choice. The dashboard row `corollary5_1_no_need_to_misrepresent_first_choice` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "corollary5_1_no_need_to_misrepresent_first_choice"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Corollary 5.1: under each side-optimal DA procedure, the non-proposing side can match any report's outcome with a report preserving its true first choice. The dashboard row `corollary5_1_no_need_to_misrepresent_first_choice` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Corollary 5.1: under each side-optimal DA procedure, the non-proposing side can match any report's outcome with a report preserving its true first choice.",
-      "dashboard_evidence": "Current human-dashboard row(s): `corollary5_1_no_need_to_misrepresent_first_choice`.",
-      "statement_sha256": "b69c7a86d75c7d9d52761f186964a9755a4801ea057d428a4677470eeaa0a84a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "b69c7a86d75c7d9d52761f186964a9755a4801ea057d428a4677470eeaa0a84a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "efficientMatchingProcedure": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "efficientMatchingProcedure",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Efficient procedure: every reported preference profile returns a Pareto-optimal matching. The dashboard row `efficientMatchingProcedure` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "efficientMatchingProcedure"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Efficient procedure: every reported preference profile returns a Pareto-optimal matching. The dashboard row `efficientMatchingProcedure` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Efficient procedure: every reported preference profile returns a Pareto-optimal matching.",
-      "dashboard_evidence": "Current human-dashboard row(s): `efficientMatchingProcedure`.",
-      "statement_sha256": "f539f5e4c497284c626663617b701f25aba733c75221350a2eae6577c5597ee4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f539f5e4c497284c626663617b701f25aba733c75221350a2eae6577c5597ee4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma1_strict_simple_misrepresentation_same_partner": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma1_strict_simple_misrepresentation_same_partner",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1: Roth's strict simple-misrepresentation same-partner route. The dashboard row `lemma1_strict_simple_misrepresentation_same_partner` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma1_strict_simple_misrepresentation_same_partner"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1: Roth's strict simple-misrepresentation same-partner route. The dashboard row `lemma1_strict_simple_misrepresentation_same_partner` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Lemma 1: Roth's strict simple-misrepresentation same-partner route.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma1_strict_simple_misrepresentation_same_partner`.",
-      "statement_sha256": "44ef01336561f0cd1433650c39c0c78686da8a606b2d7a4582f0a53a7270bf91",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "44ef01336561f0cd1433650c39c0c78686da8a606b2d7a4582f0a53a7270bf91",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 2: a strict simple misrepresentation cannot harm any other man on the strict marriage domain. The dashboard row `lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 2: a strict simple misrepresentation cannot harm any other man on the strict marriage domain. The dashboard row `lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Lemma 2: a strict simple misrepresentation cannot harm any other man on the strict marriage domain.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain`.",
-      "statement_sha256": "8c0cbcec0b8f9d01293ad53f049a94808c2fecd8725abd3df3a87bf3c439ff81",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8c0cbcec0b8f9d01293ad53f049a94808c2fecd8725abd3df3a87bf3c439ff81",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "manReportStrictlyRanksPartnerFirst": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "manReportStrictlyRanksPartnerFirst",
+      "reason": "The source item is the paper-facing statement/formula summarized as: A report strictly ranks the optional partner first. The dashboard row `manReportStrictlyRanksPartnerFirst` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "manReportStrictlyRanksPartnerFirst"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: A report strictly ranks the optional partner first. The dashboard row `manReportStrictlyRanksPartnerFirst` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: A report strictly ranks the optional partner first.",
-      "dashboard_evidence": "Current human-dashboard row(s): `manReportStrictlyRanksPartnerFirst`.",
-      "statement_sha256": "f3a806b62ec7f79d3efa27290f925cdf831fec4d7e7c197922090fa967c7468a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f3a806b62ec7f79d3efa27290f925cdf831fec4d7e7c197922090fa967c7468a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "menDeferredAcceptance": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "menDeferredAcceptance",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Men-proposing deferred acceptance, Roth's procedure/outcome `G(P)`/`g(P)`. The dashboard row `menDeferredAcceptance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "menDeferredAcceptance"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Men-proposing deferred acceptance, Roth's procedure/outcome `G(P)`/`g(P)`. The dashboard row `menDeferredAcceptance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Men-proposing deferred acceptance, Roth's procedure/outcome `G(P)`/`g(P)`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `menDeferredAcceptance`.",
-      "statement_sha256": "952a482907bee6e819f0571676f12d16ce2cb317e00c72bab395ce9117e8a630",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "952a482907bee6e819f0571676f12d16ce2cb317e00c72bab395ce9117e8a630",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "menOptimal": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "menOptimal",
+      "reason": "The source item is the paper-facing statement/formula summarized as: A stable matching is men-optimal if every man weakly prefers it to any stable matching. The dashboard row `menOptimal` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "menOptimal"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: A stable matching is men-optimal if every man weakly prefers it to any stable matching. The dashboard row `menOptimal` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: A stable matching is men-optimal if every man weakly prefers it to any stable matching.",
-      "dashboard_evidence": "Current human-dashboard row(s): `menOptimal`.",
-      "statement_sha256": "d07a2dc701ce60da12b9bc1984bf52584f22a9986c72473e4ac0dedbcb945b6e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d07a2dc701ce60da12b9bc1984bf52584f22a9986c72473e4ac0dedbcb945b6e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "paretoOptimal": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "paretoOptimal",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Pareto-optimal complete matching among complete matchings. The dashboard row `paretoOptimal` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "paretoOptimal"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Pareto-optimal complete matching among complete matchings. The dashboard row `paretoOptimal` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Pareto-optimal complete matching among complete matchings.",
-      "dashboard_evidence": "Current human-dashboard row(s): `paretoOptimal`.",
-      "statement_sha256": "50c5a7c13dfcc53c113a9556ee24077dd6da4c843253ee928aba6b75cb54e3f4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "50c5a7c13dfcc53c113a9556ee24077dd6da4c843253ee928aba6b75cb54e3f4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "possibleForMan": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "possibleForMan",
+      "reason": "The source item is the paper-facing statement/formula summarized as: A woman is possible for a man if some stable outcome matches them. The dashboard row `possibleForMan` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "possibleForMan"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: A woman is possible for a man if some stable outcome matches them. The dashboard row `possibleForMan` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: A woman is possible for a man if some stable outcome matches them.",
-      "dashboard_evidence": "Current human-dashboard row(s): `possibleForMan`.",
-      "statement_sha256": "7b2c1109b6a0bc1029bf976cbea3894c6ddeb3067c04c1fafb52e280388126da",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "7b2c1109b6a0bc1029bf976cbea3894c6ddeb3067c04c1fafb52e280388126da",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "preferenceProfile": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "preferenceProfile",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Roth preference profile `P`: one score table for each side. The dashboard row `preferenceProfile` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "preferenceProfile"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Roth preference profile `P`: one score table for each side. The dashboard row `preferenceProfile` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Roth preference profile `P`: one score table for each side.",
-      "dashboard_evidence": "Current human-dashboard row(s): `preferenceProfile`.",
-      "statement_sha256": "186f42769e128bde92d0493d7bf7ce31a34f450613c6c651047cbb675b06c4e5",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "186f42769e128bde92d0493d7bf7ce31a34f450613c6c651047cbb675b06c4e5",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "reportMisrepresentsKthChoice": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "reportMisrepresentsKthChoice",
+      "reason": "The source item is the paper-facing statement/formula summarized as: A report changes the identity of some alternative that was truly ranked `k`. The dashboard row `reportMisrepresentsKthChoice` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "reportMisrepresentsKthChoice"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: A report changes the identity of some alternative that was truly ranked `k`. The dashboard row `reportMisrepresentsKthChoice` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. direct paper definition. Source inventory item: A report changes the identity of some alternative that was truly ranked `k`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `reportMisrepresentsKthChoice`.",
-      "statement_sha256": "9163989291f38e040f024c5c5af917a79262b9ed04a0002da2f5bb05c36c94aa",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9163989291f38e040f024c5c5af917a79262b9ed04a0002da2f5bb05c36c94aa",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "serialDictatorshipMechanism_matches": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "serialDictatorshipMechanism_matches",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The serial-dictatorship mechanism chooses its permutation from the men's reported preferences and matches each man to `p m` and each woman to `p.symm w`. The dashboard row `serialDictatorshipMechanism_matches` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "serialDictatorshipMechanism_matches"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The serial-dictatorship mechanism chooses its permutation from the men's reported preferences and matches each man to `p m` and each woman to `p.symm w`. The dashboard row `serialDictatorshipMechanism_matches` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: The serial-dictatorship mechanism chooses its permutation from the men's reported preferences and matches each man to `p m` and each woman to `p.symm w`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `serialDictatorshipMechanism_matches`.",
-      "statement_sha256": "11a2f3109c0411a716e972e4d14afea76d050f68436c3b883c70b1234639ad2e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "11a2f3109c0411a716e972e4d14afea76d050f68436c3b883c70b1234639ad2e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "stable": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "stable",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Stable matching: every assigned partner is acceptable and no man-woman pair strictly blocks the matching. The dashboard row `stable` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "stable"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Stable matching: every assigned partner is acceptable and no man-woman pair strictly blocks the matching. The dashboard row `stable` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Stable matching: every assigned partner is acceptable and no man-woman pair strictly blocks the matching.",
-      "dashboard_evidence": "Current human-dashboard row(s): `stable`.",
-      "statement_sha256": "f7d5c26c0ff99e6f3b38851fc83791a034b498747e1001c45e62deb14daa989c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "f7d5c26c0ff99e6f3b38851fc83791a034b498747e1001c45e62deb14daa989c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "stableMatchingProcedure": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "stableMatchingProcedure",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Stable matching procedure on strict reported preference profiles. The dashboard row `stableMatchingProcedure` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "stableMatchingProcedure"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Stable matching procedure on strict reported preference profiles. The dashboard row `stableMatchingProcedure` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Stable matching procedure on strict reported preference profiles.",
-      "dashboard_evidence": "Current human-dashboard row(s): `stableMatchingProcedure`.",
-      "statement_sha256": "cba89474fbb3106bf98f9dd01f0b865b2c054cfd5d0cd0bfb89ad1abfd42d1f7",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "cba89474fbb3106bf98f9dd01f0b865b2c054cfd5d0cd0bfb89ad1abfd42d1f7",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "stableOutcomes": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "stableOutcomes",
+      "reason": "The source item is the paper-facing statement/formula summarized as: The stable-outcome set `C(P)` for a reported preference profile. The dashboard row `stableOutcomes` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "stableOutcomes"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: The stable-outcome set `C(P)` for a reported preference profile. The dashboard row `stableOutcomes` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: The stable-outcome set `C(P)` for a reported preference profile.",
-      "dashboard_evidence": "Current human-dashboard row(s): `stableOutcomes`.",
-      "statement_sha256": "bc6bc0b64b5d5c88bca9684dd011b3c94013d5a07b2685af7c7cd949a4bc2143",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "bc6bc0b64b5d5c88bca9684dd011b3c94013d5a07b2685af7c7cd949a4bc2143",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "strictMarriageDomain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "strictMarriageDomain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Strict marriage domain: each side has strict rankings over the opposite side, and every potential pair is strictly preferred to being unmatched. The dashboard row `strictMarriageDomain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "strictMarriageDomain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Strict marriage domain: each side has strict rankings over the opposite side, and every potential pair is strictly preferred to being unmatched. The dashboard row `strictMarriageDomain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Strict marriage domain: each side has strict rankings over the opposite side, and every potential pair is strictly preferred to being unmatched.",
-      "dashboard_evidence": "Current human-dashboard row(s): `strictMarriageDomain`.",
-      "statement_sha256": "199e56f6dd3d1e864e3eaf84583ea9a2563d67d8fc8a575154a644cb1c26f993",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "199e56f6dd3d1e864e3eaf84583ea9a2563d67d8fc8a575154a644cb1c26f993",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1: on an equal-size strict marriage domain, a stable complete outcome exists. The dashboard row `theorem1_stable_complete_outcome_exists_on_strict_marriage_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1: on an equal-size strict marriage domain, a stable complete outcome exists. The dashboard row `theorem1_stable_complete_outcome_exists_on_strict_marriage_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Theorem 1: on an equal-size strict marriage domain, a stable complete outcome exists.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_stable_complete_outcome_exists_on_strict_marriage_domain`.",
-      "statement_sha256": "d1ce8e42274a41b2744ac01b7e6ac9c2c79bd1370ccbb1c26e6ffd843fe5dc4d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d1ce8e42274a41b2744ac01b7e6ac9c2c79bd1370ccbb1c26e6ffd843fe5dc4d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_optimal_stable_outcomes_on_strict_marriage_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem2_optimal_stable_outcomes_on_strict_marriage_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2: men-optimal and women-optimal stable outcomes exist on the strict marriage domain. The dashboard row `theorem2_optimal_stable_outcomes_on_strict_marriage_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem2_optimal_stable_outcomes_on_strict_marriage_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 2: men-optimal and women-optimal stable outcomes exist on the strict marriage domain. The dashboard row `theorem2_optimal_stable_outcomes_on_strict_marriage_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Theorem 2: men-optimal and women-optimal stable outcomes exist on the strict marriage domain.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_optimal_stable_outcomes_on_strict_marriage_domain`.",
-      "statement_sha256": "0c093543f6a321bfc83f1f704b93023814baf404118a9cc452a05262f39a9de4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0c093543f6a321bfc83f1f704b93023814baf404118a9cc452a05262f39a9de4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem3_no_stable_truthful_procedure_on_strict_profiles": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem3_no_stable_truthful_procedure_on_strict_profiles",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3: on Roth's strict 3-by-3 counterexample domain, no procedure stable on strict profiles is truthful for both sides. The dashboard row `theorem3_no_stable_truthful_procedure_on_strict_profiles` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem3_no_stable_truthful_procedure_on_strict_profiles"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 3: on Roth's strict 3-by-3 counterexample domain, no procedure stable on strict profiles is truthful for both sides. The dashboard row `theorem3_no_stable_truthful_procedure_on_strict_profiles` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Theorem 3: on Roth's strict 3-by-3 counterexample domain, no procedure stable on strict profiles is truthful for both sides.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem3_no_stable_truthful_procedure_on_strict_profiles`.",
-      "statement_sha256": "6e4e64d5413553e1762f71dd174f306e683cd18c791b2184206884d9683ce94a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6e4e64d5413553e1762f71dd174f306e683cd18c791b2184206884d9683ce94a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem4_serial_dictatorship_constructed": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem4_serial_dictatorship_constructed",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4: Roth's constructed serial-dictatorship procedure is efficient on strict men-side profiles, truthful for men on that strict men-side domain, and truthful for women. The dashboard row `theorem4_serial_dictatorship_constructed` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem4_serial_dictatorship_constructed"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 4: Roth's constructed serial-dictatorship procedure is efficient on strict men-side profiles, truthful for men on that strict men-side domain, and truthful for women. The dashboard row `theorem4_serial_dictatorship_constructed` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Theorem 4: Roth's constructed serial-dictatorship procedure is efficient on strict men-side profiles, truthful for men on that strict men-side domain, and truthful for women.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem4_serial_dictatorship_constructed`.",
-      "statement_sha256": "9a9a2f261c1239be98382bdbb26f10005ed33cc1ac9f7be6446eb7f0743def7a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "9a9a2f261c1239be98382bdbb26f10005ed33cc1ac9f7be6446eb7f0743def7a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 5: side-optimal deferred-acceptance procedures are strategyproof on equal-size strict marriage domains. The dashboard row `theorem5_optimal_side_truthful_on_strict_domain_of_card_eq` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 5: side-optimal deferred-acceptance procedures are strategyproof on equal-size strict marriage domains. The dashboard row `theorem5_optimal_side_truthful_on_strict_domain_of_card_eq` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. direct paper statement. Source inventory item: Theorem 5: side-optimal deferred-acceptance procedures are strategyproof on equal-size strict marriage domains.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem5_optimal_side_truthful_on_strict_domain_of_card_eq`.",
-      "statement_sha256": "2e031a4c89c5ba96f4b9f090d45f4ec78db7502cf51444a1b954fe4dde62b071",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2e031a4c89c5ba96f4b9f090d45f4ec78db7502cf51444a1b954fe4dde62b071",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem6_weak_pareto_for_men_on_strict_marriage_domain": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem6_weak_pareto_for_men_on_strict_marriage_domain",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 6: the men-optimal stable outcome is weakly Pareto optimal on the strict marriage domain. The dashboard row `theorem6_weak_pareto_for_men_on_strict_marriage_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem6_weak_pareto_for_men_on_strict_marriage_domain"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 6: the men-optimal stable outcome is weakly Pareto optimal on the strict marriage domain. The dashboard row `theorem6_weak_pareto_for_men_on_strict_marriage_domain` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Theorem 6: the men-optimal stable outcome is weakly Pareto optimal on the strict marriage domain.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem6_weak_pareto_for_men_on_strict_marriage_domain`.",
-      "statement_sha256": "ed308a01aa97b01bbf5f602af86edd362041ab84b06d83afb0458c76f17b0e14",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "ed308a01aa97b01bbf5f602af86edd362041ab84b06d83afb0458c76f17b0e14",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem7_arbitrary_k_on_strict_profiles": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem7_arbitrary_k_on_strict_profiles",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7: for any `k > 1`, some finite balanced strict-profile market admits a profitable stable-procedure `k`th-choice manipulation. The dashboard row `theorem7_arbitrary_k_on_strict_profiles` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem7_arbitrary_k_on_strict_profiles"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 7: for any `k > 1`, some finite balanced strict-profile market admits a profitable stable-procedure `k`th-choice manipulation. The dashboard row `theorem7_arbitrary_k_on_strict_profiles` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. direct paper statement. Source inventory item: Theorem 7: for any `k > 1`, some finite balanced strict-profile market admits a profitable stable-procedure `k`th-choice manipulation.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem7_arbitrary_k_on_strict_profiles`.",
-      "statement_sha256": "3c0c2ee5120e309f9edfe4a9af5ef5fab8a8b2a39ed78d8de8d5c60800283197",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3c0c2ee5120e309f9edfe4a9af5ef5fab8a8b2a39ed78d8de8d5c60800283197",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "truthfulForAllAgents": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "truthfulForAllAgents",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Truthful revelation is dominant for both sides on strict true and reported profiles. The dashboard row `truthfulForAllAgents` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "truthfulForAllAgents"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Truthful revelation is dominant for both sides on strict true and reported profiles. The dashboard row `truthfulForAllAgents` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Truthful revelation is dominant for both sides on strict true and reported profiles.",
-      "dashboard_evidence": "Current human-dashboard row(s): `truthfulForAllAgents`.",
-      "statement_sha256": "17de5542e6c3978cdcdb81440f739214a4a7e54dba5a4b30000a9e634c0c716a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "17de5542e6c3978cdcdb81440f739214a4a7e54dba5a4b30000a9e634c0c716a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "womenDeferredAcceptance": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "womenDeferredAcceptance",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Women-proposing deferred acceptance, represented on the original `(M, W)` sides by reversing roles and swapping the resulting assignment back. The dashboard row `womenDeferredAcceptance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "womenDeferredAcceptance"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Women-proposing deferred acceptance, represented on the original `(M, W)` sides by reversing roles and swapping the resulting assignment back. The dashboard row `womenDeferredAcceptance` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Women-proposing deferred acceptance, represented on the original `(M, W)` sides by reversing roles and swapping the resulting assignment back.",
-      "dashboard_evidence": "Current human-dashboard row(s): `womenDeferredAcceptance`.",
-      "statement_sha256": "48c00c609b6cd57d28cbdfcbbc7cf167d7c048a401411ae2e0dda3f1cd8d4f5a",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "48c00c609b6cd57d28cbdfcbbc7cf167d7c048a401411ae2e0dda3f1cd8d4f5a",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "womenOptimal": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "womenOptimal",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Women-optimal stable matching, with the symmetric weak-preference condition. The dashboard row `womenOptimal` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "womenOptimal"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Women-optimal stable matching, with the symmetric weak-preference condition. The dashboard row `womenOptimal` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: documented source inventory for Roth 1982 from prior source audit and validation report; local source text not tracked in this repo. Source inventory item: Women-optimal stable matching, with the symmetric weak-preference condition.",
-      "dashboard_evidence": "Current human-dashboard row(s): `womenOptimal`.",
-      "statement_sha256": "18c4fcee983cb4fc9524f86403c443de1e6e2149cf5fff9ef18734715438c3e9",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "18c4fcee983cb4fc9524f86403c443de1e6e2149cf5fff9ef18734715438c3e9",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "Roth82StableMatching",
+  "paper_statement_inventory_sha256": "0fef8b2f5688ee4d53c588662ede17ecdb11d0e6b68b77bea96a48ce9529ee43",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "8e729d5b22642eb79d020275d88a5f9f69b596cad412ecc711bcaa552e1b7ef7",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

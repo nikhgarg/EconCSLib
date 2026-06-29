@@ -1,246 +1,396 @@
 {
-  "schema": 1,
-  "paper": "GCG24UserItemFairness",
-  "title": "User-item fairness tradeoffs in recommendations",
-  "generated_at": "2026-06-29T00:40:22Z",
-  "source_inventory_policy": "Source basis: /tmp/econcs_source_text/GCG24UserItemFairness.txt, validation report, and source-record audit notes. Curated by the 2026-06-28 source-grounded coverage pass. Dashboard-seeded keys were checked against the source inventory reports/source text when available; explicitly missing named source items are recorded as out_of_scope rather than silently omitted.",
-  "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+  "generated_at": "2026-06-29T20:39:31Z",
   "items": {
-    "recommendationUtility": {
-      "statement": "- Recommendation utility matrix `w_{ij}` for users and items.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "recommendationUtility"
-      ]
-    },
-    "rawUserUtility": {
-      "statement": "- Raw user utility `sum_j w_ij rho_ij`.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "rawUserUtility"
-      ]
-    },
-    "normalizedUserUtility": {
-      "statement": "- Normalized user utility `U_i(rho)`.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "normalizedUserUtility"
-      ]
-    },
-    "userFairness": {
-      "statement": "-\nUser fairness objective for a recommendation policy.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "direct source text",
-      "aliases": [
-        "userFairness"
-      ]
-    },
-    "rawItemUtility": {
-      "statement": "- Raw item utility `sum_i w_ij rho_ij`.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "rawItemUtility"
-      ]
-    },
-    "itemNormalizer": {
-      "statement": "- Item normalizer `sum_i w_ij`.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "itemNormalizer"
-      ]
-    },
-    "normalizedItemUtility": {
-      "statement": "- Normalized item utility `I_j(rho)`.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "normalizedItemUtility"
-      ]
-    },
-    "itemFairness": {
-      "statement": "-\nItem fairness objective for a recommendation policy.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "direct source text",
-      "aliases": [
-        "itemFairness"
-      ]
-    },
-    "solvesProblemOne": {
-      "statement": "- Problem 1: a policy maximizes user fairness subject to item-fairness level `gamma`.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "solvesProblemOne"
-      ]
-    },
-    "priceOfFairnessAt": {
-      "statement": "- Price of fairness at item-fairness level `gamma`.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "priceOfFairnessAt"
-      ]
-    },
-    "priceOfFairness": {
-      "statement": "- Price of maximal item fairness.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "priceOfFairness"
-      ]
-    },
-    "priceOfMisestimation": {
-      "statement": "- Price of misestimation for a policy selected on an estimated utility matrix.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "priceOfMisestimation"
-      ]
-    },
-    "proposition1_symmetric_lp_reduction": {
-      "statement": "-\nProposition 1: symmetric LP reduction.  Type-symmetric original optima are\nrepresented by reduced type-level policies.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "proposition1_symmetric_lp_reduction"
-      ]
-    },
-    "proposition2_symmetric_optimum_exists": {
-      "statement": "-\nProposition 2: under positive utilities, a type-symmetric optimal policy exists\nfor the maximal item-fairness problem.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "proposition2_symmetric_optimum_exists"
-      ]
-    },
-    "theorem3_price_decreases_first_half": {
-      "statement": "-\nTheorem 3, first half: in the opposing two-type model, increasing `alpha`\ntoward `1 / 2` weakly decreases the price of fairness.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "theorem3_price_decreases_first_half"
-      ]
-    },
-    "theorem3_price_increases_second_half": {
-      "statement": "-\nTheorem 3, second half: in the opposing two-type model, increasing `alpha`\naway from `1 / 2` weakly increases the price of fairness.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "theorem3_price_increases_second_half"
-      ]
-    },
-    "theorem4_misestimation_tradeoff_typeZero": {
-      "statement": "-\nTheorem 4 final tradeoff, cold-start user whose true row is the first opposing\ntype: without fairness the misestimation price is at most `1/2`, while with\nmaximal item fairness some estimated optimum has misestimation price above\n`1 - eps`.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "theorem4_misestimation_tradeoff_typeZero"
-      ]
-    },
-    "theorem4_misestimation_tradeoff_typeOne": {
-      "statement": "- Theorem 4 final tradeoff for the second opposing true type.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "theorem4_misestimation_tradeoff_typeOne"
-      ]
-    },
     "assumption_positive_recommendation_utilities": {
-      "statement": "-\nThe source model uses strictly positive recommendation utilities. This covers\nProposition 2's symmetric model and Theorem 3's two opposing-type models.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
       "aliases": [
         "assumption_positive_recommendation_utilities"
-      ]
-    },
-    "assumption_theorem3_opposing_type_model": {
-      "statement": "-\nTheorem 3 compares two instances of the opposing two-type source model with\nthe same positive, strictly decreasing value vector.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      ],
       "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "assumption_theorem3_opposing_type_model"
-      ]
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nThe source model uses strictly positive recommendation utilities. This covers\nProposition 2's symmetric model and Theorem 3's two opposing-type models."
     },
     "assumption_theorem3_first_half_alpha_domain": {
-      "statement": "-\nTheorem 3 first-half domain: `alpha` moves toward the balanced population from\nbelow.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
       "aliases": [
         "assumption_theorem3_first_half_alpha_domain"
-      ]
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nTheorem 3 first-half domain: `alpha` moves toward the balanced population from\nbelow."
+    },
+    "assumption_theorem3_opposing_type_model": {
+      "aliases": [
+        "assumption_theorem3_opposing_type_model"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nTheorem 3 compares two instances of the opposing two-type source model with\nthe same positive, strictly decreasing value vector."
     },
     "assumption_theorem3_second_half_alpha_domain": {
-      "statement": "-\nTheorem 3 second-half domain: `alpha` moves away from the balanced population\nabove `1 / 2`.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
       "aliases": [
         "assumption_theorem3_second_half_alpha_domain"
-      ]
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nTheorem 3 second-half domain: `alpha` moves away from the balanced population\nabove `1 / 2`."
     },
     "assumption_theorem4_at_least_three_items": {
-      "statement": "-\nThe Theorem 4 construction uses at least three items.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
       "aliases": [
         "assumption_theorem4_at_least_three_items"
-      ]
-    },
-    "assumption_theorem4_true_model_reduction": {
-      "statement": "-\nThe Theorem 4 true model is represented by the two-type reduction witness.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      ],
       "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "assumption_theorem4_true_model_reduction"
-      ]
-    },
-    "assumption_theorem4_estimated_model_reduction": {
-      "statement": "-\nThe Theorem 4 estimated model is represented by the three-type reduction\nwitness.",
       "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "assumption_theorem4_estimated_model_reduction"
-      ]
-    },
-    "assumption_theorem4_displayed_reduced_models": {
-      "statement": "-\nTheorem 4 fixes the true two-type model and the three-type estimated model\nthrough the displayed reduced matrices.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
-      "aliases": [
-        "assumption_theorem4_displayed_reduced_models"
-      ]
+      "statement": "-\nThe Theorem 4 construction uses at least three items."
     },
     "assumption_theorem4_cold_start_type_wiring": {
-      "statement": "-\nTheorem 4's cold-start row is the estimated third type, whose true type is one\nof the two opposing source rows.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
       "aliases": [
         "assumption_theorem4_cold_start_type_wiring"
-      ]
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nTheorem 4's cold-start row is the estimated third type, whose true type is one\nof the two opposing source rows."
+    },
+    "assumption_theorem4_displayed_reduced_models": {
+      "aliases": [
+        "assumption_theorem4_displayed_reduced_models"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nTheorem 4 fixes the true two-type model and the three-type estimated model\nthrough the displayed reduced matrices."
+    },
+    "assumption_theorem4_estimated_model_reduction": {
+      "aliases": [
+        "assumption_theorem4_estimated_model_reduction"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nThe Theorem 4 estimated model is represented by the three-type reduction\nwitness."
     },
     "assumption_theorem4_parameter_domain": {
-      "statement": "-\nTheorem 4 parameter domain for the arbitrary-large misestimation conclusion.",
-      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
-      "source_location": "paper-facing review target; exact source location to be refined",
       "aliases": [
         "assumption_theorem4_parameter_domain"
-      ]
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nTheorem 4 parameter domain for the arbitrary-large misestimation conclusion."
     },
-    "source_example1_out_of_scope": {
-      "statement": "Source Example 1 is visible in the paper but is not currently represented as a separate dashboard target.",
-      "source_location": "Example 1 in source text; flagged by source-grounding audit as omitted from dashboard inventory.",
-      "aliases": []
+    "assumption_theorem4_true_model_reduction": {
+      "aliases": [
+        "assumption_theorem4_true_model_reduction"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nThe Theorem 4 true model is represented by the two-type reduction witness."
     },
-    "source_appendix_lemmas_1_to_17_wrapped": {
-      "statement": "Appendix Lemmas 1--17 are source-visible supporting lemmas; the validation report says their content is used through theorem/proof wrappers rather than exposed as individual dashboard rows.",
-      "source_location": "Appendix Lemmas 1--17 in source text; flagged by source-grounding audit as not separate inventory rows.",
-      "aliases": []
+    "itemFairness": {
+      "aliases": [
+        "itemFairness"
+      ],
+      "source_location": "direct source text",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nItem fairness objective for a recommendation policy."
+    },
+    "itemNormalizer": {
+      "aliases": [
+        "itemNormalizer"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Item normalizer `sum_i w_ij`."
+    },
+    "normalizedItemUtility": {
+      "aliases": [
+        "normalizedItemUtility"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Normalized item utility `I_j(rho)`."
+    },
+    "normalizedUserUtility": {
+      "aliases": [
+        "normalizedUserUtility"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Normalized user utility `U_i(rho)`."
+    },
+    "priceOfFairness": {
+      "aliases": [
+        "priceOfFairness"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Price of maximal item fairness."
+    },
+    "priceOfFairnessAt": {
+      "aliases": [
+        "priceOfFairnessAt"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Price of fairness at item-fairness level `gamma`."
+    },
+    "priceOfMisestimation": {
+      "aliases": [
+        "priceOfMisestimation"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Price of misestimation for a policy selected on an estimated utility matrix."
+    },
+    "proposition1_symmetric_lp_reduction": {
+      "aliases": [
+        "proposition1_symmetric_lp_reduction"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nProposition 1: symmetric LP reduction.  Type-symmetric original optima are\nrepresented by reduced type-level policies."
+    },
+    "proposition2_symmetric_optimum_exists": {
+      "aliases": [
+        "proposition2_symmetric_optimum_exists"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nProposition 2: under positive utilities, a type-symmetric optimal policy exists\nfor the maximal item-fairness problem."
+    },
+    "rawItemUtility": {
+      "aliases": [
+        "rawItemUtility"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Raw item utility `sum_i w_ij rho_ij`."
+    },
+    "rawUserUtility": {
+      "aliases": [
+        "rawUserUtility"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Raw user utility `sum_j w_ij rho_ij`."
+    },
+    "recommendationUtility": {
+      "aliases": [
+        "recommendationUtility"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Recommendation utility matrix `w_{ij}` for users and items."
+    },
+    "solvesProblemOne": {
+      "aliases": [
+        "solvesProblemOne"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Problem 1: a policy maximizes user fairness subject to item-fairness level `gamma`."
+    },
+    "source_appendix_c_lemma1_item_fairness_positive": {
+      "aliases": [
+        "appendix_c_lemma1_item_fairness_positive"
+      ],
+      "source_location": "Appendix C, Lemma 1",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix C, Lemma 1: the optimal item-fairness value is positive."
+    },
+    "source_appendix_c_lemma2_item_fairness_lp_value": {
+      "aliases": [
+        "appendix_c_lemma2_item_fairness_lp_value"
+      ],
+      "source_location": "Appendix C, Lemma 2",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix C, Lemma 2: item-fairness LP value characterization."
+    },
+    "source_appendix_d_lemma10_midpoint_candidate": {
+      "aliases": [
+        "appendix_d_lemma10_midpoint_candidate"
+      ],
+      "source_location": "Appendix D, Lemma 10",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix D, Lemma 10: midpoint candidate construction."
+    },
+    "source_appendix_d_lemma11_denominator_monotonicity": {
+      "aliases": [
+        "appendix_d_lemma11_denominator_monotonicity"
+      ],
+      "source_location": "Appendix D, Lemma 11",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix D, Lemma 11: fixed-pivot denominator monotonicity."
+    },
+    "source_appendix_d_lemma3_unconstrained_baseline": {
+      "aliases": [
+        "appendix_d_lemma3_unconstrained_baseline"
+      ],
+      "source_location": "Appendix D, Lemma 3",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix D, Lemma 3: unconstrained user-fairness baseline."
+    },
+    "source_appendix_d_lemma4_problem6_structure": {
+      "aliases": [
+        "appendix_d_lemma4_problem6_structure"
+      ],
+      "source_location": "Appendix D, Lemma 4",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix D, Lemma 4: Problem 6 sparse-support structure."
+    },
+    "source_appendix_d_lemma5_problem6_closed_form": {
+      "aliases": [
+        "appendix_d_lemma5_problem6_closed_form"
+      ],
+      "source_location": "Appendix D, Lemma 5",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix D, Lemma 5: Problem 6 closed-form value."
+    },
+    "source_appendix_d_lemma6_mirror_inverse_gap": {
+      "aliases": [
+        "appendix_d_lemma6_mirror_inverse_gap"
+      ],
+      "source_location": "Appendix D, Lemma 6",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix D, Lemma 6: mirror inverse-gap algebra."
+    },
+    "source_appendix_d_lemma7_pivot_monotonicity": {
+      "aliases": [
+        "appendix_d_lemma7_pivot_monotonicity"
+      ],
+      "source_location": "Appendix D, Lemma 7",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix D, Lemma 7: pivot monotonicity."
+    },
+    "source_appendix_d_lemma8_selected_pivot_stitching": {
+      "aliases": [
+        "appendix_d_lemma8_selected_pivot_stitching"
+      ],
+      "source_location": "Appendix D, Lemma 8",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix D, Lemma 8: selected-pivot interval stitching."
+    },
+    "source_appendix_d_lemma9_pair_share_algebra": {
+      "aliases": [
+        "appendix_d_lemma9_pair_share_algebra"
+      ],
+      "source_location": "Appendix D, Lemma 9",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix D, Lemma 9: the q_j / pair-share algebra."
+    },
+    "source_appendix_e_lemma12_symmetrized_policy": {
+      "aliases": [
+        "appendix_e_lemma12_symmetrized_policy"
+      ],
+      "source_location": "Appendix E, Lemma 12",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix E, Lemma 12: symmetrized estimated policy optimality."
+    },
+    "source_appendix_e_lemma13_pivot_support": {
+      "aliases": [
+        "appendix_e_lemma13_pivot_support"
+      ],
+      "source_location": "Appendix E, Lemma 13",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix E, Lemma 13: Problem 11 pivot-support shape."
+    },
+    "source_appendix_e_lemma14_uniqueness": {
+      "aliases": [
+        "appendix_e_lemma14_uniqueness"
+      ],
+      "source_location": "Appendix E, Lemma 14",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix E, Lemma 14: Problem 11 uniqueness/equality-form policy shape."
+    },
+    "source_appendix_e_lemma15_closed_formula": {
+      "aliases": [
+        "appendix_e_lemma15_closed_formula"
+      ],
+      "source_location": "Appendix E, Lemma 15",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix E, Lemma 15: Problem 11 closed-form lambda formula."
+    },
+    "source_appendix_e_lemma16_midpoint_order_algebra": {
+      "aliases": [
+        "appendix_e_lemma16_midpoint_order_algebra"
+      ],
+      "source_location": "Appendix E, Lemma 16",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix E, Lemma 16: midpoint order algebra for pair shares."
+    },
+    "source_appendix_e_lemma17_no_right_half_support": {
+      "aliases": [
+        "appendix_e_lemma17_no_right_half_support"
+      ],
+      "source_location": "Appendix E, Lemma 17",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Appendix E, Lemma 17: no right-half known-type support in Problem 11."
+    },
+    "source_example1_diverse_item_fairness": {
+      "aliases": [
+        "example1_diverse_favorite_policy_item_fairness"
+      ],
+      "source_location": "Example 1",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Example 1, diverse-preferences toy instance: the same favorite-item policy equalizes item utility at the displayed 10/11 normalized value."
+    },
+    "source_example1_diverse_user_fairness": {
+      "aliases": [
+        "example1_diverse_favorite_policy_user_fairness"
+      ],
+      "source_location": "Example 1",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Example 1, diverse-preferences toy instance: recommending each user her favorite item gives maximal normalized user fairness."
+    },
+    "source_example1_homogeneous_tradeoff": {
+      "aliases": [
+        "example1_homogeneous_tradeoff_bound"
+      ],
+      "source_location": "Example 1",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "Example 1, homogeneous-preferences algebra: the displayed bounds imply the linear normalized user/item fairness tradeoff Umin + Imin <= 1 + epsilon."
+    },
+    "theorem3_price_decreases_first_half": {
+      "aliases": [
+        "theorem3_price_decreases_first_half"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nTheorem 3, first half: in the opposing two-type model, increasing `alpha`\ntoward `1 / 2` weakly decreases the price of fairness."
+    },
+    "theorem3_price_increases_second_half": {
+      "aliases": [
+        "theorem3_price_increases_second_half"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nTheorem 3, second half: in the opposing two-type model, increasing `alpha`\naway from `1 / 2` weakly increases the price of fairness."
+    },
+    "theorem4_misestimation_tradeoff_typeOne": {
+      "aliases": [
+        "theorem4_misestimation_tradeoff_typeOne"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "- Theorem 4 final tradeoff for the second opposing true type."
+    },
+    "theorem4_misestimation_tradeoff_typeZero": {
+      "aliases": [
+        "theorem4_misestimation_tradeoff_typeZero"
+      ],
+      "source_location": "paper-facing review target; exact source location to be refined",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nTheorem 4 final tradeoff, cold-start user whose true row is the first opposing\ntype: without fairness the misestimation price is at most `1/2`, while with\nmaximal item fairness some estimated optimum has misestimation price above\n`1 - eps`."
+    },
+    "userFairness": {
+      "aliases": [
+        "userFairness"
+      ],
+      "source_location": "direct source text",
+      "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+      "statement": "-\nUser fairness objective for a recommendation policy."
     }
   },
+  "paper": "GCG24UserItemFairness",
+  "schema": 1,
+  "source_curated": true,
   "source_inventory_kind": "source_curated",
-  "source_curated": true
+  "source_inventory_policy": "Source-curated inventory refreshed for complete source-to-dashboard coverage. Main-text definitions/examples/remarks/propositions and appendix theorems are represented by dashboard rows; GCG appendix lemmas are split into review-legible lemma-family rows.",
+  "source_url": "https://openreview.net/pdf?id=ZOZjMs3JTs; https://arxiv.org/pdf/2412.04466",
+  "title": "User-item fairness tradeoffs in recommendations"
 }

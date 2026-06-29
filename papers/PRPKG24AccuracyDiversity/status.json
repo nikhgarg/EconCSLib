@@ -7,7 +7,7 @@
   "build_target": "lake build PRPKG24AccuracyDiversity",
   "status": "formalized",
   "main_caveat": "",
-  "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result.",
+  "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Human review treats this as a source-quality note rather than a caveat.",
   "human_summary_review": {
     "status": "human_approved",
     "note": "Do not rewrite this summary without explicit human instruction."

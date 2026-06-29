@@ -1310,6 +1310,55 @@ theorem definition3_decomposable_utilities_formula
           D.coords.sum (fun m => D.coordinateUtility m v (D.coordinate m x)) := by
   rfl
 
+/-- Definition 4: DLCD finite-budget utility formula. -/
+noncomputable def dlcdBudgetUtility
+    {Dim : Type*} [Fintype Dim]
+    (isExpense : Dim → Bool) (componentUtility : Dim → ℝ → ℝ)
+    (deficitWeight : ℝ) (x : Dim → ℝ) : ℝ :=
+  (∑ m : Dim, componentUtility m (x m)) -
+    deficitWeight *
+      ((∑ m : Dim, if isExpense m then x m else 0) -
+        (∑ m : Dim, if isExpense m then 0 else x m))
+
+/--
+Source Definition 4 / DLCD: decomposable utility with a linear cost for the
+budget deficit.
+-/
+def paper_definition4_dlcd_formula
+    {Dim : Type*} [Fintype Dim]
+    (utility : (Dim → ℝ) → ℝ)
+    (isExpense : Dim → Bool) (componentUtility : Dim → ℝ → ℝ)
+    (deficitWeight : ℝ) : Prop :=
+  0 ≤ deficitWeight ∧
+    (∀ m : Dim, ConcaveOn ℝ Set.univ (componentUtility m)) ∧
+      ∀ x : Dim → ℝ,
+        utility x =
+          dlcdBudgetUtility isExpense componentUtility deficitWeight x
+
+/--
+Appendix Theorem 4 boundary: expected selected subgradients are subgradients
+of the expected objective.
+-/
+theorem appendix_theorem4_expected_subgradient_boundary
+    {Point Theta Grad : Type*}
+    (isSampleSubgradient : Point → Theta → Grad → Prop)
+    (expected : (Theta → Grad) → Grad)
+    (isExpectedSubgradient : Point → Grad → Prop) :
+    ExpectedSubgradientTheoremStatement
+      isSampleSubgradient expected isExpectedSubgradient :=
+  assumption_expected_subgradient_theorem
+    isSampleSubgradient expected isExpectedSubgradient
+
+/--
+Appendix Theorem 5 boundary: the stochastic subgradient method convergence
+bundle quoted by the paper.
+-/
+theorem appendix_theorem5_ssgm_convergence_boundary
+    {Voter Coord : Type*} [Fintype Coord] [Nonempty Coord]
+    (E : ILVEnvironment Voter (Coord → ℝ)) :
+    FiniteCoordinateILVSSGMConvergenceTheorems E :=
+  assumption_ssgm_convergence_theorem E
+
 /--
 Proposition 2 median-set source formula: the paper's median target is the set
 of points whose decomposed coordinates lie in the corresponding one-dimensional

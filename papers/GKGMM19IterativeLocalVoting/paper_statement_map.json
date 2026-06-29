@@ -1,253 +1,270 @@
 {
-  "schema": 1,
-  "paper": "GKGMM19IterativeLocalVoting",
   "comment": "Declaration-keyed source/subclaim statements for closeout LLM-as-judge sidecars. Endpoint rows keep the original source theorem, so conditional Lean wrappers are judged honestly.",
+  "generated_at": "2026-06-29T20:39:31Z",
   "items": {
-    "conditions_c123_formula": {
-      "statement": "Section 3 assumptions C1-C3: the solution space is nonempty, bounded, closed, and convex; every voter has a unique ideal point; and ideal points are independently drawn from a distribution with bounded measurable density.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Section 3 assumptions C1-C3"
-    },
-    "theorem1_norm_pair_l2_l2": {
-      "statement": "Theorem 1 source subcase: one allowed norm pair is (p,q) = (2,2).",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Theorem 1"
-    },
-    "theorem1_norm_pair_l1_linf": {
-      "statement": "Theorem 1 source subcase: one allowed norm pair is (p,q) = (1, infinity).",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Theorem 1"
-    },
-    "theorem1_norm_pair_linf_l1": {
-      "statement": "Theorem 1 source subcase: one allowed norm pair is (p,q) = (infinity,1).",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Theorem 1"
-    },
-    "algorithm1_radius_formula": {
-      "statement": "Algorithm 1 source formula: the local-neighborhood radius is r_t = r_0 / t.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
-    },
-    "algorithm1_radius_tendsto_zero": {
-      "statement": "Algorithm 1 radius consequence: for fixed r_0, the schedule r_t = r_0/t tends to 0 as t tends to infinity.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
-    },
-    "algorithm1_radius_sq_summable": {
-      "statement": "Algorithm 1 stochastic-approximation step-size subclaim: the shifted squared radii sum_t (r_0/(t+1))^2 are summable.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
-    },
-    "algorithm1_radius_sum_tendsto_atTop": {
-      "statement": "Algorithm 1 stochastic-approximation step-size subclaim: for r_0 > 0, shifted radius partial sums sum_{t<n} r_0/(t+1) diverge to infinity.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
-    },
-    "algorithm1_radius_not_summable": {
-      "statement": "Algorithm 1 stochastic-approximation step-size subclaim: for r_0 > 0, the shifted radii r_0/(t+1) are not summable.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
-    },
-    "algorithm1_radius_ssgm_step_size_conditions": {
-      "statement": "Algorithm 1/SSGM bridge subclaim: for r_0 > 0, the radius schedule r_t = r_0/t satisfies positivity, square summability, and divergent-sum SSGM step-size conditions.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
-    },
     "algorithm1_local_neighborhood_formula": {
-      "statement": "Algorithm 1 local-neighborhood source formula: a candidate is in the local query set exactly when it is feasible and its L_q/source-norm distance from the current point is at most r.",
+      "source_location": "Algorithm 1",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
+      "statement": "Algorithm 1 local-neighborhood source formula: a candidate is in the local query set exactly when it is feasible and its L_q/source-norm distance from the current point is at most r."
     },
     "algorithm1_norm_projection_formula": {
-      "statement": "Algorithm 1 projection source formula: [y]_X is a selected feasible point minimizing source-norm distance to y over the solution space X.",
+      "source_location": "Algorithm 1",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
-    },
-    "algorithm1_projected_update_formula": {
-      "statement": "Algorithm 1 projected update source formula: the next iterate is the projection of the raw local response back to the feasible set.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
+      "statement": "Algorithm 1 projection source formula: [y]_X is a selected feasible point minimizing source-norm distance to y over the solution space X."
     },
     "algorithm1_projected_trajectory_feasible_of_normProjection": {
-      "statement": "Algorithm 1 projection consequence: if the initial iterate is feasible and each update is a projection onto the feasible solution space, every projected trajectory point remains feasible.",
+      "source_location": "Algorithm 1",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
+      "statement": "Algorithm 1 projection consequence: if the initial iterate is feasible and each update is a projection onto the feasible solution space, every projected trajectory point remains feasible."
     },
-    "algorithm1_window_stable_formula": {
-      "statement": "Algorithm 1 stopping-window source formula: all iterates in the recent window [t-N,t] are pairwise within epsilon in the chosen movement norm.",
+    "algorithm1_projected_update_formula": {
+      "source_location": "Algorithm 1",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
+      "statement": "Algorithm 1 projected update source formula: the next iterate is the projection of the raw local response back to the feasible set."
+    },
+    "algorithm1_radius_formula": {
+      "source_location": "Algorithm 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Algorithm 1 source formula: the local-neighborhood radius is r_t = r_0 / t."
+    },
+    "algorithm1_radius_not_summable": {
+      "source_location": "Algorithm 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Algorithm 1 stochastic-approximation step-size subclaim: for r_0 > 0, the shifted radii r_0/(t+1) are not summable."
+    },
+    "algorithm1_radius_sq_summable": {
+      "source_location": "Algorithm 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Algorithm 1 stochastic-approximation step-size subclaim: the shifted squared radii sum_t (r_0/(t+1))^2 are summable."
+    },
+    "algorithm1_radius_ssgm_step_size_conditions": {
+      "source_location": "Algorithm 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Algorithm 1/SSGM bridge subclaim: for r_0 > 0, the radius schedule r_t = r_0/t satisfies positivity, square summability, and divergent-sum SSGM step-size conditions."
+    },
+    "algorithm1_radius_sum_tendsto_atTop": {
+      "source_location": "Algorithm 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Algorithm 1 stochastic-approximation step-size subclaim: for r_0 > 0, shifted radius partial sums sum_{t<n} r_0/(t+1) diverge to infinity."
+    },
+    "algorithm1_radius_tendsto_zero": {
+      "source_location": "Algorithm 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Algorithm 1 radius consequence: for fixed r_0, the schedule r_t = r_0/t tends to 0 as t tends to infinity."
     },
     "algorithm1_stop_condition_formula": {
-      "statement": "Algorithm 1 stopping source formula: the algorithm stops at terminal time T or when the recent window is stable.",
+      "source_location": "Algorithm 1",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Algorithm 1"
+      "statement": "Algorithm 1 stopping source formula: the algorithm stops at terminal time T or when the recent window is stable."
     },
-    "modelA_response_formula": {
-      "statement": "Model A source formula: the voter returns a favorite feasible point in the queried local neighborhood, maximizing utility over that neighborhood.",
+    "algorithm1_window_stable_formula": {
+      "source_location": "Algorithm 1",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Model A response rule"
+      "statement": "Algorithm 1 stopping-window source formula: all iterates in the recent window [t-N,t] are pairwise within epsilon in the chosen movement norm."
     },
-    "modelA_response_isMaxOn_formula": {
-      "statement": "Model A source-equivalent extrema formulation: the response is in the local neighborhood and is an IsMaxOn maximizer of voter utility over that neighborhood.",
+    "assumption_conditions_c123": {
+      "source_location": "paper source inventory; exact source location to be refined",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Model A response rule"
+      "statement": "Section 3 source assumptions C1-C3: nonempty bounded closed convex solution space, unique ideal points, and a bounded measurable density for independently drawn ideal points."
     },
-    "modelB_finite_response_formula": {
-      "statement": "Model B finite-coordinate source formula: the response moves from x in the supplied gradient direction by x' = x + r * g / ||g||_q.",
+    "assumption_ssgm_convergence_theorem": {
+      "source_location": "proof boundary recorded by audit; not source text",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Model B response rule"
-    },
-    "modelB_finite_response_neg_lp_cost_gradient_formula": {
-      "statement": "Model B/Lemma 3 sign bridge subclaim: for Lp utilities and Holder-dual q, the sign-correct utility-gradient direction gives response x' = x - r * grad_cost when coordinate equalities are avoided.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Model B response rule"
-    },
-    "definition1_lp_normed_utilities_formula": {
-      "statement": "Definition 1 source formula: Lp-normed utilities have f_v(x) = -||x - x_v||_p.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Definition 1"
-    },
-    "modelA_response_lp_normed_cost_minimizer_formula": {
-      "statement": "Definition 1/Model A source bridge: maximizing f_v(x) = -||x-x_v||_p over the local neighborhood is equivalent to minimizing the p-distance to the voter ideal over that neighborhood.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Model A response rule"
-    },
-    "definition1_finite_coordinate_l1_formula": {
-      "statement": "Definition 1 finite-coordinate L1 specialization: f_v(x) = -||x - x_v||_1, represented as the finite-coordinate L1 norm of coordinate differences.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Definition 1"
-    },
-    "definition1_finite_coordinate_l2_formula": {
-      "statement": "Definition 1 finite-coordinate L2 specialization: f_v(x) = -||x - x_v||_2, represented as the finite-coordinate L2 norm of coordinate differences.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Definition 1"
-    },
-    "definition1_finite_coordinate_linf_formula": {
-      "statement": "Definition 1 finite-coordinate L_infinity specialization: f_v(x) = -||x - x_v||_infinity, represented as the finite-coordinate Linf norm of coordinate differences.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Definition 1"
-    },
-    "definition1_finite_coordinate_lp_formula": {
-      "statement": "Definition 1 finite-coordinate finite-Lp specialization: f_v(x) = -||x - x_v||_p, represented as the finite-coordinate Lp norm of coordinate differences.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Definition 1"
-    },
-    "lemma3_gradient_candidate_source_formula": {
-      "statement": "Appendix C.4 Lemma 3 displayed candidate-gradient formula: the coordinate i of the gradient candidate is (|d_i|^(p-1) * (d_i/|d_i|)) / ||d||_p^(p-1).",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Appendix C.4 / Lemma 3"
-    },
-    "lemma3_finite_holder_dual_gradient_candidate_norm_formula": {
-      "statement": "Lemma 3 source norm claim: for p,q > 0 with 1/p + 1/q = 1 and away from coordinate equalities, the Lq norm of the gradient of ||x-x_v||_p is 1.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Appendix C.4 / Lemma 3"
-    },
-    "lemma3_gradient_candidate_hasFDerivAt_formula": {
-      "statement": "Lemma 3 calculus bridge: away from coordinate equalities and for differentiable finite Lp (1 < p), the displayed candidate vector represents the Frechet derivative of y |-> ||y-ideal||_p.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Appendix C.4 / Lemma 3"
-    },
-    "lemma3_coordinate_equality_bad_event_null_from_boundedDensity": {
-      "statement": "Appendix C.4/C3 bad-event bridge: under bounded-density/absolute-continuity hypotheses, if each coordinate-equality hyperplane is null for the base measure then the finite coordinate-equality bad event is null for the ideal distribution.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Appendix C.4 / Lemma 3"
-    },
-    "lemma3_coordinate_equality_bad_event_null_from_productMeasure": {
-      "statement": "Appendix C.4/C3 product-measure instance: if the ideal distribution has bounded density with respect to a finite product of sigma-finite atomless one-dimensional marginals, the coordinate-equality bad event is null.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Appendix C.4 / Lemma 3"
-    },
-    "lemma3_coordinate_noncollision_ae_from_productMeasure": {
-      "statement": "Appendix C.4/C3 a.e. form: under the product bounded-density hypothesis, almost every ideal point avoids every coordinate equality with a fixed current point.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Appendix C.4 / Lemma 3"
+      "statement": "Approved proof-boundary theorem, not a source assumption: a future stochastic subgradient method theorem should prove the finite-coordinate SSGM convergence bundle consumed by the formalized deterministic ILV source-model bridges."
     },
     "c3_product_density_coordinate_noncollision_ae": {
-      "statement": "Structured finite-coordinate C3 bridge: the product bounded-density ideal-point data supply the a.e. coordinate-noncollision condition needed for Lemma 3.",
+      "source_location": "Appendix C.4 / Lemma 3",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Appendix C.4 / Lemma 3"
+      "statement": "Structured finite-coordinate C3 bridge: the product bounded-density ideal-point data supply the a.e. coordinate-noncollision condition needed for Lemma 3."
+    },
+    "conditions_c123_formula": {
+      "source_location": "Section 3 assumptions C1-C3",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Section 3 assumptions C1-C3: the solution space is nonempty, bounded, closed, and convex; every voter has a unique ideal point; and ideal points are independently drawn from a distribution with bounded measurable density."
+    },
+    "definition1_finite_coordinate_l1_formula": {
+      "source_location": "Definition 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Definition 1 finite-coordinate L1 specialization: f_v(x) = -||x - x_v||_1, represented as the finite-coordinate L1 norm of coordinate differences."
+    },
+    "definition1_finite_coordinate_l2_formula": {
+      "source_location": "Definition 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Definition 1 finite-coordinate L2 specialization: f_v(x) = -||x - x_v||_2, represented as the finite-coordinate L2 norm of coordinate differences."
+    },
+    "definition1_finite_coordinate_linf_formula": {
+      "source_location": "Definition 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Definition 1 finite-coordinate L_infinity specialization: f_v(x) = -||x - x_v||_infinity, represented as the finite-coordinate Linf norm of coordinate differences."
+    },
+    "definition1_finite_coordinate_lp_formula": {
+      "source_location": "Definition 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Definition 1 finite-coordinate finite-Lp specialization: f_v(x) = -||x - x_v||_p, represented as the finite-coordinate Lp norm of coordinate differences."
+    },
+    "definition1_lp_normed_utilities_formula": {
+      "source_location": "Definition 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Definition 1 source formula: Lp-normed utilities have f_v(x) = -||x - x_v||_p."
     },
     "definition2_weighted_euclidean_utilities_formula": {
-      "statement": "Definition 2 source formula: weighted-Euclidean utilities have f_v(x) = - sum_k (w_v^k / ||w_v||_2) * ||x^k - x_v^k||_2, with the paper's weight/ideal distribution condition.",
+      "source_location": "Definition 2",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Definition 2"
+      "statement": "Definition 2 source formula: weighted-Euclidean utilities have f_v(x) = - sum_k (w_v^k / ||w_v||_2) * ||x^k - x_v^k||_2, with the paper's weight/ideal distribution condition."
     },
     "definition3_decomposable_utilities_formula": {
-      "statement": "Definition 3 source formula: decomposable utilities have f_v(x) = sum_m f_v^m(x^m), with concave coordinate utilities.",
+      "source_location": "Definition 3",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Definition 3"
+      "statement": "Definition 3 source formula: decomposable utilities have f_v(x) = sum_m f_v^m(x^m), with concave coordinate utilities."
     },
     "finite_coordinate_concrete_source_model_formula": {
-      "statement": "Concrete finite-coordinate source-model audit row: the deterministic non-SSGM source semantics are exactly a positive Algorithm 1 radius, concrete finite-coordinate norm semantics, finite-coordinate C3/product-density data, Model B trace semantics, weighted-Euclidean SSGM input and objective bridges, and decomposable median/Linf response bridges.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
       "aliases": [
         "modelB_finite_response_formula"
       ],
-      "source_location": "Algorithm 1"
-    },
-    "theorem1_lp_normed_dual_cases": {
-      "statement": "Theorem 1 source statement: under C1-C3, Lp-normed utilities, Model A or Model B responses, and norm pairs (p,q) = (2,2), (1,infinity), or (infinity,1), ILV with Lq neighborhoods converges almost surely to the societal optimal point.",
+      "source_location": "Algorithm 1",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Theorem 1"
+      "statement": "Concrete finite-coordinate source-model audit row: the deterministic non-SSGM source semantics are exactly a positive Algorithm 1 radius, concrete finite-coordinate norm semantics, finite-coordinate C3/product-density data, Model B trace semantics, weighted-Euclidean SSGM input and objective bridges, and decomposable median/Linf response bridges."
     },
-    "theorem2_modelB_holder_dual_norms": {
-      "statement": "Theorem 2 source statement: under C1-C3, Lp-normed utilities, Model B responses, and p > 0, q > 0 with 1/p + 1/q = 1, ILV with Lq neighborhoods converges almost surely to the societal optimal point.",
+    "lemma3_coordinate_equality_bad_event_null_from_boundedDensity": {
+      "source_location": "Appendix C.4 / Lemma 3",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Theorem 2"
+      "statement": "Appendix C.4/C3 bad-event bridge: under bounded-density/absolute-continuity hypotheses, if each coordinate-equality hyperplane is null for the base measure then the finite coordinate-equality bad event is null for the ideal distribution."
+    },
+    "lemma3_coordinate_equality_bad_event_null_from_productMeasure": {
+      "source_location": "Appendix C.4 / Lemma 3",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Appendix C.4/C3 product-measure instance: if the ideal distribution has bounded density with respect to a finite product of sigma-finite atomless one-dimensional marginals, the coordinate-equality bad event is null."
+    },
+    "lemma3_coordinate_noncollision_ae_from_productMeasure": {
+      "source_location": "Appendix C.4 / Lemma 3",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Appendix C.4/C3 a.e. form: under the product bounded-density hypothesis, almost every ideal point avoids every coordinate equality with a fixed current point."
+    },
+    "lemma3_finite_holder_dual_gradient_candidate_norm_formula": {
+      "source_location": "Appendix C.4 / Lemma 3",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Lemma 3 source norm claim: for p,q > 0 with 1/p + 1/q = 1 and away from coordinate equalities, the Lq norm of the gradient of ||x-x_v||_p is 1."
+    },
+    "lemma3_gradient_candidate_hasFDerivAt_formula": {
+      "source_location": "Appendix C.4 / Lemma 3",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Lemma 3 calculus bridge: away from coordinate equalities and for differentiable finite Lp (1 < p), the displayed candidate vector represents the Frechet derivative of y |-> ||y-ideal||_p."
+    },
+    "lemma3_gradient_candidate_source_formula": {
+      "source_location": "Appendix C.4 / Lemma 3",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Appendix C.4 Lemma 3 displayed candidate-gradient formula: the coordinate i of the gradient candidate is (|d_i|^(p-1) * (d_i/|d_i|)) / ||d||_p^(p-1)."
+    },
+    "modelA_response_formula": {
+      "source_location": "Model A response rule",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Model A source formula: the voter returns a favorite feasible point in the queried local neighborhood, maximizing utility over that neighborhood."
+    },
+    "modelA_response_isMaxOn_formula": {
+      "source_location": "Model A response rule",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Model A source-equivalent extrema formulation: the response is in the local neighborhood and is an IsMaxOn maximizer of voter utility over that neighborhood."
+    },
+    "modelA_response_lp_normed_cost_minimizer_formula": {
+      "source_location": "Model A response rule",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Definition 1/Model A source bridge: maximizing f_v(x) = -||x-x_v||_p over the local neighborhood is equivalent to minimizing the p-distance to the voter ideal over that neighborhood."
+    },
+    "modelB_finite_response_formula": {
+      "source_location": "Model B response rule",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Model B finite-coordinate source formula: the response moves from x in the supplied gradient direction by x' = x + r * g / ||g||_q."
+    },
+    "modelB_finite_response_neg_lp_cost_gradient_formula": {
+      "source_location": "Model B response rule",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Model B/Lemma 3 sign bridge subclaim: for Lp utilities and Holder-dual q, the sign-correct utility-gradient direction gives response x' = x - r * grad_cost when coordinate equalities are avoided."
     },
     "proposition1_weighted_euclidean_l2": {
-      "statement": "Proposition 1 source statement: under C1-C3, weighted-Euclidean utilities, and correct Model A or Model B responses, ILV with L2 neighborhoods converges almost surely to the societal optimal point.",
+      "source_location": "Proposition 1",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Proposition 1"
+      "statement": "Proposition 1 source statement: under C1-C3, weighted-Euclidean utilities, and correct Model A or Model B responses, ILV with L2 neighborhoods converges almost surely to the societal optimal point."
     },
     "proposition2_decomposable_linf_medians": {
-      "statement": "Proposition 2 source statement: under C1-C3, decomposable utilities, and Model A or Model B responses, ILV with L_infinity neighborhoods converges almost surely to a point in the set of medians.",
+      "source_location": "Proposition 2",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "Proposition 2"
+      "statement": "Proposition 2 source statement: under C1-C3, decomposable utilities, and Model A or Model B responses, ILV with L_infinity neighborhoods converges almost surely to a point in the set of medians."
+    },
+    "source_appendix_lemmas_1_2_4_out_of_scope": {
+      "aliases": [],
+      "source_location": "Appendix Lemmas 1, 2, and 4 in source text; flagged by source-grounding audit.",
+      "statement": "Source Appendix Lemmas 1, 2, and 4 are visible but are not currently separate dashboard targets."
+    },
+    "source_appendix_theorem4_expected_subgradient": {
+      "aliases": [
+        "appendix_theorem4_expected_subgradient_boundary"
+      ],
+      "source_location": "Appendix Theorem 4",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Appendix Theorem 4 boundary: expected selected subgradients are subgradients of the expected objective."
+    },
+    "source_appendix_theorem5_ssgm_convergence": {
+      "aliases": [
+        "appendix_theorem5_ssgm_convergence_boundary"
+      ],
+      "source_location": "Appendix Theorem 5",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Appendix Theorem 5 boundary: the stochastic subgradient method convergence bundle quoted by the paper."
+    },
+    "source_definition4_dlcd": {
+      "aliases": [
+        "paper_definition4_dlcd_formula"
+      ],
+      "source_location": "Definition 4",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Source Definition 4 / DLCD: decomposable utility with a linear cost for the budget deficit."
+    },
+    "source_definition4_dlcd_budget_utility": {
+      "aliases": [
+        "dlcdBudgetUtility"
+      ],
+      "source_location": "Definition 4",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Definition 4: DLCD finite-budget utility formula."
+    },
+    "theorem1_lp_normed_dual_cases": {
+      "source_location": "Theorem 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Theorem 1 source statement: under C1-C3, Lp-normed utilities, Model A or Model B responses, and norm pairs (p,q) = (2,2), (1,infinity), or (infinity,1), ILV with Lq neighborhoods converges almost surely to the societal optimal point."
+    },
+    "theorem1_norm_pair_l1_linf": {
+      "source_location": "Theorem 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Theorem 1 source subcase: one allowed norm pair is (p,q) = (1, infinity)."
+    },
+    "theorem1_norm_pair_l2_l2": {
+      "source_location": "Theorem 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Theorem 1 source subcase: one allowed norm pair is (p,q) = (2,2)."
+    },
+    "theorem1_norm_pair_linf_l1": {
+      "source_location": "Theorem 1",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Theorem 1 source subcase: one allowed norm pair is (p,q) = (infinity,1)."
+    },
+    "theorem2_modelB_holder_dual_norms": {
+      "source_location": "Theorem 2",
+      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
+      "statement": "Theorem 2 source statement: under C1-C3, Lp-normed utilities, Model B responses, and p > 0, q > 0 with 1/p + 1/q = 1, ILV with Lq neighborhoods converges almost surely to the societal optimal point."
     },
     "theorem3_convergent_l2_modelB_is_directional_equilibrium": {
-      "statement": "Theorem 3 source statement: under C1-C3, G(x) = E_v[grad f_v(x)/||grad f_v(x)||_2] uniformly continuous, L2 movement norm constraints, and Model B responses, with probability 1 any convergent infinite ILV trajectory has a directional-equilibrium limit, i.e. if x_t -> x*, then G(x*) = 0. Equivalently, the event that a trajectory converges to a non-directional-equilibrium limit has probability zero.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
       "aliases": [
         "theorem3_statement_of_full_sampled_projected_source_semantics_univ"
       ],
-      "source_location": "Theorem 3"
-    },
-    "assumption_conditions_c123": {
-      "statement": "Section 3 source assumptions C1-C3: nonempty bounded closed convex solution space, unique ideal points, and a bounded measurable density for independently drawn ideal points.",
+      "source_location": "Theorem 3",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "paper source inventory; exact source location to be refined"
-    },
-    "assumption_ssgm_convergence_theorem": {
-      "statement": "Approved proof-boundary theorem, not a source assumption: a future stochastic subgradient method theorem should prove the finite-coordinate SSGM convergence bundle consumed by the formalized deterministic ILV source-model bridges.",
-      "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-      "source_location": "proof boundary recorded by audit; not source text"
-    },
-    "source_definition4_dlcd_out_of_scope": {
-      "statement": "Source Definition 4 / DLCD is visible in the paper but is not currently a separate dashboard target.",
-      "source_location": "Definition 4 / DLCD in source text; flagged by source-grounding audit.",
-      "aliases": []
-    },
-    "source_appendix_theorem4_out_of_scope": {
-      "statement": "Source Appendix Theorem 4 is visible but is not currently a separate dashboard target.",
-      "source_location": "Appendix Theorem 4 in source text; flagged by source-grounding audit.",
-      "aliases": []
-    },
-    "source_appendix_theorem5_out_of_scope": {
-      "statement": "Source Appendix Theorem 5 is visible but is not currently a separate dashboard target.",
-      "source_location": "Appendix Theorem 5 in source text; flagged by source-grounding audit.",
-      "aliases": []
-    },
-    "source_appendix_lemmas_1_2_4_out_of_scope": {
-      "statement": "Source Appendix Lemmas 1, 2, and 4 are visible but are not currently separate dashboard targets.",
-      "source_location": "Appendix Lemmas 1, 2, and 4 in source text; flagged by source-grounding audit.",
-      "aliases": []
+      "statement": "Theorem 3 source statement: under C1-C3, G(x) = E_v[grad f_v(x)/||grad f_v(x)||_2] uniformly continuous, L2 movement norm constraints, and Model B responses, with probability 1 any convergent infinite ILV trajectory has a directional-equilibrium limit, i.e. if x_t -> x*, then G(x*) = 0. Equivalently, the event that a trajectory converges to a non-directional-equilibrium limit has probability zero."
     }
   },
-  "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",
-  "source_inventory_kind": "source_curated",
+  "paper": "GKGMM19IterativeLocalVoting",
+  "schema": 1,
   "source_curated": true,
-  "source_inventory_policy": "Source basis: /tmp/econcs_source_text/GKGMM19IterativeLocalVoting.txt, PAPER_NOTES.md, and validation report. Curated by the 2026-06-28 source-grounded coverage pass. Dashboard-seeded keys were checked against the source inventory reports/source text when available; explicitly missing named source items are recorded as out_of_scope rather than silently omitted.",
-  "generated_at": "2026-06-29T01:27:19Z"
+  "source_inventory_kind": "source_curated",
+  "source_inventory_policy": "Source-curated inventory refreshed for complete source-to-dashboard coverage. Main-text definitions/examples/remarks/propositions and appendix theorems are represented by dashboard rows; GCG appendix lemmas are split into review-legible lemma-family rows.",
+  "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358"
 }

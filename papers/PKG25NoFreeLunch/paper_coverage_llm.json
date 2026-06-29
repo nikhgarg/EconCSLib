@@ -1,160 +1,255 @@
 {
-  "schema": 1,
-  "paper": "PKG25NoFreeLunch",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "f852b593533ebb369f69b833a402cc46c35c77d037cad1624a8bea3d8f16e03c",
-  "review_surface_sha256": "a05fb7cfe47a0a02b2a98a840e21559b69fa004ffa4b5ef303193e290e01b077",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard audit refreshed after expanding the review surface for source-visible definitions, examples, remarks, propositions, and appendix theorem/lemma targets.",
   "items": {
     "definition_collaboration_strategy": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition_collaboration_strategy",
+      "reason": "The source item is the paper-facing statement/formula summarized as: deterministic collaboration strategy from prediction profiles to labels. The dashboard row `definition_collaboration_strategy` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition_collaboration_strategy"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: deterministic collaboration strategy from prediction profiles to labels. The dashboard row `definition_collaboration_strategy` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Definition from Section 3.. Source inventory item: deterministic collaboration strategy from prediction profiles to labels.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition_collaboration_strategy`.",
-      "statement_sha256": "b31041d74b0061aaed5241d1d95ffd103e3f0c3d871eccdb77639510ec9c0436",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "b31041d74b0061aaed5241d1d95ffd103e3f0c3d871eccdb77639510ec9c0436",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_interior_prediction_profile": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition_interior_prediction_profile",
+      "reason": "The source item is the paper-facing statement/formula summarized as: source domain `(0,1)^n`. The dashboard row `definition_interior_prediction_profile` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition_interior_prediction_profile"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: source domain `(0,1)^n`. The dashboard row `definition_interior_prediction_profile` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Definition 4 constrains the strategy only on `(0,1)^n`; boundary. Source inventory item: source domain `(0,1)^n`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition_interior_prediction_profile`.",
-      "statement_sha256": "6f60ea03913ea9ab4e8f605348f450f2c62448bae0961dec84bd3139760ca861",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6f60ea03913ea9ab4e8f605348f450f2c62448bae0961dec84bd3139760ca861",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_non_collaborative": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition_non_collaborative",
+      "reason": "The source item is the paper-facing statement/formula summarized as: fixed agent off ties and fixed tie label on the half slice. The dashboard row `definition_non_collaborative` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition_non_collaborative"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: fixed agent off ties and fixed tie label on the half slice. The dashboard row `definition_non_collaborative` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Definition 4.. Source inventory item: fixed agent off ties and fixed tie label on the half slice.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition_non_collaborative`.",
-      "statement_sha256": "1894edd6dd6458fda6b5434a67d5ecfe103716876aaba8483613088feea0d55b",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1894edd6dd6458fda6b5434a67d5ecfe103716876aaba8483613088feea0d55b",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_reliable": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition_reliable",
+      "reason": "The source item is the paper-facing statement/formula summarized as: source reliability over all collaboration-setting accuracy surfaces. The dashboard row `definition_reliable` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition_reliable"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: source reliability over all collaboration-setting accuracy surfaces. The dashboard row `definition_reliable` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Definition 3.  The finite adversarial settings used in the proof. Source inventory item: source reliability over all collaboration-setting accuracy surfaces.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition_reliable`.",
-      "statement_sha256": "21567e3a21a2aae7840fd4c39a5420d027a81520182c49865668e274881430d6",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "21567e3a21a2aae7840fd4c39a5420d027a81520182c49865668e274881430d6",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "definition_rounding_convention": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "definition_rounding_convention",
+      "reason": "The source item is the paper-facing statement/formula summarized as: source rounding convention `round(1/2) = 1`. The dashboard row `definition_rounding_convention` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "definition_rounding_convention"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: source rounding convention `round(1/2) = 1`. The dashboard row `definition_rounding_convention` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Definition from Section 3, immediately before the individual. Source inventory item: source rounding convention `round(1/2) = 1`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `definition_rounding_convention`.",
+      "source_grounded": true,
       "statement_sha256": "1bec226d6885d186f46931d80ca90571066d2f81eec2880f7c8efcd13a85c84e",
-      "audit_kind": "source_to_dashboard_agent",
-      "source_grounded": true,
-      "seed_scaffold": false
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_definition1_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "The current public surface formalizes the collaboration/non-collaboration/reliability definitions and main theorem; this preliminary/source-support definition is recorded as out of scope for the dashboard.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Definition 1 in source text; flagged by source-grounding audit.. Source Definition 1 is visible in the paper but is not part of the current six-row public dashboard inventory.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "11b9ea486eede73fa3aa24976e5e3aa9b41c702a4708bdf5b75bdb3df770a834",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_definition1_collaboration_setting": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): definition_collaboration_setting",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "definition_collaboration_setting"
+      ],
+      "source_evidence": "Source inventory entry source_definition1_collaboration_setting at Definition 1: Source Definition 1: a collaboration setting. The Lean source-facing surface uses finite calibrated collaboration settings, which are the settings constructed in the paper proof, together with the embedding into the abstract accuracy surface used by the theorem statement.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "420109dcbc29894e0af811bc62c7377c72112b606c54fd200c83527579e52447",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_definition5_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "Definition 5 is not exposed as a standalone target in the current public review surface; it is recorded explicitly rather than omitted.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Definition 5 in source text; flagged by source-grounding audit.. Source Definition 5 is visible in the paper but is not part of the current six-row public dashboard inventory.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "a6e97d51eae8cda9fff81b60809327e420413e782858804ec4f01f5a7d7660ae",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_definition5_agree_on": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): definition_agree_on",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "definition_agree_on"
+      ],
+      "source_evidence": "Source inventory entry source_definition5_agree_on at Definition 5: Source Definition 5: two agents or strategies agree at a point when their binary predictions are equal.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "a999fc0f98e2870e74a24953d0cf4099460944c7eeab29824a2098e72d92301e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_lemma8_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "Lemma 8 is proof-support material not currently surfaced as a standalone human dashboard row.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Lemma 8 in source text; flagged by source-grounding audit.. Source Lemma 8 is visible proof-level material outside the current public dashboard target list.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "9f8a44e24a92c6e7fb071e39c482f76ddddc69a09d86daca24969061edd6a13a",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_definition5_correct_on": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): definition_correct_on",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "definition_correct_on"
+      ],
+      "source_evidence": "Source inventory entry source_definition5_correct_on at Definition 5: Source Definition 5: correctness of a prediction at a point.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d05a82c7048591c1ea7b3fd143a2d903e0f3af8a46ba201df2850440e866915d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_proposition6_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "The current public formalization surface centers the main no-free-lunch theorem and its core definitions; Proposition 6 is proof/support material not separately reviewed.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Proposition 6 in source text; flagged by source-grounding audit.. Source Proposition 6 is visible proof-level material outside the current public dashboard target list.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "b45ba6bb3d02c5739eec8f50fc9c3642ce6a4e253318366b149c9ccf91bc23cd",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_definition5_disagree_on": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): definition_disagree_on",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "definition_disagree_on"
+      ],
+      "source_evidence": "Source inventory entry source_definition5_disagree_on at Definition 5: Source Definition 5: two agents or strategies disagree at a point when their binary predictions differ.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6bd24d96068afa3a3e0661c2dbb18765bca5d7cfad5350bbbd06084f61f9bd42",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_proposition7_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "The current public formalization surface centers the main no-free-lunch theorem and core definitions; Proposition 7 is recorded as out of scope for the dashboard.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Proposition 7 in source text; flagged by source-grounding audit.. Source Proposition 7 is visible proof-level material outside the current public dashboard target list.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "8e7cd2f1f63f3656508e789c449d77b2eeaa7a573b70ef2bf21d30f3d6f0b0ae",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_definition5_incorrect_on": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): definition_incorrect_on",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "definition_incorrect_on"
+      ],
+      "source_evidence": "Source inventory entry source_definition5_incorrect_on at Definition 5: Source Definition 5: incorrectness of a prediction at a point.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "008d4668ede275565897525cacd29eea223020d33963068f8b88942ec904bbb2",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
-    "source_proposition9_out_of_scope": {
-      "coverage": "out_of_scope",
-      "review_rows": [],
-      "reason": "Proposition 9 is proof/support material not currently surfaced as a standalone human dashboard row.",
-      "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Proposition 9 in source text; flagged by source-grounding audit.. Source Proposition 9 is visible proof-level material outside the current public dashboard target list.",
-      "dashboard_evidence": "No dashboard row: explicitly marked out of scope for the current public review surface.",
-      "statement_sha256": "ae2d2eddaebab33a24fe8c48e426d585709894d1f6726af6abc4b0ca12fd013a",
-      "audit_kind": "source_to_dashboard_agent",
+    "source_lemma8_bad_tuple_counterexample_setting": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): lemma8_bad_tuple_counterexample_setting",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "lemma8_bad_tuple_counterexample_setting"
+      ],
+      "source_evidence": "Source inventory entry source_lemma8_bad_tuple_counterexample_setting at Lemma 8: Lemma 8: if a collaboration strategy disagrees with agent k away from the tie point, the source construction gives a finite collaboration setting where agent k is strictly more accurate and every agent is at least as accurate as the strategy.",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8a1a784b53f8c441dd2be43a588864a9b265053ecd614dcc86283b26df80a3de",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_proposition6_linear_combination_settings": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): proposition6_linear_combination_settings",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "proposition6_linear_combination_settings"
+      ],
+      "source_evidence": "Source inventory entry source_proposition6_linear_combination_settings at Proposition 6: Proposition 6: linear combinations of finite collaboration settings preserve agent and strategy accuracies componentwise.",
+      "source_grounded": true,
+      "statement_sha256": "db7122ee5755e909a4a92ac8ba3289825df31973abb493f43b41b7934002f234",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_proposition7_fixed_deferral": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): proposition7_reliability_forces_fixed_deferral",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "proposition7_reliability_forces_fixed_deferral"
+      ],
+      "source_evidence": "Source inventory entry source_proposition7_fixed_deferral at Proposition 7: Proposition 7: reliability over all collaboration settings forces deferral to one fixed agent away from the tie point.",
+      "source_grounded": true,
+      "statement_sha256": "b7f488ea8241777d3ef8be84b317a233ec006121b5fd3b4807dc48a9afb650a4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "source_proposition9_fixed_tie_label": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): proposition9_reliability_forces_fixed_tie_label",
+      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "review_rows": [
+        "proposition9_reliability_forces_fixed_tie_label"
+      ],
+      "source_evidence": "Source inventory entry source_proposition9_fixed_tie_label at Proposition 9: Proposition 9: for the same fixed agent, reliability forces one fixed tie label on the p_k = 1/2 slice.",
+      "source_grounded": true,
+      "statement_sha256": "c94af85700c2acc06da05369b334726840bface5d315d50c51459363f9badd07",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T20:39:31Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem_main_no_free_lunch": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "theorem_main_no_free_lunch",
+      "reason": "The source item is the paper-facing statement/formula summarized as: for a nonempty finite agent set, `Reliable C -> NonCollaborative C`. The dashboard row `theorem_main_no_free_lunch` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "theorem_main_no_free_lunch"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: for a nonempty finite agent set, `Reliable C -> NonCollaborative C`. The dashboard row `theorem_main_no_free_lunch` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Theorem 1.  Proposition 1, the counterexample lemma, the linear. Source inventory item: for a nonempty finite agent set, `Reliable C -> NonCollaborative C`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem_main_no_free_lunch`.",
-      "statement_sha256": "974f37c7d9435bb8e0b3bfb83ee10b33d5885b0b88a34521f240d930633c72d7",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "974f37c7d9435bb8e0b3bfb83ee10b33d5885b0b88a34521f240d930633c72d7",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "PKG25NoFreeLunch",
+  "paper_statement_inventory_sha256": "6e6b29372c1b1a00b0a0fcd6717e0a9d8a3135087f2866e945bc75ed86d5b870",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "2826b9f1ba413cae38f7cb85bed059c3ec1f175862af46f43f2e45f0b7b8a12b",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T20:39:31Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

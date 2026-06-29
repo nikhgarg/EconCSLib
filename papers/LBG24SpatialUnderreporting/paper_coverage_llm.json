@@ -1,368 +1,399 @@
 {
-  "schema": 1,
-  "paper": "LBG24SpatialUnderreporting",
-  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
-  "audit_kind": "source_to_dashboard_agent",
-  "source_grounded": true,
-  "seed_scaffold": false,
-  "validator": "codex source-grounded audit pass",
-  "validator_type": "agent",
-  "validated_at": "2026-06-29T07:31:10Z",
-  "comment": "Source-grounded judgments preserved; review-surface digest refreshed against the source-declaration-stable dashboard surface.",
-  "paper_statement_inventory_sha256": "e9e4dfb249a8a04d39428db66d55c38f74fb8868e71114ca1957d03f5af0471d",
-  "review_surface_sha256": "abd20f16d5e934b7f63b31249ed5a3ca33eb796bdc0a4aa75ef7009efd20c7d2",
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage rejudge. Coverage links must point to current row-local statement/assumption judgments.",
   "items": {
     "equation2_poisson_count_pmf_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "equation2_poisson_count_pmf_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (2): the Poisson count probability mass used throughout the paper. The dashboard row `equation2_poisson_count_pmf_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "equation2_poisson_count_pmf_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (2): the Poisson count probability mass used throughout the paper. The dashboard row `equation2_poisson_count_pmf_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Eq. (2). Source inventory item: Eq. (2): the Poisson count probability mass used throughout the paper.",
-      "dashboard_evidence": "Current human-dashboard row(s): `equation2_poisson_count_pmf_formula`.",
-      "statement_sha256": "07b9c3b8350d3d8da0a628383bc4edfd653463c3339750d1cf886b3554fcc0b5",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "07b9c3b8350d3d8da0a628383bc4edfd653463c3339750d1cf886b3554fcc0b5",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "equation33_nyc_preprocessing_stopping_observation_window": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "conditional_boundary",
+      "dashboard_evidence": "equation33_nyc_preprocessing_stopping_observation_window",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (33), NYC preprocessing stopping-time form: if the first-report time, inspection time, and work-order time are stopping times, then the paper's min-censored preprocessing rule defines a stopping observation window. The dashboard row `equation33_nyc_preprocessing_stopping_observation_window` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "review_rows": [
         "equation33_nyc_preprocessing_stopping_observation_window"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (33), NYC preprocessing stopping-time form: if the first-report time, inspection time, and work-order time are stopping times, then the paper's min-censored preprocessing rule defines a stopping observation window. The dashboard row `equation33_nyc_preprocessing_stopping_observation_window` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Supplement Eq. (33), NYC preprocessing window. Source inventory item: Eq. (33), NYC preprocessing stopping-time form: if the first-report time, inspection time, and work-order time are stopping times, then the paper's min-censored preprocessing rule defines a stopping observation window.",
-      "dashboard_evidence": "Current human-dashboard row(s): `equation33_nyc_preprocessing_stopping_observation_window`.",
-      "statement_sha256": "c8934ee0a0924cb8d70def56acb0a2962a4b107d74ca5651c390390085727c17",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false,
-      "boundary_names": [
-        "homogeneous Poisson counting-process law",
-        "duration-censored stopping certificate",
-        "fixed Condition 1/2 kernels"
-      ]
+      "statement_sha256": "c8934ee0a0924cb8d70def56acb0a2962a4b107d74ca5651c390390085727c17",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "equation34_chicago_preprocessing_stopping_observation_window": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "conditional_boundary",
+      "dashboard_evidence": "equation34_chicago_preprocessing_stopping_observation_window",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (34), Chicago preprocessing stopping-time form: if the first-report time, closed time, and dataset retrieval/update time are stopping times, then the paper's min-censored preprocessing rule defines a stopping observation window. The dashboard row `equation34_chicago_preprocessing_stopping_observation_window` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "review_rows": [
         "equation34_chicago_preprocessing_stopping_observation_window"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (34), Chicago preprocessing stopping-time form: if the first-report time, closed time, and dataset retrieval/update time are stopping times, then the paper's min-censored preprocessing rule defines a stopping observation window. The dashboard row `equation34_chicago_preprocessing_stopping_observation_window` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Supplement Eq. (34), Chicago preprocessing window. Source inventory item: Eq. (34), Chicago preprocessing stopping-time form: if the first-report time, closed time, and dataset retrieval/update time are stopping times, then the paper's min-censored preprocessing rule defines a stopping observation window.",
-      "dashboard_evidence": "Current human-dashboard row(s): `equation34_chicago_preprocessing_stopping_observation_window`.",
-      "statement_sha256": "b323ee7544cd39dd84014819bc0ce06626180a31d5c328c795bd66d4548469b7",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false,
-      "boundary_names": [
-        "homogeneous Poisson counting-process law",
-        "duration-censored stopping certificate",
-        "fixed Condition 1/2 kernels"
-      ]
+      "statement_sha256": "b323ee7544cd39dd84014819bc0ce06626180a31d5c328c795bd66d4548469b7",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "equation3_mle_global_logLikelihood_max": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "equation3_mle_global_logLikelihood_max",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (3): the displayed estimator globally maximizes the rate-dependent Poisson log-likelihood kernel over positive reporting rates. The dashboard row `equation3_mle_global_logLikelihood_max` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "equation3_mle_global_logLikelihood_max"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (3): the displayed estimator globally maximizes the rate-dependent Poisson log-likelihood kernel over positive reporting rates. The dashboard row `equation3_mle_global_logLikelihood_max` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Eq. (3) MLE characterization. Source inventory item: Eq. (3): the displayed estimator globally maximizes the rate-dependent Poisson log-likelihood kernel over positive reporting rates.",
-      "dashboard_evidence": "Current human-dashboard row(s): `equation3_mle_global_logLikelihood_max`.",
-      "statement_sha256": "d00efad5cde1dd0ab813190f16eae380f4a5b980383ac9fc04bc972d71908a99",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "d00efad5cde1dd0ab813190f16eae380f4a5b980383ac9fc04bc972d71908a99",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "equation3_mle_score_equation": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "equation3_mle_score_equation",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (3): the displayed closed-form rate estimator. The dashboard row `equation3_mle_score_equation` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "equation3_mle_score_equation"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (3): the displayed closed-form rate estimator. The dashboard row `equation3_mle_score_equation` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Eq. (3). Source inventory item: Eq. (3): the displayed closed-form rate estimator.",
-      "dashboard_evidence": "Current human-dashboard row(s): `equation3_mle_score_equation`.",
-      "statement_sha256": "381a2ee60af037e2d4d6b42dc611966d3e24410cc187307b52a62b9f28d11e7e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "381a2ee60af037e2d4d6b42dc611966d3e24410cc187307b52a62b9f28d11e7e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "equation5_poisson_regression_rate_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "equation5_poisson_regression_rate_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (5), supplementary numbering: the same Poisson regression log-link. The dashboard row `equation5_poisson_regression_rate_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "equation5_poisson_regression_rate_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (5), supplementary numbering: the same Poisson regression log-link. The dashboard row `equation5_poisson_regression_rate_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Supplement Eq. (5). Source inventory item: Eq. (5), supplementary numbering: the same Poisson regression log-link.",
-      "dashboard_evidence": "Current human-dashboard row(s): `equation5_poisson_regression_rate_formula`.",
-      "statement_sha256": "91fb76fd13c733d3c0380b58f6f5db1b1204d0954e8f152335a67f7f8e552028",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "91fb76fd13c733d3c0380b58f6f5db1b1204d0954e8f152335a67f7f8e552028",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "equation6_poisson_regression_likelihood_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "equation6_poisson_regression_likelihood_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (6): the incident likelihood is proportional to the Poisson PMF factor. The dashboard row `equation6_poisson_regression_likelihood_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "equation6_poisson_regression_likelihood_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (6): the incident likelihood is proportional to the Poisson PMF factor. The dashboard row `equation6_poisson_regression_likelihood_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Supplement Eq. (6). Source inventory item: Eq. (6): the incident likelihood is proportional to the Poisson PMF factor.",
-      "dashboard_evidence": "Current human-dashboard row(s): `equation6_poisson_regression_likelihood_formula`.",
-      "statement_sha256": "8976887a111a6ec1c3b0d0f0db3454826c6f9b8d0a6c8f5d903e612b4306f42c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8976887a111a6ec1c3b0d0f0db3454826c6f9b8d0a6c8f5d903e612b4306f42c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "equation7_zero_inflated_likelihood_positive_count": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "equation7_zero_inflated_likelihood_positive_count",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (7), positive-count case: only the ordinary Poisson component contributes. The dashboard row `equation7_zero_inflated_likelihood_positive_count` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "equation7_zero_inflated_likelihood_positive_count"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (7), positive-count case: only the ordinary Poisson component contributes. The dashboard row `equation7_zero_inflated_likelihood_positive_count` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Supplement Eq. (7), positive-count case. Source inventory item: Eq. (7), positive-count case: only the ordinary Poisson component contributes.",
-      "dashboard_evidence": "Current human-dashboard row(s): `equation7_zero_inflated_likelihood_positive_count`.",
-      "statement_sha256": "2bea74ab9bc74737136e2d109297ecba843c48b505e9df413843de00ea0c8462",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "2bea74ab9bc74737136e2d109297ecba843c48b505e9df413843de00ea0c8462",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "equation7_zero_inflated_likelihood_zero": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "equation7_zero_inflated_likelihood_zero",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (7), zero-count case: structural zero plus ordinary Poisson zero mass. The dashboard row `equation7_zero_inflated_likelihood_zero` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "equation7_zero_inflated_likelihood_zero"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Eq. (7), zero-count case: structural zero plus ordinary Poisson zero mass. The dashboard row `equation7_zero_inflated_likelihood_zero` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Supplement Eq. (7), zero-count case. Source inventory item: Eq. (7), zero-count case: structural zero plus ordinary Poisson zero mass.",
-      "dashboard_evidence": "Current human-dashboard row(s): `equation7_zero_inflated_likelihood_zero`.",
-      "statement_sha256": "6278c74e2b67f54568acd3fea84bd8a7f416c51c9421e305ec2d3fd7aac6c67e",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "6278c74e2b67f54568acd3fea84bd8a7f416c51c9421e305ec2d3fd7aac6c67e",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "first_report_probability_formula": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "first_report_probability_formula",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Homogeneous probability that an active incident receives at least one report. The dashboard row `first_report_probability_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "first_report_probability_formula"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Homogeneous probability that an active incident receives at least one report. The dashboard row `first_report_probability_formula` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text reporting-probability formula preceding Lemma 1. Source inventory item: Homogeneous probability that an active incident receives at least one report.",
-      "dashboard_evidence": "Current human-dashboard row(s): `first_report_probability_formula`.",
-      "statement_sha256": "b58836b375fd271e77a397dc0b4eaef67076a7939eca6e8a610d3d762f99e364",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "b58836b375fd271e77a397dc0b4eaef67076a7939eca6e8a610d3d762f99e364",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma1_continuous_duration_first_report_probability_integral": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma1_continuous_duration_first_report_probability_integral",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1 continuous-duration homogeneous integral formula. The dashboard row `lemma1_continuous_duration_first_report_probability_integral` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma1_continuous_duration_first_report_probability_integral"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1 continuous-duration homogeneous integral formula. The dashboard row `lemma1_continuous_duration_first_report_probability_integral` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Lemma 1. Source inventory item: Lemma 1 continuous-duration homogeneous integral formula.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma1_continuous_duration_first_report_probability_integral`.",
-      "statement_sha256": "983bcdcbf4ac1c60a8395c1d402ec3330e22d7bc6635ccc7d3c892211ebbc6e4",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "983bcdcbf4ac1c60a8395c1d402ec3330e22d7bc6635ccc7d3c892211ebbc6e4",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma1_continuous_duration_observed_rate_integral": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma1_continuous_duration_observed_rate_integral",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1 continuous-duration observed unique-incident rate formula. The dashboard row `lemma1_continuous_duration_observed_rate_integral` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma1_continuous_duration_observed_rate_integral"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1 continuous-duration observed unique-incident rate formula. The dashboard row `lemma1_continuous_duration_observed_rate_integral` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Lemma 1. Source inventory item: Lemma 1 continuous-duration observed unique-incident rate formula.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma1_continuous_duration_observed_rate_integral`.",
-      "statement_sha256": "e1c7b542904fab287eadddda6a5ad50d2655ebcb05ed1067d338d394f0a33172",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "e1c7b542904fab287eadddda6a5ad50d2655ebcb05ed1067d338d394f0a33172",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma1_continuous_duration_poisson_thinning_count_law": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma1_continuous_duration_poisson_thinning_count_law",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1 continuous-duration thinning count law: a latent Poisson incident count, thinned by the continuous-duration detection probability, has observed count likelihood with mean equal to the continuous observed incident rate. The dashboard row `lemma1_continuous_duration_poisson_thinning_count_law` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma1_continuous_duration_poisson_thinning_count_law"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1 continuous-duration thinning count law: a latent Poisson incident count, thinned by the continuous-duration detection probability, has observed count likelihood with mean equal to the continuous observed incident rate. The dashboard row `lemma1_continuous_duration_poisson_thinning_count_law` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Lemma 1 thinning/count implication. Source inventory item: Lemma 1 continuous-duration thinning count law: a latent Poisson incident count, thinned by the continuous-duration detection probability, has observed count likelihood with mean equal to the continuous observed incident rate.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma1_continuous_duration_poisson_thinning_count_law`.",
-      "statement_sha256": "51167c9f6bf7f4e7635aeb3baf8277b2632e38f41428b2b9f389cc0a58e0be2d",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "51167c9f6bf7f4e7635aeb3baf8277b2632e38f41428b2b9f389cc0a58e0be2d",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma1_finite_duration_first_report_weighted_average": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma1_finite_duration_first_report_weighted_average",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1 finite-duration mixture form: normalized duration weights turn the finite-duration first-report probability into the weighted average of per-duration first-report probabilities. The dashboard row `lemma1_finite_duration_first_report_weighted_average` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma1_finite_duration_first_report_weighted_average"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Lemma 1 finite-duration mixture form: normalized duration weights turn the finite-duration first-report probability into the weighted average of per-duration first-report probabilities. The dashboard row `lemma1_finite_duration_first_report_weighted_average` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Lemma 1 finite-duration analogue. Source inventory item: Lemma 1 finite-duration mixture form: normalized duration weights turn the finite-duration first-report probability into the weighted average of per-duration first-report probabilities.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma1_finite_duration_first_report_weighted_average`.",
-      "statement_sha256": "3e34b6acace0c0a1c60bad52902ec871f6ba516ecf32faaf2782e33bd4940054",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "3e34b6acace0c0a1c60bad52902ec871f6ba516ecf32faaf2782e33bd4940054",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma2_exponential_waiting_tail": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma2_exponential_waiting_tail",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix Lemma 2 tail form after the source proof's sum/integral collapse: integrating the independent no-arrival tail against the normalized start-time density on `s >= lower`, with the shifted Poisson count mass inside the integrand, g... The dashboard row `lemma2_exponential_waiting_tail` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma2_exponential_waiting_tail"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix Lemma 2 tail form after the source proof's sum/integral collapse: integrating the independent no-arrival tail against the normalized start-time density on `s >= lower`, with the shifted Poisson count mass inside the integrand, g... The dashboard row `lemma2_exponential_waiting_tail` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Appendix Lemma 2. Source inventory item: Appendix Lemma 2 tail form after the source proof's sum/integral collapse: integrating the independent no-arrival tail against the normalized start-time density on `s >= lower`, with the shifted Poisson count mass inside the integrand, gives the tail probab...",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma2_exponential_waiting_tail`.",
-      "statement_sha256": "8f35156214ec8faf29a0cf33d7e567f799706f33a82cc9ba1029d59441cfa711",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "8f35156214ec8faf29a0cf33d7e567f799706f33a82cc9ba1029d59441cfa711",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "lemma2_exponential_waiting_tail_memoryless_ratio": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "lemma2_exponential_waiting_tail_memoryless_ratio",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix Lemma 2 memoryless-tail form: after conditioning on survival through an elapsed waiting time, the exponential tail ratio equals the tail probability of the remaining future wait. The dashboard row `lemma2_exponential_waiting_tail_memoryless_ratio` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "lemma2_exponential_waiting_tail_memoryless_ratio"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix Lemma 2 memoryless-tail form: after conditioning on survival through an elapsed waiting time, the exponential tail ratio equals the tail probability of the remaining future wait. The dashboard row `lemma2_exponential_waiting_tail_memoryless_ratio` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Appendix Lemma 2 memoryless step. Source inventory item: Appendix Lemma 2 memoryless-tail form: after conditioning on survival through an elapsed waiting time, the exponential tail ratio equals the tail probability of the remaining future wait.",
-      "dashboard_evidence": "Current human-dashboard row(s): `lemma2_exponential_waiting_tail_memoryless_ratio`.",
-      "statement_sha256": "b05db62dcca27d98645e1a7f6e027230bd222004d75e9fba890314dcce871d34",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "b05db62dcca27d98645e1a7f6e027230bd222004d75e9fba890314dcce871d34",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "proposition1_continuous_duration_nonidentifiability": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "proposition1_continuous_duration_nonidentifiability",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 1 continuous-duration core: unique observed incident rates still do not identify the reporting rate after averaging over incident durations. The dashboard row `proposition1_continuous_duration_nonidentifiability` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "proposition1_continuous_duration_nonidentifiability"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 1 continuous-duration core: unique observed incident rates still do not identify the reporting rate after averaging over incident durations. The dashboard row `proposition1_continuous_duration_nonidentifiability` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Proposition 1, continuous-duration case. Source inventory item: Proposition 1 continuous-duration core: unique observed incident rates still do not identify the reporting rate after averaging over incident durations.",
-      "dashboard_evidence": "Current human-dashboard row(s): `proposition1_continuous_duration_nonidentifiability`.",
-      "statement_sha256": "0ff39e3d99fc55e7de668e490f0ee025c561089ffa0b9129a99dde0ce7f4262c",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "0ff39e3d99fc55e7de668e490f0ee025c561089ffa0b9129a99dde0ce7f4262c",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "proposition1_homogeneous_nonidentifiability": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "covered",
+      "dashboard_evidence": "proposition1_homogeneous_nonidentifiability",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 1, homogeneous algebraic core: unique observed incident rates alone do not identify the reporting rate, because occurrence rates can compensate for different reporting probabilities and produce the same observed rate. The dashboard row `proposition1_homogeneous_nonidentifiability` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "review_rows": [
         "proposition1_homogeneous_nonidentifiability"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Proposition 1, homogeneous algebraic core: unique observed incident rates alone do not identify the reporting rate, because occurrence rates can compensate for different reporting probabilities and produce the same observed rate. The dashboard row `proposition1_homogeneous_nonidentifiability` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Proposition 1, homogeneous case. Source inventory item: Proposition 1, homogeneous algebraic core: unique observed incident rates alone do not identify the reporting rate, because occurrence rates can compensate for different reporting probabilities and produce the same observed rate.",
-      "dashboard_evidence": "Current human-dashboard row(s): `proposition1_homogeneous_nonidentifiability`.",
-      "statement_sha256": "1a5cb86a6a90dc4e3bff074428a0958873cb55ec03692f2e3d1eabcf9307a0fa",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false
+      "statement_sha256": "1a5cb86a6a90dc4e3bff074428a0958873cb55ec03692f2e3d1eabcf9307a0fa",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_likelihood_decomposition_from_poisson_increment_laws": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "conditional_boundary",
+      "dashboard_evidence": "theorem1_likelihood_decomposition_from_poisson_increment_laws",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1 / Appendix Theorem 2, preferred source-assumption factorization form: given a homogeneous Poisson process via mathlib Poisson increment laws plus Condition 1/2 source assumptions, any observed zero/one/multi-report window case... The dashboard row `theorem1_likelihood_decomposition_from_poisson_increment_laws` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "review_rows": [
         "theorem1_likelihood_decomposition_from_poisson_increment_laws"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1 / Appendix Theorem 2, preferred source-assumption factorization form: given a homogeneous Poisson process via mathlib Poisson increment laws plus Condition 1/2 source assumptions, any observed zero/one/multi-report window case... The dashboard row `theorem1_likelihood_decomposition_from_poisson_increment_laws` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Theorem 1 likelihood decomposition. Source inventory item: Theorem 1 / Appendix Theorem 2, preferred source-assumption factorization form: given a homogeneous Poisson process via mathlib Poisson increment laws plus Condition 1/2 source assumptions, any observed zero/one/multi-report window case has likelihood equal...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_likelihood_decomposition_from_poisson_increment_laws`.",
-      "statement_sha256": "71251518da4f8b7e8e10ae8d16955377c7b771198bb5faf0204f04e9828c4331",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false,
-      "boundary_names": [
-        "homogeneous Poisson counting-process law",
-        "duration-censored stopping certificate",
-        "fixed Condition 1/2 kernels"
-      ]
+      "statement_sha256": "71251518da4f8b7e8e10ae8d16955377c7b771198bb5faf0204f04e9828c4331",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem1_likelihood_product_decomposition_from_poisson_increment_laws": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "conditional_boundary",
+      "dashboard_evidence": "theorem1_likelihood_product_decomposition_from_poisson_increment_laws",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1 finite-product form from mathlib Poisson increment laws: under the paper's homogeneous Poisson process plus Condition 1/2 source assumptions, a finite product of observed zero/one/multi-report window cases collapses to one tota... The dashboard row `theorem1_likelihood_product_decomposition_from_poisson_increment_laws` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "review_rows": [
         "theorem1_likelihood_product_decomposition_from_poisson_increment_laws"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Theorem 1 finite-product form from mathlib Poisson increment laws: under the paper's homogeneous Poisson process plus Condition 1/2 source assumptions, a finite product of observed zero/one/multi-report window cases collapses to one tota... The dashboard row `theorem1_likelihood_product_decomposition_from_poisson_increment_laws` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Main text Theorem 1 finite-product likelihood decomposition. Source inventory item: Theorem 1 finite-product form from mathlib Poisson increment laws: under the paper's homogeneous Poisson process plus Condition 1/2 source assumptions, a finite product of observed zero/one/multi-report window cases collapses to one total-count Poisson PMF,...",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem1_likelihood_product_decomposition_from_poisson_increment_laws`.",
-      "statement_sha256": "9fc352e6727577e50dc5a279044a6b437c8d2c792f22bede2a78842f96eed5be",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false,
-      "boundary_names": [
-        "homogeneous Poisson counting-process law",
-        "duration-censored stopping certificate",
-        "fixed Condition 1/2 kernels"
-      ]
+      "statement_sha256": "9fc352e6727577e50dc5a279044a6b437c8d2c792f22bede2a78842f96eed5be",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_corrected_case_factorization": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "conditional_boundary",
+      "dashboard_evidence": "theorem2_corrected_case_factorization",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix Theorem 2 proof algebra: a case likelihood whose rate dependence has the raw density shape `rate^M * exp(-rate * exposure)` factors into the Poisson count PMF after absorbing `M! / exposure^M` into the residual. The dashboard row `theorem2_corrected_case_factorization` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "review_rows": [
         "theorem2_corrected_case_factorization"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix Theorem 2 proof algebra: a case likelihood whose rate dependence has the raw density shape `rate^M * exp(-rate * exposure)` factors into the Poisson count PMF after absorbing `M! / exposure^M` into the residual. The dashboard row `theorem2_corrected_case_factorization` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Appendix Theorem 2 proof algebra; corrected multi-report residual noted in validation report. Source inventory item: Appendix Theorem 2 proof algebra: a case likelihood whose rate dependence has the raw density shape `rate^M * exp(-rate * exposure)` factors into the Poisson count PMF after absorbing `M! / exposure^M` into the residual.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_corrected_case_factorization`.",
-      "statement_sha256": "34bb853e747cbe931db3924f0f9342fab4999ba2d96c24989a4ab34f369b1e52",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false,
-      "boundary_names": [
-        "homogeneous Poisson counting-process law",
-        "duration-censored stopping certificate",
-        "fixed Condition 1/2 kernels"
-      ]
+      "statement_sha256": "34bb853e747cbe931db3924f0f9342fab4999ba2d96c24989a4ab34f369b1e52",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_multi_report_source_case": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "conditional_boundary",
+      "dashboard_evidence": "theorem2_multi_report_source_case",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix B.2 Eq. (32), two or more reports in `(s,e]`. The dashboard row `theorem2_multi_report_source_case` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "review_rows": [
         "theorem2_multi_report_source_case"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix B.2 Eq. (32), two or more reports in `(s,e]`. The dashboard row `theorem2_multi_report_source_case` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Appendix Theorem 2 / Eq. (32), multi-report case. Source inventory item: Appendix B.2 Eq. (32), two or more reports in `(s,e]`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_multi_report_source_case`.",
-      "statement_sha256": "07432e4a1f0171d63ced7d991ff66040386ca2098388232ddb4b26642739e918",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false,
-      "boundary_names": [
-        "homogeneous Poisson counting-process law",
-        "duration-censored stopping certificate",
-        "fixed Condition 1/2 kernels"
-      ]
+      "statement_sha256": "07432e4a1f0171d63ced7d991ff66040386ca2098388232ddb4b26642739e918",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_one_report_source_case": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "conditional_boundary",
+      "dashboard_evidence": "theorem2_one_report_source_case",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix B.2 Eq. (26), one report in `(s,e]`. The dashboard row `theorem2_one_report_source_case` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "review_rows": [
         "theorem2_one_report_source_case"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix B.2 Eq. (26), one report in `(s,e]`. The dashboard row `theorem2_one_report_source_case` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Appendix Theorem 2 / Eq. (26), one-report case. Source inventory item: Appendix B.2 Eq. (26), one report in `(s,e]`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_one_report_source_case`.",
-      "statement_sha256": "093e855aee294a6bb919a94f0c24dd0bc7e731912999b985df3079155e2373e3",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false,
-      "boundary_names": [
-        "homogeneous Poisson counting-process law",
-        "duration-censored stopping certificate",
-        "fixed Condition 1/2 kernels"
-      ]
+      "statement_sha256": "093e855aee294a6bb919a94f0c24dd0bc7e731912999b985df3079155e2373e3",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "theorem2_zero_report_source_case": {
+      "audit_kind": "source_to_dashboard_llm",
       "coverage": "conditional_boundary",
+      "dashboard_evidence": "theorem2_zero_report_source_case",
+      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix B.2 Eq. (20), zero reports in `(s,e]`. The dashboard row `theorem2_zero_report_source_case` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "review_rows": [
         "theorem2_zero_report_source_case"
       ],
-      "reason": "The source item is the paper-facing statement/formula summarized as: Appendix B.2 Eq. (20), zero reports in `(s,e]`. The dashboard row `theorem2_zero_report_source_case` exposes the corresponding Lean statement for that same source claim, with the paper-facing theorem/formula represented in the review surface rather than merely inferred from a name match. The row-level statement judge records this as covered with an explicit conditional boundary rather than as unconditional direct coverage.",
       "source_evidence": "Source basis: /tmp/econcs_source_text/LBG24SpatialUnderreporting.txt and validation report. Appendix Theorem 2 / Eq. (20), zero-report case. Source inventory item: Appendix B.2 Eq. (20), zero reports in `(s,e]`.",
-      "dashboard_evidence": "Current human-dashboard row(s): `theorem2_zero_report_source_case`.",
-      "statement_sha256": "470318756adbd960cf37e82f645cf09a697fb3c22f857a5eee9cb712a8d4e7bc",
-      "audit_kind": "source_to_dashboard_agent",
       "source_grounded": true,
-      "seed_scaffold": false,
-      "boundary_names": [
-        "homogeneous Poisson counting-process law",
-        "duration-censored stopping certificate",
-        "fixed Condition 1/2 kernels"
-      ]
+      "statement_sha256": "470318756adbd960cf37e82f645cf09a697fb3c22f857a5eee9cb712a8d4e7bc",
+      "support_declarations": [],
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     }
-  }
+  },
+  "paper": "LBG24SpatialUnderreporting",
+  "paper_statement_inventory_sha256": "7127d8531865c77912951621f837ddfd86924f03ac2b139dce8fd4e3c7ef0a94",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "6d1d4dbcdcc218f3cb950f9651fc8f20554295e70821780b504e80c3be57c98f",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

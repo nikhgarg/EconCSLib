@@ -1,0 +1,301 @@
+{
+  "boundary_input_count": 0,
+  "boundary_input_items": [],
+  "configured_review_row_count": 7,
+  "expected_field_judgment_keys": [],
+  "expected_input_judgment_keys": [],
+  "import_module": "GS62CollegeAdmissions.PaperInterface",
+  "lean_check": {
+    "command": "lake build GS62CollegeAdmissions.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "GS62CollegeAdmissions.PaperInterface.strictMarriageDomain.{u_1, u_2} {M : Type u_1} {W : Type u_2} (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) : Prop\n'GS62CollegeAdmissions.PaperInterface.strictMarriageDomain' depends on axioms: [propext, Classical.choice, Quot.sound]\nGS62CollegeAdmissions.PaperInterface.stableMarriage.{u_1, u_2} {M : Type u_1} {W : Type u_2} (val_m : M \u2192 W \u2192 \u211d)\n  (val_w : W \u2192 M \u2192 \u211d) (mu : EconCSLib.Matching.Assignment M W) : Prop\n'GS62CollegeAdmissions.PaperInterface.stableMarriage' depends on axioms: [propext, Classical.choice, Quot.sound]\nGS62CollegeAdmissions.PaperInterface.completeMarriage.{u_1, u_2} {M : Type u_1} {W : Type u_2}\n  (mu : EconCSLib.Matching.Assignment M W) : Prop\n'GS62CollegeAdmissions.PaperInterface.completeMarriage' does not depend on any axioms\nGS62CollegeAdmissions.PaperInterface.applicantOptimalStableMarriage.{u_1, u_2} {M : Type u_1} {W : Type u_2}\n  (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) (mu : EconCSLib.Matching.Assignment M W) : Prop\n'GS62CollegeAdmissions.PaperInterface.applicantOptimalStableMarriage' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGS62CollegeAdmissions.PaperInterface.theorem1_stable_marriage_exists.{u_1} {A : Type u_1} [Fintype A] [DecidableEq A]\n  (val_m val_w : A \u2192 A \u2192 \u211d) (hdomain : PaperInterface.strictMarriageDomain val_m val_w) :\n  \u2203 mu, PaperInterface.stableMarriage val_m val_w mu \u2227 PaperInterface.completeMarriage mu\n'GS62CollegeAdmissions.PaperInterface.theorem1_stable_marriage_exists' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGS62CollegeAdmissions.PaperInterface.college_admissions_stable_assignment_exists.{u_1, u_2} {Applicants : Type u_1}\n  {Colleges : Type u_2} [Fintype Applicants] [Fintype Colleges] [DecidableEq Applicants] [DecidableEq Colleges]\n  (quota : Colleges \u2192 \u2115) (val_applicant : Applicants \u2192 Colleges \u2192 \u211d) (val_college : Colleges \u2192 Applicants \u2192 \u211d) :\n  \u2203 mu, EconCSLib.Matching.ManyToOne.IsStable val_applicant val_college quota mu\n'GS62CollegeAdmissions.PaperInterface.college_admissions_stable_assignment_exists' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGS62CollegeAdmissions.PaperInterface.theorem2_applicant_optimality.{u_1} {A : Type u_1} [Fintype A] [DecidableEq A]\n  (val_applicant val_college : A \u2192 A \u2192 \u211d) (hdomain : PaperInterface.strictMarriageDomain val_applicant val_college) :\n  PaperInterface.completeMarriage (EconCSLib.Matching.deferredAcceptance val_applicant val_college) \u2227\n    PaperInterface.applicantOptimalStableMarriage val_applicant val_college\n      (EconCSLib.Matching.deferredAcceptance val_applicant val_college)\n'GS62CollegeAdmissions.PaperInterface.theorem2_applicant_optimality' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GS62CollegeAdmissions\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"lean_source_declaration\": \"def strictMarriageDomain {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d) : Prop :=\\n  MenStrictPreferenceProfile val_m \\u2227\\n    WomenStrictPreferenceProfile val_w \\u2227\\n    AllPairsAcceptable val_m val_w\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"strictMarriageDomain\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def stableMarriage {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (mu : Assignment M W) : Prop :=\\n  (\\u2200 m, 0 \\u2264 valM val_m m (mu.m_match m)) \\u2227\\n    (\\u2200 w, 0 \\u2264 valW val_w w (mu.w_match w)) \\u2227\\n      (\\u2200 m w, valM val_m m (mu.m_match m) < val_m m w \\u2192\\n        valW val_w w (mu.w_match w) < val_w w m \\u2192 False)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"stableMarriage\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"mu\",\n        \"type\": \"Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def completeMarriage {M W : Type*} (mu : Assignment M W) : Prop :=\\n  (\\u2200 m, \\u2203 w, mu.m_match m = some w) \\u2227\\n    (\\u2200 w, \\u2203 m, mu.w_match w = some m)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"completeMarriage\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"mu\",\n        \"type\": \"Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"def applicantOptimalStableMarriage {M W : Type*}\\n    (val_m : M \\u2192 W \\u2192 \\u211d) (val_w : W \\u2192 M \\u2192 \\u211d)\\n    (mu : Assignment M W) : Prop :=\\n  stableMarriage val_m val_w mu \\u2227\\n    \\u2200 mu', stableMarriage val_m val_w mu' \\u2192\\n      \\u2200 m, valM val_m m (mu'.m_match m) \\u2264 valM val_m m (mu.m_match m)\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"applicantOptimalStableMarriage\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"M W\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"M \\u2192 W \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"W \\u2192 M \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"mu\",\n        \"type\": \"Assignment M W\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem1_stable_marriage_exists\\n    {A : Type*} [Fintype A] [DecidableEq A]\\n    (val_m : A \\u2192 A \\u2192 \\u211d) (val_w : A \\u2192 A \\u2192 \\u211d)\\n    (hdomain : strictMarriageDomain val_m val_w) :\\n    \\u2203 mu : Assignment A A,\\n      stableMarriage val_m val_w mu \\u2227 completeMarriage mu := by\\n  simpa [strictMarriageDomain, stableMarriage, completeMarriage, IsStable,\\n    gs_strict_marriage_domain, gs_stable_marriage, gs_complete_marriage] using\\n    paper_gs62_theorem1_stable_marriage_exists\\n      val_m val_w rfl hdomain\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem1_stable_marriage_exists\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"A\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_m\",\n        \"type\": \"A \\u2192 A \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_w\",\n        \"type\": \"A \\u2192 A \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hdomain\",\n        \"type\": \"strictMarriageDomain val_m val_w\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem college_admissions_stable_assignment_exists\\n    {Applicants Colleges : Type*}\\n    [Fintype Applicants] [Fintype Colleges]\\n    [DecidableEq Applicants] [DecidableEq Colleges]\\n    (quota : Colleges \\u2192 \\u2115)\\n    (val_applicant : Applicants \\u2192 Colleges \\u2192 \\u211d)\\n    (val_college : Colleges \\u2192 Applicants \\u2192 \\u211d) :\\n    \\u2203 mu : ManyToOneAssignment Applicants Colleges,\\n      ManyToOne.IsStable val_applicant val_college quota mu := by\\n  exact paper_gs62_college_admissions_stable_assignment_exists\\n    quota val_applicant val_college\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"college_admissions_stable_assignment_exists\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Applicants Colleges\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"quota\",\n        \"type\": \"Colleges \\u2192 \\u2115\"\n      },\n      {\n        \"names\": \"val_applicant\",\n        \"type\": \"Applicants \\u2192 Colleges \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_college\",\n        \"type\": \"Colleges \\u2192 Applicants \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem2_applicant_optimality\\n    {A : Type*} [Fintype A] [DecidableEq A]\\n    (val_applicant : A \\u2192 A \\u2192 \\u211d)\\n    (val_college : A \\u2192 A \\u2192 \\u211d)\\n    (hdomain : strictMarriageDomain val_applicant val_college) :\\n    completeMarriage (deferredAcceptance val_applicant val_college) \\u2227\\n      applicantOptimalStableMarriage val_applicant val_college\\n        (deferredAcceptance val_applicant val_college) := by\\n  constructor\\n  \\u00b7 simpa [strictMarriageDomain, completeMarriage,\\n      gs_strict_marriage_domain, gs_complete_marriage] using\\n      gs_deferredAcceptance_complete_on_strict_marriage_domain\\n        val_applicant val_college rfl hdomain\\n  \\u00b7 simpa [strictMarriageDomain, stableMarriage, IsStable,\\n      applicantOptimalStableMarriage, gs_strict_marriage_domain,\\n      gs_stable_marriage, gs_applicant_optimal_stable_marriage] using\\n      gs_deferredAcceptance_applicant_optimal_on_strict_marriage_domain\\n        val_applicant val_college hdomain\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem2_applicant_optimality\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"A\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"val_applicant\",\n        \"type\": \"A \\u2192 A \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"val_college\",\n        \"type\": \"A \\u2192 A \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hdomain\",\n        \"type\": \"strictMarriageDomain val_applicant val_college\"\n      }\n    ]\n  }\n]",
+  "paper": "GS62CollegeAdmissions",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/GS62CollegeAdmissions",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 0,
+  "recursive_field_items": [],
+  "review_row_count": 7,
+  "row_visible_inputs": {
+    "applicantOptimalStableMarriage": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "mu",
+        "type": "Assignment M W"
+      }
+    ],
+    "college_admissions_stable_assignment_exists": [
+      {
+        "names": "Applicants Colleges",
+        "type": "Type*"
+      },
+      {
+        "names": "quota",
+        "type": "Colleges \u2192 \u2115"
+      },
+      {
+        "names": "val_applicant",
+        "type": "Applicants \u2192 Colleges \u2192 \u211d"
+      },
+      {
+        "names": "val_college",
+        "type": "Colleges \u2192 Applicants \u2192 \u211d"
+      }
+    ],
+    "completeMarriage": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "mu",
+        "type": "Assignment M W"
+      }
+    ],
+    "stableMarriage": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      },
+      {
+        "names": "mu",
+        "type": "Assignment M W"
+      }
+    ],
+    "strictMarriageDomain": [
+      {
+        "names": "M W",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "M \u2192 W \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "W \u2192 M \u2192 \u211d"
+      }
+    ],
+    "theorem1_stable_marriage_exists": [
+      {
+        "names": "A",
+        "type": "Type*"
+      },
+      {
+        "names": "val_m",
+        "type": "A \u2192 A \u2192 \u211d"
+      },
+      {
+        "names": "val_w",
+        "type": "A \u2192 A \u2192 \u211d"
+      },
+      {
+        "names": "hdomain",
+        "type": "strictMarriageDomain val_m val_w"
+      }
+    ],
+    "theorem2_applicant_optimality": [
+      {
+        "names": "A",
+        "type": "Type*"
+      },
+      {
+        "names": "val_applicant",
+        "type": "A \u2192 A \u2192 \u211d"
+      },
+      {
+        "names": "val_college",
+        "type": "A \u2192 A \u2192 \u211d"
+      },
+      {
+        "names": "hdomain",
+        "type": "strictMarriageDomain val_applicant val_college"
+      }
+    ]
+  },
+  "rows_with_record_premises": [],
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "def strictMarriageDomain {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d) : Prop :=\n  MenStrictPreferenceProfile val_m \u2227\n    WomenStrictPreferenceProfile val_w \u2227\n    AllPairsAcceptable val_m val_w",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "strictMarriageDomain",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def stableMarriage {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (mu : Assignment M W) : Prop :=\n  (\u2200 m, 0 \u2264 valM val_m m (mu.m_match m)) \u2227\n    (\u2200 w, 0 \u2264 valW val_w w (mu.w_match w)) \u2227\n      (\u2200 m w, valM val_m m (mu.m_match m) < val_m m w \u2192\n        valW val_w w (mu.w_match w) < val_w w m \u2192 False)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "stableMarriage",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "mu",
+          "type": "Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def completeMarriage {M W : Type*} (mu : Assignment M W) : Prop :=\n  (\u2200 m, \u2203 w, mu.m_match m = some w) \u2227\n    (\u2200 w, \u2203 m, mu.w_match w = some m)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "completeMarriage",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "mu",
+          "type": "Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "def applicantOptimalStableMarriage {M W : Type*}\n    (val_m : M \u2192 W \u2192 \u211d) (val_w : W \u2192 M \u2192 \u211d)\n    (mu : Assignment M W) : Prop :=\n  stableMarriage val_m val_w mu \u2227\n    \u2200 mu', stableMarriage val_m val_w mu' \u2192\n      \u2200 m, valM val_m m (mu'.m_match m) \u2264 valM val_m m (mu.m_match m)",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "applicantOptimalStableMarriage",
+      "visible_inputs": [
+        {
+          "names": "M W",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "M \u2192 W \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "W \u2192 M \u2192 \u211d"
+        },
+        {
+          "names": "mu",
+          "type": "Assignment M W"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem1_stable_marriage_exists\n    {A : Type*} [Fintype A] [DecidableEq A]\n    (val_m : A \u2192 A \u2192 \u211d) (val_w : A \u2192 A \u2192 \u211d)\n    (hdomain : strictMarriageDomain val_m val_w) :\n    \u2203 mu : Assignment A A,\n      stableMarriage val_m val_w mu \u2227 completeMarriage mu := by\n  simpa [strictMarriageDomain, stableMarriage, completeMarriage, IsStable,\n    gs_strict_marriage_domain, gs_stable_marriage, gs_complete_marriage] using\n    paper_gs62_theorem1_stable_marriage_exists\n      val_m val_w rfl hdomain",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem1_stable_marriage_exists",
+      "visible_inputs": [
+        {
+          "names": "A",
+          "type": "Type*"
+        },
+        {
+          "names": "val_m",
+          "type": "A \u2192 A \u2192 \u211d"
+        },
+        {
+          "names": "val_w",
+          "type": "A \u2192 A \u2192 \u211d"
+        },
+        {
+          "names": "hdomain",
+          "type": "strictMarriageDomain val_m val_w"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem college_admissions_stable_assignment_exists\n    {Applicants Colleges : Type*}\n    [Fintype Applicants] [Fintype Colleges]\n    [DecidableEq Applicants] [DecidableEq Colleges]\n    (quota : Colleges \u2192 \u2115)\n    (val_applicant : Applicants \u2192 Colleges \u2192 \u211d)\n    (val_college : Colleges \u2192 Applicants \u2192 \u211d) :\n    \u2203 mu : ManyToOneAssignment Applicants Colleges,\n      ManyToOne.IsStable val_applicant val_college quota mu := by\n  exact paper_gs62_college_admissions_stable_assignment_exists\n    quota val_applicant val_college",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "college_admissions_stable_assignment_exists",
+      "visible_inputs": [
+        {
+          "names": "Applicants Colleges",
+          "type": "Type*"
+        },
+        {
+          "names": "quota",
+          "type": "Colleges \u2192 \u2115"
+        },
+        {
+          "names": "val_applicant",
+          "type": "Applicants \u2192 Colleges \u2192 \u211d"
+        },
+        {
+          "names": "val_college",
+          "type": "Colleges \u2192 Applicants \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem2_applicant_optimality\n    {A : Type*} [Fintype A] [DecidableEq A]\n    (val_applicant : A \u2192 A \u2192 \u211d)\n    (val_college : A \u2192 A \u2192 \u211d)\n    (hdomain : strictMarriageDomain val_applicant val_college) :\n    completeMarriage (deferredAcceptance val_applicant val_college) \u2227\n      applicantOptimalStableMarriage val_applicant val_college\n        (deferredAcceptance val_applicant val_college) := by\n  constructor\n  \u00b7 simpa [strictMarriageDomain, completeMarriage,\n      gs_strict_marriage_domain, gs_complete_marriage] using\n      gs_deferredAcceptance_complete_on_strict_marriage_domain\n        val_applicant val_college rfl hdomain\n  \u00b7 simpa [strictMarriageDomain, stableMarriage, IsStable,\n      applicantOptimalStableMarriage, gs_strict_marriage_domain,\n      gs_stable_marriage, gs_applicant_optimal_stable_marriage] using\n      gs_deferredAcceptance_applicant_optimal_on_strict_marriage_domain\n        val_applicant val_college hdomain",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem2_applicant_optimality",
+      "visible_inputs": [
+        {
+          "names": "A",
+          "type": "Type*"
+        },
+        {
+          "names": "val_applicant",
+          "type": "A \u2192 A \u2192 \u211d"
+        },
+        {
+          "names": "val_college",
+          "type": "A \u2192 A \u2192 \u211d"
+        },
+        {
+          "names": "hdomain",
+          "type": "strictMarriageDomain val_applicant val_college"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "6aec862d3ce25836182f3fee6853cb06c7f1ccd4e20d3be0848b154193819d03",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": []
+}

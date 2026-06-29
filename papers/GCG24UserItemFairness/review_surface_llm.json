@@ -1,0 +1,12 @@
+{
+  "judgment": "passes",
+  "paper": "GCG24UserItemFairness",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: source-visible review targets are exposed as paper-facing rows, with helper-only implementation details kept outside the dashboard unless needed for source coverage.",
+  "review_rows": 48,
+  "review_surface_sha256": "2491fef1e5f7db6eaba3ff313dccc9943dbfb92e0411da51084ec50937317f1f",
+  "schema": 1,
+  "validated_at": "2026-06-29T20:39:31Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
+}

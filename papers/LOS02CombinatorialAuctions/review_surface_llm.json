@@ -1,13 +1,12 @@
 {
-  "judgment": "paper_facing",
+  "judgment": "passes",
   "paper": "LOS02CombinatorialAuctions",
-  "prompt_version": "review-surface-v1",
-  "reason": "Current dashboard rows are paper-facing definitions, named statements, explicit source-condition rows, or documented boundary rows; premise provenance is audited separately. Hash refreshed against the current dashboard row surface.",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: current dashboard rows are paper-facing definitions, assumptions, theorem endpoints, or explicitly documented partial/source-version boundaries; helper-only rows remain outside the compact dashboard surface.",
   "review_rows": 39,
   "review_surface_sha256": "aa6bfe1457d7fde129dbd467b87f84c80df693b4a171166c9cf14a10bf446bec",
   "schema": 1,
-  "validated_at": "2026-06-29T07:31:10Z",
-  "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "comment": "Review-surface digest refreshed against the source-declaration-stable dashboard surface."
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

@@ -1,0 +1,996 @@
+{
+  "boundary_input_count": 0,
+  "boundary_input_items": [],
+  "configured_review_row_count": 15,
+  "expected_field_judgment_keys": [],
+  "expected_input_judgment_keys": [],
+  "import_module": "GJ18InformativeRatingSystems.PaperInterface",
+  "lean_check": {
+    "command": "lake build GJ18InformativeRatingSystems.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "GJ18InformativeRatingSystems.definition_log_mgf_formula.{u_1, u_2} {Seller : Type u_1} {Rating : Type u_2}\n  [Fintype Rating] [DecidableEq Rating] (M : EconCSLib.Probability.FiniteRatingLDPModel Seller Rating) (\u03b8 : Seller)\n  (z : \u211d) : paperLogMGF M \u03b8 z = Real.log (\u2211 y, ((M.typeLaw \u03b8) y).toReal * Real.exp (z * M.score y))\n'GJ18InformativeRatingSystems.definition_log_mgf_formula' depends on axioms: [propext, Classical.choice, Quot.sound]\nGJ18InformativeRatingSystems.definition_rate_function_formula.{u_1, u_2} {Seller : Type u_1} {Rating : Type u_2}\n  [Fintype Rating] [DecidableEq Rating] (M : EconCSLib.Probability.FiniteRatingLDPModel Seller Rating) (\u03b8 : Seller)\n  (a : \u211d) : paperRateFunction M \u03b8 a = sSup (Set.range fun z => z * a - paperLogMGF M \u03b8 z)\n'GJ18InformativeRatingSystems.definition_rate_function_formula' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives.{u_1, u_2}\n  {Seller : Type u_1} {Rating : Type u_2} [Fintype Rating] [DecidableEq Rating]\n  (M : EconCSLib.Probability.FiniteRatingLDPModel Seller Rating) (sampleRate : Seller \u2192 \u211d) (hi lo : Seller)\n  (gHi gLo : \u2115) (hgHi : 0 < gHi) (hgLo : 0 < gLo) (hsample_hi : sampleRate hi = \u2191gHi)\n  (hsample_lo : sampleRate lo = \u2191gLo)\n  (hbdd_hi :\n    \u2200 (a : \u211d), BddAbove (Set.range fun z => EconCSLib.Probability.finiteLegendreValue (M.typeLaw hi) M.score a z))\n  (hbdd_lo :\n    \u2200 (a : \u211d), BddAbove (Set.range fun z => EconCSLib.Probability.finiteLegendreValue (M.typeLaw lo) M.score a z))\n  (a z : \u211d) (hderiv_hi : HasDerivAt (fun t => M.logMGF hi t) a (z * (\u2191gHi)\u207b\u00b9))\n  (hderiv_lo : HasDerivAt (fun t => M.logMGF lo t) a (-(z * (\u2191gLo)\u207b\u00b9)))\n  (hmean :\n    0 \u2264\n      EconCSLib.pmfExp (EconCSLib.Probability.twoSampleRateBlockLaw M hi lo gHi gLo)\n        (EconCSLib.Probability.twoSampleRateBlockScore M gHi gLo))\n  {samplePos sampleNeg : (Fin gHi \u2192 Rating) \u00d7 (Fin gLo \u2192 Rating)}\n  (hmassPos : 0 < ((EconCSLib.Probability.twoSampleRateBlockLaw M hi lo gHi gLo) samplePos).toReal)\n  (hscorePos : 0 < EconCSLib.Probability.twoSampleRateBlockScore M gHi gLo samplePos)\n  (hmassNeg : 0 < ((EconCSLib.Probability.twoSampleRateBlockLaw M hi lo gHi gLo) sampleNeg).toReal)\n  (hscoreNeg : EconCSLib.Probability.twoSampleRateBlockScore M gHi gLo sampleNeg < 0) :\n  EconCSLib.Probability.ExponentialRateCertificate\n    (fun n => EconCSLib.Probability.twoSamplePkComplementErrorProb M hi lo (n * gHi) (n * gLo) (\u2191gHi)\u207b\u00b9 (\u2191gLo)\u207b\u00b9)\n    (EconCSLib.Probability.pairwiseSellerThresholdRate M sampleRate hi lo)\n'GJ18InformativeRatingSystems.lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law.{u_1}\n  {n : \u2115} {Rating : Type u_1} [Fintype Rating] [DecidableEq Rating] [DecidableEq (finiteChainOrderedPair n)]\n  [Nonempty (finiteChainAdjacentIndex n)] (M : EconCSLib.Probability.FiniteRatingLDPModel (Fin n) Rating)\n  (sampleRate : Fin n \u2192 \u211d) (hpositive_sample : \u2200 (\u03b8 : Fin n), 0 < sampleRate \u03b8) (a z : finiteChainOrderedPair n \u2192 \u211d)\n  (hz : \u2200 (p : finiteChainOrderedPair n), z p \u2264 0)\n  (hderiv_hi :\n    \u2200 (p : finiteChainOrderedPair n),\n      HasDerivAt (fun t => M.logMGF (finiteChainOrderedPairHi p) t) (a p)\n        (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9))\n  (hderiv_lo :\n    \u2200 (p : finiteChainOrderedPair n),\n      HasDerivAt (fun t => M.logMGF (finiteChainOrderedPairLo p) t) (a p)\n        (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9)))\n  (hthreshold_min :\n    \u2200 (p : finiteChainOrderedPair n) (b : \u211d),\n      M.pairwiseRateObjective sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) (a p) \u2264\n        M.pairwiseRateObjective sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) b)\n  (hstraddle_hi :\n    \u2200 (p : finiteChainOrderedPair n),\n      EconCSLib.Probability.ratingLawStraddlesThreshold M (finiteChainOrderedPairHi p) (a p))\n  (hstraddle_lo :\n    \u2200 (p : finiteChainOrderedPair n),\n      EconCSLib.Probability.ratingLawStraddlesThreshold M (finiteChainOrderedPairLo p) (a p)) :\n  EconCSLib.Probability.HasExponentialRate\n    (fun k =>\n      1 -\n        EconCSLib.Probability.finiteUniformFloorPkObjective M sampleRate finiteChainOrderedPairHi\n          finiteChainOrderedPairLo k)\n    (minFiniteChainAdjacentThresholdRate M sampleRate)\n'GJ18InformativeRatingSystems.theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives.{u_1}\n  {n : \u2115} {Rating : Type u_1} [Fintype Rating] [DecidableEq Rating] [Nonempty (finiteChainAdjacentIndex n)]\n  (M : EconCSLib.Probability.FiniteRatingLDPModel (Fin n) Rating) (sampleRate : Fin n \u2192 \u211d)\n  (hpositive_sample : \u2200 (\u03b8 : Fin n), 0 < sampleRate \u03b8) (a z : finiteChainOrderedPair n \u2192 \u211d)\n  (hderiv_hi :\n    \u2200 (p : finiteChainOrderedPair n),\n      HasDerivAt (fun t => M.logMGF (finiteChainOrderedPairHi p) t) (a p)\n        (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9))\n  (hderiv_lo :\n    \u2200 (p : finiteChainOrderedPair n),\n      HasDerivAt (fun t => M.logMGF (finiteChainOrderedPairLo p) t) (a p)\n        (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9))) :\n  minFiniteChainAdjacentThresholdRateTop M sampleRate = \u2191(minFiniteChainAdjacentObjectiveRate M sampleRate a)\n'GJ18InformativeRatingSystems.theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support\n  {n m : \u2115} [DecidableEq (finiteChainOrderedPair n)] [Nonempty (finiteChainAdjacentIndex n)]\n  (M : EconCSLib.Probability.FiniteRatingLDPModel (Fin n) (Fin (m + 1))) (sampleRate : Fin n \u2192 \u211d)\n  (hpositive_sample : \u2200 (\u03b8 : Fin n), 0 < sampleRate \u03b8)\n  (htail :\n    \u2200 (p : finiteChainOrderedPair n) (t : Fin (m + 1)),\n      (EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairLo p)) fun r => t \u2264 r) \u2264\n        EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairHi p)) fun r => t \u2264 r)\n  (hscore_mono : Monotone M.score) (hfull_support : M.fullSupport) (hscore_lt : M.score 0 < M.score (Fin.last m)) :\n  EconCSLib.Probability.HasExtendedExponentialRate\n    (fun k =>\n      1 -\n        EconCSLib.Probability.finiteUniformFloorPkObjective M sampleRate finiteChainOrderedPairHi\n          finiteChainOrderedPairLo k)\n    (minFiniteChainAdjacentThresholdRateTop M sampleRate)\n'GJ18InformativeRatingSystems.theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq.{u_1}\n  {n : \u2115} {Rating : Type u_1} [Fintype Rating] [DecidableEq Rating] [DecidableEq (finiteChainOrderedPair n)]\n  [Nonempty (finiteChainAdjacentIndex n)] (M : EconCSLib.Probability.FiniteRatingLDPModel (Fin n) Rating)\n  (sampleRate : Fin n \u2192 \u211d) (hpositive_sample : \u2200 (\u03b8 : Fin n), 0 < sampleRate \u03b8) (a z : finiteChainOrderedPair n \u2192 \u211d)\n  (hz : \u2200 (p : finiteChainOrderedPair n), z p \u2264 0)\n  (hderiv_hi :\n    \u2200 (p : finiteChainOrderedPair n),\n      HasDerivAt (fun t => M.logMGF (finiteChainOrderedPairHi p) t) (a p)\n        (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9))\n  (hderiv_lo :\n    \u2200 (p : finiteChainOrderedPair n),\n      HasDerivAt (fun t => M.logMGF (finiteChainOrderedPairLo p) t) (a p)\n        (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9)))\n  (rLow rHigh : Rating) (hmass_low : \u2200 (\u03b8 : Fin n), 0 < ((M.typeLaw \u03b8) rLow).toReal)\n  (hmass_high : \u2200 (\u03b8 : Fin n), 0 < ((M.typeLaw \u03b8) rHigh).toReal)\n  (hscore_low_le : \u2200 (r : Rating), M.score rLow \u2264 M.score r)\n  (hscore_le_high : \u2200 (r : Rating), M.score r \u2264 M.score rHigh) (hscore_lt : M.score rLow < M.score rHigh)\n  (hextended_min_eq :\n    minFiniteChainAdjacentThresholdRateTop M sampleRate = \u2191(minFiniteChainAdjacentThresholdRate M sampleRate)) :\n  EconCSLib.Probability.HasExponentialRate\n    (fun k =>\n      1 -\n        EconCSLib.Probability.finiteUniformFloorPkObjective M sampleRate finiteChainOrderedPairHi\n          finiteChainOrderedPairLo k)\n    (minFiniteChainAdjacentThresholdRate M sampleRate)\n'GJ18InformativeRatingSystems.theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.assumption_positive_match_rates.{u_1} {Seller : Type u_1} (sampleRate : Seller \u2192 \u211d) : Prop\n'GJ18InformativeRatingSystems.assumption_positive_match_rates' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.assumption_positive_integer_sample_rates (gHi gLo : \u2115) : Prop\n'GJ18InformativeRatingSystems.assumption_positive_integer_sample_rates' does not depend on any axioms\nGJ18InformativeRatingSystems.assumption_nonpositive_common_dual_parameters.{u_1} {Pair : Type u_1} (z : Pair \u2192 \u211d) : Prop\n'GJ18InformativeRatingSystems.assumption_nonpositive_common_dual_parameters' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.assumption_pairwise_threshold_minimizer.{u_1, u_2} {Seller : Type u_1} {Rating : Type u_2}\n  [Fintype Rating] [DecidableEq Rating] (M : EconCSLib.Probability.FiniteRatingLDPModel Seller Rating)\n  (sampleRate : Seller \u2192 \u211d) (hi lo : Seller) (a : \u211d) : Prop\n'GJ18InformativeRatingSystems.assumption_pairwise_threshold_minimizer' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.assumption_two_sided_score_witnesses.{u_1, u_2} {Seller : Type u_1} {Rating : Type u_2}\n  [Fintype Rating] [DecidableEq Rating] (M : EconCSLib.Probability.FiniteRatingLDPModel Seller Rating) (gHi gLo : \u2115) :\n  Prop\n'GJ18InformativeRatingSystems.assumption_two_sided_score_witnesses' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.assumption_monotone_rating_scores.{u_1} {Rating : Type u_1} [Preorder Rating]\n  (score : Rating \u2192 \u211d) : Prop\n'GJ18InformativeRatingSystems.assumption_monotone_rating_scores' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.assumption_full_finite_ordinal_rating_support.{u_1, u_2} {Seller : Type u_1}\n  {Rating : Type u_2} [Fintype Rating] [DecidableEq Rating]\n  (M : EconCSLib.Probability.FiniteRatingLDPModel Seller Rating) : Prop\n'GJ18InformativeRatingSystems.assumption_full_finite_ordinal_rating_support' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGJ18InformativeRatingSystems.assumption_score_range_and_strict_span.{u_1} {Rating : Type u_1} (score : Rating \u2192 \u211d)\n  (rLow rHigh : Rating) : Prop\n'GJ18InformativeRatingSystems.assumption_score_range_and_strict_span' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GJ18InformativeRatingSystems\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Scrutinize every visible theorem input semantically: names and source-looking type suffixes are only routing hints, not evidence. Do not approve by theorem label, phrase overlap, or source-looking Lean name. Each input must correspond to a specific paper primitive/source assumption, be derived by a Lean-checked constructor from paper primitives, be an approved external boundary, or remain an unresolved conditional/partial boundary. In particular, any Certificate, Replay, Process, or Bridge input needs a specific source statement or an instantiation path from the paper's primitive model; do not accept it merely because the final theorem name resembles the paper claim.\n\nClassify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/replay/process/bridge/source-model field that states convexity, response semantics, trace/replay validity, transfer preservation, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"lean_source_declaration\": \"theorem definition_log_mgf_formula\\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\\n    (M : FiniteRatingLDPModel Seller Rating) (\\u03b8 : Seller) (z : \\u211d) :\\n    paperLogMGF M \\u03b8 z =\\n      Real.log (\\u2211 y : Rating,\\n        ((M.typeLaw \\u03b8) y).toReal * Real.exp (z * M.score y)) :=\\n  ratingLogMGF_eq_finite_formula M \\u03b8 z\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"definition_log_mgf_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Seller Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel Seller Rating\"\n      },\n      {\n        \"names\": \"\\u03b8\",\n        \"type\": \"Seller\"\n      },\n      {\n        \"names\": \"z\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem definition_rate_function_formula\\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\\n    (M : FiniteRatingLDPModel Seller Rating) (\\u03b8 : Seller) (a : \\u211d) :\\n    paperRateFunction M \\u03b8 a =\\n      sSup (Set.range fun z : \\u211d =>\\n        z * a - paperLogMGF M \\u03b8 z) :=\\n  ratingRateFunction_eq_finite_formula M \\u03b8 a\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"definition_rate_function_formula\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Seller Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel Seller Rating\"\n      },\n      {\n        \"names\": \"\\u03b8\",\n        \"type\": \"Seller\"\n      },\n      {\n        \"names\": \"a\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives\\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\\n    (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller \\u2192 \\u211d)\\n    (hi lo : Seller) (gHi gLo : \\u2115)\\n    (hgHi : 0 < gHi) (hgLo : 0 < gLo)\\n    (hsample_hi : sampleRate hi = (gHi : \\u211d))\\n    (hsample_lo : sampleRate lo = (gLo : \\u211d))\\n    (hbdd_hi :\\n      \\u2200 a : \\u211d, BddAbove (Set.range fun z : \\u211d =>\\n        finiteLegendreValue (M.typeLaw hi) M.score a z))\\n    (hbdd_lo :\\n      \\u2200 a : \\u211d, BddAbove (Set.range fun z : \\u211d =>\\n        finiteLegendreValue (M.typeLaw lo) M.score a z))\\n    (a z : \\u211d)\\n    (hderiv_hi :\\n      HasDerivAt (fun t : \\u211d => M.logMGF hi t) a\\n        (z * (gHi : \\u211d)\\u207b\\u00b9))\\n    (hderiv_lo :\\n      HasDerivAt (fun t : \\u211d => M.logMGF lo t) a\\n        (-(z * (gLo : \\u211d)\\u207b\\u00b9)))\\n    (hmean :\\n      0 \\u2264\\n        EconCSLib.pmfExp (twoSampleRateBlockLaw M hi lo gHi gLo)\\n          (twoSampleRateBlockScore M gHi gLo))\\n    {samplePos sampleNeg : (Fin gHi \\u2192 Rating) \\u00d7 (Fin gLo \\u2192 Rating)}\\n    (hmassPos :\\n      0 < (twoSampleRateBlockLaw M hi lo gHi gLo samplePos).toReal)\\n    (hscorePos : 0 < twoSampleRateBlockScore M gHi gLo samplePos)\\n    (hmassNeg :\\n      0 < (twoSampleRateBlockLaw M hi lo gHi gLo sampleNeg).toReal)\\n    (hscoreNeg : twoSampleRateBlockScore M gHi gLo sampleNeg < 0) :\\n    ExponentialRateCertificate\\n      (fun n : \\u2115 =>\\n        twoSamplePkComplementErrorProb M hi lo\\n          (n * gHi) (n * gLo) ((gHi : \\u211d)\\u207b\\u00b9) ((gLo : \\u211d)\\u207b\\u00b9))\\n      (pairwiseSellerThresholdRate M sampleRate hi lo) :=\\n  twoSamplePkComplementError_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives\\n    M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo\\n    hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hmean\\n    hmassPos hscorePos hmassNeg hscoreNeg\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Seller Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel Seller Rating\"\n      },\n      {\n        \"names\": \"sampleRate\",\n        \"type\": \"Seller \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hi lo\",\n        \"type\": \"Seller\"\n      },\n      {\n        \"names\": \"gHi gLo\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"hgHi\",\n        \"type\": \"0 < gHi\"\n      },\n      {\n        \"names\": \"hgLo\",\n        \"type\": \"0 < gLo\"\n      },\n      {\n        \"names\": \"hsample_hi\",\n        \"type\": \"sampleRate hi = (gHi : \\u211d)\"\n      },\n      {\n        \"names\": \"hsample_lo\",\n        \"type\": \"sampleRate lo = (gLo : \\u211d)\"\n      },\n      {\n        \"names\": \"hbdd_hi\",\n        \"type\": \"\\u2200 a : \\u211d, BddAbove (Set.range fun z : \\u211d => finiteLegendreValue (M.typeLaw hi) M.score a z)\"\n      },\n      {\n        \"names\": \"hbdd_lo\",\n        \"type\": \"\\u2200 a : \\u211d, BddAbove (Set.range fun z : \\u211d => finiteLegendreValue (M.typeLaw lo) M.score a z)\"\n      },\n      {\n        \"names\": \"a z\",\n        \"type\": \"\\u211d\"\n      },\n      {\n        \"names\": \"hderiv_hi\",\n        \"type\": \"HasDerivAt (fun t : \\u211d => M.logMGF hi t) a (z * (gHi : \\u211d)\\u207b\\u00b9)\"\n      },\n      {\n        \"names\": \"hderiv_lo\",\n        \"type\": \"HasDerivAt (fun t : \\u211d => M.logMGF lo t) a (-(z * (gLo : \\u211d)\\u207b\\u00b9))\"\n      },\n      {\n        \"names\": \"hmean\",\n        \"type\": \"0 \\u2264 EconCSLib.pmfExp (twoSampleRateBlockLaw M hi lo gHi gLo) (twoSampleRateBlockScore M gHi gLo)\"\n      },\n      {\n        \"names\": \"samplePos sampleNeg\",\n        \"type\": \"(Fin gHi \\u2192 Rating) \\u00d7 (Fin gLo \\u2192 Rating)\"\n      },\n      {\n        \"names\": \"hmassPos\",\n        \"type\": \"0 < (twoSampleRateBlockLaw M hi lo gHi gLo samplePos).toReal\"\n      },\n      {\n        \"names\": \"hscorePos\",\n        \"type\": \"0 < twoSampleRateBlockScore M gHi gLo samplePos\"\n      },\n      {\n        \"names\": \"hmassNeg\",\n        \"type\": \"0 < (twoSampleRateBlockLaw M hi lo gHi gLo sampleNeg).toReal\"\n      },\n      {\n        \"names\": \"hscoreNeg\",\n        \"type\": \"twoSampleRateBlockScore M gHi gLo sampleNeg < 0\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law\\n    {n : \\u2115} {Rating : Type*} [Fintype Rating] [DecidableEq Rating]\\n    [DecidableEq (finiteChainOrderedPair n)]\\n    [Nonempty (finiteChainAdjacentIndex n)]\\n    (M : FiniteRatingLDPModel (Fin n) Rating) (sampleRate : Fin n \\u2192 \\u211d)\\n    (hpositive_sample : \\u2200 \\u03b8 : Fin n, 0 < sampleRate \\u03b8)\\n    (a z : finiteChainOrderedPair n \\u2192 \\u211d)\\n    (hz : \\u2200 p : finiteChainOrderedPair n, z p \\u2264 0)\\n    (hderiv_hi :\\n      \\u2200 p : finiteChainOrderedPair n,\\n        HasDerivAt\\n          (fun t : \\u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p)\\n          (z p * (sampleRate (finiteChainOrderedPairHi p))\\u207b\\u00b9))\\n    (hderiv_lo :\\n      \\u2200 p : finiteChainOrderedPair n,\\n        HasDerivAt\\n          (fun t : \\u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p)\\n          (-(z p * (sampleRate (finiteChainOrderedPairLo p))\\u207b\\u00b9)))\\n    (hthreshold_min :\\n      \\u2200 p : finiteChainOrderedPair n, \\u2200 b : \\u211d,\\n        M.pairwiseRateObjective sampleRate\\n            (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) (a p) \\u2264\\n          M.pairwiseRateObjective sampleRate\\n            (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) b)\\n    (hstraddle_hi :\\n      \\u2200 p : finiteChainOrderedPair n,\\n        ratingLawStraddlesThreshold M (finiteChainOrderedPairHi p) (a p))\\n    (hstraddle_lo :\\n      \\u2200 p : finiteChainOrderedPair n,\\n        ratingLawStraddlesThreshold M (finiteChainOrderedPairLo p) (a p)) :\\n    HasExponentialRate\\n      (fun k : \\u2115 =>\\n        1 - finiteUniformFloorPkObjective M sampleRate\\n          finiteChainOrderedPairHi finiteChainOrderedPairLo k)\\n      (minFiniteChainAdjacentThresholdRate M sampleRate) :=\\n  finiteChainUniformFloorPkObjective_oneSub_hasExponentialRate_of_joint_floor_rating_law_min_rate\\n    M sampleRate hpositive_sample a z hz hderiv_hi hderiv_lo hthreshold_min\\n    hstraddle_hi hstraddle_lo\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel (Fin n) Rating\"\n      },\n      {\n        \"names\": \"sampleRate\",\n        \"type\": \"Fin n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hpositive_sample\",\n        \"type\": \"\\u2200 \\u03b8 : Fin n, 0 < sampleRate \\u03b8\"\n      },\n      {\n        \"names\": \"a z\",\n        \"type\": \"finiteChainOrderedPair n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hz\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, z p \\u2264 0\"\n      },\n      {\n        \"names\": \"hderiv_hi\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \\u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p) (z p * (sampleRate (finiteChainOrderedPairHi p))\\u207b\\u00b9)\"\n      },\n      {\n        \"names\": \"hderiv_lo\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \\u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p) (-(z p * (sampleRate (finiteChainOrderedPairLo p))\\u207b\\u00b9))\"\n      },\n      {\n        \"names\": \"hthreshold_min\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, \\u2200 b : \\u211d, M.pairwiseRateObjective sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) (a p) \\u2264 M.pairwiseRateObjective sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) b\"\n      },\n      {\n        \"names\": \"hstraddle_hi\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, ratingLawStraddlesThreshold M (finiteChainOrderedPairHi p) (a p)\"\n      },\n      {\n        \"names\": \"hstraddle_lo\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, ratingLawStraddlesThreshold M (finiteChainOrderedPairLo p) (a p)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives\\n    {n : \\u2115} {Rating : Type*} [Fintype Rating] [DecidableEq Rating]\\n    [Nonempty (finiteChainAdjacentIndex n)]\\n    (M : FiniteRatingLDPModel (Fin n) Rating) (sampleRate : Fin n \\u2192 \\u211d)\\n    (hpositive_sample : \\u2200 \\u03b8 : Fin n, 0 < sampleRate \\u03b8)\\n    (a z : finiteChainOrderedPair n \\u2192 \\u211d)\\n    (hderiv_hi :\\n      \\u2200 p : finiteChainOrderedPair n,\\n        HasDerivAt\\n          (fun t : \\u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p)\\n          (z p * (sampleRate (finiteChainOrderedPairHi p))\\u207b\\u00b9))\\n    (hderiv_lo :\\n      \\u2200 p : finiteChainOrderedPair n,\\n        HasDerivAt\\n          (fun t : \\u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p)\\n          (-(z p * (sampleRate (finiteChainOrderedPairLo p))\\u207b\\u00b9))) :\\n    minFiniteChainAdjacentThresholdRateTop M sampleRate =\\n      (minFiniteChainAdjacentObjectiveRate M sampleRate a : WithTop \\u211d) :=\\n  minFiniteChainAdjacentThresholdRateTop_eq_coe_minFiniteChainAdjacentObjectiveRate_of_common_logMGF_derivatives\\n    M sampleRate hpositive_sample a z hderiv_hi hderiv_lo\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel (Fin n) Rating\"\n      },\n      {\n        \"names\": \"sampleRate\",\n        \"type\": \"Fin n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hpositive_sample\",\n        \"type\": \"\\u2200 \\u03b8 : Fin n, 0 < sampleRate \\u03b8\"\n      },\n      {\n        \"names\": \"a z\",\n        \"type\": \"finiteChainOrderedPair n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hderiv_hi\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \\u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p) (z p * (sampleRate (finiteChainOrderedPairHi p))\\u207b\\u00b9)\"\n      },\n      {\n        \"names\": \"hderiv_lo\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \\u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p) (-(z p * (sampleRate (finiteChainOrderedPairLo p))\\u207b\\u00b9))\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support\\n    {n m : \\u2115}\\n    [DecidableEq (finiteChainOrderedPair n)]\\n    [Nonempty (finiteChainAdjacentIndex n)]\\n    (M : FiniteRatingLDPModel (Fin n) (Fin (m + 1)))\\n    (sampleRate : Fin n \\u2192 \\u211d)\\n    (hpositive_sample : \\u2200 \\u03b8 : Fin n, 0 < sampleRate \\u03b8)\\n    (htail :\\n      \\u2200 p : finiteChainOrderedPair n, \\u2200 t : Fin (m + 1),\\n        EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairLo p))\\n            (fun r => t \\u2264 r) \\u2264\\n          EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairHi p))\\n            (fun r => t \\u2264 r))\\n    (hscore_mono : Monotone M.score)\\n    (hfull_support : M.fullSupport)\\n    (hscore_lt : M.score 0 < M.score (Fin.last m)) :\\n    HasExtendedExponentialRate\\n      (fun k : \\u2115 =>\\n        1 - finiteUniformFloorPkObjective M sampleRate\\n          finiteChainOrderedPairHi finiteChainOrderedPairLo k)\\n      (minFiniteChainAdjacentThresholdRateTop M sampleRate) :=\\n  finiteChainUniformFloorPkObjective_oneSub_hasExtendedExponentialRate_of_joint_floor_rating_law_min_threshold_rate_top_of_rating_tail_dominance_and_full_support\\n    M sampleRate hpositive_sample htail hscore_mono hfull_support hscore_lt\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n m\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel (Fin n) (Fin (m + 1))\"\n      },\n      {\n        \"names\": \"sampleRate\",\n        \"type\": \"Fin n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hpositive_sample\",\n        \"type\": \"\\u2200 \\u03b8 : Fin n, 0 < sampleRate \\u03b8\"\n      },\n      {\n        \"names\": \"htail\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, \\u2200 t : Fin (m + 1), EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairLo p)) (fun r => t \\u2264 r) \\u2264 EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairHi p)) (fun r => t \\u2264 r)\"\n      },\n      {\n        \"names\": \"hscore_mono\",\n        \"type\": \"Monotone M.score\"\n      },\n      {\n        \"names\": \"hfull_support\",\n        \"type\": \"M.fullSupport\"\n      },\n      {\n        \"names\": \"hscore_lt\",\n        \"type\": \"M.score 0 < M.score (Fin.last m)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"theorem theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq\\n    {n : \\u2115} {Rating : Type*} [Fintype Rating] [DecidableEq Rating]\\n    [DecidableEq (finiteChainOrderedPair n)]\\n    [Nonempty (finiteChainAdjacentIndex n)]\\n    (M : FiniteRatingLDPModel (Fin n) Rating) (sampleRate : Fin n \\u2192 \\u211d)\\n    (hpositive_sample : \\u2200 \\u03b8 : Fin n, 0 < sampleRate \\u03b8)\\n    (a z : finiteChainOrderedPair n \\u2192 \\u211d)\\n    (hz : \\u2200 p : finiteChainOrderedPair n, z p \\u2264 0)\\n    (hderiv_hi :\\n      \\u2200 p : finiteChainOrderedPair n,\\n        HasDerivAt\\n          (fun t : \\u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p)\\n          (z p * (sampleRate (finiteChainOrderedPairHi p))\\u207b\\u00b9))\\n    (hderiv_lo :\\n      \\u2200 p : finiteChainOrderedPair n,\\n        HasDerivAt\\n          (fun t : \\u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p)\\n          (-(z p * (sampleRate (finiteChainOrderedPairLo p))\\u207b\\u00b9)))\\n    (rLow rHigh : Rating)\\n    (hmass_low : \\u2200 \\u03b8 : Fin n, 0 < (M.typeLaw \\u03b8 rLow).toReal)\\n    (hmass_high : \\u2200 \\u03b8 : Fin n, 0 < (M.typeLaw \\u03b8 rHigh).toReal)\\n    (hscore_low_le : \\u2200 r : Rating, M.score rLow \\u2264 M.score r)\\n    (hscore_le_high : \\u2200 r : Rating, M.score r \\u2264 M.score rHigh)\\n    (hscore_lt : M.score rLow < M.score rHigh)\\n    (hextended_min_eq :\\n      minFiniteChainAdjacentThresholdRateTop M sampleRate =\\n        (minFiniteChainAdjacentThresholdRate M sampleRate : WithTop \\u211d)) :\\n    HasExponentialRate\\n      (fun k : \\u2115 =>\\n        1 - finiteUniformFloorPkObjective M sampleRate\\n          finiteChainOrderedPairHi finiteChainOrderedPairLo k)\\n      (minFiniteChainAdjacentThresholdRate M sampleRate) :=\\n  finiteChainUniformFloorPkObjective_oneSub_hasExponentialRate_of_joint_floor_rating_law_min_threshold_rate_of_score_bounds_of_extended_min_eq\\n    M sampleRate hpositive_sample a z hz hderiv_hi hderiv_lo\\n    rLow rHigh hmass_low hmass_high hscore_low_le hscore_le_high hscore_lt\\n    hextended_min_eq\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"n\",\n        \"type\": \"\\u2115\"\n      },\n      {\n        \"names\": \"Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel (Fin n) Rating\"\n      },\n      {\n        \"names\": \"sampleRate\",\n        \"type\": \"Fin n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hpositive_sample\",\n        \"type\": \"\\u2200 \\u03b8 : Fin n, 0 < sampleRate \\u03b8\"\n      },\n      {\n        \"names\": \"a z\",\n        \"type\": \"finiteChainOrderedPair n \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hz\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, z p \\u2264 0\"\n      },\n      {\n        \"names\": \"hderiv_hi\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \\u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p) (z p * (sampleRate (finiteChainOrderedPairHi p))\\u207b\\u00b9)\"\n      },\n      {\n        \"names\": \"hderiv_lo\",\n        \"type\": \"\\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \\u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p) (-(z p * (sampleRate (finiteChainOrderedPairLo p))\\u207b\\u00b9))\"\n      },\n      {\n        \"names\": \"rLow rHigh\",\n        \"type\": \"Rating\"\n      },\n      {\n        \"names\": \"hmass_low\",\n        \"type\": \"\\u2200 \\u03b8 : Fin n, 0 < (M.typeLaw \\u03b8 rLow).toReal\"\n      },\n      {\n        \"names\": \"hmass_high\",\n        \"type\": \"\\u2200 \\u03b8 : Fin n, 0 < (M.typeLaw \\u03b8 rHigh).toReal\"\n      },\n      {\n        \"names\": \"hscore_low_le\",\n        \"type\": \"\\u2200 r : Rating, M.score rLow \\u2264 M.score r\"\n      },\n      {\n        \"names\": \"hscore_le_high\",\n        \"type\": \"\\u2200 r : Rating, M.score r \\u2264 M.score rHigh\"\n      },\n      {\n        \"names\": \"hscore_lt\",\n        \"type\": \"M.score rLow < M.score rHigh\"\n      },\n      {\n        \"names\": \"hextended_min_eq\",\n        \"type\": \"minFiniteChainAdjacentThresholdRateTop M sampleRate = (minFiniteChainAdjacentThresholdRate M sampleRate : WithTop \\u211d)\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_positive_match_rates {Seller : Type*}\\n    (sampleRate : Seller \\u2192 \\u211d) : Prop :=\\n  \\u2200 \\u03b8 : Seller, 0 < sampleRate \\u03b8\\n\\n                                                                      \\n-- audit-premise: hgHi : 0 < gHi\\n-- audit-premise: hgLo : 0 < gLo\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_positive_match_rates\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Seller\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"sampleRate\",\n        \"type\": \"Seller \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_positive_integer_sample_rates (gHi gLo : \\u2115) : Prop :=\\n  0 < gHi \\u2227 0 < gLo\\n\\n                                                                               \\n-- audit-premise: hz : z \\u2264 0\\n-- audit-premise: hz : \\u2200 p : finiteChainOrderedPair n, z p \\u2264 0\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_positive_integer_sample_rates\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"gHi gLo\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_nonpositive_common_dual_parameters {Pair : Type*}\\n    (z : Pair \\u2192 \\u211d) : Prop :=\\n  \\u2200 p : Pair, z p \\u2264 0\\n\\n                                                                                   \\n-- audit-premise: hthreshold_min : \\u2200 b : \\u211d, M.pairwiseRateObjective sampleRate hi lo a \\u2264 M.pairwiseRateObjective sampleRate hi lo b\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_nonpositive_common_dual_parameters\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Pair\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"z\",\n        \"type\": \"Pair \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_pairwise_threshold_minimizer\\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\\n    (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller \\u2192 \\u211d)\\n    (hi lo : Seller) (a : \\u211d) : Prop :=\\n  \\u2200 b : \\u211d,\\n    M.pairwiseRateObjective sampleRate hi lo a \\u2264\\n      M.pairwiseRateObjective sampleRate hi lo b\\n\\n                                                                                        \\n-- audit-premise: hscorePos : 0 < twoSampleRateBlockScore M gHi gLo samplePos\\n-- audit-premise: hscoreNeg : twoSampleRateBlockScore M gHi gLo sampleNeg < 0\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_pairwise_threshold_minimizer\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Seller Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel Seller Rating\"\n      },\n      {\n        \"names\": \"sampleRate\",\n        \"type\": \"Seller \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"hi lo\",\n        \"type\": \"Seller\"\n      },\n      {\n        \"names\": \"a\",\n        \"type\": \"\\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_two_sided_score_witnesses\\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\\n    (M : FiniteRatingLDPModel Seller Rating) (gHi gLo : \\u2115) : Prop :=\\n  \\u2203 samplePos sampleNeg : (Fin gHi \\u2192 Rating) \\u00d7 (Fin gLo \\u2192 Rating),\\n    0 < twoSampleRateBlockScore M gHi gLo samplePos \\u2227\\n      twoSampleRateBlockScore M gHi gLo sampleNeg < 0\\n\\n                                                                            \\n-- audit-premise: hscore_mono : Monotone M.score\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_two_sided_score_witnesses\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Seller Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel Seller Rating\"\n      },\n      {\n        \"names\": \"gHi gLo\",\n        \"type\": \"\\u2115\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_monotone_rating_scores {Rating : Type*} [Preorder Rating]\\n    (score : Rating \\u2192 \\u211d) : Prop :=\\n  Monotone score\\n\\n                                                                                 \\n-- audit-premise: hfull_support : M.fullSupport\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_monotone_rating_scores\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"score\",\n        \"type\": \"Rating \\u2192 \\u211d\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_full_finite_ordinal_rating_support\\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\\n    (M : FiniteRatingLDPModel Seller Rating) : Prop :=\\n  M.fullSupport\\n\\n                                                                      \\n-- audit-premise: hscore_low_le : \\u2200 r : Rating, M.score rLow \\u2264 M.score r\\n-- audit-premise: hscore_le_high : \\u2200 r : Rating, M.score r \\u2264 M.score rHigh\\n-- audit-premise: hscore_lt : M.score rLow < M.score rHigh\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_full_finite_ordinal_rating_support\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Seller Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"M\",\n        \"type\": \"FiniteRatingLDPModel Seller Rating\"\n      }\n    ]\n  },\n  {\n    \"lean_source_declaration\": \"abbrev assumption_score_range_and_strict_span {Rating : Type*}\\n    (score : Rating \\u2192 \\u211d) (rLow rHigh : Rating) : Prop :=\\n  (\\u2200 r : Rating, score rLow \\u2264 score r) \\u2227\\n    (\\u2200 r : Rating, score r \\u2264 score rHigh) \\u2227\\n      score rLow < score rHigh\",\n    \"record_premises\": [],\n    \"required_check\": \"Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.\",\n    \"row\": \"assumption_score_range_and_strict_span\",\n    \"visible_inputs\": [\n      {\n        \"names\": \"Rating\",\n        \"type\": \"Type*\"\n      },\n      {\n        \"names\": \"score\",\n        \"type\": \"Rating \\u2192 \\u211d\"\n      },\n      {\n        \"names\": \"rLow rHigh\",\n        \"type\": \"Rating\"\n      }\n    ]\n  }\n]",
+  "paper": "GJ18InformativeRatingSystems",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/GJ18InformativeRatingSystems",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 0,
+  "recursive_field_items": [],
+  "review_row_count": 15,
+  "row_visible_inputs": {
+    "assumption_full_finite_ordinal_rating_support": [
+      {
+        "names": "Seller Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel Seller Rating"
+      }
+    ],
+    "assumption_monotone_rating_scores": [
+      {
+        "names": "Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "score",
+        "type": "Rating \u2192 \u211d"
+      }
+    ],
+    "assumption_nonpositive_common_dual_parameters": [
+      {
+        "names": "Pair",
+        "type": "Type*"
+      },
+      {
+        "names": "z",
+        "type": "Pair \u2192 \u211d"
+      }
+    ],
+    "assumption_pairwise_threshold_minimizer": [
+      {
+        "names": "Seller Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel Seller Rating"
+      },
+      {
+        "names": "sampleRate",
+        "type": "Seller \u2192 \u211d"
+      },
+      {
+        "names": "hi lo",
+        "type": "Seller"
+      },
+      {
+        "names": "a",
+        "type": "\u211d"
+      }
+    ],
+    "assumption_positive_integer_sample_rates": [
+      {
+        "names": "gHi gLo",
+        "type": "\u2115"
+      }
+    ],
+    "assumption_positive_match_rates": [
+      {
+        "names": "Seller",
+        "type": "Type*"
+      },
+      {
+        "names": "sampleRate",
+        "type": "Seller \u2192 \u211d"
+      }
+    ],
+    "assumption_score_range_and_strict_span": [
+      {
+        "names": "Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "score",
+        "type": "Rating \u2192 \u211d"
+      },
+      {
+        "names": "rLow rHigh",
+        "type": "Rating"
+      }
+    ],
+    "assumption_two_sided_score_witnesses": [
+      {
+        "names": "Seller Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel Seller Rating"
+      },
+      {
+        "names": "gHi gLo",
+        "type": "\u2115"
+      }
+    ],
+    "definition_log_mgf_formula": [
+      {
+        "names": "Seller Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel Seller Rating"
+      },
+      {
+        "names": "\u03b8",
+        "type": "Seller"
+      },
+      {
+        "names": "z",
+        "type": "\u211d"
+      }
+    ],
+    "definition_rate_function_formula": [
+      {
+        "names": "Seller Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel Seller Rating"
+      },
+      {
+        "names": "\u03b8",
+        "type": "Seller"
+      },
+      {
+        "names": "a",
+        "type": "\u211d"
+      }
+    ],
+    "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives": [
+      {
+        "names": "Seller Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel Seller Rating"
+      },
+      {
+        "names": "sampleRate",
+        "type": "Seller \u2192 \u211d"
+      },
+      {
+        "names": "hi lo",
+        "type": "Seller"
+      },
+      {
+        "names": "gHi gLo",
+        "type": "\u2115"
+      },
+      {
+        "names": "hgHi",
+        "type": "0 < gHi"
+      },
+      {
+        "names": "hgLo",
+        "type": "0 < gLo"
+      },
+      {
+        "names": "hsample_hi",
+        "type": "sampleRate hi = (gHi : \u211d)"
+      },
+      {
+        "names": "hsample_lo",
+        "type": "sampleRate lo = (gLo : \u211d)"
+      },
+      {
+        "names": "hbdd_hi",
+        "type": "\u2200 a : \u211d, BddAbove (Set.range fun z : \u211d => finiteLegendreValue (M.typeLaw hi) M.score a z)"
+      },
+      {
+        "names": "hbdd_lo",
+        "type": "\u2200 a : \u211d, BddAbove (Set.range fun z : \u211d => finiteLegendreValue (M.typeLaw lo) M.score a z)"
+      },
+      {
+        "names": "a z",
+        "type": "\u211d"
+      },
+      {
+        "names": "hderiv_hi",
+        "type": "HasDerivAt (fun t : \u211d => M.logMGF hi t) a (z * (gHi : \u211d)\u207b\u00b9)"
+      },
+      {
+        "names": "hderiv_lo",
+        "type": "HasDerivAt (fun t : \u211d => M.logMGF lo t) a (-(z * (gLo : \u211d)\u207b\u00b9))"
+      },
+      {
+        "names": "hmean",
+        "type": "0 \u2264 EconCSLib.pmfExp (twoSampleRateBlockLaw M hi lo gHi gLo) (twoSampleRateBlockScore M gHi gLo)"
+      },
+      {
+        "names": "samplePos sampleNeg",
+        "type": "(Fin gHi \u2192 Rating) \u00d7 (Fin gLo \u2192 Rating)"
+      },
+      {
+        "names": "hmassPos",
+        "type": "0 < (twoSampleRateBlockLaw M hi lo gHi gLo samplePos).toReal"
+      },
+      {
+        "names": "hscorePos",
+        "type": "0 < twoSampleRateBlockScore M gHi gLo samplePos"
+      },
+      {
+        "names": "hmassNeg",
+        "type": "0 < (twoSampleRateBlockLaw M hi lo gHi gLo sampleNeg).toReal"
+      },
+      {
+        "names": "hscoreNeg",
+        "type": "twoSampleRateBlockScore M gHi gLo sampleNeg < 0"
+      }
+    ],
+    "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives": [
+      {
+        "names": "n",
+        "type": "\u2115"
+      },
+      {
+        "names": "Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel (Fin n) Rating"
+      },
+      {
+        "names": "sampleRate",
+        "type": "Fin n \u2192 \u211d"
+      },
+      {
+        "names": "hpositive_sample",
+        "type": "\u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8"
+      },
+      {
+        "names": "a z",
+        "type": "finiteChainOrderedPair n \u2192 \u211d"
+      },
+      {
+        "names": "hderiv_hi",
+        "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p) (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9)"
+      },
+      {
+        "names": "hderiv_lo",
+        "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p) (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9))"
+      }
+    ],
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law": [
+      {
+        "names": "n",
+        "type": "\u2115"
+      },
+      {
+        "names": "Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel (Fin n) Rating"
+      },
+      {
+        "names": "sampleRate",
+        "type": "Fin n \u2192 \u211d"
+      },
+      {
+        "names": "hpositive_sample",
+        "type": "\u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8"
+      },
+      {
+        "names": "a z",
+        "type": "finiteChainOrderedPair n \u2192 \u211d"
+      },
+      {
+        "names": "hz",
+        "type": "\u2200 p : finiteChainOrderedPair n, z p \u2264 0"
+      },
+      {
+        "names": "hderiv_hi",
+        "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p) (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9)"
+      },
+      {
+        "names": "hderiv_lo",
+        "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p) (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9))"
+      },
+      {
+        "names": "hthreshold_min",
+        "type": "\u2200 p : finiteChainOrderedPair n, \u2200 b : \u211d, M.pairwiseRateObjective sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) (a p) \u2264 M.pairwiseRateObjective sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) b"
+      },
+      {
+        "names": "hstraddle_hi",
+        "type": "\u2200 p : finiteChainOrderedPair n, ratingLawStraddlesThreshold M (finiteChainOrderedPairHi p) (a p)"
+      },
+      {
+        "names": "hstraddle_lo",
+        "type": "\u2200 p : finiteChainOrderedPair n, ratingLawStraddlesThreshold M (finiteChainOrderedPairLo p) (a p)"
+      }
+    ],
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq": [
+      {
+        "names": "n",
+        "type": "\u2115"
+      },
+      {
+        "names": "Rating",
+        "type": "Type*"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel (Fin n) Rating"
+      },
+      {
+        "names": "sampleRate",
+        "type": "Fin n \u2192 \u211d"
+      },
+      {
+        "names": "hpositive_sample",
+        "type": "\u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8"
+      },
+      {
+        "names": "a z",
+        "type": "finiteChainOrderedPair n \u2192 \u211d"
+      },
+      {
+        "names": "hz",
+        "type": "\u2200 p : finiteChainOrderedPair n, z p \u2264 0"
+      },
+      {
+        "names": "hderiv_hi",
+        "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p) (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9)"
+      },
+      {
+        "names": "hderiv_lo",
+        "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p) (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9))"
+      },
+      {
+        "names": "rLow rHigh",
+        "type": "Rating"
+      },
+      {
+        "names": "hmass_low",
+        "type": "\u2200 \u03b8 : Fin n, 0 < (M.typeLaw \u03b8 rLow).toReal"
+      },
+      {
+        "names": "hmass_high",
+        "type": "\u2200 \u03b8 : Fin n, 0 < (M.typeLaw \u03b8 rHigh).toReal"
+      },
+      {
+        "names": "hscore_low_le",
+        "type": "\u2200 r : Rating, M.score rLow \u2264 M.score r"
+      },
+      {
+        "names": "hscore_le_high",
+        "type": "\u2200 r : Rating, M.score r \u2264 M.score rHigh"
+      },
+      {
+        "names": "hscore_lt",
+        "type": "M.score rLow < M.score rHigh"
+      },
+      {
+        "names": "hextended_min_eq",
+        "type": "minFiniteChainAdjacentThresholdRateTop M sampleRate = (minFiniteChainAdjacentThresholdRate M sampleRate : WithTop \u211d)"
+      }
+    ],
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support": [
+      {
+        "names": "n m",
+        "type": "\u2115"
+      },
+      {
+        "names": "M",
+        "type": "FiniteRatingLDPModel (Fin n) (Fin (m + 1))"
+      },
+      {
+        "names": "sampleRate",
+        "type": "Fin n \u2192 \u211d"
+      },
+      {
+        "names": "hpositive_sample",
+        "type": "\u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8"
+      },
+      {
+        "names": "htail",
+        "type": "\u2200 p : finiteChainOrderedPair n, \u2200 t : Fin (m + 1), EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairLo p)) (fun r => t \u2264 r) \u2264 EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairHi p)) (fun r => t \u2264 r)"
+      },
+      {
+        "names": "hscore_mono",
+        "type": "Monotone M.score"
+      },
+      {
+        "names": "hfull_support",
+        "type": "M.fullSupport"
+      },
+      {
+        "names": "hscore_lt",
+        "type": "M.score 0 < M.score (Fin.last m)"
+      }
+    ]
+  },
+  "rows_with_record_premises": [],
+  "rows_with_semantic_inputs": [
+    {
+      "lean_source_declaration": "theorem definition_log_mgf_formula\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\n    (M : FiniteRatingLDPModel Seller Rating) (\u03b8 : Seller) (z : \u211d) :\n    paperLogMGF M \u03b8 z =\n      Real.log (\u2211 y : Rating,\n        ((M.typeLaw \u03b8) y).toReal * Real.exp (z * M.score y)) :=\n  ratingLogMGF_eq_finite_formula M \u03b8 z",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "definition_log_mgf_formula",
+      "visible_inputs": [
+        {
+          "names": "Seller Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel Seller Rating"
+        },
+        {
+          "names": "\u03b8",
+          "type": "Seller"
+        },
+        {
+          "names": "z",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem definition_rate_function_formula\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\n    (M : FiniteRatingLDPModel Seller Rating) (\u03b8 : Seller) (a : \u211d) :\n    paperRateFunction M \u03b8 a =\n      sSup (Set.range fun z : \u211d =>\n        z * a - paperLogMGF M \u03b8 z) :=\n  ratingRateFunction_eq_finite_formula M \u03b8 a",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "definition_rate_function_formula",
+      "visible_inputs": [
+        {
+          "names": "Seller Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel Seller Rating"
+        },
+        {
+          "names": "\u03b8",
+          "type": "Seller"
+        },
+        {
+          "names": "a",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\n    (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller \u2192 \u211d)\n    (hi lo : Seller) (gHi gLo : \u2115)\n    (hgHi : 0 < gHi) (hgLo : 0 < gLo)\n    (hsample_hi : sampleRate hi = (gHi : \u211d))\n    (hsample_lo : sampleRate lo = (gLo : \u211d))\n    (hbdd_hi :\n      \u2200 a : \u211d, BddAbove (Set.range fun z : \u211d =>\n        finiteLegendreValue (M.typeLaw hi) M.score a z))\n    (hbdd_lo :\n      \u2200 a : \u211d, BddAbove (Set.range fun z : \u211d =>\n        finiteLegendreValue (M.typeLaw lo) M.score a z))\n    (a z : \u211d)\n    (hderiv_hi :\n      HasDerivAt (fun t : \u211d => M.logMGF hi t) a\n        (z * (gHi : \u211d)\u207b\u00b9))\n    (hderiv_lo :\n      HasDerivAt (fun t : \u211d => M.logMGF lo t) a\n        (-(z * (gLo : \u211d)\u207b\u00b9)))\n    (hmean :\n      0 \u2264\n        EconCSLib.pmfExp (twoSampleRateBlockLaw M hi lo gHi gLo)\n          (twoSampleRateBlockScore M gHi gLo))\n    {samplePos sampleNeg : (Fin gHi \u2192 Rating) \u00d7 (Fin gLo \u2192 Rating)}\n    (hmassPos :\n      0 < (twoSampleRateBlockLaw M hi lo gHi gLo samplePos).toReal)\n    (hscorePos : 0 < twoSampleRateBlockScore M gHi gLo samplePos)\n    (hmassNeg :\n      0 < (twoSampleRateBlockLaw M hi lo gHi gLo sampleNeg).toReal)\n    (hscoreNeg : twoSampleRateBlockScore M gHi gLo sampleNeg < 0) :\n    ExponentialRateCertificate\n      (fun n : \u2115 =>\n        twoSamplePkComplementErrorProb M hi lo\n          (n * gHi) (n * gLo) ((gHi : \u211d)\u207b\u00b9) ((gLo : \u211d)\u207b\u00b9))\n      (pairwiseSellerThresholdRate M sampleRate hi lo) :=\n  twoSamplePkComplementError_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives\n    M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo\n    hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hmean\n    hmassPos hscorePos hmassNeg hscoreNeg",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives",
+      "visible_inputs": [
+        {
+          "names": "Seller Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel Seller Rating"
+        },
+        {
+          "names": "sampleRate",
+          "type": "Seller \u2192 \u211d"
+        },
+        {
+          "names": "hi lo",
+          "type": "Seller"
+        },
+        {
+          "names": "gHi gLo",
+          "type": "\u2115"
+        },
+        {
+          "names": "hgHi",
+          "type": "0 < gHi"
+        },
+        {
+          "names": "hgLo",
+          "type": "0 < gLo"
+        },
+        {
+          "names": "hsample_hi",
+          "type": "sampleRate hi = (gHi : \u211d)"
+        },
+        {
+          "names": "hsample_lo",
+          "type": "sampleRate lo = (gLo : \u211d)"
+        },
+        {
+          "names": "hbdd_hi",
+          "type": "\u2200 a : \u211d, BddAbove (Set.range fun z : \u211d => finiteLegendreValue (M.typeLaw hi) M.score a z)"
+        },
+        {
+          "names": "hbdd_lo",
+          "type": "\u2200 a : \u211d, BddAbove (Set.range fun z : \u211d => finiteLegendreValue (M.typeLaw lo) M.score a z)"
+        },
+        {
+          "names": "a z",
+          "type": "\u211d"
+        },
+        {
+          "names": "hderiv_hi",
+          "type": "HasDerivAt (fun t : \u211d => M.logMGF hi t) a (z * (gHi : \u211d)\u207b\u00b9)"
+        },
+        {
+          "names": "hderiv_lo",
+          "type": "HasDerivAt (fun t : \u211d => M.logMGF lo t) a (-(z * (gLo : \u211d)\u207b\u00b9))"
+        },
+        {
+          "names": "hmean",
+          "type": "0 \u2264 EconCSLib.pmfExp (twoSampleRateBlockLaw M hi lo gHi gLo) (twoSampleRateBlockScore M gHi gLo)"
+        },
+        {
+          "names": "samplePos sampleNeg",
+          "type": "(Fin gHi \u2192 Rating) \u00d7 (Fin gLo \u2192 Rating)"
+        },
+        {
+          "names": "hmassPos",
+          "type": "0 < (twoSampleRateBlockLaw M hi lo gHi gLo samplePos).toReal"
+        },
+        {
+          "names": "hscorePos",
+          "type": "0 < twoSampleRateBlockScore M gHi gLo samplePos"
+        },
+        {
+          "names": "hmassNeg",
+          "type": "0 < (twoSampleRateBlockLaw M hi lo gHi gLo sampleNeg).toReal"
+        },
+        {
+          "names": "hscoreNeg",
+          "type": "twoSampleRateBlockScore M gHi gLo sampleNeg < 0"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law\n    {n : \u2115} {Rating : Type*} [Fintype Rating] [DecidableEq Rating]\n    [DecidableEq (finiteChainOrderedPair n)]\n    [Nonempty (finiteChainAdjacentIndex n)]\n    (M : FiniteRatingLDPModel (Fin n) Rating) (sampleRate : Fin n \u2192 \u211d)\n    (hpositive_sample : \u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8)\n    (a z : finiteChainOrderedPair n \u2192 \u211d)\n    (hz : \u2200 p : finiteChainOrderedPair n, z p \u2264 0)\n    (hderiv_hi :\n      \u2200 p : finiteChainOrderedPair n,\n        HasDerivAt\n          (fun t : \u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p)\n          (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9))\n    (hderiv_lo :\n      \u2200 p : finiteChainOrderedPair n,\n        HasDerivAt\n          (fun t : \u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p)\n          (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9)))\n    (hthreshold_min :\n      \u2200 p : finiteChainOrderedPair n, \u2200 b : \u211d,\n        M.pairwiseRateObjective sampleRate\n            (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) (a p) \u2264\n          M.pairwiseRateObjective sampleRate\n            (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) b)\n    (hstraddle_hi :\n      \u2200 p : finiteChainOrderedPair n,\n        ratingLawStraddlesThreshold M (finiteChainOrderedPairHi p) (a p))\n    (hstraddle_lo :\n      \u2200 p : finiteChainOrderedPair n,\n        ratingLawStraddlesThreshold M (finiteChainOrderedPairLo p) (a p)) :\n    HasExponentialRate\n      (fun k : \u2115 =>\n        1 - finiteUniformFloorPkObjective M sampleRate\n          finiteChainOrderedPairHi finiteChainOrderedPairLo k)\n      (minFiniteChainAdjacentThresholdRate M sampleRate) :=\n  finiteChainUniformFloorPkObjective_oneSub_hasExponentialRate_of_joint_floor_rating_law_min_rate\n    M sampleRate hpositive_sample a z hz hderiv_hi hderiv_lo hthreshold_min\n    hstraddle_hi hstraddle_lo",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law",
+      "visible_inputs": [
+        {
+          "names": "n",
+          "type": "\u2115"
+        },
+        {
+          "names": "Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel (Fin n) Rating"
+        },
+        {
+          "names": "sampleRate",
+          "type": "Fin n \u2192 \u211d"
+        },
+        {
+          "names": "hpositive_sample",
+          "type": "\u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8"
+        },
+        {
+          "names": "a z",
+          "type": "finiteChainOrderedPair n \u2192 \u211d"
+        },
+        {
+          "names": "hz",
+          "type": "\u2200 p : finiteChainOrderedPair n, z p \u2264 0"
+        },
+        {
+          "names": "hderiv_hi",
+          "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p) (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9)"
+        },
+        {
+          "names": "hderiv_lo",
+          "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p) (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9))"
+        },
+        {
+          "names": "hthreshold_min",
+          "type": "\u2200 p : finiteChainOrderedPair n, \u2200 b : \u211d, M.pairwiseRateObjective sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) (a p) \u2264 M.pairwiseRateObjective sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p) b"
+        },
+        {
+          "names": "hstraddle_hi",
+          "type": "\u2200 p : finiteChainOrderedPair n, ratingLawStraddlesThreshold M (finiteChainOrderedPairHi p) (a p)"
+        },
+        {
+          "names": "hstraddle_lo",
+          "type": "\u2200 p : finiteChainOrderedPair n, ratingLawStraddlesThreshold M (finiteChainOrderedPairLo p) (a p)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives\n    {n : \u2115} {Rating : Type*} [Fintype Rating] [DecidableEq Rating]\n    [Nonempty (finiteChainAdjacentIndex n)]\n    (M : FiniteRatingLDPModel (Fin n) Rating) (sampleRate : Fin n \u2192 \u211d)\n    (hpositive_sample : \u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8)\n    (a z : finiteChainOrderedPair n \u2192 \u211d)\n    (hderiv_hi :\n      \u2200 p : finiteChainOrderedPair n,\n        HasDerivAt\n          (fun t : \u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p)\n          (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9))\n    (hderiv_lo :\n      \u2200 p : finiteChainOrderedPair n,\n        HasDerivAt\n          (fun t : \u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p)\n          (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9))) :\n    minFiniteChainAdjacentThresholdRateTop M sampleRate =\n      (minFiniteChainAdjacentObjectiveRate M sampleRate a : WithTop \u211d) :=\n  minFiniteChainAdjacentThresholdRateTop_eq_coe_minFiniteChainAdjacentObjectiveRate_of_common_logMGF_derivatives\n    M sampleRate hpositive_sample a z hderiv_hi hderiv_lo",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives",
+      "visible_inputs": [
+        {
+          "names": "n",
+          "type": "\u2115"
+        },
+        {
+          "names": "Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel (Fin n) Rating"
+        },
+        {
+          "names": "sampleRate",
+          "type": "Fin n \u2192 \u211d"
+        },
+        {
+          "names": "hpositive_sample",
+          "type": "\u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8"
+        },
+        {
+          "names": "a z",
+          "type": "finiteChainOrderedPair n \u2192 \u211d"
+        },
+        {
+          "names": "hderiv_hi",
+          "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p) (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9)"
+        },
+        {
+          "names": "hderiv_lo",
+          "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p) (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9))"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support\n    {n m : \u2115}\n    [DecidableEq (finiteChainOrderedPair n)]\n    [Nonempty (finiteChainAdjacentIndex n)]\n    (M : FiniteRatingLDPModel (Fin n) (Fin (m + 1)))\n    (sampleRate : Fin n \u2192 \u211d)\n    (hpositive_sample : \u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8)\n    (htail :\n      \u2200 p : finiteChainOrderedPair n, \u2200 t : Fin (m + 1),\n        EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairLo p))\n            (fun r => t \u2264 r) \u2264\n          EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairHi p))\n            (fun r => t \u2264 r))\n    (hscore_mono : Monotone M.score)\n    (hfull_support : M.fullSupport)\n    (hscore_lt : M.score 0 < M.score (Fin.last m)) :\n    HasExtendedExponentialRate\n      (fun k : \u2115 =>\n        1 - finiteUniformFloorPkObjective M sampleRate\n          finiteChainOrderedPairHi finiteChainOrderedPairLo k)\n      (minFiniteChainAdjacentThresholdRateTop M sampleRate) :=\n  finiteChainUniformFloorPkObjective_oneSub_hasExtendedExponentialRate_of_joint_floor_rating_law_min_threshold_rate_top_of_rating_tail_dominance_and_full_support\n    M sampleRate hpositive_sample htail hscore_mono hfull_support hscore_lt",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support",
+      "visible_inputs": [
+        {
+          "names": "n m",
+          "type": "\u2115"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel (Fin n) (Fin (m + 1))"
+        },
+        {
+          "names": "sampleRate",
+          "type": "Fin n \u2192 \u211d"
+        },
+        {
+          "names": "hpositive_sample",
+          "type": "\u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8"
+        },
+        {
+          "names": "htail",
+          "type": "\u2200 p : finiteChainOrderedPair n, \u2200 t : Fin (m + 1), EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairLo p)) (fun r => t \u2264 r) \u2264 EconCSLib.pmfProb (M.typeLaw (finiteChainOrderedPairHi p)) (fun r => t \u2264 r)"
+        },
+        {
+          "names": "hscore_mono",
+          "type": "Monotone M.score"
+        },
+        {
+          "names": "hfull_support",
+          "type": "M.fullSupport"
+        },
+        {
+          "names": "hscore_lt",
+          "type": "M.score 0 < M.score (Fin.last m)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "theorem theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq\n    {n : \u2115} {Rating : Type*} [Fintype Rating] [DecidableEq Rating]\n    [DecidableEq (finiteChainOrderedPair n)]\n    [Nonempty (finiteChainAdjacentIndex n)]\n    (M : FiniteRatingLDPModel (Fin n) Rating) (sampleRate : Fin n \u2192 \u211d)\n    (hpositive_sample : \u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8)\n    (a z : finiteChainOrderedPair n \u2192 \u211d)\n    (hz : \u2200 p : finiteChainOrderedPair n, z p \u2264 0)\n    (hderiv_hi :\n      \u2200 p : finiteChainOrderedPair n,\n        HasDerivAt\n          (fun t : \u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p)\n          (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9))\n    (hderiv_lo :\n      \u2200 p : finiteChainOrderedPair n,\n        HasDerivAt\n          (fun t : \u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p)\n          (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9)))\n    (rLow rHigh : Rating)\n    (hmass_low : \u2200 \u03b8 : Fin n, 0 < (M.typeLaw \u03b8 rLow).toReal)\n    (hmass_high : \u2200 \u03b8 : Fin n, 0 < (M.typeLaw \u03b8 rHigh).toReal)\n    (hscore_low_le : \u2200 r : Rating, M.score rLow \u2264 M.score r)\n    (hscore_le_high : \u2200 r : Rating, M.score r \u2264 M.score rHigh)\n    (hscore_lt : M.score rLow < M.score rHigh)\n    (hextended_min_eq :\n      minFiniteChainAdjacentThresholdRateTop M sampleRate =\n        (minFiniteChainAdjacentThresholdRate M sampleRate : WithTop \u211d)) :\n    HasExponentialRate\n      (fun k : \u2115 =>\n        1 - finiteUniformFloorPkObjective M sampleRate\n          finiteChainOrderedPairHi finiteChainOrderedPairLo k)\n      (minFiniteChainAdjacentThresholdRate M sampleRate) :=\n  finiteChainUniformFloorPkObjective_oneSub_hasExponentialRate_of_joint_floor_rating_law_min_threshold_rate_of_score_bounds_of_extended_min_eq\n    M sampleRate hpositive_sample a z hz hderiv_hi hderiv_lo\n    rLow rHigh hmass_low hmass_high hscore_low_le hscore_le_high hscore_lt\n    hextended_min_eq",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq",
+      "visible_inputs": [
+        {
+          "names": "n",
+          "type": "\u2115"
+        },
+        {
+          "names": "Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel (Fin n) Rating"
+        },
+        {
+          "names": "sampleRate",
+          "type": "Fin n \u2192 \u211d"
+        },
+        {
+          "names": "hpositive_sample",
+          "type": "\u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8"
+        },
+        {
+          "names": "a z",
+          "type": "finiteChainOrderedPair n \u2192 \u211d"
+        },
+        {
+          "names": "hz",
+          "type": "\u2200 p : finiteChainOrderedPair n, z p \u2264 0"
+        },
+        {
+          "names": "hderiv_hi",
+          "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairHi p) t) (a p) (z p * (sampleRate (finiteChainOrderedPairHi p))\u207b\u00b9)"
+        },
+        {
+          "names": "hderiv_lo",
+          "type": "\u2200 p : finiteChainOrderedPair n, HasDerivAt (fun t : \u211d => M.logMGF (finiteChainOrderedPairLo p) t) (a p) (-(z p * (sampleRate (finiteChainOrderedPairLo p))\u207b\u00b9))"
+        },
+        {
+          "names": "rLow rHigh",
+          "type": "Rating"
+        },
+        {
+          "names": "hmass_low",
+          "type": "\u2200 \u03b8 : Fin n, 0 < (M.typeLaw \u03b8 rLow).toReal"
+        },
+        {
+          "names": "hmass_high",
+          "type": "\u2200 \u03b8 : Fin n, 0 < (M.typeLaw \u03b8 rHigh).toReal"
+        },
+        {
+          "names": "hscore_low_le",
+          "type": "\u2200 r : Rating, M.score rLow \u2264 M.score r"
+        },
+        {
+          "names": "hscore_le_high",
+          "type": "\u2200 r : Rating, M.score r \u2264 M.score rHigh"
+        },
+        {
+          "names": "hscore_lt",
+          "type": "M.score rLow < M.score rHigh"
+        },
+        {
+          "names": "hextended_min_eq",
+          "type": "minFiniteChainAdjacentThresholdRateTop M sampleRate = (minFiniteChainAdjacentThresholdRate M sampleRate : WithTop \u211d)"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_positive_match_rates {Seller : Type*}\n    (sampleRate : Seller \u2192 \u211d) : Prop :=\n  \u2200 \u03b8 : Seller, 0 < sampleRate \u03b8\n\n                                                                      \n-- audit-premise: hgHi : 0 < gHi\n-- audit-premise: hgLo : 0 < gLo",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_positive_match_rates",
+      "visible_inputs": [
+        {
+          "names": "Seller",
+          "type": "Type*"
+        },
+        {
+          "names": "sampleRate",
+          "type": "Seller \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_positive_integer_sample_rates (gHi gLo : \u2115) : Prop :=\n  0 < gHi \u2227 0 < gLo\n\n                                                                               \n-- audit-premise: hz : z \u2264 0\n-- audit-premise: hz : \u2200 p : finiteChainOrderedPair n, z p \u2264 0",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_positive_integer_sample_rates",
+      "visible_inputs": [
+        {
+          "names": "gHi gLo",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_nonpositive_common_dual_parameters {Pair : Type*}\n    (z : Pair \u2192 \u211d) : Prop :=\n  \u2200 p : Pair, z p \u2264 0\n\n                                                                                   \n-- audit-premise: hthreshold_min : \u2200 b : \u211d, M.pairwiseRateObjective sampleRate hi lo a \u2264 M.pairwiseRateObjective sampleRate hi lo b",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_nonpositive_common_dual_parameters",
+      "visible_inputs": [
+        {
+          "names": "Pair",
+          "type": "Type*"
+        },
+        {
+          "names": "z",
+          "type": "Pair \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_pairwise_threshold_minimizer\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\n    (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller \u2192 \u211d)\n    (hi lo : Seller) (a : \u211d) : Prop :=\n  \u2200 b : \u211d,\n    M.pairwiseRateObjective sampleRate hi lo a \u2264\n      M.pairwiseRateObjective sampleRate hi lo b\n\n                                                                                        \n-- audit-premise: hscorePos : 0 < twoSampleRateBlockScore M gHi gLo samplePos\n-- audit-premise: hscoreNeg : twoSampleRateBlockScore M gHi gLo sampleNeg < 0",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_pairwise_threshold_minimizer",
+      "visible_inputs": [
+        {
+          "names": "Seller Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel Seller Rating"
+        },
+        {
+          "names": "sampleRate",
+          "type": "Seller \u2192 \u211d"
+        },
+        {
+          "names": "hi lo",
+          "type": "Seller"
+        },
+        {
+          "names": "a",
+          "type": "\u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_two_sided_score_witnesses\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\n    (M : FiniteRatingLDPModel Seller Rating) (gHi gLo : \u2115) : Prop :=\n  \u2203 samplePos sampleNeg : (Fin gHi \u2192 Rating) \u00d7 (Fin gLo \u2192 Rating),\n    0 < twoSampleRateBlockScore M gHi gLo samplePos \u2227\n      twoSampleRateBlockScore M gHi gLo sampleNeg < 0\n\n                                                                            \n-- audit-premise: hscore_mono : Monotone M.score",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_two_sided_score_witnesses",
+      "visible_inputs": [
+        {
+          "names": "Seller Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel Seller Rating"
+        },
+        {
+          "names": "gHi gLo",
+          "type": "\u2115"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_monotone_rating_scores {Rating : Type*} [Preorder Rating]\n    (score : Rating \u2192 \u211d) : Prop :=\n  Monotone score\n\n                                                                                 \n-- audit-premise: hfull_support : M.fullSupport",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_monotone_rating_scores",
+      "visible_inputs": [
+        {
+          "names": "Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "score",
+          "type": "Rating \u2192 \u211d"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_full_finite_ordinal_rating_support\n    {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]\n    (M : FiniteRatingLDPModel Seller Rating) : Prop :=\n  M.fullSupport\n\n                                                                      \n-- audit-premise: hscore_low_le : \u2200 r : Rating, M.score rLow \u2264 M.score r\n-- audit-premise: hscore_le_high : \u2200 r : Rating, M.score r \u2264 M.score rHigh\n-- audit-premise: hscore_lt : M.score rLow < M.score rHigh",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_full_finite_ordinal_rating_support",
+      "visible_inputs": [
+        {
+          "names": "Seller Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "M",
+          "type": "FiniteRatingLDPModel Seller Rating"
+        }
+      ]
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_score_range_and_strict_span {Rating : Type*}\n    (score : Rating \u2192 \u211d) (rLow rHigh : Rating) : Prop :=\n  (\u2200 r : Rating, score rLow \u2264 score r) \u2227\n    (\u2200 r : Rating, score r \u2264 score rHigh) \u2227\n      score rLow < score rHigh",
+      "record_premises": [],
+      "required_check": "Every visible input must be semantically matched to the paper source model, not accepted by name. Every record/certificate/replay/process/bridge premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_score_range_and_strict_span",
+      "visible_inputs": [
+        {
+          "names": "Rating",
+          "type": "Type*"
+        },
+        {
+          "names": "score",
+          "type": "Rating \u2192 \u211d"
+        },
+        {
+          "names": "rLow rHigh",
+          "type": "Rating"
+        }
+      ]
+    }
+  ],
+  "source_record_audit_sha256": "3c2a537918e9bbc3c894792fe20024dddbd3b502d23eab2112182355e3d8d82d",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": [
+    "lemmaC_equal_sample_pairwise_error_rate_from_cramer",
+    "lemmaC_equal_sample_pairwise_gap_mean_formula",
+    "lemmaC_equal_sample_pairwise_mgf_product_formula",
+    "lemmaC_floor_pk_complement_error_eq_one_sub_pk_objective",
+    "lemmaC_floor_pk_complement_error_probability_sandwich_left_tail",
+    "lemmaC_floor_pk_complement_error_rate_from_left_tail",
+    "lemmaC_floor_pk_complement_error_rate_from_shifted_cramer_minimizer",
+    "lemmaC_floor_score_gap_rate_from_logMGF_derivative_minimizer",
+    "lemmaC_floor_score_gap_rate_from_logMGF_derivative_minimizer_of_pos_neg_atoms",
+    "lemmaC_floor_score_gap_rate_from_logMGF_derivative_minimizer_of_straddling_support",
+    "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support",
+    "lemmaC_floor_score_gap_rate_from_logMGF_derivatives_of_straddling_support",
+    "lemmaC_floor_score_gap_rate_from_shifted_cramer_minimizer",
+    "lemmaC_integer_rate_block_chernoff_le_source_threshold_rate",
+    "lemmaC_integer_rate_block_error_probability_eq_two_population_probability",
+    "lemmaC_integer_rate_block_error_rate_from_cramer",
+    "lemmaC_integer_rate_block_error_rate_from_stationary_tilt",
+    "lemmaC_integer_rate_block_log_mgf_formula",
+    "lemmaC_integer_rate_block_mgf_product_formula",
+    "lemmaC_integer_rate_block_source_threshold_rate_from_common_derivatives",
+    "lemmaC_integer_rate_block_source_threshold_rate_from_cramer",
+    "lemmaC_integer_rate_block_source_threshold_rate_from_logMGF_derivatives",
+    "lemmaC_integer_rate_block_source_threshold_rate_from_stationary_tilt",
+    "lemmaC_integer_rate_two_population_source_threshold_rate_from_logMGF_derivatives",
+    "lemmaC_pairwise_threshold_rate_formula",
+    "lemmaC_pairwise_threshold_rate_top_attained_of_common_logMGF_derivatives",
+    "lemmaC_pairwise_threshold_rate_top_eq_displayed_objective_of_common_logMGF_derivatives",
+    "lemmaC_pk_complement_error_eq_one_sub_pk_objective",
+    "lemmaC_pk_complement_error_probability_sandwich_left_tail",
+    "lemmaC_pk_complement_error_rate_from_left_tail",
+    "lemmaC_pk_error_rate_from_pairwise_const_sandwich",
+    "lemmaC_two_population_integer_rate_chernoff_upper_certificate",
+    "lemmaC_two_population_sample_chernoff_upper_bound",
+    "lemmaC_two_population_sample_mgf_product_formula",
+    "paperLogMGF",
+    "paperRateFunction",
+    "source_floor_sample_count_div_tendsto_sampleRate",
+    "source_floor_sample_count_eq_mul_of_nat_sampleRate",
+    "theorem1PairwiseThresholdRateRegularity",
+    "theorem1PairwiseThresholdRateTopLdpCertificate",
+    "theorem1PairwiseThresholdRateTopLdpCertificate_of_regularity",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_adjacent_objective_rate_from_logMGF_derivatives_and_score_bounds",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_objective_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_interval_adjacent_threshold_rate_dominance",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_interval_floor_leftTail_event_bounds",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law_logMGF_derivatives",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law_threshold_eq",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_marginals",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_score_marginals",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_pairwise_threshold_rate_regularity",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_threshold_rate_eq_and_score_bounds",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_rate_from_adjacent_logMGF_derivative_threshold_minimizers_of_straddling_support",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_rate_from_interval_adjacent_threshold_rate_dominance",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_expected_score_gap_and_common_extreme_support",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_pairwise_threshold_rate_regularity",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_pairwise_top_ldp_certificates",
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_common_extreme_support",
+    "theorem1_finite_pk_complement_ranking_error_exact_rate_from_adjacent_logMGF_derivatives",
+    "theorem1_finite_pk_complement_ranking_error_exact_rate_from_adjacent_source_rates",
+    "theorem1_finite_ranking_error_exact_rate_from_adjacent_pair_min",
+    "theorem1_finite_ranking_error_exact_rate_from_min_pair_certificate",
+    "theorem1_finite_ranking_error_upper_bound_from_pair_certificates",
+    "theorem1_floor_pk_complement_error_eq_one_sub_weighted_objective",
+    "theorem1_floor_pk_complement_ranking_error_exact_rate_from_adjacent_leftTail_source_rates",
+    "theorem1_floor_pk_complement_ranking_error_exact_rate_from_adjacent_source_rates",
+    "theorem1_floor_weighted_objective_eq_integer_rate_objective_of_nat_sampleRates",
+    "theorem1_floor_weighted_objective_oneSub_exact_rate_from_adjacent_leftTail_source_rates",
+    "theorem1_floor_weighted_objective_oneSub_exact_rate_from_adjacent_logMGF_derivative_minimizers",
+    "theorem1_floor_weighted_objective_oneSub_exact_rate_from_adjacent_logMGF_derivative_minimizers_of_pos_neg_atoms",
+    "theorem1_floor_weighted_objective_oneSub_exact_rate_from_adjacent_logMGF_derivative_threshold_minimizers_of_straddling_support",
+    "theorem1_floor_weighted_objective_oneSub_exact_rate_from_adjacent_logMGF_derivatives_of_straddling_support",
+    "theorem1_floor_weighted_objective_oneSub_exact_rate_from_adjacent_shifted_cramer_minimizers",
+    "theorem1_floor_weighted_objective_oneSub_exact_rate_from_min_logMGF_derivative_minimizers_of_pos_neg_atoms",
+    "theorem1_floor_weighted_objective_oneSub_exact_rate_from_nat_sampleRates_adjacent_logMGF_derivatives",
+    "theorem1_integer_rate_pk_complement_error_eq_one_sub_weighted_objective",
+    "theorem1_integer_rate_weighted_objective_oneSub_exact_rate_from_adjacent_logMGF_derivatives",
+    "theorem1_uniform_floor_objective_oneSub_exact_rate_from_min_logMGF_derivative_minimizers_of_pos_neg_atoms"
+  ]
+}

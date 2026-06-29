@@ -1,0 +1,12 @@
+{
+  "judgment": "passes",
+  "paper": "GS62CollegeAdmissions",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: current dashboard rows are paper-facing definitions, assumptions, theorem endpoints, or explicitly documented partial/source-version boundaries; helper-only rows remain outside the compact dashboard surface.",
+  "review_rows": 7,
+  "review_surface_sha256": "58790df1c9c0d51c9e2e0700278d3be663faeed4340424445042607599de23cf",
+  "schema": 1,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
+}

@@ -1,13 +1,12 @@
 {
-  "comment": "",
-  "items": {},
-  "judgment": "",
+  "judgment": "passes",
   "paper": "PKG25NoFreeLunch",
-  "reason": "Hash refreshed against the current dashboard row surface.",
-  "review_rows": 6,
-  "review_surface_sha256": "a05fb7cfe47a0a02b2a98a840e21559b69fa004ffa4b5ef303193e290e01b077",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: source-visible review targets are exposed as paper-facing rows, with helper-only implementation details kept outside the dashboard unless needed for source coverage.",
+  "review_rows": 15,
+  "review_surface_sha256": "2826b9f1ba413cae38f7cb85bed059c3ec1f175862af46f43f2e45f0b7b8a12b",
   "schema": 1,
-  "validated_at": "2026-06-28T01:10:04Z",
-  "validator": "",
-  "validator_type": ""
+  "validated_at": "2026-06-29T20:39:31Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

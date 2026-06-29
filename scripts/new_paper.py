@@ -157,8 +157,14 @@ public workspaces unless redistribution rights have been checked separately.
 direct theorem statements there, with short proofs that call into
 `MainTheorems.lean`. Do not mark a row `formalized` unless the Lean declaration
 is closed and the remaining assumptions cell is `None`.
-Keep the dashboard surface small: one row per paper-facing definition or named
-result, not every helper theorem, certificate, or proof-route alias.
+Keep the dashboard surface curated but complete: one row per paper-facing
+definition, formula, example, remark, proposition, theorem/corollary, and
+main-text lemma that a reviewer or LLM-as-judge should inspect. Do not omit
+source-visible named material merely to keep the dashboard compact. Appendix
+theorems/corollaries should be represented; appendix lemmas are a judgment call,
+but if they carry paper-facing mathematical content needed for the formalized
+claim, expose review-legible rows rather than hiding them in a broad support
+bundle.
 
 Use the controlled status vocabulary from `../../docs/STATUS.md`. Public-facing
 rows should use `partially formalized` for results that still depend on an
@@ -186,7 +192,10 @@ Also populate `paper_statement_map.json` for the paper's source definitions,
 formulas, and named claims, then run the paper-level coverage pass and save
 `paper_coverage_llm.json`: this asks whether every source statement that should
 be represented is covered by at least one dashboard row. This source-to-row
-accounting is separate from the row-local statement judge.
+accounting is separate from the row-local statement judge. A source-visible
+definition, example, remark, proposition, theorem/corollary, or main-text lemma
+must not be marked `out_of_scope`/`not_a_paper_target` just because the review
+surface would grow; add a row and let the row-local statement judge inspect it.
 Then run `python3 scripts/review_dashboard.py --paper {folder}
 --assumption-precheck`: the statement judge is row-local and does not certify
 that theorem premises are source assumptions or derived facts. Use this pass
@@ -197,23 +206,36 @@ this early check ran.
 At review boundaries, populate `lean_to_tex_llm.json` with context-free
 Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. The
 translator must preserve every visible variable, binder, hypothesis, domain
-condition, equivalence direction, and conclusion; it must not summarize a theorem
-as an endpoint label or omit conditions that appear in the Lean statement. New
-tracked entries should use `{{ "tex_statement": "...", "lean_statement_sha256":
-"..." }}`. Then populate `statement_match_llm.json` with an independent
-no-context judgment of whether each translation matches the original full paper
-statement, including all hypotheses, subparts, quantifiers, domains, constants,
-normalizations, signs, inequality directions, and conclusions. A row may be
-judged `matches` only if it is equivalent to the full source statement or to a
-clearly identified source subpart; if the Lean translation is a conditional
-wrapper, source-row package, omitted subclaim, weakened/strengthened statement,
+condition, named predicate/wrapper application, equivalence direction, and
+conclusion; it must not summarize a theorem as an endpoint label, source-like
+phrase, or proof route, or omit conditions that appear in the Lean statement.
+New tracked entries should use `{{ "tex_statement": "...",
+"lean_statement_sha256": "..." }}`. Then populate `statement_match_llm.json`
+with an independent no-context judgment of whether each translation matches the
+original full paper statement, including all hypotheses, subparts, quantifiers,
+domains, constants, normalizations, signs, inequality directions, conclusions,
+and visible inputs. A row may be judged `matches` only if it is semantically
+equivalent to the full source statement or to a clearly identified source
+subpart, and every input premise is accounted for as a paper primitive/source
+assumption, a Lean-derived consequence of those primitives, or an explicit
+conditional boundary. The judge must inspect named Lean predicates/wrappers
+semantically, not approve by theorem label, phrase overlap, or source-looking
+name. If the Lean translation is a conditional wrapper, source-row package,
+certificate/replay/process/bridge package, omitted subclaim,
+weakened/strengthened statement, hidden strengthening inside a named predicate,
 or broad aggregate for several displayed formulas, the judge must mark
 `mismatch` or `uncertain`. Include Lean, paper, and TeX statement digests plus
 the judge model/agent name, validator type, validation timestamp, and any
-validator comment. If the judge flags a mismatch or uncertainty, iterate on the
-Lean statement before treating it as the paper theorem target. Run
+validator comment. If the judge flags a mismatch
+or uncertainty, iterate on the Lean statement before treating it as the paper
+theorem target. Run
 `python3 scripts/review_dashboard.py --paper {folder} --precheck` before
 handoff so missing/stale statement-audit rows are explicit.
+All audit sidecars are fail-closed. Blank scaffolded files, missing prompt
+versions, stale prompt versions, missing current digests, missing
+validator/model identity, missing timestamps, unrecognized judgments, failed
+judge runs, and items without explicit success verdicts remain audit alarms
+until rerun against the current Lean/source inputs.
 If any paper-facing theorem takes a hypothesis that is not proved from prior
 Lean declarations, declare that hypothesis in `Assumptions.lean`, list it in
 `status.json` `review_surface.assumption_names`, and populate
@@ -229,6 +251,9 @@ with a no-paper-context LLM audit that checks whether every dashboard row is a
 paper-facing definition, formula, or named statement. At 120 or more rows, treat
 the dashboard as oversized and curate `PaperInterface.lean` or
 `status.json.review_surface.include_names` before broad human review.
+For public-facing closeout, populate a current `review_surface_llm.json` even
+when the dashboard has 30 or fewer rows; the row threshold is an early review
+prompt, not a final-audit exemption.
 Before a full-formalization closeout, rerun
 `python3 scripts/review_dashboard.py --paper {folder} --paper-coverage-precheck`
 and resolve missing, stale, partial, or uncertain source coverage.
@@ -255,6 +280,9 @@ and resolve missing, stale, partial, or uncertain source coverage.
 - [ ] Run the assumption/hidden-premise precheck after the statement pass; do
       not treat row-local statement matches as globally certified targets until
       premise provenance also clears.
+- [ ] Run the source-record/boundary-input audit if any reviewed theorem uses a
+      record, certificate, replay, process, bridge, source-row, or broad package
+      premise.
 - [ ] Confirm `python3 scripts/audit_repository.py` reports no recursive
       paper-local hidden-premise dependency or axiom-like declaration for this
       paper.
@@ -267,7 +295,7 @@ and resolve missing, stale, partial, or uncertain source coverage.
       `Assumptions.lean`, then run the assumption-provenance LLM judge.
 - [ ] If the dashboard has more than 30 rows, run the LLM review-surface audit;
       if it has 120 or more rows, curate the interface before broad review.
-- [ ] Run the context-free Lean-to-TeX translation and third-LLM match judgment
+- [ ] Run the context-free Lean-to-TeX translation and independent semantic match judgment
       workflow before asking for human dashboard review.
 - [ ] Update `status.json`, then run `python3 scripts/sync_paper_status.py`.
 - [ ] Rebuild `DependencyDAG.pdf` and verify visually after each significant edit.
@@ -352,13 +380,17 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
                     "policy": (
                         "Translate each Lean statement with an LLM that has no paper context "
                         "and require it to preserve every visible binder, hypothesis, domain "
-                        "condition, equivalence direction, and conclusion. Have a third LLM "
+                        "condition, equivalence direction, conclusion, and named predicate "
+                        "application. Have an independent semantic LLM judge "
                         "compare that TeX/prose translation with the original full paper "
-                        "statement, not just the theorem label. A `matches` verdict requires "
+                        "statement, not just the theorem label or phrase. A `matches` verdict requires "
                         "equivalence of hypotheses, subparts, quantifiers, domains, constants, "
-                        "normalizations, signs, inequality directions, and conclusions; "
-                        "conditional wrappers, source-row packages, omitted subclaims, "
-                        "weakened/strengthened statements, or broad aggregates must be judged "
+                        "normalizations, signs, inequality directions, conclusions, and the "
+                        "semantics of every Lean premise. If a Lean premise is a named predicate "
+                        "or wrapper, the judge must inspect what that predicate means in the "
+                        "paper model; source-looking names are not evidence. Extra replay, "
+                        "certificate, process, bridge, source-row, or broad package assumptions "
+                        "must be judged "
                         "`mismatch` or `uncertain`. Record the model/agent validator metadata "
                         "and iterate on PaperInterface.lean until the full statement matches. "
                         "If the dashboard has more than 30 rows, run a no-paper-context LLM "
@@ -385,6 +417,17 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
                         "than a proof assumption."
                     ),
                 },
+                "llm_source_record_review": {
+                    "source_record_audit_file": f"papers/{folder}/source_record_audit.json",
+                    "source_record_judgment_file": f"papers/{folder}/source_record_match_llm.json",
+                    "policy": (
+                        "Run the code-backed recursive source-record audit for any visible "
+                        "record, certificate, replay, process, bridge, source-row, or broad "
+                        "package premise. The LLM judge must classify each boundary-shaped "
+                        "input and recursive field by source evidence, Lean derivation, "
+                        "approved external boundary, or unresolved proof debt."
+                    ),
+                },
                 "assumption_policy": "strict",
                 "assumption_names": [],
                 "paper_coverage_required": False,
@@ -408,14 +451,15 @@ def lean_to_tex_llm_text(folder: str) -> str:
         {
             "schema": 1,
             "paper": folder,
-            "prompt_version": "lean-to-tex-v2-strict-context-free",
+            "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
             "translator": "",
             "translator_type": "",
             "translated_at": "",
             "prompt_summary": [
                 "Translate each Lean declaration from the Lean statement alone, with no paper context.",
-                "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
-                "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries.",
+                "Preserve every visible variable, binder, hypothesis, domain condition, named predicate/wrapper application, equivalence or implication direction, and conclusion.",
+                "Do not replace formulas or named premises with theorem labels, source-like phrases, informal endpoints, or proof-route summaries.",
+                "If a statement contains a predicate such as a certificate/replay/process/bridge/source-row/bounds condition, keep that premise explicit with its arguments so the statement-match judge can inspect it semantically.",
             ],
             "items": {},
         },
@@ -428,14 +472,17 @@ def statement_match_llm_text(folder: str) -> str:
         {
             "schema": 1,
             "paper": folder,
-            "prompt_version": "statement-match-v2-strict-full-statement",
+            "prompt_version": "statement-match-v3-semantic-full-statement",
             "validator": "",
             "validator_type": "",
             "validated_at": "",
-            "comment": "Compare the complete original source statement against the context-free Lean-to-TeX translation. Use no proof context.",
+            "comment": "Compare the complete original source statement against the context-free Lean-to-TeX translation. Use no proof context, but do semantically inspect every named Lean premise/predicate in the statement.",
             "prompt_summary": [
-                "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
-                "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, conditional wrappers, broad aggregate rows, source-row packages, certificate packages, or weakened/strengthened statements.",
+                "A matches verdict requires semantic equivalence of the full source statement and Lean statement: same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, conclusions, and visible inputs.",
+                "Do not approve by theorem label, phrase overlap, or source-looking Lean names. Expand or otherwise semantically inspect every named predicate/wrapper appearing as a Lean hypothesis or conclusion.",
+                "Every input premise must be one of: a paper primitive/source assumption, a Lean-derived consequence of paper primitives, an approved external boundary, or an explicit conditional boundary.",
+                "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, hidden strengthening inside named predicates, conditional wrappers, broad aggregate rows, source-row packages, certificate/replay/process/bridge packages, or weakened/strengthened statements.",
+                "A replay/certificate/process/bridge premise is an extra assumption unless the source statement explicitly assumes that object or the Lean statement also includes a checked derivation from source primitives.",
                 "For formula-bearing rows, check the exact formula rather than only the theorem label or qualitative interpretation.",
             ],
             "items": {},
@@ -452,7 +499,14 @@ def review_surface_llm_text(folder: str) -> str:
             "validator": "",
             "validator_type": "",
             "validated_at": "",
+            "prompt_version": "review-surface-v2-semantic-paper-facing",
             "comment": "",
+            "prompt_summary": [
+                "Judge whether each dashboard row is genuinely paper-facing, not just source-sounding.",
+                "Rows should expose source definitions, formulas, named statements, explicit source conditions, or documented boundaries.",
+                "Reject or mark needs_curation for rows that are merely proof plumbing, broad packages, replay/certificate/process/bridge internals, or theorem-label paraphrases without source-facing mathematical content.",
+                "Do not approve by Lean declaration name, phrase overlap, or source-looking terminology.",
+            ],
             "judgment": "",
             "reason": "",
             "review_rows": 0,
@@ -468,11 +522,21 @@ def paper_coverage_llm_text(folder: str) -> str:
         {
             "schema": 1,
             "paper": folder,
-            "prompt_version": "paper-coverage-v1-source-inventory-to-review-surface",
+            "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+            "audit_kind": "source_to_dashboard_llm",
+            "source_grounded": True,
+            "seed_scaffold": False,
             "validator": "",
             "validator_type": "",
             "validated_at": "",
-            "comment": "Judge whether each canonical source-paper statement is covered by one or more dashboard rows. This is separate from row-local statement matching.",
+            "comment": "Judge whether each canonical source-paper statement is semantically covered by one or more dashboard rows. This is separate from row-local statement matching; phrase overlap or matching theorem names are not enough.",
+            "prompt_summary": [
+                "For each source inventory item, identify the exact dashboard row(s) that cover the mathematical content.",
+                "A covered verdict requires semantic coverage of the source hypotheses, objects, quantifiers, constants, formulas, and conclusions, not just a matching title or phrase.",
+                "Do not mark source-visible definitions, examples, remarks, propositions, theorems/corollaries, or main-text lemmas out of scope for compactness. Expose dashboard rows so the row-local statement judge can inspect them. Appendix lemmas are a judgment call, but appendix theorem/corollary targets should be covered.",
+                "If a linked Lean row has extra replay/certificate/process/bridge/source-row premises, mark the source item covered_with_boundary or partially_covered unless those premises are separately derived from source primitives.",
+                "Include source_evidence from the paper and dashboard_evidence from the row; exact-key or theorem-name matching is only a scaffold.",
+            ],
             "paper_statement_inventory_sha256": "",
             "review_surface_sha256": "",
             "items": {},
@@ -486,17 +550,43 @@ def assumption_match_llm_text(folder: str) -> str:
         {
             "schema": 1,
             "paper": folder,
-            "prompt_version": "assumption-provenance-v2-exact-premise-source",
+            "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
             "validator": "",
             "validator_type": "",
             "validated_at": "",
             "comment": "Validate every assumption declaration and every exact audit-premise against source text or a Lean derivation.",
             "prompt_summary": [
-                "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
+                "For each Assumptions.lean declaration, decide semantically whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
                 "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
+                "Scrutinize each premise against the source model, not by declaration name, theorem label, or phrase overlap. Expand named predicates/wrappers enough to identify the actual mathematical assumption.",
+                "Certificate, replay, process, bridge, source-row, or broad package premises need a specific source primitive or a Lean-checked instantiation path from paper primitives; otherwise mark partial_boundary/not_paper_assumption.",
                 "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
                 "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
                 "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption.",
+            ],
+            "items": {},
+        },
+        indent=2,
+    ) + "\n"
+
+
+def source_record_match_llm_text(folder: str) -> str:
+    return json.dumps(
+        {
+            "schema": 1,
+            "paper": folder,
+            "prompt_version": "source-record-v2-semantic-boundary-inputs",
+            "validator": "",
+            "validator_type": "",
+            "validated_at": "",
+            "source_record_audit_sha256": "",
+            "comment": "Classify every boundary-shaped theorem input and recursive source-record field semantically against the paper source and Lean derivation path.",
+            "prompt_summary": [
+                "Do not approve by theorem label, phrase overlap, final theorem name, or source-looking Lean names.",
+                "Each replay/certificate/process/bridge/source-row/package input needs a specific source primitive, a Lean-checked constructor from paper primitives, an approved external boundary, or unresolved_assumed_math.",
+                "Use validated_source_assumption only with a source key/location/evidence; use proved_from_primitives only with a Lean constructor/derivation.",
+                "Use approved_external_boundary only for declared partial/conditional boundaries, not for a paper marked fully formalized.",
+                "Do not classify a theorem input as container_recursively_audited or nonpropositional_witness_data.",
             ],
             "items": {},
         },
@@ -930,15 +1020,10 @@ language before listing Lean declarations, validator rows, or proof plumbing
 below.
 
 ## 5. Remaining Boundaries and Gaps
-All named results remain open. Put partial-formalization, external-library,
-analytic, solver, runtime, or source-certificate boundaries here, not in the
-additional-assumptions section.
+All named results remain open.
 
 ## 6. Additional Assumptions Beyond Paper
 - None
-Only list hypotheses added by the formalization that are not paper assumptions
-or source theorem conditions. If a dependency is open formalization work rather
-than a hypothesis, describe it in Section 5.
 
 ## 7. Proof-Strategy Deviations
 - None
@@ -946,32 +1031,26 @@ than a hypothesis, describe it in Section 5.
 ## 8. Proof Tricks Worth Reusing
 - None
 
-## 9. Paper Issues or Caveats
+## 9. Mathematical Typos or Other Fixes Suggested in the Source Paper
 None found.
 
-## 10. Detailed Formalization Evidence
+## 10. Paper Issues or Caveats
+None found.
+
+## 11. Detailed Formalization Evidence
 None yet.
 
-## 11. Paper Assumption Provenance
+## 12. Paper Assumption Provenance
 Every paper-facing theorem premise that is not derived in Lean should appear as
 a named assumption declaration in `Assumptions.lean`, be listed in `status.json`
 `review_surface.assumption_names`, and be checked in `assumption_match_llm.json`
 as a true paper/source model assumption.
-If an assumption declaration has `-- audit-premise:` comments, every exact
-premise must have a premise-level source/provenance judgment. Use
-`partial_boundary` for any premise that is visible but not yet source-matched or
-derived; the paper remains partial until those boundaries are closed. Use
-top-level `partial_boundary` for an assumption declaration that is itself a
-known external/library/analytic/runtime/solver boundary, not a source caveat.
-In human-facing tables, display validator labels as `source condition`,
-`derived`, `additional assumption`, `formalization boundary`, `paper caveat`,
-or `not paper-facing`; keep raw enum labels only in machine-readable JSON.
 
 | Assumption declaration | Lean declaration | Source location / statement | Assumption validators | Comments |
 | --- | --- | --- | --- | --- |
 | None | `none` | None | None | No paper assumptions recorded yet. |
 
-## 12. Library Lift Pass
+## 13. Library Lift Pass
 - Reusable library extraction candidates: None
 - Library certificate/source-boundary audit: not run. Before a completion
   claim, summarize whether certificate-taking library APIs used by paper
@@ -986,12 +1065,12 @@ or `not paper-facing`; keep raw enum labels only in machine-readable JSON.
   If a finding remains, record it here and mark the endpoint partially
   formalized.
 
-## 13. DAG Audit
+## 14. DAG Audit
 - Rendered artifact: not checked
 - Topology: not checked
 - Layout: not checked
 
-## 14. Validation Checks
+## 15. Validation Checks
 - Not run.
 - Required closeout checks include targeted Lean build, statement precheck,
   assumption/hidden-premise precheck, targeted repository audit, DAG/report
@@ -1003,10 +1082,10 @@ or `not paper-facing`; keep raw enum labels only in machine-readable JSON.
   audit command here, but keep commands out of the executive verdict and proof
   narrative.
 
-## 15. Paper Definitions Checked
+## 16. Paper Definitions Checked
 - None yet.
 
-## 16. Named Theorem Statements Checked
+## 17. Named Theorem Statements Checked
 ### Theorem <n>
 **Paper statement.** <one theorem-box-level statement matching the source>
 
@@ -1015,7 +1094,7 @@ or `not paper-facing`; keep raw enum labels only in machine-readable JSON.
 
 **Status.** not formalized.
 
-## 17. Paper-Facing Statement Validator Ledger
+## 18. Paper-Facing Statement Validator Ledger
 This table is one row per dashboard/PaperInterface row. Generate it from the
 validator ledger rather than from memory.
 
@@ -1071,6 +1150,7 @@ def main() -> int:
     write_file(paper_dir / "review_surface_llm.json", review_surface_llm_text(folder), args.force)
     write_file(paper_dir / "paper_coverage_llm.json", paper_coverage_llm_text(folder), args.force)
     write_file(paper_dir / "assumption_match_llm.json", assumption_match_llm_text(folder), args.force)
+    write_file(paper_dir / "source_record_match_llm.json", source_record_match_llm_text(folder), args.force)
     launch_script = paper_dir / "review-dashboard.sh"
     write_file(
         launch_script,

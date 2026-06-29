@@ -1,27 +1,32 @@
 {
-  "comment": "Bernoulli model source-record fields are primitive source-model data, not proof shortcuts.",
+  "comment": "Semantic source-record provenance rejudge. Record/certificate/replay/process premises are not accepted by source-looking names alone.",
   "items": {
     "BernoulliSatisfactionModel.likelihood": {
       "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "The Bernoulli satisfaction model takes the likelihood function as primitive source-model data used to state the paper distribution family.",
-      "source_record_audit_sha256": "932a086cf43d5779b03e1d041e2292027fc1295ec2f77e976b80cdc67a04ab22",
-      "validated_at": "2026-06-28T01:37:31Z",
-      "validator": "codex-source-record-audit",
+      "source_location": "paper_statement_map.json / source-domain review row",
+      "source_record_audit_sha256": "ce8250e3a8e01a11afb5defbf037415c00613e50f9e146616574e4cc0282a083",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "BernoulliSatisfactionModel.successProb": {
       "classification": "validated_source_assumption",
+      "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "The Bernoulli satisfaction model takes the success-probability function as primitive source-model data used to state the paper distribution family.",
-      "source_record_audit_sha256": "932a086cf43d5779b03e1d041e2292027fc1295ec2f77e976b80cdc67a04ab22",
-      "validated_at": "2026-06-28T01:37:31Z",
-      "validator": "codex-source-record-audit",
+      "source_location": "paper_statement_map.json / source-domain review row",
+      "source_record_audit_sha256": "ce8250e3a8e01a11afb5defbf037415c00613e50f9e146616574e4cc0282a083",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     }
   },
   "paper": "PRPKG24AccuracyDiversity",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
   "schema": 1,
-  "source_record_audit_sha256": "932a086cf43d5779b03e1d041e2292027fc1295ec2f77e976b80cdc67a04ab22",
-  "validated_at": "2026-06-28T01:37:31Z",
-  "validator": "codex-source-record-audit",
+  "source_record_audit_sha256": "ce8250e3a8e01a11afb5defbf037415c00613e50f9e146616574e4cc0282a083",
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
   "validator_type": "model"
 }

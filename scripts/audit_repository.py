@@ -75,6 +75,9 @@ DEFAULT_ASSUMPTION_SOURCE_FILE = "Assumptions.lean"
 DEFAULT_SOURCE_RECORD_AUDIT_FILE = "source_record_audit.json"
 DEFAULT_SOURCE_RECORD_JUDGE_FILE = "source_record_match_llm.json"
 SOURCE_RECORD_AUDIT_HELPER = ROOT / "skills" / "econcs-formalizer" / "scripts" / "source_record_audit.py"
+REQUIRED_LLM_ASSUMPTION_PROMPT_VERSION = "assumption-provenance-v3-semantic-exact-premise-source"
+REQUIRED_LLM_STATEMENT_PROMPT_VERSION = "statement-match-v3-semantic-full-statement"
+REQUIRED_SOURCE_RECORD_PROMPT_VERSION = "source-record-v2-semantic-boundary-inputs"
 APPROVED_SOURCE_RECORD_CLASSIFICATIONS = {
     "container_recursively_audited",
     "derived_consequence_record",
@@ -250,6 +253,7 @@ ASSUMPTION_AUDIT_PREMISE_RE = re.compile(r"^\s*--\s*audit-premise:\s*(.+?)\s*$")
 APPROVED_ASSUMPTION_JUDGMENTS = {
     "paper_assumption",
     "paper_condition",
+    "documented_additional_assumption",
     "documented_caveat",
     "partial_boundary",
 }
@@ -259,30 +263,31 @@ APPROVED_ASSUMPTION_PREMISE_JUDGMENTS = {
     "source_text",
     "source_text_model_primitive",
     "derived_from_source_primitives",
+    "documented_additional_assumption",
     "documented_caveat",
     "partial_boundary",
 }
 LEAN_BINDER_RE = re.compile(r"[\(\{]([^()\{\}\[\]]+?)\s*:\s*([^()\{\}\[\]]+?)[\)\}]")
 HYPOTHESIS_NAME_RE = re.compile(
-    r"^(?:h[A-Za-z0-9_']*|.*(?:assumption|certificate|hypothesis|premise|regularity|bridge|row|threshold|capacity).*)$",
+    r"^(?:h[A-Za-z0-9_']*|.*(?:assumption|certificate|hypothesis|premise|regularity|bridge|replay|process|row|threshold|capacity).*)$",
     re.I,
 )
 PROOF_BOUNDARY_TYPE_RE = re.compile(
     r"\b(?:Prop|[A-Za-z0-9_']*(?:Certificate|Assumption|Hypothesis|Witness|Boundary|"
     r"Bridge|Rows?|Table|SourceModel|SourceFamilyRows|SourceRows?|SourceTable|External|Oracle|"
-    r"Window|Windows|Package|Regularity|Invariant))\b",
+    r"Window|Windows|Package|Regularity|Invariant|Replay|Process))\b",
     re.I,
 )
 VARIABLE_BOUNDARY_TYPE_RE = re.compile(
     r"\b[A-Za-z0-9_']*(?:Certificate|Assumption|Hypothesis|Witness|Boundary|Bridge|"
     r"Rows?|Table|SourceModel|SourceFamilyRows|SourceRows?|SourceTable|External|Oracle|Window|"
-    r"Windows|Package|Regularity|Invariant)\b",
+    r"Windows|Package|Regularity|Invariant|Replay|Process)\b",
     re.I,
 )
 LIBRARY_CERTIFICATE_BOUNDARY_RE = re.compile(
     r"(?:^|[_A-Za-z0-9'])("
     r"cert(?:ificate)?|source[-_ ]?rows?|source[-_ ]?table|row[-_ ]?package|"
-    r"external|oracle|boundary|witness|bridge|assumption|hypothesis"
+    r"external|oracle|boundary|witness|bridge|replay|process|assumption|hypothesis"
     r")",
     re.I,
 )
@@ -290,7 +295,7 @@ LIBRARY_BOUNDARY_TYPE_RE = re.compile(
     r"\b[A-Za-z0-9_']*(?:"
     r"Certificate|Assumption|Hypothesis|Witness|Boundary|Bridge|Rows?|"
     r"SourceModel|SourceFamilyRows|SourceRows?|SourceTable|External|Oracle|Window|Windows|Package|"
-    r"Regularity"
+    r"Regularity|Replay|Process"
     r")\b",
     re.I,
 )
@@ -939,17 +944,15 @@ FINAL_REPORT_REMAINING_BOUNDARIES_RE = re.compile(
 FINAL_REPORT_ADDITIONAL_ASSUMPTIONS_RE = re.compile(
     r"(?mi)^##+\s+(?:\d+\.\s*)?Additional\s+Assumptions\s+Beyond\s+Paper\b"
 )
-FINAL_REPORT_ADDITIONAL_BOUNDARY_RE = re.compile(
-    r"\b(?:partial[- ]formalization|external[- ]library|library|analytic|solver|"
-    r"runtime|source[- ]certificate|proof)\s+boundar(?:y|ies)\b|"
-    r"\bboundar(?:y|ies)\s+(?:assumption|for|from|in|remain|through|to|work)\b",
-    re.I,
-)
 FINAL_REPORT_PROOF_DEVIATIONS_RE = re.compile(
     r"(?mi)^##+\s+(?:\d+\.\s*)?Proof-Strategy\s+Deviations\b"
 )
 FINAL_REPORT_PROOF_TRICKS_RE = re.compile(
     r"(?mi)^##+\s+(?:\d+\.\s*)?Proof\s+Tricks\s+Worth\s+Reusing\b"
+)
+FINAL_REPORT_SOURCE_FIXES_RE = re.compile(
+    r"(?mi)^##+\s+(?:\d+\.\s*)?Mathematical\s+Typos\s+or\s+Other\s+Fixes\s+"
+    r"Suggested\s+(?:in|for)\s+the\s+Source\s+Paper\b"
 )
 FINAL_REPORT_ISSUES_CAVEATS_RE = re.compile(
     r"(?mi)^##+\s+(?:\d+\.\s*)?Paper\s+Issues\s+or\s+Caveats\b"
@@ -1070,17 +1073,6 @@ def check_final_report_status_alignment(
     return findings
 
 
-def markdown_section_body(report_text: str, heading: re.Match[str]) -> str:
-    """Return text under a Markdown heading up to the next same-or-higher heading."""
-
-    heading_line = report_text[heading.start(): report_text.find("\n", heading.start())]
-    heading_level = len(re.match(r"#+", heading_line.strip()).group(0)) if heading_line else 2
-    next_heading_re = re.compile(rf"(?m)^#{{1,{heading_level}}}\s+")
-    next_heading = next_heading_re.search(report_text, heading.end())
-    end = next_heading.start() if next_heading else len(report_text)
-    return report_text[heading.end():end]
-
-
 def check_final_report_human_facing_front_matter(
     include_active: bool,
     paper_filter: str | None = None,
@@ -1182,6 +1174,7 @@ def check_final_report_human_facing_front_matter(
         additional = FINAL_REPORT_ADDITIONAL_ASSUMPTIONS_RE.search(report_text)
         deviations = FINAL_REPORT_PROOF_DEVIATIONS_RE.search(report_text)
         tricks = FINAL_REPORT_PROOF_TRICKS_RE.search(report_text)
+        source_fixes = FINAL_REPORT_SOURCE_FIXES_RE.search(report_text)
         issues = FINAL_REPORT_ISSUES_CAVEATS_RE.search(report_text)
         detailed = FINAL_REPORT_DETAILED_EVIDENCE_RE.search(report_text)
         required_front = [
@@ -1206,7 +1199,22 @@ def check_final_report_human_facing_front_matter(
                 )
         present_positions = [
             human_verdict.start(),
-            *[match.start() for _, match in required_front if match],
+            *[
+                match.start()
+                for match in [
+                    closeout,
+                    source_scope,
+                    summary,
+                    remaining,
+                    additional,
+                    deviations,
+                    tricks,
+                    source_fixes,
+                    issues,
+                    detailed,
+                ]
+                if match
+            ],
         ]
         if present_positions != sorted(present_positions):
             findings.append(
@@ -1216,22 +1224,10 @@ def check_final_report_human_facing_front_matter(
                     "final validation report should order front sections as Human Verdict, "
                     "Closeout Status, Source and Scope, Researcher Summary, "
                     "Remaining Boundaries, Additional Assumptions, Proof-Strategy "
-                    "Deviations, Proof Tricks, Paper Issues or Caveats, then "
-                    "Detailed Formalization Evidence",
+                    "Deviations, Proof Tricks, optional source-paper fixes, "
+                    "Paper Issues or Caveats, then Detailed Formalization Evidence",
                 )
             )
-        if additional and folder.name != "TEMPLATE":
-            additional_body = markdown_section_body(report_text, additional)
-            if FINAL_REPORT_ADDITIONAL_BOUNDARY_RE.search(additional_body):
-                findings.append(
-                    Finding(
-                        "WARN",
-                        report,
-                        "`Additional Assumptions Beyond Paper` should list only genuine "
-                        "non-paper hypotheses; put partial/library/proof boundaries in "
-                        "`Remaining Boundaries and Gaps`",
-                    )
-                )
         if detailed:
             pre_detail = report_text[human_verdict.start():detailed.start()]
             if FINAL_REPORT_CHECKLIST_HEADING_RE.search(pre_detail):
@@ -1849,7 +1845,7 @@ def resolve_paper_local_alias_chain(
 def assumption_finding_severity(strict_assumption_policy: bool, status: object) -> str:
     """Completed papers should not hide proof-boundary premises."""
 
-    if status not in {"formalized", "formalized with caveat"}:
+    if status not in {"formalized", "formalized with caveat", "partially formalized", "conditional"}:
         return "WARN"
     if strict_assumption_policy:
         return "ERROR"
@@ -1859,7 +1855,7 @@ def assumption_finding_severity(strict_assumption_policy: bool, status: object) 
 def completed_status_finding_severity(status: object) -> str:
     """Completed paper claims should satisfy the strict review-surface checks."""
 
-    if status in {"formalized", "formalized with caveat"}:
+    if status in {"formalized", "formalized with caveat", "partially formalized", "conditional"}:
         return "ERROR"
     return "WARN"
 
@@ -1879,6 +1875,7 @@ def paper_statement_sidecar_findings(
     severity = completed_status_finding_severity(status)
     try:
         from review_dashboard import (
+            assumption_provenance_audit_summary,
             paper_coverage_audit_summary,
             review_items_for_paper,
             review_surface_audit_summary,
@@ -1889,6 +1886,7 @@ def paper_statement_sidecar_findings(
         surface = review_surface_audit_summary(folder, items)
         statements = statement_translation_audit_summary(folder, items)
         paper_coverage = paper_coverage_audit_summary(folder, items)
+        assumptions = assumption_provenance_audit_summary(folder, items)
     except Exception as exc:  # noqa: BLE001 - audit should report parser failures.
         return [
             Finding(
@@ -1899,14 +1897,30 @@ def paper_statement_sidecar_findings(
         ]
 
     findings: list[Finding] = []
-    if surface.get("needs_attention"):
+    strict_evidence_required = status in {
+        "formalized",
+        "formalized with caveat",
+        "partially formalized",
+        "conditional",
+    }
+    surface_needs_attention = bool(
+        surface.get("needs_attention")
+        or (strict_evidence_required and not surface.get("has_completed_audit"))
+    )
+    if surface_needs_attention:
         reasons: list[str] = []
+        if strict_evidence_required and not surface.get("has_completed_audit"):
+            reasons.append("missing explicit review-surface LLM pass")
         if surface.get("missing_required"):
             reasons.append("missing review-surface LLM audit")
         if surface.get("stale"):
             reasons.append("stale review-surface LLM audit")
+        if surface.get("metadata_missing"):
+            reasons.append("review-surface audit missing validator/timestamp success metadata")
         if surface.get("judgment") in {"needs_curation", "uncertain"}:
             reasons.append(f"review-surface judgment `{surface.get('judgment')}`")
+        if surface.get("unknown_judgment"):
+            reasons.append(f"unrecognized review-surface judgment `{surface.get('judgment') or 'missing'}`")
         findings.append(
             Finding(
                 severity,
@@ -1928,8 +1942,14 @@ def paper_statement_sidecar_findings(
             ("uncertain_count", "uncertain source-coverage judgment"),
             ("unknown_count", "unknown source-coverage judgment"),
             ("stale_statement_count", "stale source-statement digest"),
+            ("extra_coverage_count", "stale extra coverage item"),
+            ("coverage_metadata_missing_count", "coverage item missing validator/timestamp metadata"),
             ("invalid_row_link_count", "invalid linked dashboard row"),
             ("covered_without_rows_count", "covered source statement without linked row"),
+            (
+                "required_out_of_scope_count",
+                "required source-visible review target marked out of scope/not a paper target",
+            ),
         ):
             value = paper_coverage.get(key)
             if isinstance(value, bool):
@@ -1941,6 +1961,8 @@ def paper_statement_sidecar_findings(
             parts.append("stale source-inventory digest")
         if paper_coverage.get("stale_surface"):
             parts.append("stale review-surface digest")
+        if paper_coverage.get("audit_metadata_missing"):
+            parts.append("paper-coverage audit missing validator/timestamp success metadata")
         findings.append(
             Finding(
                 severity,
@@ -1949,6 +1971,56 @@ def paper_statement_sidecar_findings(
                 + (", ".join(parts) if parts else "unknown issue"),
             )
         )
+    if paper_coverage.get("source_to_lean_needs_attention"):
+        parts = []
+        for key, label in (
+            ("support_only_named_claim_count", "theorem-like source statement only support-covered"),
+            (
+                "support_only_required_source_item_count",
+                "required source-visible review target only support-covered",
+            ),
+            (
+                "required_out_of_scope_count",
+                "required source-visible review target marked out of scope/not a paper target",
+            ),
+            ("row_statement_match_missing_count", "source-to-row link without row-local statement judgment"),
+            ("row_statement_match_stale_count", "source-to-row link with stale row-local statement judgment"),
+            ("row_statement_match_mismatch_count", "source-to-row link with mismatched row-local statement judgment"),
+            ("row_statement_match_uncertain_count", "source-to-row link with uncertain row-local statement judgment"),
+            ("row_statement_match_unknown_count", "source-to-row link with unknown row-local statement judgment"),
+            (
+                "row_statement_match_conditional_without_coverage_boundary_count",
+                "direct source coverage link whose row is only conditionally matched",
+            ),
+            (
+                "row_statement_match_missing_statement_digest_count",
+                "source-to-row link without row-local statement digest",
+            ),
+            (
+                "row_statement_match_wrong_statement_digest_count",
+                "source-to-row link with wrong row-local statement digest",
+            ),
+            ("row_assumption_provenance_missing_count", "source-to-assumption link without provenance judgment"),
+            ("row_assumption_provenance_stale_count", "source-to-assumption link with stale provenance judgment"),
+            ("row_assumption_provenance_mismatch_count", "source-to-assumption link with provenance mismatch"),
+            ("row_assumption_provenance_uncertain_count", "source-to-assumption link with uncertain provenance"),
+            ("row_assumption_provenance_unknown_count", "source-to-assumption link with unknown provenance"),
+            (
+                "row_assumption_provenance_conditional_without_coverage_boundary_count",
+                "direct source coverage link whose assumption is only a partial boundary",
+            ),
+        ):
+            value = paper_coverage.get(key)
+            if isinstance(value, int) and value:
+                parts.append(f"{value} {label}(s)")
+        if parts:
+            findings.append(
+                Finding(
+                    severity,
+                    folder / "paper_coverage_llm.json",
+                    f"`{paper_id}` source-to-Lean audit needs attention: " + ", ".join(parts),
+                )
+            )
 
     if statements.get("needs_attention"):
         parts: list[str] = []
@@ -1969,6 +2041,30 @@ def paper_statement_sidecar_findings(
                 severity,
                 folder / "statement_match_llm.json",
                 f"`{paper_id}` statement-translation audit needs attention: "
+                + (", ".join(parts) if parts else "unknown issue"),
+            )
+        )
+    if assumptions.get("needs_attention"):
+        parts = []
+        for key, label in (
+            ("missing_rows_count", "configured assumption declaration missing from review surface"),
+            ("unlisted_rows_count", "assumption-like declaration not listed in status.json"),
+            ("missing_judgment_count", "missing assumption-provenance judgment"),
+            ("stale_judgment_count", "stale assumption-provenance judgment"),
+            ("not_paper_assumption_count", "assumption judged not paper/source backed"),
+            ("uncertain_count", "uncertain assumption-provenance judgment"),
+            ("unknown_count", "unknown assumption-provenance judgment"),
+            ("unresolved_premise_count", "unresolved premise-level provenance judgment"),
+            ("missing_source_location_premise_count", "source-text premise judgment without source location"),
+        ):
+            value = assumptions.get(key)
+            if isinstance(value, int) and value:
+                parts.append(f"{value} {label}(s)")
+        findings.append(
+            Finding(
+                severity,
+                folder / "assumption_match_llm.json",
+                f"`{paper_id}` assumption-provenance audit needs attention: "
                 + (", ".join(parts) if parts else "unknown issue"),
             )
         )
@@ -2119,6 +2215,17 @@ def load_json_object(path: Path) -> dict[str, object] | None:
     return payload if isinstance(payload, dict) else None
 
 
+def repo_display_path(path: Path) -> str:
+    """Return a stable repository-relative path string for messages."""
+
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        if not path.is_absolute():
+            return str(path)
+        return str(path)
+
+
 def run_source_record_audit_helper(paper_id: str) -> tuple[dict[str, object] | None, str]:
     """Run the skill-bundled source-record audit helper and return its JSON payload."""
 
@@ -2184,6 +2291,19 @@ def source_record_judgment_items(path: Path, paper_id: str) -> dict[str, dict[st
         items = payload.get("field_judgments")
     if not isinstance(items, dict):
         return {}
+    prompt_version = str(payload.get("prompt_version") or "").strip()
+    prompt_version_stale = prompt_version != REQUIRED_SOURCE_RECORD_PROMPT_VERSION
+    payload_audit_digest = str(payload.get("source_record_audit_sha256") or "").strip()
+    payload_has_validator = bool(
+        payload.get("validator")
+        or payload.get("model")
+        or payload.get("judge")
+        or payload.get("agent")
+        or payload.get("generator")
+    )
+    payload_has_validated_at = bool(
+        payload.get("validated_at") or payload.get("timestamp") or payload.get("generated_at")
+    )
     out: dict[str, dict[str, object]] = {}
     for raw_key, raw_item in items.items():
         key = str(raw_key).strip()
@@ -2197,9 +2317,39 @@ def source_record_judgment_items(path: Path, paper_id: str) -> dict[str, dict[st
                 or raw_item.get("status")
                 or ""
             ).strip()
-            out[key] = {**raw_item, "classification": classification}
+            out[key] = {
+                **raw_item,
+                "classification": classification,
+                "prompt_version": prompt_version,
+                "prompt_version_stale": prompt_version_stale,
+                "metadata_missing": not bool(
+                    (
+                        raw_item.get("validator")
+                        or raw_item.get("model")
+                        or raw_item.get("judge")
+                        or raw_item.get("agent")
+                        or raw_item.get("generator")
+                        or payload_has_validator
+                    )
+                    and (
+                        raw_item.get("validated_at")
+                        or raw_item.get("timestamp")
+                        or raw_item.get("generated_at")
+                        or payload_has_validated_at
+                    )
+                ),
+                "source_record_audit_sha256": str(
+                    raw_item.get("source_record_audit_sha256") or payload_audit_digest
+                ).strip(),
+            }
         else:
-            out[key] = {"classification": str(raw_item).strip()}
+            out[key] = {
+                "classification": str(raw_item).strip(),
+                "prompt_version": prompt_version,
+                "prompt_version_stale": prompt_version_stale,
+                "metadata_missing": not bool(payload_has_validator and payload_has_validated_at),
+                "source_record_audit_sha256": payload_audit_digest,
+            }
     return out
 
 
@@ -2220,6 +2370,7 @@ def check_source_record_audit(
         return [Finding(severity, folder / "PaperInterface.lean", f"`{paper_id}` source-record audit produced no payload")]
 
     field_count = int(payload.get("recursive_field_count") or 0)
+    input_count = int(payload.get("boundary_input_count") or 0)
     row_count = len(payload.get("rows_with_record_premises") or [])
     recursion_failures = [
         item for item in payload.get("recursion_failures") or []
@@ -2240,7 +2391,7 @@ def check_source_record_audit(
                 + ("; ..." if len(recursion_failures) > 5 else ""),
             )
         ]
-    if field_count <= 0 and row_count <= 0:
+    if field_count <= 0 and input_count <= 0 and row_count <= 0:
         return []
 
     digest = str(payload.get("source_record_audit_sha256") or "").strip()
@@ -2249,6 +2400,12 @@ def check_source_record_audit(
         for key in payload.get("expected_field_judgment_keys") or []
         if str(key).strip()
     }
+    expected_input_keys = {
+        str(key).strip()
+        for key in payload.get("expected_input_judgment_keys") or []
+        if str(key).strip()
+    }
+    expected_keys.update(expected_input_keys)
     findings: list[Finding] = []
     audit_file = source_record_audit_file_path(folder, review_surface)
     judgment_file = source_record_judgment_file_path(folder, review_surface)
@@ -2258,9 +2415,10 @@ def check_source_record_audit(
             Finding(
                 severity,
                 audit_file,
-                f"`{paper_id}` source-record audit found {row_count} record-backed row(s) "
-                f"and {field_count} recursive field(s), but `{audit_file.relative_to(ROOT)}` is missing. "
-                "Run the source-record audit helper and feed the generated Lean-checked field payload to the LLM judge.",
+                f"`{paper_id}` source-record audit found {input_count} boundary-shaped input(s), "
+                f"{row_count} record-backed row(s), and {field_count} recursive field(s), but "
+                f"`{repo_display_path(audit_file)}` is missing. Run the source-record audit helper "
+                "and feed the generated Lean-checked input/field payload to the LLM judge.",
             )
         )
     else:
@@ -2274,6 +2432,16 @@ def check_source_record_audit(
                     f"`{saved_digest or 'missing'}` but current digest is `{digest}`.",
                 )
             )
+        saved_prompt_version = str(saved_audit.get("prompt_version") or "").strip()
+        if saved_prompt_version != REQUIRED_SOURCE_RECORD_PROMPT_VERSION:
+            findings.append(
+                Finding(
+                    severity,
+                    audit_file,
+                    f"`{paper_id}` source-record audit payload prompt version is stale or missing: "
+                    f"`{saved_prompt_version or 'missing'}`.",
+                )
+            )
 
     judgments = source_record_judgment_items(judgment_file, paper_id)
     if not judgments:
@@ -2281,8 +2449,9 @@ def check_source_record_audit(
             Finding(
                 severity,
                 judgment_file,
-                f"`{paper_id}` source-record judge has {field_count} field(s) requiring LLM provenance judgments, "
-                f"but `{judgment_file.relative_to(ROOT)}` is missing or invalid.",
+                f"`{paper_id}` source-record judge has {input_count} boundary input(s) and "
+                f"{field_count} field(s) requiring LLM provenance judgments, "
+                f"but `{repo_display_path(judgment_file)}` is missing or invalid.",
             )
         )
         return findings
@@ -2313,11 +2482,28 @@ def check_source_record_audit(
         if key in expected_keys
         and str(item.get("classification") or "").strip() not in APPROVED_SOURCE_RECORD_CLASSIFICATIONS
     )
+    stale_prompt = sorted(
+        key for key, item in judgments.items() if key in expected_keys and item.get("prompt_version_stale")
+    )
+    missing_metadata = sorted(
+        key for key, item in judgments.items() if key in expected_keys and item.get("metadata_missing")
+    )
+    stale_judgment_digest = sorted(
+        key
+        for key, item in judgments.items()
+        if key in expected_keys
+        and digest
+        and str(item.get("source_record_audit_sha256") or "").strip() != digest
+    )
     invalid_context: list[str] = []
-    for key in sorted(expected_keys & set(judgments)):
+    for key in sorted((expected_keys - expected_input_keys) & set(judgments)):
         classification = str(judgments[key].get("classification") or "").strip()
         field_item = field_items.get(key, {})
         nested = [str(name).strip() for name in field_item.get("nested_structures") or [] if str(name).strip()]
+        if classification == "approved_external_boundary" and status in {"formalized", "formalized with caveat"}:
+            invalid_context.append(
+                f"{key} classified `approved_external_boundary` but paper status is `{status}`"
+            )
         if nested and classification not in {
             "container_recursively_audited",
             "approved_external_boundary",
@@ -2351,12 +2537,45 @@ def check_source_record_audit(
                 f"{key} classified `nonpropositional_witness_data` but points to nested source record(s) "
                 + ", ".join(nested)
             )
+    for key in sorted(expected_input_keys & set(judgments)):
+        classification = str(judgments[key].get("classification") or "").strip()
+        source_location = str(
+            judgments[key].get("source_location")
+            or judgments[key].get("source_evidence")
+            or judgments[key].get("source_key")
+            or judgments[key].get("paper_statement_key")
+            or ""
+        ).strip()
+        lean_derivation = str(
+            judgments[key].get("lean_derivation")
+            or judgments[key].get("constructor")
+            or judgments[key].get("derived_from")
+            or judgments[key].get("derivation")
+            or ""
+        ).strip()
+        if classification in {"container_recursively_audited", "nonpropositional_witness_data"}:
+            invalid_context.append(
+                f"{key} classified `{classification}` but boundary-shaped theorem inputs need "
+                "source evidence, a Lean derivation, approved external-boundary status, or unresolved status"
+            )
+        if classification == "validated_source_assumption" and not source_location:
+            invalid_context.append(
+                f"{key} classified `validated_source_assumption` but gives no source key/location/evidence"
+            )
+        if classification == "proved_from_primitives" and not lean_derivation:
+            invalid_context.append(
+                f"{key} classified `proved_from_primitives` but gives no Lean constructor/derivation"
+            )
+        if classification == "approved_external_boundary" and status in {"formalized", "formalized with caveat"}:
+            invalid_context.append(
+                f"{key} classified `approved_external_boundary` but paper status is `{status}`"
+            )
     if missing:
         findings.append(
             Finding(
                 severity,
                 judgment_file,
-                f"`{paper_id}` source-record judge is missing {len(missing)} field judgment(s): "
+                f"`{paper_id}` source-record judge is missing {len(missing)} boundary/source-record judgment(s): "
                 + ", ".join(missing[:8])
                 + ("; ..." if len(missing) > 8 else ""),
             )
@@ -2366,7 +2585,7 @@ def check_source_record_audit(
             Finding(
                 "WARN",
                 judgment_file,
-                f"`{paper_id}` source-record judge has {len(extra)} stale/extra field judgment(s): "
+                f"`{paper_id}` source-record judge has {len(extra)} stale/extra boundary/source-record judgment(s): "
                 + ", ".join(extra[:8])
                 + ("; ..." if len(extra) > 8 else ""),
             )
@@ -2376,9 +2595,42 @@ def check_source_record_audit(
             Finding(
                 severity,
                 judgment_file,
-                f"`{paper_id}` source-record judge marks {len(unresolved)} field(s) as unresolved or unapproved: "
+                f"`{paper_id}` source-record judge marks {len(unresolved)} boundary/source-record item(s) as unresolved or unapproved: "
                 + ", ".join(unresolved[:8])
                 + ("; ..." if len(unresolved) > 8 else ""),
+            )
+        )
+    if stale_prompt:
+        findings.append(
+            Finding(
+                severity,
+                judgment_file,
+                f"`{paper_id}` source-record judge uses stale or missing prompt version for "
+                f"{len(stale_prompt)} item(s): "
+                + ", ".join(stale_prompt[:8])
+                + ("; ..." if len(stale_prompt) > 8 else ""),
+            )
+        )
+    if missing_metadata:
+        findings.append(
+            Finding(
+                severity,
+                judgment_file,
+                f"`{paper_id}` source-record judge lacks validator/timestamp success metadata for "
+                f"{len(missing_metadata)} item(s): "
+                + ", ".join(missing_metadata[:8])
+                + ("; ..." if len(missing_metadata) > 8 else ""),
+            )
+        )
+    if stale_judgment_digest:
+        findings.append(
+            Finding(
+                severity,
+                judgment_file,
+                f"`{paper_id}` source-record judge has {len(stale_judgment_digest)} item(s) "
+                "not tied to the current source_record_audit_sha256: "
+                + ", ".join(stale_judgment_digest[:8])
+                + ("; ..." if len(stale_judgment_digest) > 8 else ""),
             )
         )
     if invalid_context:
@@ -2392,6 +2644,168 @@ def check_source_record_audit(
             )
         )
     return findings
+
+
+def _source_record_source_location(judgment: dict[str, object]) -> str:
+    return str(
+        judgment.get("source_location")
+        or judgment.get("source_evidence")
+        or judgment.get("source_key")
+        or judgment.get("paper_statement_key")
+        or ""
+    ).strip()
+
+
+def _source_record_lean_derivation(judgment: dict[str, object]) -> str:
+    return str(
+        judgment.get("lean_derivation")
+        or judgment.get("constructor")
+        or judgment.get("derived_from")
+        or judgment.get("derivation")
+        or ""
+    ).strip()
+
+
+def _source_record_boundary_input_is_validated(
+    judgment: dict[str, object],
+    *,
+    digest: str,
+    status: object,
+) -> bool:
+    """Return true only for current source-record judgments that route theorem inputs.
+
+    Source-record inputs are an alternate explicit provenance lane for visible
+    source-model/source-row premises.  This should not weaken the hidden-premise
+    audit: missing metadata, stale prompts, unresolved judgments, partial
+    external boundaries in completed papers, or missing source/derivation
+    evidence all fail closed here and remain hidden-premise findings.
+    """
+
+    classification = str(judgment.get("classification") or "").strip()
+    if classification not in APPROVED_SOURCE_RECORD_CLASSIFICATIONS:
+        return False
+    if judgment.get("prompt_version_stale") or judgment.get("metadata_missing"):
+        return False
+    if digest and str(judgment.get("source_record_audit_sha256") or "").strip() != digest:
+        return False
+    if classification in {"container_recursively_audited", "nonpropositional_witness_data"}:
+        return False
+    if classification == "approved_external_boundary" and status in {"formalized", "formalized with caveat"}:
+        return False
+    if classification == "validated_source_assumption" and not _source_record_source_location(judgment):
+        return False
+    if classification == "proved_from_primitives" and not _source_record_lean_derivation(judgment):
+        return False
+    return True
+
+
+def source_record_validated_boundary_premises(
+    paper_id: str,
+    folder: Path,
+    review_surface: dict[str, object],
+    status: object,
+) -> set[str]:
+    """Return visible theorem premises routed through current source-record judgments."""
+
+    audit_file = source_record_audit_file_path(folder, review_surface)
+    saved_audit = load_json_object(audit_file)
+    if not saved_audit:
+        return set()
+    digest = str(saved_audit.get("source_record_audit_sha256") or "").strip()
+    if str(saved_audit.get("prompt_version") or "").strip() != REQUIRED_SOURCE_RECORD_PROMPT_VERSION:
+        return set()
+
+    judgment_file = source_record_judgment_file_path(folder, review_surface)
+    judgments = source_record_judgment_items(judgment_file, paper_id)
+    if not judgments:
+        return set()
+
+    routed: set[str] = set()
+    for raw_item in saved_audit.get("boundary_input_items") or []:
+        if not isinstance(raw_item, dict):
+            continue
+        key = str(raw_item.get("judgment_key") or "").strip()
+        if not key:
+            continue
+        judgment = judgments.get(key)
+        if not isinstance(judgment, dict):
+            continue
+        if not _source_record_boundary_input_is_validated(judgment, digest=digest, status=status):
+            continue
+        raw_input = raw_item.get("input")
+        if not isinstance(raw_input, dict):
+            continue
+        names = str(raw_input.get("names") or "").strip()
+        type_text = str(raw_input.get("type") or "").strip()
+        if names and type_text:
+            routed.add(normalize_premise_text(f"{names} : {type_text}"))
+            routed.add(premise_type_text(f"{names} : {type_text}"))
+    return routed
+
+
+def current_statement_conditional_boundary_rows(folder: Path) -> set[str]:
+    """Return rows with current LLM-reviewed conditional statement boundaries."""
+
+    path = folder / "statement_match_llm.json"
+    payload = load_json_object(path)
+    if not payload or payload.get("schema") != 1:
+        return set()
+    if payload.get("paper") not in {None, folder.name}:
+        return set()
+    if str(payload.get("prompt_version") or "").strip() != REQUIRED_LLM_STATEMENT_PROMPT_VERSION:
+        return set()
+    items = payload.get("items")
+    if not isinstance(items, dict):
+        return set()
+    payload_has_validator = bool(
+        payload.get("validator")
+        or payload.get("model")
+        or payload.get("judge")
+        or payload.get("agent")
+        or payload.get("generator")
+    )
+    payload_has_validated_at = bool(
+        payload.get("validated_at") or payload.get("timestamp") or payload.get("generated_at")
+    )
+    out: set[str] = set()
+    for raw_name, raw_value in items.items():
+        name = str(raw_name).strip()
+        if not name or not isinstance(raw_value, dict):
+            continue
+        judgment = str(
+            raw_value.get("judgment")
+            or raw_value.get("verdict")
+            or raw_value.get("status")
+            or ""
+        ).strip().lower()
+        resolution = str(
+            raw_value.get("resolution")
+            or raw_value.get("accepted_resolution")
+            or raw_value.get("review_resolution")
+            or ""
+        ).strip().lower()
+        has_validator = bool(
+            raw_value.get("validator")
+            or raw_value.get("model")
+            or raw_value.get("judge")
+            or raw_value.get("agent")
+            or raw_value.get("generator")
+            or payload_has_validator
+        )
+        has_validated_at = bool(
+            raw_value.get("validated_at")
+            or raw_value.get("timestamp")
+            or raw_value.get("generated_at")
+            or payload_has_validated_at
+        )
+        if (
+            judgment in {"mismatch", "does_not_match", "no", "false"}
+            and resolution in {"conditional_boundary", "documented_boundary", "accepted_conditional_boundary"}
+            and has_validator
+            and has_validated_at
+        ):
+            out.add(name)
+    return out
 
 
 def assumption_declarations_from_file(path: Path) -> dict[str, tuple[int, str, str]]:
@@ -2508,6 +2922,15 @@ def normalize_assumption_judgment(raw: object) -> str:
     }:
         return "paper_condition"
     if value in {
+        "documented_additional_assumption",
+        "documented additional assumption",
+        "additional_assumption",
+        "additional assumption",
+        "human_approved_additional_assumption",
+        "human approved additional assumption",
+    }:
+        return "documented_additional_assumption"
+    if value in {
         "documented_caveat",
         "documented caveat",
         "paper_caveat",
@@ -2610,8 +3033,8 @@ def is_review_explicit_boundary_premise(premise: str) -> bool:
         "Package",
         "Window",
         "Windows",
-        "Bounds",
-        "Bound",
+        "Replay",
+        "Process",
     )
     return short_head.endswith(boundary_suffixes) or re.search(
         r"\b(?:source[-_ ]?rows?|source[-_ ]?table|row[-_ ]?package)\b",
@@ -3933,6 +4356,20 @@ def check_machine_paper_status(
     if not isinstance(papers, list):
         findings.append(Finding("ERROR", PAPER_STATUS_FILE, "`papers` should be a list"))
         return findings
+    using_paper_local_fallback = False
+    if paper_filter is not None and not any(
+        isinstance(entry, dict) and entry.get("id") == paper_filter for entry in papers
+    ):
+        local_status = PAPERS / paper_filter / "status.json"
+        if local_status.exists():
+            try:
+                local_payload = json.loads(local_status.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                findings.append(Finding("ERROR", local_status, f"invalid JSON: {exc.msg}"))
+                local_payload = None
+            if isinstance(local_payload, dict):
+                papers = [local_payload]
+                using_paper_local_fallback = True
 
     known = {folder.name for folder in paper_dirs()}
     entries: dict[str, dict] = {}
@@ -4106,12 +4543,22 @@ def check_machine_paper_status(
         assumption_judgments: dict[str, dict[str, object]] = {}
         validated_assumption_premises: set[str] = set()
         validated_assumption_premise_types: set[str] = set()
+        accepted_conditional_boundary_rows = (
+            set()
+            if status in {"formalized", "formalized with caveat"}
+            else current_statement_conditional_boundary_rows(PAPERS / paper_id)
+        )
         hidden_premise_finding_keys: set[tuple[Path, int, str, str, tuple[str, ...]]] = set()
         hidden_premise_severity = assumption_finding_severity(strict_assumption_policy, status)
 
         def add_hidden_premise_finding(
-            declaration: LeanDeclaration, hidden: list[str], context: str
+            declaration: LeanDeclaration,
+            hidden: list[str],
+            context: str,
+            row_name: str | None = None,
         ) -> None:
+            if row_name and row_name in accepted_conditional_boundary_rows:
+                return
             hidden = list(dict.fromkeys(
                 premise
                 for premise in hidden
@@ -4193,15 +4640,23 @@ def check_machine_paper_status(
                 proof_boundary_names,
             )
         )
-        findings.extend(
-            check_source_record_audit(
+        source_record_findings = check_source_record_audit(
+            paper_id,
+            PAPERS / paper_id,
+            review_surface,
+            status,
+            strict_assumption_policy,
+        )
+        findings.extend(source_record_findings)
+        if not any(finding.severity == "ERROR" for finding in source_record_findings):
+            for premise in source_record_validated_boundary_premises(
                 paper_id,
                 PAPERS / paper_id,
                 review_surface,
                 status,
-                strict_assumption_policy,
-            )
-        )
+            ):
+                validated_assumption_premises.add(normalize_premise_text(premise))
+                validated_assumption_premise_types.add(premise_type_text(premise))
         if assumption_names:
             assumption_judge_file = assumption_judgment_file_path(interface_path.parent, review_surface)
             if not assumption_judge_file.exists():
@@ -4231,7 +4686,8 @@ def check_machine_paper_status(
                             "ERROR" if strict_assumption_policy else "WARN",
                             assumption_judge_file,
                             f"`{paper_id}` assumption `{assumption_name}` lacks a current "
-                            "`paper_assumption`, `paper_condition`, `documented_caveat`, "
+                            "`paper_assumption`, `paper_condition`, "
+                            "`documented_additional_assumption`, `documented_caveat`, "
                             "or `partial_boundary` "
                             "LLM provenance judgment",
                         )
@@ -4380,6 +4836,7 @@ def check_machine_paper_status(
                 ),
                 expanded_boundary_premises,
                 "expanded review row",
+                row_name=name,
             )
         for name in include_names:
             declaration = declaration_blocks.get(name)
@@ -4468,6 +4925,7 @@ def check_machine_paper_status(
                         row_declaration,
                         direct_boundary_premises,
                         "review row",
+                        row_name=name,
                     )
                 alias_targets = resolve_paper_local_alias_chain(declaration_index, source)
                 for target_declaration in alias_targets:
@@ -4488,6 +4946,7 @@ def check_machine_paper_status(
                             target_declaration,
                             target_hidden,
                             f"review row `{name}` resolves to",
+                            row_name=name,
                         )
             if not is_signature_only_review_alias(kind, source):
                 continue
@@ -4567,12 +5026,13 @@ def check_machine_paper_status(
                 Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` oversized interface should include maintainability_issue")
             )
 
-    missing = known - set(entries)
-    extra = set(entries) - known
-    if missing:
-        findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"missing paper status entries: {', '.join(sorted(missing))}"))
-    if extra:
-        findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"unknown paper status entries: {', '.join(sorted(extra))}"))
+    if not using_paper_local_fallback:
+        missing = known - set(entries)
+        extra = set(entries) - known
+        if missing:
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"missing paper status entries: {', '.join(sorted(missing))}"))
+        if extra:
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"unknown paper status entries: {', '.join(sorted(extra))}"))
 
     return findings
 

@@ -37,13 +37,20 @@ than a hypothesis, describe it in Section 5.
 ## 8. Proof Tricks Worth Reusing
 - None
 
-## 9. Paper Issues or Caveats
+## 9. Mathematical Typos or Other Fixes Suggested in the Source Paper
+None found.
+Use this section for likely mathematical typos, sign errors, missing constants,
+source-version corrections, or theorem-statement repairs suggested by the
+formalization. Do not use this section for ordinary proof engineering choices
+or open Lean/library work.
+
+## 10. Paper Issues or Caveats
 None found.
 
-## 10. Detailed Formalization Evidence
+## 11. Detailed Formalization Evidence
 None yet.
 
-## 11. Paper Assumption Provenance
+## 12. Paper Assumption Provenance
 Every paper-facing theorem premise that is not derived in Lean should appear as
 a named assumption declaration in `Assumptions.lean`, be listed in `status.json`
 `review_surface.assumption_names`, and be checked in `assumption_match_llm.json`
@@ -62,7 +69,7 @@ or `not paper-facing`; keep raw enum labels only in machine-readable JSON.
 | --- | --- | --- | --- | --- |
 | None | `none` | None | None | No paper assumptions recorded yet. |
 
-## 12. Displayed Formula Provenance
+## 13. Displayed Formula Provenance
 Every displayed or source-defining formula used by a named result should have
 an exact paper-facing row or exact subclaim row. Broad aggregate rows are not
 enough for full validation. Formula rows are closed only when the formula is
@@ -73,7 +80,7 @@ assumptions.
 | --- | --- | --- | --- | --- |
 | None | `none` | None | None | No displayed formulas checked yet. |
 
-## 13. Library Lift Pass
+## 14. Library Lift Pass
 - Reusable library extraction candidates: None
 - Library certificate/source-boundary audit: not run. Before a completion
   claim, summarize whether certificate-taking library APIs used by paper
@@ -84,12 +91,12 @@ assumptions.
   source-row formula boundaries, hidden premises, or transitive library
   certificate findings.
 
-## 14. DAG Audit
+## 15. DAG Audit
 - Rendered artifact: not checked
 - Topology: not checked
 - Layout: not checked
 
-## 15. Validation Checks
+## 16. Validation Checks
 - Not run.
 - Required closeout checks include targeted Lean build, statement precheck,
   assumption/hidden-premise precheck, repository audit, and library premise
@@ -99,10 +106,10 @@ assumptions.
   audit command here, but keep commands out of the executive verdict and proof
   narrative.
 
-## 16. Paper Definitions Checked
+## 17. Paper Definitions Checked
 - None yet.
 
-## 17. Named Theorem Statements Checked
+## 18. Named Theorem Statements Checked
 ### Theorem <n>
 **Paper statement.** <one theorem-box-level statement matching the source>
 
@@ -111,7 +118,7 @@ assumptions.
 
 **Status.** not formalized.
 
-## 18. Paper-Facing Statement Validator Ledger
+## 19. Paper-Facing Statement Validator Ledger
 This table is one row per dashboard/PaperInterface row. Generate it from the
 validator ledger rather than from memory.
 

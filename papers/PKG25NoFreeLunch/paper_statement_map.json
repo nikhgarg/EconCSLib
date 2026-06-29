@@ -1,90 +1,132 @@
 {
-  "schema": 1,
-  "paper": "PKG25NoFreeLunch",
-  "title": "A No Free Lunch Theorem for Human-AI Collaboration",
-  "generated_at": "2026-06-29T00:41:56Z",
-  "source_inventory_policy": "Source basis: /tmp/econcs_source_text/PKG25NoFreeLunch.txt, PDF cache, and validation report. Curated by the 2026-06-28 source-grounded coverage pass. Dashboard-seeded keys were checked against the source inventory reports/source text when available; explicitly missing named source items are recorded as out_of_scope rather than silently omitted.",
-  "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+  "generated_at": "2026-06-29T20:39:31Z",
   "items": {
-    "definition_rounding_convention": {
-      "statement": "source rounding convention `round(1/2) = 1`.",
-      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
-      "source_location": "Definition from Section 3, immediately before the individual",
-      "aliases": [
-        "definition_rounding_convention"
-      ]
-    },
     "definition_collaboration_strategy": {
-      "statement": "deterministic collaboration strategy from prediction profiles to labels.",
-      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
-      "source_location": "Definition from Section 3.",
       "aliases": [
         "definition_collaboration_strategy"
-      ]
+      ],
+      "source_location": "Definition from Section 3.",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "deterministic collaboration strategy from prediction profiles to labels."
     },
     "definition_interior_prediction_profile": {
-      "statement": "source domain `(0,1)^n`.",
-      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
-      "source_location": "Definition 4 constrains the strategy only on `(0,1)^n`; boundary",
       "aliases": [
         "definition_interior_prediction_profile"
-      ]
+      ],
+      "source_location": "Definition 4 constrains the strategy only on `(0,1)^n`; boundary",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "source domain `(0,1)^n`."
     },
     "definition_non_collaborative": {
-      "statement": "fixed agent off ties and fixed tie label on the half slice.",
-      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
-      "source_location": "Definition 4.",
       "aliases": [
         "definition_non_collaborative"
-      ]
+      ],
+      "source_location": "Definition 4.",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "fixed agent off ties and fixed tie label on the half slice."
     },
     "definition_reliable": {
-      "statement": "source reliability over all collaboration-setting accuracy surfaces.",
-      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
-      "source_location": "Definition 3.  The finite adversarial settings used in the proof",
       "aliases": [
         "definition_reliable"
-      ]
+      ],
+      "source_location": "Definition 3.  The finite adversarial settings used in the proof",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "source reliability over all collaboration-setting accuracy surfaces."
+    },
+    "definition_rounding_convention": {
+      "aliases": [
+        "definition_rounding_convention"
+      ],
+      "source_location": "Definition from Section 3, immediately before the individual",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "source rounding convention `round(1/2) = 1`."
+    },
+    "source_definition1_collaboration_setting": {
+      "aliases": [
+        "definition_collaboration_setting"
+      ],
+      "source_location": "Definition 1",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "Source Definition 1: a collaboration setting. The Lean source-facing surface uses finite calibrated collaboration settings, which are the settings constructed in the paper proof, together with the embedding into the abstract accuracy surface used by the theorem statement."
+    },
+    "source_definition5_agree_on": {
+      "aliases": [
+        "definition_agree_on"
+      ],
+      "source_location": "Definition 5",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "Source Definition 5: two agents or strategies agree at a point when their binary predictions are equal."
+    },
+    "source_definition5_correct_on": {
+      "aliases": [
+        "definition_correct_on"
+      ],
+      "source_location": "Definition 5",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "Source Definition 5: correctness of a prediction at a point."
+    },
+    "source_definition5_disagree_on": {
+      "aliases": [
+        "definition_disagree_on"
+      ],
+      "source_location": "Definition 5",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "Source Definition 5: two agents or strategies disagree at a point when their binary predictions differ."
+    },
+    "source_definition5_incorrect_on": {
+      "aliases": [
+        "definition_incorrect_on"
+      ],
+      "source_location": "Definition 5",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "Source Definition 5: incorrectness of a prediction at a point."
+    },
+    "source_lemma8_bad_tuple_counterexample_setting": {
+      "aliases": [
+        "lemma8_bad_tuple_counterexample_setting"
+      ],
+      "source_location": "Lemma 8",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "Lemma 8: if a collaboration strategy disagrees with agent k away from the tie point, the source construction gives a finite collaboration setting where agent k is strictly more accurate and every agent is at least as accurate as the strategy."
+    },
+    "source_proposition6_linear_combination_settings": {
+      "aliases": [
+        "proposition6_linear_combination_settings"
+      ],
+      "source_location": "Proposition 6",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "Proposition 6: linear combinations of finite collaboration settings preserve agent and strategy accuracies componentwise."
+    },
+    "source_proposition7_fixed_deferral": {
+      "aliases": [
+        "proposition7_reliability_forces_fixed_deferral"
+      ],
+      "source_location": "Proposition 7",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "Proposition 7: reliability over all collaboration settings forces deferral to one fixed agent away from the tie point."
+    },
+    "source_proposition9_fixed_tie_label": {
+      "aliases": [
+        "proposition9_reliability_forces_fixed_tie_label"
+      ],
+      "source_location": "Proposition 9",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "Proposition 9: for the same fixed agent, reliability forces one fixed tie label on the p_k = 1/2 slice."
     },
     "theorem_main_no_free_lunch": {
-      "statement": "for a nonempty finite agent set, `Reliable C -> NonCollaborative C`.",
-      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
-      "source_location": "Theorem 1.  Proposition 1, the counterexample lemma, the linear",
       "aliases": [
         "theorem_main_no_free_lunch"
-      ]
-    },
-    "source_definition1_out_of_scope": {
-      "statement": "Source Definition 1 is visible in the paper but is not part of the current six-row public dashboard inventory.",
-      "source_location": "Definition 1 in source text; flagged by source-grounding audit.",
-      "aliases": []
-    },
-    "source_definition5_out_of_scope": {
-      "statement": "Source Definition 5 is visible in the paper but is not part of the current six-row public dashboard inventory.",
-      "source_location": "Definition 5 in source text; flagged by source-grounding audit.",
-      "aliases": []
-    },
-    "source_proposition6_out_of_scope": {
-      "statement": "Source Proposition 6 is visible proof-level material outside the current public dashboard target list.",
-      "source_location": "Proposition 6 in source text; flagged by source-grounding audit.",
-      "aliases": []
-    },
-    "source_proposition7_out_of_scope": {
-      "statement": "Source Proposition 7 is visible proof-level material outside the current public dashboard target list.",
-      "source_location": "Proposition 7 in source text; flagged by source-grounding audit.",
-      "aliases": []
-    },
-    "source_lemma8_out_of_scope": {
-      "statement": "Source Lemma 8 is visible proof-level material outside the current public dashboard target list.",
-      "source_location": "Lemma 8 in source text; flagged by source-grounding audit.",
-      "aliases": []
-    },
-    "source_proposition9_out_of_scope": {
-      "statement": "Source Proposition 9 is visible proof-level material outside the current public dashboard target list.",
-      "source_location": "Proposition 9 in source text; flagged by source-grounding audit.",
-      "aliases": []
+      ],
+      "source_location": "Theorem 1.  Proposition 1, the counterexample lemma, the linear",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+      "statement": "for a nonempty finite agent set, `Reliable C -> NonCollaborative C`."
     }
   },
+  "paper": "PKG25NoFreeLunch",
+  "schema": 1,
+  "source_curated": true,
   "source_inventory_kind": "source_curated",
-  "source_curated": true
+  "source_inventory_policy": "Source-curated inventory refreshed for complete source-to-dashboard coverage. Main-text definitions/examples/remarks/propositions and appendix theorems are represented by dashboard rows; GCG appendix lemmas are split into review-legible lemma-family rows.",
+  "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574/35729; https://arxiv.org/pdf/2411.15230",
+  "title": "A No Free Lunch Theorem for Human-AI Collaboration"
 }

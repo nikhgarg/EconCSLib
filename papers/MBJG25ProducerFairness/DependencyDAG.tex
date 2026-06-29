@@ -9,12 +9,11 @@
 \dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes) {Formalized Result};
 \node[dag_model, right=0.5cm of legRes, dag_template_legend] (legDef) {Definitions};
-\node[dag_caveat_legend, right=0.5cm of legDef] (legCav) {Caveats};
-\node[dag_unformalized, right=0.5cm of legCav, dag_template_legend] (legNot) {Not Formalized};
+\node[dag_unformalized, right=0.5cm of legDef, dag_template_legend] (legNot) {Not Formalized};
 
 
 }
-\daglegend{(legRes)(legDef)(legCav)(legNot)}{Legend}
+\daglegend{(legRes)(legDef)(legNot)}{Legend}
 
 \begin{dagPaperBody}
 
@@ -23,7 +22,7 @@
 \node[dag_result, below=2cm of ModelDefs] (Thm3_1_Var_Weak) {\textbf{Theorem 3.1} \\ Variance Weak Decr.};
 \node[dag_result, below=1cm of Thm3_1_Var_Weak] (Thm3_1_Var_Strict) {\textbf{Theorem 3.1} \\ Variance Strict Int.};
 \node[dag_result, below=1cm of Thm3_1_Var_Strict] (Thm3_1_Bias) {\textbf{Theorem 3.1} \\ Sq. Bias Nondecr.};
-\node[dag_caveat, right=1.5cm of Thm3_1_Var_Strict] (Boundary_Caveats) {\textbf{Boundary} \\ Caveats};
+\node[dag_template_note, text width=4.5cm, right=1.5cm of Thm3_1_Var_Strict] (Interior_Note) {\textbf{Additional assumption} \\ Strict row uses $0 < q_v < 1$};
 
 % --- Column 2 (Responsive Market) ---
 \node[dag_model, right=of ModelDefs] (DynamicDefs) {\textbf{Responsive Market} \\ Primitives};
@@ -43,7 +42,7 @@
 \draw[dag_arrow] (ModelDefs) -- (Thm3_1_Var_Weak);
 \draw[dag_arrow] (ModelDefs.south west) to[out=225, in=180] (Thm3_1_Var_Strict.west);
 \draw[dag_arrow] (ModelDefs.south west) to[out=225, in=180] (Thm3_1_Bias.west);
-\draw[dag_dashed_arrow] (Boundary_Caveats) -- (Thm3_1_Var_Strict);
+\draw[dag_dashed_arrow] (Interior_Note) -- (Thm3_1_Var_Strict);
 
 \draw[dag_arrow] (DynamicDefs) -- (Thm3_2_Bias_Convex);
 \draw[dag_arrow] (DynamicDefs.south west) to[out=225, in=180] (Thm3_2_Bias_Min.west);

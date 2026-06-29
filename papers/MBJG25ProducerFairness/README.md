@@ -31,8 +31,8 @@ algebra lives in `EconCSLib/Statistics/BinaryRating.lean`.
 
 | Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
 |---|---|---|---|---|
-| Theorem 3.1, variance weakly decreases in prior strength | `paper_theorem3_1_variance_weak_decrease` | formalized with caveat | `MBJG25ProducerFairness/MainTheorems.lean` | Previous status: formalized with corrected weak statement; assumes `0 ≤ q_v ≤ 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow ≤ etaHigh` |
-| Theorem 3.1, variance strictly decreases in prior strength | `paper_theorem3_1_variance_strict_decrease_interior`; boundary checks `paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero`, `paper_theorem3_1_variance_strict_decrease_counterexample_quality_one` | formalized with caveat | `MBJG25ProducerFairness/MainTheorems.lean` | Previous status: formalized with corrected interior assumption; boundary bug found; The corrected strict theorem assumes `0 < q_v < 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow < etaHigh`. |
+| Theorem 3.1, variance weakly decreases in prior strength | `paper_theorem3_1_variance_weak_decrease` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | Assumes `0 ≤ q_v ≤ 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow ≤ etaHigh`. |
+| Theorem 3.1, variance strictly decreases in prior strength | `paper_theorem3_1_variance_strict_decrease_interior`; boundary checks `paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero`, `paper_theorem3_1_variance_strict_decrease_counterexample_quality_one` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | Additional assumption recorded in the validation report: the strict theorem assumes `0 < q_v < 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow < etaHigh`. Human review treats the added interior-quality condition as formalized rather than as a caveat. |
 | Theorem 3.1, squared bias nondecreases in prior strength | `paper_theorem3_1_squared_bias_nondecreasing` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | None |
 | Theorem 3.2, squared bias convex in true quality | `paper_theorem3_2_squared_bias_convex_in_quality` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | None |
 | Theorem 3.2, squared bias minimized at prior mean | `paper_theorem3_2_squared_bias_global_min_at_prior_mean` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | None |
@@ -49,13 +49,14 @@ algebra lives in `EconCSLib/Statistics/BinaryRating.lean`.
 | Appendix C, MSE Decomposition | `paper_facing_responsive_mse_decomposition` | formalized | `MBJG25ProducerFairness/ResponsiveMarket.lean` | None |
 | Appendix E, Ordinal Rating | `EconCSLib.Statistics.dirichletCategoricalPosteriorMean_eq_weighted_sum` | formalized | `EconCSLib/Statistics/OrdinalRating.lean` | None |
 
-## Fix Needed In Paper Statement
+## Additional Assumption Note
 
-The published strict variance-decrease statement should explicitly exclude
-boundary qualities. The formalized corrected version assumes `0 < q_v < 1`.
-Alternatively, the paper could state weak decrease on `0 ≤ q_v ≤ 1` and reserve
-strict decrease for the interior case; the weak version is now formalized as
-`paper_theorem3_1_variance_weak_decrease`.
+The formal strict variance-decrease row includes the interior-quality condition
+`0 < q_v < 1`. The automated statement judge records this as a semantic
+mismatch against the unconditional strict wording, and the validation report
+records the human override: this is an additional assumption note, not a
+paper-level caveat. The weak decrease statement is formalized on the closed
+interval `0 ≤ q_v ≤ 1`.
 
 ## Source-Audit Notes
 

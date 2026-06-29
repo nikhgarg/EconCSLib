@@ -1,237 +1,119 @@
 {
-  "schema": 1,
-  "paper": "MBJG25ProducerFairness",
-  "prompt_version": "assumption-provenance-v2-exact-premise-source",
-  "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "validated_at": "2026-06-13T00:00:00Z",
-  "comment": "Refreshed under the exact premise-source provenance prompt. Every audit-premise is judged independently where present.",
-  "prompt_summary": [
-    "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
-    "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
-    "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
-    "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
-    "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption."
-  ],
+  "comment": "Semantic premise provenance rejudge. Certificate/replay/process premises are not accepted by name and must be paper conditions, documented caveats, partial boundaries, or derived from primitives.",
   "items": {
+    "assumption_nonnegative_time": {
+      "judgment": "paper_assumption",
+      "lean_statement_sha256": "dd6b6834481884a67c2180a014691422ca7a09edf959895f31c05d65f465cc34",
+      "paper_statement_sha256": "c94cc8e3f8e737b50627757b972d1737521f34cae1044ae66925df8f1c0fa17d",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "The model time/review count is a sample mass and therefore nonnegative.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
     "assumption_positive_prior_shape": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "8c0aecb2e24c44c23d4c907009286f0cf9abb40c05c5d8d2578e02c4b0b96b47",
+      "paper_statement_sha256": "d8baf3c85210282a9ce7a6388206b4b50f56f8bac4de608e1a1ce22dadb6d0c3",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "The source models a Beta prior with shape parameters and uses their total mass as prior strength. Positive total shape mass is the source-domain condition under which the displayed posterior and prior-mean formulas are meaningful.",
-      "source_location": "Section 2.1 prior-weighted rating model; Theorems 3.1 and 3.2",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hshape : 0 < alpha + beta": {
-          "judgment": "paper_condition",
-          "source_location": "Section 2.1 prior-weighted rating model; prior strength alpha + beta",
-          "reason": "The paper treats alpha + beta as prior strength/number of prior trials for a Beta prior. The Lean condition records the positive-mass domain for those formulas.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_positive_time": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "b579e381702601a8fa83840ba8ac19030abffbc2fbedb38d107faca54b9ad133",
+      "paper_statement_sha256": "3cf265af47438ca3af58c342805b345e5321e6855b6e4170a086df9ea59f94bb",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "The fixed-setting theorems discuss estimates after t timesteps/reviews; the monotonicity and denominator arguments use positive elapsed sample mass.",
-      "source_location": "Theorems 3.1 and 3.2; fixed setting after t timesteps",
-      "premise_count": 1,
-      "premise_judgments": {
-        "ht : 0 < t": {
-          "judgment": "paper_condition",
-          "source_location": "Theorems 3.1 and 3.2; after t timesteps",
-          "reason": "The paper's fixed-setting claims are after a positive elapsed review horizon. The Lean theorem makes the positive-time domain explicit.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
-    },
-    "assumption_nonnegative_time": {
-      "judgment": "paper_assumption",
-      "reason": "The model time/review count is a sample mass and therefore nonnegative.",
-      "source_location": "Section 2.1 binary-rating model; review count t",
-      "premise_count": 1,
-      "premise_judgments": {
-        "ht : 0 ≤ t": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "Section 2.1 binary-rating model; R(v,t) is Binomial(t,q_v)",
-          "reason": "The review count t is a count/time horizon in the source model, hence nonnegative.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
-    },
-    "assumption_quality_nonnegative": {
-      "judgment": "paper_assumption",
-      "reason": "The source states true product quality lies in the Bernoulli interval.",
-      "source_location": "Section 2.1, true quality q_v",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hq0 : 0 ≤ q": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "Section 2.1, true quality q_v with 0 <= q_v <= 1",
-          "reason": "This is the lower half of the source's closed Bernoulli quality interval.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
-    },
-    "assumption_quality_at_most_one": {
-      "judgment": "paper_assumption",
-      "reason": "The source states true product quality lies in the Bernoulli interval.",
-      "source_location": "Section 2.1, true quality q_v",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hq1 : q ≤ 1": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "Section 2.1, true quality q_v with 0 <= q_v <= 1",
-          "reason": "This is the upper half of the source's closed Bernoulli quality interval.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
-    },
-    "assumption_quality_positive": {
-      "judgment": "documented_caveat",
-      "reason": "The paper states strict variance decrease on the closed quality interval, but the strict claim fails at q_v = 0. Lean proves the corrected interior statement and an explicit boundary counterexample.",
-      "source_location": "Theorem 3.1 strict variance-decrease caveat",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hq0 : 0 < q": {
-          "judgment": "documented_caveat",
-          "source_location": "Theorem 3.1 strict variance-decrease repair; boundary counterexample at q_v = 0",
-          "reason": "This is not an extra proof assumption. It is the documented repair condition for the source statement's boundary bug.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
-    },
-    "assumption_quality_lt_one": {
-      "judgment": "documented_caveat",
-      "reason": "The paper states strict variance decrease on the closed quality interval, but the strict claim fails at q_v = 1. Lean proves the corrected interior statement and an explicit boundary counterexample.",
-      "source_location": "Theorem 3.1 strict variance-decrease caveat",
-      "premise_count": 1,
-      "premise_judgments": {
-        "hq1 : q < 1": {
-          "judgment": "documented_caveat",
-          "source_location": "Theorem 3.1 strict variance-decrease repair; boundary counterexample at q_v = 1",
-          "reason": "This is not an extra proof assumption. It is the documented repair condition for the source statement's boundary bug.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_prior_strength_nonnegative": {
       "judgment": "paper_assumption",
+      "lean_statement_sha256": "b72a724f54e544b8bf2bfe6c922af4559040972cbc66a3e27fc1e5e3cffd57d4",
+      "paper_statement_sha256": "15f4d821b209923a98b3bc210ec7a0f94a6d27408619f1fb3a80084e2cfcc23d",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "The source defines prior strength eta as a nonnegative weight.",
-      "source_location": "Section 2.1 prior strength eta",
-      "premise_count": 2,
-      "premise_judgments": {
-        "hetaLow_nonneg : 0 ≤ etaLow": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "Section 2.1 prior strength eta >= 0",
-          "reason": "This is the source model's prior-strength domain applied to the lower comparison value.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        },
-        "heta_nonneg : 0 ≤ eta": {
-          "judgment": "source_text_model_primitive",
-          "source_location": "Section 2.1 prior strength eta >= 0",
-          "reason": "This is the source model's prior-strength domain.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
-    },
-    "assumption_prior_strength_weak_order": {
-      "judgment": "paper_condition",
-      "reason": "The Theorem 3.1 monotonicity statement compares a lower and a higher prior strength.",
-      "source_location": "Theorem 3.1, as eta increases",
-      "premise_count": 1,
-      "premise_judgments": {
-        "heta_le : etaLow ≤ etaHigh": {
-          "judgment": "paper_condition",
-          "source_location": "Theorem 3.1 monotonicity in prior strength",
-          "reason": "This is the order condition needed to state nondecreasing/nonincreasing behavior as prior strength increases.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
     },
     "assumption_prior_strength_strict_order": {
       "judgment": "paper_condition",
+      "lean_statement_sha256": "a26624c362d845cc84487a2285f253f5b1989ea30ea889e82b75c85100a5a0c5",
+      "paper_statement_sha256": "e977a6e2e98cb580c41e39c153c59378d279b3708c702e69e58415339b29bd14",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
       "reason": "The corrected strict variance row compares strictly stronger prior strength.",
-      "source_location": "Theorem 3.1 strict monotonicity in prior strength",
-      "premise_count": 1,
-      "premise_judgments": {
-        "heta_lt : etaLow < etaHigh": {
-          "judgment": "paper_condition",
-          "source_location": "Theorem 3.1 strict monotonicity in prior strength",
-          "reason": "This is the strict comparison condition for the corrected strict decrease statement.",
-          "validated_at": "2026-06-13T00:00:00Z",
-          "validator": "gpt-5-codex",
-          "validator_type": "model",
-          "prompt_version": "assumption-provenance-v2-exact-premise-source"
-        }
-      },
-      "validator": "gpt-5-codex",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_prior_strength_weak_order": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "a53f2cedd8ac16ec1790fdfd623b5e0ca6ae3128c3b686e1a5e43f970f71124d",
+      "paper_statement_sha256": "3a6cdd32d7f6c618d626bf76b534aa6af2431c6c58581a42fc2e60b7cca0e621",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "The Theorem 3.1 monotonicity statement compares a lower and a higher prior strength.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_quality_at_most_one": {
+      "judgment": "paper_assumption",
+      "lean_statement_sha256": "0dbf000aaa53af0602f14e6d21d7b8e1b3556a039be920d94fada8cb65c2755c",
+      "paper_statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "The source states true product quality lies in the Bernoulli interval.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_quality_lt_one": {
+      "judgment": "documented_additional_assumption",
+      "lean_statement_sha256": "98f00614328bdf8ef4470c83628ae135e429df7c8a74faf8158fee41ae0d1724",
+      "paper_statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Additional interior-quality assumption 0 < q_v < 1 for the strict variance-decrease statement; human review treats this as formalized rather than a caveat.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "human_override": "formalized_non_caveat",
+      "human_override_by": "ngarg",
+      "human_override_note": "Automated semantic mismatch: the Lean row adds the interior-quality condition 0 < q_v < 1 to the strict variance-decrease statement. Human override: record this as an additional assumption in the validation report; it does not change the paper-level status from formalized and does not rise to a caveat.",
+      "paper_status_effect": "keep_status_formalized_without_caveat"
+    },
+    "assumption_quality_nonnegative": {
+      "judgment": "paper_assumption",
+      "lean_statement_sha256": "cd8358939bfe4f9788f058dce77b3168ca56401d4d3018f7b49916963a27efe5",
+      "paper_statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "The source states true product quality lies in the Bernoulli interval.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model"
+    },
+    "assumption_quality_positive": {
+      "judgment": "documented_additional_assumption",
+      "lean_statement_sha256": "c77c5a81ff503b125a5f620af71328c4156ca738133cb888f14ba11022c94022",
+      "paper_statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
+      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+      "reason": "Additional interior-quality assumption 0 < q_v < 1 for the strict variance-decrease statement; human review treats this as formalized rather than a caveat.",
+      "validated_at": "2026-06-29T18:08:26Z",
+      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validator_type": "model",
+      "human_override": "formalized_non_caveat",
+      "human_override_by": "ngarg",
+      "human_override_note": "Automated semantic mismatch: the Lean row adds the interior-quality condition 0 < q_v < 1 to the strict variance-decrease statement. Human override: record this as an additional assumption in the validation report; it does not change the paper-level status from formalized and does not rise to a caveat.",
+      "paper_status_effect": "keep_status_formalized_without_caveat"
     }
-  }
+  },
+  "paper": "MBJG25ProducerFairness",
+  "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
+  "schema": 1,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
 }

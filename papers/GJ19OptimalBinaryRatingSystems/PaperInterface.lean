@@ -11038,6 +11038,19 @@ theorem finite_binary_adjacent_uniform_objective_exact_rate_from_ordered_weighte
     hpositive_hi hpositive_lo hordered iMin hrate_ge
 
 /--
+Definition C.1 source-facing Kendall/Spearman objective formulas: the Kendall
+constant-weight and Spearman linear-weight population objectives reduce to the
+finite interval-gap objectives used in Lemmas C.11 and C.12.
+-/
+theorem definitionC1_kendall_spearman_population_objectives
+    (M : ℕ) (s : ℕ → ℝ) :
+    kendallConstantWeightIntervalObjective M s =
+        (1 - ∑ i : Fin M, (s (i.1 + 1) - s i.1) ^ 2) / 2 ∧
+      spearmanLinearWeightIntervalObjective M s =
+        (1 - ∑ i : Fin M, (s (i.1 + 1) - s i.1) ^ 3) / 6 := by
+  constructor <;> rfl
+
+/--
 Lemma C.10 Spearman source-integral reduction: for a partition of `[0,1]`,
 the ordered interval-pair linear-distance objective equals the cubic gap
 objective used in Lemma C.12.

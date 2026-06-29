@@ -3,13 +3,17 @@
 ## 1. Human Verdict
 Formalized. The strict variance-decrease statement is checked with the
 interior-quality condition that qualities lie strictly between zero and one.
+The automated statement judge flags that added condition as a mismatch against
+the unconditional strict wording; human review records it as an additional
+assumption that does not rise to a paper-level caveat.
 Human dashboard review has saved entries for 10 of 17 rows, with no stale
 entries or human mismatches.
 
 ## 2. Closeout Status
 - Completion status: formalized.
 - One-sentence recap: Theorems 3.1 and 3.2 are checked, with the strict
-  variance-decrease statement using the interior-quality condition.
+  variance-decrease statement using an explicitly recorded interior-quality
+  additional assumption.
 
 ## 3. Source and Scope
 - Paper: *Balancing Producer Fairness and Efficiency via Prior-Weighted Rating System Design*
@@ -24,12 +28,15 @@ entries or human mismatches.
 
 ## 5. Remaining Boundaries and Gaps
 None. The strict variance-decrease statement includes the explicit
-interior-quality condition.
+interior-quality condition, which is recorded below as an additional assumption
+rather than a status caveat.
 
 ## 6. Additional Assumptions Beyond Paper
 - Theorem 3.1 strict variance decrease: the formal statement assumes the
   interior-quality condition `0 < q_v < 1`. Boundary rows at `q_v = 0` and
-  `q_v = 1` record why the unconditional strict statement is not claimed.
+  `q_v = 1` record why the unconditional strict statement is not claimed. The
+  automated statement judge marks this as a mismatch; the human override treats
+  it as an additional assumption note, not a paper-level caveat.
 
 ## 7. Proof-Strategy Deviations
 - None. The proof follows the algebraic structure of the paper's fixed-model definitions.
@@ -37,13 +44,16 @@ interior-quality condition.
 ## 8. Proof Tricks Worth Reusing
 None separately recorded in the existing report.
 
-## 9. Paper Issues or Caveats
-None found.
+## 9. Mathematical Typos or Other Fixes Suggested in the Source Paper
+- Theorem 3.1 strict variance decrease: the unconditional strict wording should be read with the interior-quality condition `0 < q_v < 1`. At the boundary qualities `q_v = 0` and `q_v = 1`, the variance term is identically zero, so strict decrease cannot hold unconditionally.
 
-## 10. Detailed Formalization Evidence
-The paper-facing definitions and named results compile in Lean; detailed definition, theorem, and validator ledgers are collected at the end of the report. The current LLM statement-translation audit validates all 17 dashboard rows against the context-free Lean-to-TeX drafts. The saved human dashboard review is partial: 10 rows have human entries, two of those entries are intentionally marked uncertain because they require deciding how much trust to place in shared-library predicates, and 7 rows still need initial human review.
+## 10. Paper Issues or Caveats
+None for paper-level status. The automated statement judge records the interior-quality condition for strict variance decrease as a mismatch against the unconditional strict wording; human review treats that as an additional-assumption note and keeps the paper status formalized.
 
-## 11. Paper Assumption Provenance And Modeling Notes
+## 11. Detailed Formalization Evidence
+The paper-facing definitions and named results compile in Lean; detailed definition, theorem, and validator ledgers are collected at the end of the report. The current LLM statement-translation audit validates the ordinary matching rows and records conditional-boundary mismatches for the two interior-quality assumption rows and the strict variance row. Those mismatches have a human override that treats the added interior-quality condition as an additional assumption rather than a caveat. The saved human dashboard review is partial: 10 rows have human entries, two of those entries are intentionally marked uncertain because they require deciding how much trust to place in shared-library predicates, and 7 rows still need initial human review.
+
+## 12. Paper Assumption Provenance And Modeling Notes
 Every paper-facing theorem premise that is not derived in Lean is routed through
 `Assumptions.lean` and checked separately as a paper/source condition or a
 paper-facing theorem condition.
@@ -55,8 +65,8 @@ paper-facing theorem condition.
 | Nonnegative time | `assumption_nonnegative_time` | Theorem 3.2 variance-as-quality-function rows | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Used by concavity and maximum-at-half rows. |
 | Closed quality interval, lower bound | `assumption_quality_nonnegative` | Section 2.1 true quality `0 <= q_v <= 1` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Source Bernoulli quality domain. |
 | Closed quality interval, upper bound | `assumption_quality_at_most_one` | Section 2.1 true quality `0 <= q_v <= 1` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Source Bernoulli quality domain. |
-| Interior quality for strict variance decrease, lower bound | `assumption_quality_positive` | Theorem 3.1 strict variance-decrease condition | gpt-5-codex (model; checked theorem condition; 2026-06-12T00:00:00Z) | The strict-decrease endpoint is stated for the interior-quality case because strict decrease fails at `q_v = 0`. |
-| Interior quality for strict variance decrease, upper bound | `assumption_quality_lt_one` | Theorem 3.1 strict variance-decrease condition | gpt-5-codex (model; checked theorem condition; 2026-06-12T00:00:00Z) | The strict-decrease endpoint is stated for the interior-quality case because strict decrease fails at `q_v = 1`. |
+| Interior quality for strict variance decrease, lower bound | `assumption_quality_positive` | Additional assumption for Theorem 3.1 strict variance decrease | gpt-5-codex (model; documented additional assumption; human override; 2026-06-29T18:08:26Z) | The strict-decrease endpoint is stated for the interior-quality case because strict decrease fails at `q_v = 0`; human review treats this as formalized rather than as a caveat. |
+| Interior quality for strict variance decrease, upper bound | `assumption_quality_lt_one` | Additional assumption for Theorem 3.1 strict variance decrease | gpt-5-codex (model; documented additional assumption; human override; 2026-06-29T18:08:26Z) | The strict-decrease endpoint is stated for the interior-quality case because strict decrease fails at `q_v = 1`; human review treats this as formalized rather than as a caveat. |
 | Nonnegative prior strength | `assumption_prior_strength_nonnegative` | Section 2.1 prior strength `eta >= 0` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Source prior-strength domain. |
 | Ordered prior strengths, weak order | `assumption_prior_strength_weak_order` | Theorem 3.1 monotonicity in `eta` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Weak comparison form. |
 | Ordered prior strengths, strict order | `assumption_prior_strength_strict_order` | Theorem 3.1 monotonicity in `eta` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Strict comparison form. |
@@ -64,23 +74,24 @@ paper-facing theorem condition.
 ### Additional Assumptions Beyond Paper
 
 - The strict variance-decrease endpoint is stated with the explicit condition
-  `0 < q_v < 1`. This is an additional assumption for that strict endpoint, not
-  a paper issue; boundary rows record why no unconditional endpoint is claimed
-  at `q_v = 0` or `q_v = 1`.
+  `0 < q_v < 1`. This is an additional assumption for that strict endpoint.
+  The automated statement judge marks the added condition as a mismatch, while
+  human review records an override that keeps the paper status formalized and
+  treats the issue as non-caveat.
 
-## 12. Library Lift Pass
+## 13. Library Lift Pass
 None separately recorded in the existing report.
 
-## 13. DAG Audit
+## 14. DAG Audit
 No separate DAG audit note is recorded in the existing report.
 
-## 14. Validation Checks
+## 15. Validation Checks
 ### Statement Translation Audit
 
 Audit date: 2026-06-06.
 Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
 
-LLM summary: 17 rows; 17 match, 0 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
+LLM summary: 17 dashboard rows, plus assumption rows; ordinary source rows match. The two interior-quality assumption rows and the strict variance row are recorded as conditional-boundary mismatches with human override. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
 
 Human-review summary: 10/17 rows have saved human entries; 8 reviewed rows are marked matching; 2 reviewed rows are marked uncertain; 0 saved entries are stale; 7 rows remain unreviewed; 0 rows are marked mismatch.
 
@@ -89,7 +100,7 @@ Human-review flags:
 - Human reviewer marked `paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean` uncertain because this requires trusting or auditing `EconCSLib.Statistics.GlobalMinAt`.
 - All saved human-review entries are current with respect to the dashboard statement hashes.
 
-## 15. Paper Definitions Checked
+## 16. Paper Definitions Checked
 <!-- lean-derived-definitions:start -->
 ### Lean-Derived Dashboard Definitions
 
@@ -104,13 +115,13 @@ Human-review flags:
 | Expected regret | `paper_facing_expected_regret` | Section 4 expected regret: total expected regret across a finite time horizon. |
 <!-- lean-derived-definitions:end -->
 
-## 16. Named Theorem Statements Checked
+## 17. Named Theorem Statements Checked
 ### Theorem-by-Theorem Validation
 
 | Paper item | Lean declaration | Status | Statement match | Notes |
 |---|---|---|---|---|
 | Theorem 3.1, Var. Weak Decrease | `paper_facing_theorem3_1_variance_weak_decrease` | fully formalized | exact | Holds on closed interval `[0, 1]`. |
-| Theorem 3.1, Var. Strict Decrease | `paper_facing_theorem3_1_variance_strict_decrease_interior` | fully formalized | minor deviation | Interior assumption `0 < q_v < 1` added to fix boundary bug. |
+| Theorem 3.1, Var. Strict Decrease | `paper_facing_theorem3_1_variance_strict_decrease_interior` | fully formalized | automated mismatch; human override | Additional assumption `0 < q_v < 1` is recorded in the report and treated as non-caveat. |
 | Theorem 3.1, Bias Nondecreasing | `paper_facing_theorem3_1_squared_bias_nondecreasing` | fully formalized | exact | |
 | Theorem 3.2, Bias Convexity | `paper_facing_theorem3_2_squared_bias_convex_in_quality` | fully formalized | model exact; human uncertainty | Human review asks how to audit or trust the shared `JensenConvex` predicate; denominator nonzero is derived from source-domain conditions. |
 | Theorem 3.2, Bias Minimizer | `paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean` | fully formalized | model exact; human uncertainty | Human review asks how to audit or trust the shared `GlobalMinAt` predicate. |
@@ -125,7 +136,7 @@ The context-free Lean-to-TeX drafts and source-facing statement judgments are
 tracked in `lean_to_tex_llm.json` and `statement_match_llm.json`; the compact
 human-facing ledger appears below.
 
-## 17. Paper-Facing Statement Validator Ledger
+## 18. Paper-Facing Statement Validator Ledger
 Generated from the current dashboard status, condensed for PDF readability.
 Detailed timestamped evidence remains in `.review_traces/paper_theorem_validations.jsonl`
 and `statement_match_llm.json`.
@@ -137,7 +148,7 @@ and `statement_match_llm.json`.
 | Variance | match | match | Matches the paper variance formula. |
 | Squared bias | match | match | Square of the bias definition. |
 | Theorem 3.1 variance, weak | match | match | Corrected full-interval weak monotonicity statement. |
-| Theorem 3.1 variance, strict | match | match | Adds the interior-quality condition `0 < q_v < 1`. |
+| Theorem 3.1 variance, strict | match | conditional-boundary mismatch; human override | Adds the interior-quality condition `0 < q_v < 1`; human review treats this as an additional assumption rather than a caveat. |
 | Theorem 3.1 squared bias | match | match | Same monotonic direction as the paper. |
 | Theorem 3.2 squared-bias convexity | uncertain | match | Human review asks how to audit or trust shared predicate `JensenConvex`. |
 | Theorem 3.2 squared-bias minimizer | uncertain | match | Human review asks how to audit or trust shared predicate `GlobalMinAt`. |

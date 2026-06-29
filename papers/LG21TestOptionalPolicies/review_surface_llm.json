@@ -1,0 +1,12 @@
+{
+  "judgment": "passes",
+  "paper": "LG21TestOptionalPolicies",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: current dashboard rows are paper-facing definitions, assumptions, theorem endpoints, or explicitly documented partial/source-version boundaries; helper-only rows remain outside the compact dashboard surface.",
+  "review_rows": 23,
+  "review_surface_sha256": "aeb0bb6872a67b1b167841c17be6260f1b437c644caffc680c9bcdde53f02b0f",
+  "schema": 1,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
+}

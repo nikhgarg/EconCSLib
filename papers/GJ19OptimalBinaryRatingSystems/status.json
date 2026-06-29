@@ -57,6 +57,7 @@
       "paper_lemmaC4_piecewise_constant_iff_exists_positive_exponential_rate_of_defined_tieErasedSourceWbar_nonpiecewise_nonTie_interval_witness",
       "corollaryC3_monotone_scaled_first_level_ge_half_inv_adjacent_count_sq",
       "theorem32_exists_grid_depth_rate_loss_and_runtime_le_of_nested_bisection_uniform_doubled_closed_run_calculated_grid_low_bisection_upper_one_sub_grid_early_exact_return_of_eps_pos",
+      "definitionC1_kendall_spearman_population_objectives",
       "paper_lemmaC10_spearman_linear_weight_ordered_pair_interval_objective_eq_gap_objective",
       "paper_lemmaC11_kendall_constant_weight_ordered_pair_interval_objective_le_equispaced",
       "paper_lemmaC12_spearman_linear_weight_ordered_pair_interval_objective_le_equispaced",

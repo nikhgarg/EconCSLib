@@ -1,50 +1,42 @@
 {
-  "schema": 1,
-  "id": "GGSG19TopThree",
-  "title": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates",
-  "authors": "Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel",
-  "publication_venue": "HCOMP 2019",
-  "source_version": "arXiv version, 2019",
-  "build_target": "lake build GGSG19TopThree",
-  "status": "formalized",
-  "main_caveat": "",
-  "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
-  "human_review": {
-    "reviewed_rows": 0,
-    "total_rows": 10,
-    "stale_rows": 0,
-    "mismatch_rows": 0,
-    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
-  },
-  "paper_interface": {
-    "path": "papers/GGSG19TopThree/PaperInterface.lean",
-    "line_count": 317,
-    "declaration_rows": 10,
-    "review_rows": 10,
-    "oversized": false,
-    "maintainability_issue": null,
-    "proof_interface_path": "papers/GGSG19TopThree/ProofInterface.lean",
-    "proof_interface_line_count": 12771
-  },
   "artifacts": {
-    "readme": "papers/GGSG19TopThree/README.md",
-    "paper_interface": "papers/GGSG19TopThree/PaperInterface.lean",
-    "source_theorems": "papers/GGSG19TopThree/SourceTheorems.lean",
-    "proof_interface": "papers/GGSG19TopThree/ProofInterface.lean",
-    "final_validation_report": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
-    "post_formalization_audit": "papers/GGSG19TopThree/POST_FORMALIZATION_AUDIT.md",
-    "dependency_dag_tex": "papers/GGSG19TopThree/DependencyDAG.tex",
+    "assumptions": "papers/GGSG19TopThree/Assumptions.lean",
     "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf",
-    "source_pdf": "papers/GGSG19TopThree/source.pdf",
+    "dependency_dag_tex": "papers/GGSG19TopThree/DependencyDAG.tex",
+    "final_validation_report": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+    "paper_interface": "papers/GGSG19TopThree/PaperInterface.lean",
+    "post_formalization_audit": "papers/GGSG19TopThree/POST_FORMALIZATION_AUDIT.md",
+    "proof_interface": "papers/GGSG19TopThree/ProofInterface.lean",
+    "readme": "papers/GGSG19TopThree/README.md",
     "source_archive": "papers/GGSG19TopThree/source.tar.gz",
+    "source_pdf": "papers/GGSG19TopThree/source.pdf",
     "source_tex": "papers/GGSG19TopThree/source_tex/arxiv.tex",
-    "assumptions": "papers/GGSG19TopThree/Assumptions.lean"
+    "source_theorems": "papers/GGSG19TopThree/SourceTheorems.lean"
   },
+  "authors": "Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel",
+  "build_target": "lake build GGSG19TopThree",
+  "human_review": {
+    "mismatch_rows": 0,
+    "reviewed_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs",
+    "stale_rows": 0,
+    "total_rows": 10
+  },
+  "id": "GGSG19TopThree",
+  "main_caveat": "",
+  "paper_interface": {
+    "declaration_rows": 10,
+    "line_count": 317,
+    "maintainability_issue": null,
+    "oversized": false,
+    "path": "papers/GGSG19TopThree/PaperInterface.lean",
+    "proof_interface_line_count": 12771,
+    "proof_interface_path": "papers/GGSG19TopThree/ProofInterface.lean",
+    "review_rows": 10
+  },
+  "publication_venue": "HCOMP 2019",
+  "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
   "review_surface": {
-    "source_file": "papers/GGSG19TopThree/PaperInterface.lean",
-    "assumption_source_file": "papers/GGSG19TopThree/Assumptions.lean",
-    "llm_assumption_review": "papers/GGSG19TopThree/assumption_match_llm.json",
-    "assumption_policy": "strict",
     "assumption_names": [
       "assumption_strict_cross_tier_no_ties",
       "assumption_pairwise_approval_ternary_gap_domain",
@@ -52,8 +44,12 @@
       "assumption_mallows_nontrivial_winner_and_noise",
       "assumption_nontrivial_k_approval_cutoffs"
     ],
+    "assumption_policy": "strict",
+    "assumption_source_file": "papers/GGSG19TopThree/Assumptions.lean",
     "include_names": [
       "paper_definition_large_deviation_rate",
+      "paper_definition_design_invariant",
+      "paper_definition_rate_optimal",
       "source_proposition1_thm_consistency_tiered",
       "source_proposition2_thm_pairwiselearning_finite_support",
       "source_proposition3_lem_pairwiselearning_approval_finite_ternary",
@@ -64,10 +60,10 @@
       "source_corollary_lem_mallowsnorando",
       "source_theorem_lem_mallowsnotWK_counterexample"
     ],
+    "llm_assumption_review": "papers/GGSG19TopThree/assumption_match_llm.json",
     "slices": [
       {
         "id": "all",
-        "title": "All source-facing review rows",
         "names": [
           "paper_definition_large_deviation_rate",
           "source_proposition1_thm_consistency_tiered",
@@ -79,8 +75,14 @@
           "source_theorem_lem_randomizebetterapproval_w_selection_constructed",
           "source_corollary_lem_mallowsnorando",
           "source_theorem_lem_mallowsnotWK_counterexample"
-        ]
+        ],
+        "title": "All source-facing review rows"
       }
-    ]
-  }
+    ],
+    "source_file": "papers/GGSG19TopThree/PaperInterface.lean"
+  },
+  "schema": 1,
+  "source_version": "arXiv version, 2019",
+  "status": "formalized",
+  "title": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates"
 }

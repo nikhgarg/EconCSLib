@@ -1,0 +1,12 @@
+{
+  "judgment": "passes",
+  "paper": "GJ18InformativeRatingSystems",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: current dashboard rows are paper-facing definitions, assumptions, theorem endpoints, or explicitly documented partial/source-version boundaries; helper-only rows remain outside the compact dashboard surface.",
+  "review_rows": 15,
+  "review_surface_sha256": "a7b53c34a2bb7b80187cc1e3643570bb1b8ee42ea3b9e576b337c4cedc855927",
+  "schema": 1,
+  "validated_at": "2026-06-29T18:08:26Z",
+  "validator": "codex-gpt-5.5-semantic-rejudge",
+  "validator_type": "model"
+}
