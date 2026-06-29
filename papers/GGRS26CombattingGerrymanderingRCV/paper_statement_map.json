@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "paper": "GGRS26CombattingGerrymanderingRCV",
+  "title": "Combatting Gerrymandering with Ranked Choice Voting: an Experimental Analysis of Multi-member Districts in the United States",
+  "generated_at": "2026-06-29",
+  "source_inventory_kind": "source_curated_from_local_text_extract",
+  "source_curated": true,
+  "source_inventory_policy": "Source-curated inventory for the theoretical Lemma C.1 / Proposition 1 dashboard surface. Empirical redistricting and simulation claims are intentionally out of theorem scope.",
+  "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+  "items": {
+    "paper_pav_score": {
+      "statement": "- Paper object for the `lambda_PAV` committee-score comparison in Proposition 1. rows still need to be stated from the source text.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "source.txt:404-456; Appendix Lemma C.1 source.txt:3661-3678",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_pav_score"
+      ]
+    },
+    "paper_pav_seat_score": {
+      "statement": "- Paper PAV objective over possible Republican seat counts: `y_R * sum_{i=1}^{n_R} lambda_PAV(i) + (1 - y_R) * sum_{i=1}^{M - n_R} lambda_PAV(i)`.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "source.txt:404-456; Appendix Lemma C.1 source.txt:3661-3678",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_pav_seat_score"
+      ]
+    },
+    "paper_pav_min_argmax": {
+      "statement": "- Paper selector for `n_R(y_R, lambda_PAV)`: the smallest seat count maximizing the PAV objective among seat counts from `0` to `M`.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "source.txt:404-456; Appendix Lemma C.1 source.txt:3661-3678",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_pav_min_argmax"
+      ]
+    },
+    "paper_pav_marginal_conditions": {
+      "statement": "- Paper proof inequalities from Lemma C.1 after clearing positive denominators. For a chosen Republican seat count `n_R`, the previous chosen Republican seat has strictly larger PAV marginal value than the next Democratic seat, and the next Republican seat has no larger PAV marginal value than the previous Democratic seat.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Appendix Lemma C.1 proof source.txt:3694-3715",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_pav_marginal_conditions"
+      ]
+    },
+    "paper_pav_seat_interval": {
+      "statement": "- Paper interval characterization from Lemma C.1: `y_R (M + 1) - 1 <= n_R < y_R (M + 1)`.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Appendix Lemma C.1 source.txt:3661-3694; Proposition 1 source.txt:3740-3744",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_pav_seat_interval"
+      ]
+    },
+    "paper_seat_share_rounded": {
+      "statement": "- Paper formula target for Proposition 1: a party's seat count is one of the floor or ceiling of party vote share times the number of seats.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Appendix Lemma C.1 source.txt:3661-3694; Proposition 1 source.txt:3740-3744",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_seat_share_rounded"
+      ]
+    },
+    "paper_stv_solid_coalition_process_bounds": {
+      "statement": "- Paper STV input for Proposition 1: the appendix separate-party quota processes terminate with quota-reaching same-party candidates below the final party seat count, with less than one quota of residual same-party vote mass. solid-coalition STV outcome.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Proposition 1 and Appendix proof source.txt:3740-3868",
+      "source_note": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "aliases": [
+        "paper_stv_solid_coalition_process_bounds"
+      ]
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds": {
+      "statement": "- Paper STV quota-witness consequence used by the quota arithmetic bridge. argument.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Proposition 1 and Appendix proof source.txt:3740-3868",
+      "source_note": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "aliases": [
+        "paper_stv_solid_coalition_quota_witness_bounds"
+      ]
+    },
+    "paper_stv_solid_coalition_lower_bounds": {
+      "statement": "- Paper STV proportional lower-bound consequence used by the final floor/ceiling bridge. argument.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Proposition 1 and Appendix proof source.txt:3740-3868",
+      "source_note": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "aliases": [
+        "paper_stv_solid_coalition_lower_bounds"
+      ]
+    },
+    "paper_stv_seat_share_bounds": {
+      "statement": "- Paper STV floor/ceiling consequence used by Proposition 1.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Proposition 1 and Appendix proof source.txt:3740-3868",
+      "source_note": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "aliases": [
+        "paper_stv_seat_share_bounds"
+      ]
+    },
+    "paper_pav_interval_seat_share_rounded": {
+      "statement": "- Arithmetic bridge used after Lemma C.1: once the source interval `y_R (M + 1) - 1 <= n_R < y_R (M + 1)` is available, the party seat count is one of floor or ceiling of `y_R M`.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Appendix Lemma C.1 source.txt:3661-3694; Proposition 1 source.txt:3740-3744",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_pav_interval_seat_share_rounded"
+      ]
+    },
+    "paper_pav_marginal_conditions_seat_share_rounded": {
+      "statement": "- Arithmetic bridge from the source proof's adjacent PAV marginal inequalities to the Proposition 1 floor/ceiling target.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Appendix Lemma C.1 proof source.txt:3694-3715",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_pav_marginal_conditions_seat_share_rounded"
+      ]
+    },
+    "paper_pav_min_argmax_seat_interval": {
+      "statement": "the paper's leftmost maximizing PAV seat count satisfies `y_R (M + 1) - 1 <= n_R < y_R (M + 1)`.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Appendix Lemma C.1 source.txt:3661-3694; Proposition 1 source.txt:3740-3744",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_pav_min_argmax_seat_interval"
+      ]
+    },
+    "paper_pav_min_argmax_seat_share_rounded": {
+      "statement": "- PAV component of Lemma C.1 / Proposition 1: the paper's leftmost maximizing PAV seat count is one of floor or ceiling of `y_R M`.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Appendix Lemma C.1 source.txt:3661-3694; Proposition 1 source.txt:3740-3744",
+      "source_note": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "aliases": [
+        "paper_pav_min_argmax_seat_share_rounded"
+      ]
+    },
+    "paper_stv_quota_floors_fit": {
+      "statement": "the two parties' canonical Droop-quota floors fit into the district's seat count.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Proposition 1 and Appendix proof source.txt:3740-3868",
+      "source_note": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "aliases": [
+        "paper_stv_quota_floors_fit"
+      ]
+    },
+    "paper_stv_solid_coalition_process_bounds_quota_witness_bounds": {
+      "statement": "the named STV terminal process boundary implies the quota-witness boundary.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Proposition 1 and Appendix proof source.txt:3740-3868",
+      "source_note": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "aliases": [
+        "paper_stv_solid_coalition_process_bounds_quota_witness_bounds"
+      ]
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds": {
+      "statement": "the named STV quota-witness boundary implies the proportional lower-bound boundary.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Proposition 1 and Appendix proof source.txt:3740-3868",
+      "source_note": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "aliases": [
+        "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds"
+      ]
+    },
+    "paper_stv_solid_coalition_lower_bounds_seat_share_bounds": {
+      "statement": "the proportional lower-bound boundary implies the STV floor/ceiling seat-share bound.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Proposition 1 and Appendix proof source.txt:3740-3868",
+      "source_note": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "aliases": [
+        "paper_stv_solid_coalition_lower_bounds_seat_share_bounds"
+      ]
+    },
+    "paper_proposition1_from_stv_bounds_and_pav_min_argmax": {
+      "statement": "from the named STV solid-coalition terminal process boundary and the paper's PAV min-argmax selector, both STV and PAV seat counts are rounded vote shares.",
+      "source_url": "https://arxiv.org/pdf/2107.07083.pdf",
+      "source_location": "Proposition 1 and Appendix proof source.txt:3740-3868",
+      "source_note": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "aliases": [
+        "paper_proposition1_from_stv_bounds_and_pav_min_argmax"
+      ]
+    }
+  }
+}

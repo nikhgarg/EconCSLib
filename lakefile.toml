@@ -19,6 +19,7 @@ defaultTargets = [
   "LOS02CombinatorialAuctions",
   "LBG24SpatialUnderreporting",
   "GKGMM19IterativeLocalVoting",
+  "GGRS26CombattingGerrymanderingRCV",
 ]
 
 [leanOptions]
@@ -118,4 +119,8 @@ srcDir = "papers"
 
 [[lean_lib]]
 name = "GKGMM19IterativeLocalVoting"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "GGRS26CombattingGerrymanderingRCV"
 srcDir = "papers"

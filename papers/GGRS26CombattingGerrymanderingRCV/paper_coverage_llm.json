@@ -1,0 +1,263 @@
+{
+  "schema": 1,
+  "paper": "GGRS26CombattingGerrymanderingRCV",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "audit_kind": "source_to_dashboard_agent",
+  "source_grounded": true,
+  "seed_scaffold": false,
+  "validator": "gpt-5-codex",
+  "validator_type": "agent",
+  "validated_at": "2026-06-29T03:00:44Z",
+  "comment": "Source-grounded coverage pass over the theoretical Lemma C.1 / Proposition 1 surface using the local source.txt extract; empirical redistricting/simulation claims remain out of theorem scope.",
+  "paper_statement_inventory_sha256": "f5eb786f2d79675d2fc4f0a069aa54203639442d11a35bf3a9d3175feec2fe84",
+  "review_surface_sha256": "fcf0f55984c9f75c4907f3e70d7b77eab0bd8c7d4f7ac223004abaea743b735c",
+  "items": {
+    "paper_pav_score": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_pav_score"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_pav_score`.",
+      "statement_sha256": "2b9f0bc26b3e7d2c9398136bdf249514d0bbb1382ff535547acae8d46605c4d9",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_pav_seat_score": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_pav_seat_score"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_pav_seat_score`.",
+      "statement_sha256": "46ea7e64ed17a40769ea46add8c65939e220eb4ff48eab69c8c87b72d5dfa205",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_pav_min_argmax": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_pav_min_argmax"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_pav_min_argmax`.",
+      "statement_sha256": "8a3f0f9b9a040685b46951fb0ab4c25bd97532ba9498919643d97b34dc274cf6",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_pav_marginal_conditions": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_pav_marginal_conditions"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_pav_marginal_conditions`.",
+      "statement_sha256": "cfeeb432b802bb4b1814b1cf49e2d295de6f5876ef90b0ffafc175a0db1f4a52",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_pav_seat_interval": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_pav_seat_interval"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_pav_seat_interval`.",
+      "statement_sha256": "af8df2ebeae854652410cb0391f5adae9ba35ddb0a6c36a5ee03a6478e2df46a",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_seat_share_rounded": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_seat_share_rounded"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_seat_share_rounded`.",
+      "statement_sha256": "d4a075e5f49d39ee344a2f8fb4be6acd897526e68a820888d83a0197d79f904c",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_stv_solid_coalition_process_bounds": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_stv_solid_coalition_process_bounds"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_stv_solid_coalition_process_bounds`.",
+      "statement_sha256": "1bee67dc80ea50161101d21bb6886bf2b0ac9e350f5662679258bd353a6d1821",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_stv_solid_coalition_quota_witness_bounds"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_stv_solid_coalition_quota_witness_bounds`.",
+      "statement_sha256": "68409ee4602aafcf51e255ef7b78753fbeaf2fe72c9a41eea54b9ac354f305ba",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_stv_solid_coalition_lower_bounds": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_stv_solid_coalition_lower_bounds"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_stv_solid_coalition_lower_bounds`.",
+      "statement_sha256": "4ba72eb794686129ff6f5eb161a66d99c5d4b0c4bdc19323c27796bfaaa7afb9",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_stv_seat_share_bounds": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_stv_seat_share_bounds"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_stv_seat_share_bounds`.",
+      "statement_sha256": "ccd1001a59630bbca235fdc67c584e599f47ac1973dc8ab713bc9b8f2a359204",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_pav_interval_seat_share_rounded": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_pav_interval_seat_share_rounded"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_pav_interval_seat_share_rounded`.",
+      "statement_sha256": "c02a8959026339ebfcfdc045a9896075ae5fdf5f1ffd4e666ea83542620a32fc",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_pav_marginal_conditions_seat_share_rounded": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_pav_marginal_conditions_seat_share_rounded"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_pav_marginal_conditions_seat_share_rounded`.",
+      "statement_sha256": "544e8357c9d8c02d13f579b092b2a4ff939fe5fef6bb7e12880105a43d09e134",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_pav_min_argmax_seat_interval": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_pav_min_argmax_seat_interval"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_pav_min_argmax_seat_interval`.",
+      "statement_sha256": "97f8e77b99dd665f052272f7fa2a30f9a51e01d2cfe51f095eba2fc95f273d6f",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_pav_min_argmax_seat_share_rounded": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_pav_min_argmax_seat_share_rounded"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: main text defines party seat share by the PAV/Thiele min-argmax formula at source.txt:425-456; Appendix Lemma C.1 states the same min-argmax, the interval y_R(M+1)-1 <= ell < y_R(M+1), and the adjacent marginal conditions at source.txt:3661-3715.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_pav_min_argmax_seat_share_rounded`.",
+      "statement_sha256": "db7a65438d019d907cfed4be2e469d4c566a8f64be4d1637bfa10ec4a2e84558",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_stv_quota_floors_fit": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_stv_quota_floors_fit"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_stv_quota_floors_fit`.",
+      "statement_sha256": "4406fea3652866500abd08aea96235ca9075ce6ffa507b6a40c232cb5d655e77",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_stv_solid_coalition_process_bounds_quota_witness_bounds": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_stv_solid_coalition_process_bounds_quota_witness_bounds"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_stv_solid_coalition_process_bounds_quota_witness_bounds`.",
+      "statement_sha256": "26fa5d3af14f5daf7015090af3491436d2e61078fc53d30411bf080dda94596e",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_stv_solid_coalition_quota_witness_bounds_lower_bounds`.",
+      "statement_sha256": "73c1264461e709265a8c0263a29181f58a39ef4310e6283cd342eb2c4e4e1352",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_stv_solid_coalition_lower_bounds_seat_share_bounds": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_stv_solid_coalition_lower_bounds_seat_share_bounds"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_stv_solid_coalition_lower_bounds_seat_share_bounds`.",
+      "statement_sha256": "57289a55591f8da56022701591c176ec73d9743b46463bea2c41292f6268e8f9",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    },
+    "paper_proposition1_from_stv_bounds_and_pav_min_argmax": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_proposition1_from_stv_bounds_and_pav_min_argmax"
+      ],
+      "reason": "The source item is represented by the named PaperInterface row, and the row exposes either the source formula/definition, the Lemma C.1 proof step, the Appendix Proposition 1 STV proof step, or the final Proposition 1 theoretical conclusion at the abstraction documented in the final validation report.",
+      "source_evidence": "Source evidence: Proposition 1 states the STV/PAV rounded-seat conclusion at source.txt:3740-3744; the appendix proof introduces the Droop quota, separate same-party quota processes, quota-capacity argument, and final STV lower/upper bounds at source.txt:3748-3868.",
+      "dashboard_evidence": "Current human-dashboard row: `paper_proposition1_from_stv_bounds_and_pav_min_argmax`.",
+      "statement_sha256": "d37048adb942e32885de3fc47a046fd90e901185865fac38b80b596d0fd367b2",
+      "audit_kind": "source_to_dashboard_agent",
+      "source_grounded": true,
+      "seed_scaffold": false
+    }
+  }
+}

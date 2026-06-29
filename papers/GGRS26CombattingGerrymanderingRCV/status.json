@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "id": "GGRS26CombattingGerrymanderingRCV",
+  "title": "Combatting Gerrymandering with Ranked Choice Voting: an Experimental Analysis of Multi-member Districts in the United States",
+  "authors": "Nikhil Garg; Wes Gurnee; David Rothschild; David Shmoys",
+  "source_version": "arXiv:2107.07083; Operations Research 2026, DOI 10.1287/opre.2024.1167",
+  "build_target": "lake build GGRS26CombattingGerrymanderingRCV",
+  "status": "formalized",
+  "main_caveat": "The 19-row in-scope theorem ledger is Lean-closed: Lemma C.1 and Proposition 1 are formalized for the source-facing solid-coalition STV outcome predicate exposed in PaperInterface.lean. Redistricting optimization, map generation, simulations, and empirical claims remain explicit data/code boundaries rather than theorem-ledger targets.",
+  "human_summary": "The gerrymandering paper's in-scope theorem ledger has shared PAV/Thiele tooling, Droop-quota arithmetic, a formalized PAV min-argmax-to-interval proof for Lemma C.1, reusable two-party proportionality bridges, terminal same-party quota-process certificates, and a Lean-closed Proposition 1 reduction for the formal solid-coalition STV outcome predicate. Statement, source-coverage, assumption-provenance, build, and paper-closeout audits are current with no paper-local assumption declarations.",
+  "human_summary_review": {
+    "status": "draft",
+    "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
+  },
+  "review_entrypoint": "papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 19,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/GGRS26CombattingGerrymanderingRCV/PaperInterface.lean",
+    "line_count": 342,
+    "declaration_rows": 19,
+    "review_rows": 19,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/GGRS26CombattingGerrymanderingRCV/README.md",
+    "paper_interface": "papers/GGRS26CombattingGerrymanderingRCV/PaperInterface.lean",
+    "assumptions": "papers/GGRS26CombattingGerrymanderingRCV/Assumptions.lean",
+    "final_validation_report": "papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/GGRS26CombattingGerrymanderingRCV/PaperInterface.lean",
+    "assumption_source_file": "papers/GGRS26CombattingGerrymanderingRCV/Assumptions.lean",
+    "llm_statement_review": {
+      "lean_to_tex_file": "papers/GGRS26CombattingGerrymanderingRCV/lean_to_tex_llm.json",
+      "match_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/statement_match_llm.json",
+      "review_surface_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/review_surface_llm.json",
+      "paper_coverage_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/paper_coverage_llm.json",
+      "assumption_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/assumption_match_llm.json",
+      "surface_audit_threshold": 30,
+      "surface_warning_threshold": 120,
+      "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, equivalence direction, and conclusion. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions; conditional wrappers, source-row packages, omitted subclaims, weakened/strengthened statements, or broad aggregates must be judged `mismatch` or `uncertain`. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
+    },
+    "llm_paper_coverage_review": {
+      "paper_coverage_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/paper_coverage_llm.json",
+      "policy": "Maintain a paper_statement_map.json inventory of source definitions, formulas, and named statements, then use a separate LLM pass to judge whether each source item is covered by one or more dashboard rows. This paper-level accounting is required before calling a full-paper formalization closed and is separate from row-local statement matching."
+    },
+    "llm_assumption_review": {
+      "assumption_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/assumption_match_llm.json",
+      "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
+    },
+    "assumption_policy": "strict",
+    "assumption_names": [],
+    "paper_coverage_required": false,
+    "include_names": [
+      "paper_pav_score",
+      "paper_pav_seat_score",
+      "paper_pav_min_argmax",
+      "paper_pav_marginal_conditions",
+      "paper_pav_seat_interval",
+      "paper_seat_share_rounded",
+      "paper_stv_solid_coalition_process_bounds",
+      "paper_stv_solid_coalition_quota_witness_bounds",
+      "paper_stv_solid_coalition_lower_bounds",
+      "paper_stv_seat_share_bounds",
+      "paper_pav_interval_seat_share_rounded",
+      "paper_pav_marginal_conditions_seat_share_rounded",
+      "paper_pav_min_argmax_seat_interval",
+      "paper_pav_min_argmax_seat_share_rounded",
+      "paper_stv_quota_floors_fit",
+      "paper_stv_solid_coalition_process_bounds_quota_witness_bounds",
+      "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds",
+      "paper_stv_solid_coalition_lower_bounds_seat_share_bounds",
+      "paper_proposition1_from_stv_bounds_and_pav_min_argmax"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "paper_pav_score",
+          "paper_pav_seat_score",
+          "paper_pav_min_argmax",
+          "paper_pav_marginal_conditions",
+          "paper_pav_seat_interval",
+          "paper_seat_share_rounded",
+          "paper_stv_solid_coalition_process_bounds",
+          "paper_stv_solid_coalition_quota_witness_bounds",
+          "paper_stv_solid_coalition_lower_bounds",
+          "paper_stv_seat_share_bounds",
+          "paper_pav_interval_seat_share_rounded",
+          "paper_pav_marginal_conditions_seat_share_rounded",
+          "paper_pav_min_argmax_seat_interval",
+          "paper_pav_min_argmax_seat_share_rounded",
+          "paper_stv_quota_floors_fit",
+          "paper_stv_solid_coalition_process_bounds_quota_witness_bounds",
+          "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds",
+          "paper_stv_solid_coalition_lower_bounds_seat_share_bounds",
+          "paper_proposition1_from_stv_bounds_and_pav_min_argmax"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,74 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=4pt}
+]
+
+\dagPaperMetadata
+  {Combatting Gerrymandering with Ranked Choice Voting}
+  {N. Garg, W. Gurnee, D. Rothschild, D. Shmoys}
+  {Operations Research; arXiv:2107.07083}
+  {2026}
+  {https://pubsonline.informs.org/doi/abs/10.1287/opre.2024.1167}
+
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legDone) at (0,0) {formalized};
+\node[dag_model, dag_template_legend] (legDef) at (3.4,0) {definition};
+\node[dag_scaffold, dag_template_legend] (legScaf) at (6.8,0) {scaffold};
+\node[dag_unformalized, dag_template_legend] (legOpen) at (10.2,0) {not started};
+\node[dag_conditional, dag_template_legend] (legCond) at (13.6,0) {partially formalized};
+}
+\daglegend{(legDone)(legDef)(legScaf)(legOpen)(legCond)}{Legend}
+
+\begin{dagPaperBody}
+
+\node[dag_model] (PAVScore) at (0,-1.0) {
+  \textbf{PAV score (Section 2)} \\
+  Thiele committee score with harmonic marginal weights
+};
+
+\node[dag_model] (PAVSelector) at (7.0,-1.0) {
+  \textbf{PAV seat selector} \\
+  Leftmost maximizer of the two-party PAV seat score
+};
+
+\node[dag_result] (STVBoundary) at (13.4,-1.0) {
+  \textbf{STV solid-coalition outcome} \\
+  Source-facing terminal same-party quota process predicate
+};
+
+\node[dag_result] (LemmaC1) at (1.6,-4.8) {
+  \textbf{Lemma C.1 PAV interval} \\
+  PAV min-argmax implies
+  $y_R(M+1)-1 \le n_R < y_R(M+1)$
+};
+
+\node[dag_result] (RoundingBridge) at (7.2,-4.8) {
+  \textbf{Interval-to-rounding bridge} \\
+  PAV interval and STV process/quota arithmetic imply floor/ceiling rounding
+};
+
+\node[dag_result] (Prop1) at (13.4,-4.8) {
+  \textbf{Proposition 1 (Section 2.2)} \\
+  Under solid coalitions, STV and PAV party seat shares are rounded vote shares
+};
+
+\node[dag_unformalized] (Empirical) at (13.4,-8.4) {
+  \textbf{Redistricting and simulation studies} \\
+  Data and code boundary after the seat-share theorem
+};
+
+\draw[dag_arrow] (PAVScore.south) -- (LemmaC1.north);
+\draw[dag_arrow] (PAVSelector.south west) -- (LemmaC1.north east);
+\draw[dag_arrow] (LemmaC1.east) -- (RoundingBridge.west);
+\draw[dag_arrow] (STVBoundary.south) -- (Prop1.north);
+\draw[dag_arrow] (RoundingBridge.east) -- (Prop1.west);
+\draw[dag_dashed_arrow] (Prop1.south) -- (Empirical.north);
+
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

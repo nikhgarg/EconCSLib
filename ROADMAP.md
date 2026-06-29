@@ -39,6 +39,60 @@ Current high-value areas:
   certificates, starting with the LMMS04 fixed-dimension IP solver boundary and
   the LOS02 machine-level NP-hardness/`NP = ZPP` boundary.
 
+### STV/RCV Social-Choice Cluster
+
+The next new-paper cluster from the private backlog should be treated as a
+shared library project before paper-local theorem work. The target cluster is:
+
+- Deshpande--Garg--Jacobson, *Optimal Strategies in Ranked-Choice Voting*.
+  This has the largest finite formal core: ballots, deterministic STV/RCV
+  traces, quota/election/elimination rounds, transfers, tie-breaking, final
+  social-choice orders, structure regions, and strategy reductions.
+- Deshpande--Garg--Jacobson, *Simpler Than You Think: The Practical Dynamics of
+  Ranked Choice Voting*. Treat this as a second application of the STV/RCV
+  library; expect a partial formalization boundary around empirical and audit
+  claims.
+- Garg--Gurnee--Rothschild--Shmoys, *Combatting Gerrymandering with Ranked
+  Choice Voting*. Treat this as the first post-library paper: it has the
+  shortest mathematical target, combining a compact STV seat-share statement, a
+  Thiele/PAV rounding lemma, and explicit redistricting/simulation boundaries.
+
+Existing ranking modules cover useful permutation, Mallows, and score
+primitives, but they do not provide an STV/RCV election semantics. Build the new
+work under `EconCSLib/SocialChoice/Voting` rather than overloading the existing
+ranking hierarchy.
+
+Recommended shared modules:
+
+- `EconCSLib/SocialChoice/Voting/Ballot`: finite candidates, partial rankings,
+  active-candidate filtering, and next-active preference.
+- `EconCSLib/SocialChoice/Voting/STV`: quotas, active sets, tallies, winner and
+  elimination steps, transfer rules, tie-breaking, and deterministic traces.
+- `EconCSLib/SocialChoice/Voting/STV/Structures`: final order / win-loss
+  sequence structures, trace replay, and region-validity predicates.
+- `EconCSLib/SocialChoice/Voting/Thiele`: approval ballots, Thiele scores, PAV,
+  Thiele-squared, and committee-score comparisons.
+- Later: ballot-addition/change strategy vectors, proportionality/seat-share
+  metrics, and data/simulation boundary certificates.
+
+Initial milestones:
+
+1. Build the STV/RCV core library and prove deterministic trace/replay
+   invariants on finite elections.
+2. Start `GGRS26CombattingGerrymanderingRCV` as the first paper formalization
+   after the library pass, closing the PAV/STV seat-share boundary before
+   touching redistricting/simulation code.
+3. Reuse the library in the two Deshpande--Garg--Jacobson RCV papers, marking
+   empirical prediction, election-audit, and runtime claims as explicit
+   data/code boundaries rather than Lean theorem targets.
+
+Estimated scale: the core library plus the first gerrymandering seat-share
+boundary should be the shortest route to a visible STV/RCV paper result. The
+`OptimalStrategiesRCV` core likely takes several weeks because it requires full
+structure/replay and strategy-reduction machinery. The practical-dynamics paper
+should be planned as a partial/application formalization unless its empirical
+pipeline is separately certified.
+
 ## Phase 3: Paper Contribution Pipeline
 
 The public workflow should make it straightforward for contributors to develop

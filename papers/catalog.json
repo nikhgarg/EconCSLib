@@ -26,6 +26,10 @@
       "publication": "AISTATS / PMLR 89, 2019",
       "year": 2019
     },
+    "GGRS26CombattingGerrymanderingRCV": {
+      "publication": "Operations Research, 2026",
+      "year": 2026
+    },
     "GKGMM19IterativeLocalVoting": {
       "publication": "JAIR 64, 2019",
       "year": 2019
@@ -78,6 +82,7 @@
     "GHW01DigitalGoods": "https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf",
     "GJ18InformativeRatingSystems": "https://doi.org/10.1287/msom.2020.0921",
     "GJ19OptimalBinaryRatingSystems": "https://proceedings.mlr.press/v89/garg19a/garg19a.pdf",
+    "GGRS26CombattingGerrymanderingRCV": "https://doi.org/10.1287/opre.2024.1167",
     "GKGMM19IterativeLocalVoting": "https://www.jair.org/index.php/jair/article/view/11358",
     "GN21DriverSurgePricing": "https://arxiv.org/pdf/1905.07544",
     "GS62CollegeAdmissions": "http://www.jstor.org/stable/2312726",
@@ -213,11 +218,12 @@
       "paths": [
         "EconCSLib/SocialChoice"
       ],
-      "examples": "Ranking profiles, Kendall distance and Mallows-style sequential ranking models, score/payoff interfaces, envy graphs, bounded-envy allocations, and indivisible-goods fairness statements.",
+      "examples": "Ranking profiles, Kendall distance and Mallows-style ranking models, STV/RCV traces, Droop-quota and solid-coalition certificates, Thiele/PAV committee scores, envy graphs, and indivisible-goods fairness statements.",
       "papers": [
         "LMMS04FairDivision",
         "GGSG19TopThree",
-        "GKGMM19IterativeLocalVoting"
+        "GKGMM19IterativeLocalVoting",
+        "GGRS26CombattingGerrymanderingRCV"
       ]
     }
   ]

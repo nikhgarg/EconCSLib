@@ -430,6 +430,37 @@
       }
     },
     {
+      "id": "GGRS26CombattingGerrymanderingRCV",
+      "title": "Combatting Gerrymandering with Ranked Choice Voting: an Experimental Analysis of Multi-member Districts in the United States",
+      "authors": "Nikhil Garg; Wes Gurnee; David Rothschild; David Shmoys",
+      "publication": "Operations Research, 2026",
+      "publication_year": 2026,
+      "source_url": "https://doi.org/10.1287/opre.2024.1167",
+      "paper_info": "Combatting Gerrymandering with Ranked Choice Voting: an Experimental Analysis of Multi-member Districts in the United States by Nikhil Garg; Wes Gurnee; David Rothschild; David Shmoys; Operations Research, 2026.",
+      "status": "Formalized",
+      "human_review": "0/19",
+      "human_translation": "0/19 reviewed",
+      "llm_as_judge_translation": "19/19 match",
+      "llm_as_judge_paper_coverage": "19/19 covered",
+      "lean_loc": 1068,
+      "main_note": "The gerrymandering paper's in-scope theorem ledger has shared PAV/Thiele tooling, Droop-quota arithmetic, a formalized PAV min-argmax-to-interval proof for Lemma C.1, reusable two-party proportionality bridges, terminal same-party quota-process certificates, and a Lean-closed Proposition 1 reduction for the formal solid-coalition STV outcome predicate. Statement, source-coverage, assumption-provenance, build, and paper-closeout audits are current with no paper-local assumption declarations.",
+      "main_note_citation": null,
+      "main_note_review": {
+        "status": "draft",
+        "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
+      },
+      "paper_folder": "papers/GGRS26CombattingGerrymanderingRCV",
+      "review_entrypoint": "papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md",
+      "artifacts": {
+        "readme": "papers/GGRS26CombattingGerrymanderingRCV/README.md",
+        "paper_interface": "papers/GGRS26CombattingGerrymanderingRCV/PaperInterface.lean",
+        "assumptions": "papers/GGRS26CombattingGerrymanderingRCV/Assumptions.lean",
+        "final_validation_report": "papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.pdf"
+      }
+    },
+    {
       "id": "LOS02CombinatorialAuctions",
       "title": "Truth Revelation in Approximately Efficient Combinatorial Auctions",
       "authors": "Daniel Lehmann, Liadan Ita O'Callaghan, and Yoav Shoham",

@@ -1,0 +1,225 @@
+{
+  "schema": 1,
+  "paper": "GGRS26CombattingGerrymanderingRCV",
+  "prompt_version": "statement-match-v2-strict-full-statement",
+  "validator": "gpt-5-codex",
+  "validator_type": "agent",
+  "validated_at": "2026-06-29T03:00:44Z",
+  "comment": "Agent pass against the current PaperInterface source rows; human dashboard review remains unrecorded.",
+  "prompt_summary": [
+    "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
+    "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, conditional wrappers, broad aggregate rows, source-row packages, certificate packages, or weakened/strengthened statements.",
+    "For formula-bearing rows, check the exact formula rather than only the theorem label or qualitative interpretation."
+  ],
+  "items": {
+    "paper_pav_score": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "505a0e3af37a80d0f7a75d4de599d1e064260a18624af140d2802cc0ef0eeba6",
+      "paper_statement_sha256": "2b9f0bc26b3e7d2c9398136bdf249514d0bbb1382ff535547acae8d46605c4d9",
+      "tex_statement_sha256": "a8479ed5834b41708e835f25741de456e76398789b8448df032c42969dcd7de1",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_pav_seat_score": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "2105c4b9faf58d91c37ca89bb235aef938f6b117c7089eedafd5b0fbd2837277",
+      "paper_statement_sha256": "46ea7e64ed17a40769ea46add8c65939e220eb4ff48eab69c8c87b72d5dfa205",
+      "tex_statement_sha256": "bbece2961eddb907160c37450598f902a8d6bfd3f63375aa4aeafb550fac4933",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_pav_min_argmax": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "06f26a007ba0e93c61a2c431761a20fe3b7dd788699f80c3b2cffa582d0bcd04",
+      "paper_statement_sha256": "8a3f0f9b9a040685b46951fb0ab4c25bd97532ba9498919643d97b34dc274cf6",
+      "tex_statement_sha256": "bf539dfbc8ed1003a3fd7f85c736b46395880c2a331c8849b24be5b80ab15838",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_pav_marginal_conditions": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "b87d14051b188feffb5a5a08b25e7fe174fdba662abb1760c19df695a652c8e7",
+      "paper_statement_sha256": "cfeeb432b802bb4b1814b1cf49e2d295de6f5876ef90b0ffafc175a0db1f4a52",
+      "tex_statement_sha256": "5dbbeabeb7fa9f2266b3d5913b99ef5e76b1aa0dc34aec012a63cd8ff7d84ff9",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_pav_seat_interval": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "17d2902f2b17fbb0589fcf9b9ef73a148c84b28a2afe7a0b367ae5b612574330",
+      "paper_statement_sha256": "af8df2ebeae854652410cb0391f5adae9ba35ddb0a6c36a5ee03a6478e2df46a",
+      "tex_statement_sha256": "ae2f64e7dd850f7e1db4fee3e123b5b5664671dc2b7d10fad1203387d374f506",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_seat_share_rounded": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "58049fcb66c9bf56e80113cf29dd662ad9be8e4fef5f982ebf67b169af322d91",
+      "paper_statement_sha256": "d4a075e5f49d39ee344a2f8fb4be6acd897526e68a820888d83a0197d79f904c",
+      "tex_statement_sha256": "ba953a658085b1436961b24cb811dc3a89617648397bf040e88209ad56a857df",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_stv_solid_coalition_process_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "efa8990f7002304ae0593f8a0d49a8649f6ef31a20b63d1284a3a79a0e238224",
+      "paper_statement_sha256": "1bee67dc80ea50161101d21bb6886bf2b0ac9e350f5662679258bd353a6d1821",
+      "tex_statement_sha256": "14152b50578722f6120b6e2a1c45e81c2a34540d5ef129929722f219ff883725",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "0ea62e4babe75cd7cf4d27b96ef213dd133c915cbb6f910c4e1c06de9784a683",
+      "paper_statement_sha256": "68409ee4602aafcf51e255ef7b78753fbeaf2fe72c9a41eea54b9ac354f305ba",
+      "tex_statement_sha256": "b4b3aecf1f0271350282e6d4ab2e0aed358e374d12b31a1fe63eb38f54bf01d2",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_stv_solid_coalition_lower_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "57fa970a5bd4e6d32562fcb8151e64d17c50f4facc3a1c7fd49f2a0888bbf322",
+      "paper_statement_sha256": "4ba72eb794686129ff6f5eb161a66d99c5d4b0c4bdc19323c27796bfaaa7afb9",
+      "tex_statement_sha256": "308e093ebf596d1e4b0cd9188895a8c1adf10243eb82d11b3b630391e1dff3bb",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_stv_seat_share_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "ea864f53c03e221c58c40c5a0889e6041d60e452be797e1aec25514eaf4c0a3f",
+      "paper_statement_sha256": "ccd1001a59630bbca235fdc67c584e599f47ac1973dc8ab713bc9b8f2a359204",
+      "tex_statement_sha256": "1f124638e651187c45ad0f9d72e7c90538289a453c52482f1d51bac7277ffd15",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_pav_interval_seat_share_rounded": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "c16f633acc42382307938d9f3303498aa6e1449bd1e0a7e7109f6f2f5de434cd",
+      "paper_statement_sha256": "c02a8959026339ebfcfdc045a9896075ae5fdf5f1ffd4e666ea83542620a32fc",
+      "tex_statement_sha256": "e0bc98fad1ea411243da69ee39ceab0918834e5daf3a81b2a1bef9f5ea1be8b4",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_pav_marginal_conditions_seat_share_rounded": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "fc6b049151e3a6c4e83233989b4951a9d7e82125a5af9982c35df94db4535440",
+      "paper_statement_sha256": "544e8357c9d8c02d13f579b092b2a4ff939fe5fef6bb7e12880105a43d09e134",
+      "tex_statement_sha256": "9256850e9d28efa495f74bd7df940d17caa539b4ad054bc576b4e4124408ccc9",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_pav_min_argmax_seat_interval": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "1809af05dd14e360113a0ddf6ec9244e01605aaf76b2a5a48ae39a387fb9cdf3",
+      "paper_statement_sha256": "97f8e77b99dd665f052272f7fa2a30f9a51e01d2cfe51f095eba2fc95f273d6f",
+      "tex_statement_sha256": "049d3472efb1940bb8ccb6d102e8aec7d0d86c6c9407f718d1d253e286d22a23",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_pav_min_argmax_seat_share_rounded": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "27e95a531a0769119ce41aff953292cb7419930995cfc05ee9e5c1c99313b411",
+      "paper_statement_sha256": "db7a65438d019d907cfed4be2e469d4c566a8f64be4d1637bfa10ec4a2e84558",
+      "tex_statement_sha256": "7d0c18f437e91f71aade002692a697aa988ab9e4a227ca27c4c0f8d9049f7f74",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_stv_quota_floors_fit": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "550f9a320231bb3b8e7c4556772b20d48c1e5615b51eaf1275aab7c921cd2ec1",
+      "paper_statement_sha256": "4406fea3652866500abd08aea96235ca9075ce6ffa507b6a40c232cb5d655e77",
+      "tex_statement_sha256": "37ba7a7a75daa81ffe9ec0e44f51ac86e22413aefdc0a0b9aa504ab267297aa4",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_stv_solid_coalition_process_bounds_quota_witness_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "4e7e42f287da429dc3a676eeb8b14a370f98f72d948677fa942dcd3c68bac539",
+      "paper_statement_sha256": "26fa5d3af14f5daf7015090af3491436d2e61078fc53d30411bf080dda94596e",
+      "tex_statement_sha256": "cad8fbdb974bc0571eae0805682ed6fd3d05bd840fb7286f4765b69e2cd9e054",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "c1d71a8a1e13082516ac8a9e398f19a6a6e715c125e6d3c9a8a9bdf7acdea300",
+      "paper_statement_sha256": "73c1264461e709265a8c0263a29181f58a39ef4310e6283cd342eb2c4e4e1352",
+      "tex_statement_sha256": "b80fe8fe36e1fd0598468dfd97f4b625a32d9d3081ffa73731708f6a29da05a5",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_stv_solid_coalition_lower_bounds_seat_share_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "408a8d7b44eb86da89f290e2b742077ba9840cdeac5c746deefcfa106fcbb7dd",
+      "paper_statement_sha256": "57289a55591f8da56022701591c176ec73d9743b46463bea2c41292f6268e8f9",
+      "tex_statement_sha256": "62bab61cc27790035ce636bf201429afff1f073f249eaff69ea8d7d7138e9058",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    },
+    "paper_proposition1_from_stv_bounds_and_pav_min_argmax": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "b7e1a1254d8637c8840ced46c8d006dbdc1f7ac33456799ec53aadffc78525a2",
+      "paper_statement_sha256": "d37048adb942e32885de3fc47a046fd90e901185865fac38b80b596d0fd367b2",
+      "tex_statement_sha256": "3867da1f6005ef2057d5cdeb6de0655e05c649acde212320d837c86fb3da4b6c",
+      "validated_at": "2026-06-29T03:00:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "reason": "Agent statement pass: the Lean translation preserves the current PaperInterface row, and the row is marked as a paper-facing definition, source proof step, or Proposition 1/Lemma C.1 statement at the abstraction recorded in the final validation report."
+    }
+  }
+}

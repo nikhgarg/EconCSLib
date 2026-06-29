@@ -101,7 +101,7 @@
               <tr>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Foundations/Optimization">Foundations: optimization and certificates</a></td>
                 <td>Argmax and endpoint principles, finite-search certificates, approximation guarantees, linear-program certificates, binary-choice optimality, move-graph descent, and choice-equilibrium existence.</td>
-                <td>4,028</td>
+                <td>4,347</td>
               </tr>
               <tr>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Foundations/Econometrics/RatingModels">Rating-system applications</a></td>
@@ -135,8 +135,8 @@
               </tr>
               <tr>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/SocialChoice">Social choice, rankings, and fair division</a></td>
-                <td>Ranking profiles, Kendall distance and Mallows-style sequential ranking models, score/payoff interfaces, envy graphs, bounded-envy allocations, and indivisible-goods fairness statements.</td>
-                <td>9,546</td>
+                <td>Ranking profiles, Kendall distance and Mallows-style ranking models, STV/RCV traces, Droop-quota and solid-coalition certificates, Thiele/PAV committee scores, envy graphs, and indivisible-goods fairness statements.</td>
+                <td>11,661</td>
               </tr>
               <!-- END GENERATED LIBRARY COMPONENT ROWS -->
             </tbody>
@@ -350,6 +350,18 @@
                 <td>10/27 reviewed; 2 uncertain</td>
                 <td>17/17 statement rows match; 10 source-condition rows</td>
                 <td>27/27 covered</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="paper-source" href="https://doi.org/10.1287/opre.2024.1167"><cite>Combatting Gerrymandering with Ranked Choice Voting: an Experimental Analysis of Multi-member Districts in the United States</cite></a> by
+                  Nikhil Garg; Wes Gurnee; David Rothschild; David Shmoys; Operations Research, 2026.
+                </td>
+                <td><div class="artifact-links"><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md">Formalized</a> <a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.pdf">DAG</a></div></td>
+                <td>1,068</td>
+                <td>The gerrymandering paper&#x27;s in-scope theorem ledger has shared PAV/Thiele tooling, Droop-quota arithmetic, a formalized PAV min-argmax-to-interval proof for Lemma C.1, reusable two-party proportionality bridges, terminal same-party quota-process certificates, and a Lean-closed Proposition 1 reduction for the formal solid-coalition STV outcome predicate. Statement, source-coverage, assumption-provenance, build, and paper-closeout audits are current with no paper-local assumption declarations.</td>
+                <td>0/19 reviewed</td>
+                <td>19/19 match</td>
+                <td>19/19 covered</td>
               </tr>
               <tr>
                 <td>
