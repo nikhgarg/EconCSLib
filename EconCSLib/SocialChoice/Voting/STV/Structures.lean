@@ -330,9 +330,9 @@ theorem hasInitialEliminationPrefix_of_initialEliminationFocusPrefix
   exact ⟨hlen, hkind⟩
 
 /--
-Index-wise source trace facts package into the focused initial-elimination
-prefix predicate. This is the bridge used when an executable STV run proves the
-first `lossPrefix.length` trace steps one round at a time.
+Index-wise trace facts package into the focused initial-elimination prefix
+predicate. This is the bridge used when an executable STV run proves the first
+`lossPrefix.length` trace steps one round at a time.
 -/
 theorem hasInitialEliminationFocusPrefix_of_getElem
     {Candidate : Type*} {trace : STVTrace Candidate}
@@ -373,7 +373,7 @@ Focused initial-elimination prefixes expose their indexed focus equations.
 
 This is the reverse direction of
 `hasInitialEliminationFocusPrefix_of_getElem` for callers that prefer to keep a
-single source-facing prefix predicate in theorem statements.
+single prefix predicate in theorem statements.
 -/
 theorem get_focus_eq_of_initialEliminationFocusPrefix
     {Candidate : Type*} {trace : STVTrace Candidate}
