@@ -1,3 +1,4 @@
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Real.Archimedean
 import Mathlib.Data.Set.Basic
@@ -8,6 +9,8 @@ import Mathlib.Topology.Order.Compact
 
 namespace EconCSLib
 namespace Optimization
+
+open scoped BigOperators
 
 /-!
 # Optimization Certificates
@@ -27,8 +30,25 @@ optimization arguments.
 - `AlgorithmMinimizerCertificate`, `AlgorithmMaximizerCertificate`: pointwise
   optimality certificates for an algorithm together with an abstract
   operation-count bound.
+- `AlgorithmMinimizerCertificate.of_lowerBoundCertificate`,
+  `AlgorithmMaximizerCertificate.of_upperBoundCertificate`: lift pointwise
+  ordinary bound certificates into algorithm certificates.
+- `AlgorithmMinimizerCertificate.of_output_transform`,
+  `AlgorithmMaximizerCertificate.of_output_transform`: lift algorithm
+  certificates through feasible objective-preserving output transforms.
+- `MinimizerOutputTransformCertificate`: certificate for an objective-preserving
+  feasible transform of a minimization algorithm output.
+- `componentwiseLowerBoundFill_isMinimizerOn`: exact componentwise lower-bound
+  filling minimizes the sum of nonnegative integral allocations.
 - `AlgorithmSoundnessCertificate`: pointwise specification certificate for an
   algorithm together with an abstract operation-count bound.
+- `AlgorithmSoundnessCertificate.of_condition`: lift a checked condition plus
+  a condition-to-specification bridge into a soundness certificate.
+- `exists_feasible_objective_lt_of_replacement`: a deterministic replacement
+  map gives a feasible strict-improvement witness.
+- `exists_feasible_objective_lt_of_split_replacement`: two deterministic
+  replacement maps, selected by a source split, give a feasible strict
+  improvement witness.
 - `exists_isMaximizerOn_of_isCompact_continuousOn`,
   `exists_isMinimizerOn_of_isCompact_continuousOn`: extreme-value theorem
   wrappers in the local `IsMaximizerOn`/`IsMinimizerOn` certificate language.
@@ -189,6 +209,26 @@ theorem not_lt (h : IsMaximizerOn feasible objective x)
     (hy : feasible y) : ¬ objective x < objective y :=
   not_lt_of_ge (h.le hy)
 
+/-- A point with a feasible strict improvement is not a maximizer. -/
+theorem not_of_exists_objective_lt
+    (hbetter : ∃ y, feasible y ∧ objective x < objective y) :
+    ¬ IsMaximizerOn feasible objective x := by
+  intro hmax
+  rcases hbetter with ⟨y, hy, hlt⟩
+  exact hmax.not_lt hy hlt
+
+/--
+A feasible point with no feasible strict improvement is a maximizer.
+-/
+theorem of_feasible_not_exists_objective_lt
+    (hx : feasible x)
+    (hno : ¬ ∃ y, feasible y ∧ objective x < objective y) :
+    IsMaximizerOn feasible objective x := by
+  refine ⟨hx, ?_⟩
+  intro y hy
+  by_contra hnot
+  exact hno ⟨y, hy, lt_of_not_ge hnot⟩
+
 /-- The objective value of a maximizer is in the feasible value set. -/
 theorem value_mem_feasibleValueSet
     (h : IsMaximizerOn feasible objective x) :
@@ -331,6 +371,26 @@ theorem not_lt (h : IsMinimizerOn feasible objective x)
     (hy : feasible y) : ¬ objective y < objective x :=
   not_lt_of_ge (h.le hy)
 
+/-- A point with a feasible strict improvement is not a minimizer. -/
+theorem not_of_exists_objective_lt
+    (hbetter : ∃ y, feasible y ∧ objective y < objective x) :
+    ¬ IsMinimizerOn feasible objective x := by
+  intro hmin
+  rcases hbetter with ⟨y, hy, hlt⟩
+  exact hmin.not_lt hy hlt
+
+/--
+A feasible point with no feasible strict improvement is a minimizer.
+-/
+theorem of_feasible_not_exists_objective_lt
+    (hx : feasible x)
+    (hno : ¬ ∃ y, feasible y ∧ objective y < objective x) :
+    IsMinimizerOn feasible objective x := by
+  refine ⟨hx, ?_⟩
+  intro y hy
+  by_contra hnot
+  exact hno ⟨y, hy, lt_of_not_ge hnot⟩
+
 /-- The objective value of a minimizer is in the feasible value set. -/
 theorem value_mem_feasibleValueSet
     (h : IsMinimizerOn feasible objective x) :
@@ -345,6 +405,51 @@ theorem objective_eq_of_isMinimizerOn
   le_antisymm (hx.le hy.isFeasible) (hy.le hx.isFeasible)
 
 end IsMinimizerOn
+
+/--
+A deterministic replacement map for bad feasible points gives an existential
+strict-improvement witness.
+-/
+theorem exists_feasible_objective_lt_of_replacement
+    {α : Type*} {feasible bad : α → Prop} {objective : α → ℝ}
+    (replacement : ∀ x, feasible x → bad x → α)
+    (replacement_feasible : ∀ x hx hbad,
+      feasible (replacement x hx hbad))
+    (replacement_objective_lt : ∀ x hx hbad,
+      objective (replacement x hx hbad) < objective x) :
+    ∀ x, feasible x → bad x → ∃ y, feasible y ∧ objective y < objective x := by
+  intro x hx hbad
+  exact ⟨replacement x hx hbad,
+    replacement_feasible x hx hbad,
+    replacement_objective_lt x hx hbad⟩
+
+/--
+Two deterministic replacement maps, selected by a source-level split of the
+bad cases, give an existential strict-improvement witness.
+-/
+theorem exists_feasible_objective_lt_of_split_replacement
+    {α : Type*}
+    {feasible bad leftCase rightCase : α → Prop} {objective : α → ℝ}
+    (split : ∀ x, feasible x → bad x → leftCase x ∨ rightCase x)
+    (leftReplacement : ∀ x, feasible x → bad x → leftCase x → α)
+    (leftReplacement_feasible : ∀ x hx hbad hleft,
+      feasible (leftReplacement x hx hbad hleft))
+    (leftReplacement_objective_lt : ∀ x hx hbad hleft,
+      objective (leftReplacement x hx hbad hleft) < objective x)
+    (rightReplacement : ∀ x, feasible x → bad x → rightCase x → α)
+    (rightReplacement_feasible : ∀ x hx hbad hright,
+      feasible (rightReplacement x hx hbad hright))
+    (rightReplacement_objective_lt : ∀ x hx hbad hright,
+      objective (rightReplacement x hx hbad hright) < objective x) :
+    ∀ x, feasible x → bad x → ∃ y, feasible y ∧ objective y < objective x := by
+  intro x hx hbad
+  rcases split x hx hbad with hleft | hright
+  · exact ⟨leftReplacement x hx hbad hleft,
+      leftReplacement_feasible x hx hbad hleft,
+      leftReplacement_objective_lt x hx hbad hleft⟩
+  · exact ⟨rightReplacement x hx hbad hright,
+      rightReplacement_feasible x hx hbad hright,
+      rightReplacement_objective_lt x hx hbad hright⟩
 
 namespace IsStrictMaximizerOn
 
@@ -676,11 +781,116 @@ structure AlgorithmSoundnessCertificate {Input Output : Type*}
   sound : ∀ input, specification input (algorithm input)
   operationCount_le : ∀ input, operationCount input ≤ operationBound input
 
+/--
+Certificate for a feasible, objective-preserving transform of a minimization
+algorithm's output.
+
+This packages the common pattern used by robust-output and postprocessing
+arguments: a base algorithm is already certified optimal, the transformed
+output is feasible and has the same objective value on every input, and the
+transformed implementation satisfies the advertised operation-count bound.
+-/
+structure MinimizerOutputTransformCertificate {Input Output : Type*}
+    (baseAlgorithm transformedAlgorithm : Input → Output)
+    (feasible : Input → Output → Prop)
+    (objective : Input → Output → ℝ)
+    (baseOperationCount transformedOperationCount operationBound :
+      Input → ℕ) where
+  baseCert :
+    AlgorithmMinimizerCertificate baseAlgorithm feasible objective
+      baseOperationCount operationBound
+  transformed_feasible :
+    ∀ input, feasible input (transformedAlgorithm input)
+  transformed_objective_eq :
+    ∀ input,
+      objective input (transformedAlgorithm input) =
+        objective input (baseAlgorithm input)
+  transformedOperationCount_le :
+    ∀ input, transformedOperationCount input ≤ operationBound input
+
 namespace AlgorithmMinimizerCertificate
 
 variable {Input Output : Type*} {algorithm : Input → Output}
   {feasible : Input → Output → Prop} {objective : Input → Output → ℝ}
   {operationCount operationBound : Input → ℕ}
+
+/--
+Build an algorithm minimization certificate from source-shaped output
+feasibility, objective lower-bound, and operation-count fields.
+-/
+theorem of_output_feasible_objective_le
+    (output_feasible : ∀ input, feasible input (algorithm input))
+    (objective_le : ∀ input output, feasible input output →
+      objective input (algorithm input) ≤ objective input output)
+    (operationCount_le : ∀ input, operationCount input ≤ operationBound input) :
+    AlgorithmMinimizerCertificate algorithm feasible objective
+      operationCount operationBound where
+  optimal := by
+    intro input
+    exact ⟨output_feasible input, objective_le input⟩
+  operationCount_le := operationCount_le
+
+/--
+Build an algorithm minimization certificate from output feasibility, absence
+of any feasible lower-objective output, and operation-count fields.
+-/
+theorem of_output_feasible_not_exists_objective_lt
+    (output_feasible : ∀ input, feasible input (algorithm input))
+    (not_exists_objective_lt : ∀ input,
+      ¬ ∃ output, feasible input output ∧
+        objective input output < objective input (algorithm input))
+    (operationCount_le : ∀ input, operationCount input ≤ operationBound input) :
+    AlgorithmMinimizerCertificate algorithm feasible objective
+      operationCount operationBound where
+  optimal := by
+    intro input
+    exact IsMinimizerOn.of_feasible_not_exists_objective_lt
+      (output_feasible input) (not_exists_objective_lt input)
+  operationCount_le := operationCount_le
+
+/--
+Build an algorithm minimization certificate from pointwise lower-bound
+certificates whose certified candidate is the algorithm output.
+-/
+theorem of_lowerBoundCertificate
+    (value : Input → ℝ)
+    (lowerBoundCert : ∀ input,
+      LowerBoundCertificate (feasible input) (objective input) (value input))
+    (candidate_eq : ∀ input, (lowerBoundCert input).candidate = algorithm input)
+    (operationCount_le : ∀ input, operationCount input ≤ operationBound input) :
+    AlgorithmMinimizerCertificate algorithm feasible objective
+      operationCount operationBound where
+  optimal := by
+    intro input
+    simpa [candidate_eq input] using (lowerBoundCert input).isMinimizerOn
+  operationCount_le := operationCount_le
+
+/--
+Lift a minimization certificate through an output transform that preserves the
+objective value of the certified output and returns a feasible transformed
+output.
+-/
+theorem of_output_transform
+    {transformedAlgorithm : Input → Output}
+    {transformedOperationCount : Input → ℕ}
+    (cert :
+      AlgorithmMinimizerCertificate algorithm feasible objective
+        operationCount operationBound)
+    (transformed_feasible : ∀ input, feasible input (transformedAlgorithm input))
+    (transformed_objective_eq : ∀ input,
+      objective input (transformedAlgorithm input) =
+        objective input (algorithm input))
+    (transformedOperationCount_le :
+      ∀ input, transformedOperationCount input ≤ operationBound input) :
+    AlgorithmMinimizerCertificate transformedAlgorithm feasible objective
+      transformedOperationCount operationBound where
+  optimal := by
+    intro input
+    refine ⟨transformed_feasible input, ?_⟩
+    intro output houtput
+    rw [transformed_objective_eq input]
+    exact (cert.optimal input).le houtput
+  operationCount_le := transformedOperationCount_le
 
 /-- The certified algorithm output is feasible for each input. -/
 theorem output_feasible
@@ -703,11 +913,132 @@ theorem objective_le
 
 end AlgorithmMinimizerCertificate
 
+namespace MinimizerOutputTransformCertificate
+
+variable {Input Output : Type*}
+  {baseAlgorithm transformedAlgorithm : Input → Output}
+  {feasible : Input → Output → Prop} {objective : Input → Output → ℝ}
+  {baseOperationCount transformedOperationCount operationBound : Input → ℕ}
+
+/--
+A minimizer output-transform certificate gives the reusable algorithm
+certificate for the transformed algorithm.
+-/
+theorem algorithmCertificate
+    (cert :
+      MinimizerOutputTransformCertificate baseAlgorithm transformedAlgorithm
+        feasible objective baseOperationCount transformedOperationCount
+        operationBound) :
+    AlgorithmMinimizerCertificate transformedAlgorithm feasible objective
+      transformedOperationCount operationBound :=
+  AlgorithmMinimizerCertificate.of_output_transform
+    cert.baseCert cert.transformed_feasible cert.transformed_objective_eq
+    cert.transformedOperationCount_le
+
+/--
+Pointwise optimality and operation-count projection from a minimizer
+output-transform certificate.
+-/
+theorem optimal_and_operationCount
+    (cert :
+      MinimizerOutputTransformCertificate baseAlgorithm transformedAlgorithm
+        feasible objective baseOperationCount transformedOperationCount
+        operationBound) :
+    ∀ input,
+      IsMinimizerOn
+          (feasible input) (objective input) (transformedAlgorithm input) ∧
+        transformedOperationCount input ≤ operationBound input := by
+  intro input
+  let transformedCert :=
+    algorithmCertificate cert
+  exact ⟨transformedCert.optimal input,
+    transformedCert.operationCount_le input⟩
+
+end MinimizerOutputTransformCertificate
+
 namespace AlgorithmMaximizerCertificate
 
 variable {Input Output : Type*} {algorithm : Input → Output}
   {feasible : Input → Output → Prop} {objective : Input → Output → ℝ}
   {operationCount operationBound : Input → ℕ}
+
+/--
+Build an algorithm maximization certificate from source-shaped output
+feasibility, objective upper-bound, and operation-count fields.
+-/
+theorem of_output_feasible_objective_le_output
+    (output_feasible : ∀ input, feasible input (algorithm input))
+    (objective_le_output : ∀ input output, feasible input output →
+      objective input output ≤ objective input (algorithm input))
+    (operationCount_le : ∀ input, operationCount input ≤ operationBound input) :
+    AlgorithmMaximizerCertificate algorithm feasible objective
+      operationCount operationBound where
+  optimal := by
+    intro input
+    exact ⟨output_feasible input, objective_le_output input⟩
+  operationCount_le := operationCount_le
+
+/--
+Build an algorithm maximization certificate from output feasibility, absence
+of any feasible higher-objective output, and operation-count fields.
+-/
+theorem of_output_feasible_not_exists_objective_lt
+    (output_feasible : ∀ input, feasible input (algorithm input))
+    (not_exists_objective_lt : ∀ input,
+      ¬ ∃ output, feasible input output ∧
+        objective input (algorithm input) < objective input output)
+    (operationCount_le : ∀ input, operationCount input ≤ operationBound input) :
+    AlgorithmMaximizerCertificate algorithm feasible objective
+      operationCount operationBound where
+  optimal := by
+    intro input
+    exact IsMaximizerOn.of_feasible_not_exists_objective_lt
+      (output_feasible input) (not_exists_objective_lt input)
+  operationCount_le := operationCount_le
+
+/--
+Build an algorithm maximization certificate from pointwise upper-bound
+certificates whose certified candidate is the algorithm output.
+-/
+theorem of_upperBoundCertificate
+    (value : Input → ℝ)
+    (upperBoundCert : ∀ input,
+      UpperBoundCertificate (feasible input) (objective input) (value input))
+    (candidate_eq : ∀ input, (upperBoundCert input).candidate = algorithm input)
+    (operationCount_le : ∀ input, operationCount input ≤ operationBound input) :
+    AlgorithmMaximizerCertificate algorithm feasible objective
+      operationCount operationBound where
+  optimal := by
+    intro input
+    simpa [candidate_eq input] using (upperBoundCert input).isMaximizerOn
+  operationCount_le := operationCount_le
+
+/--
+Lift a maximization certificate through an output transform that preserves the
+objective value of the certified output and returns a feasible transformed
+output.
+-/
+theorem of_output_transform
+    {transformedAlgorithm : Input → Output}
+    {transformedOperationCount : Input → ℕ}
+    (cert :
+      AlgorithmMaximizerCertificate algorithm feasible objective
+        operationCount operationBound)
+    (transformed_feasible : ∀ input, feasible input (transformedAlgorithm input))
+    (transformed_objective_eq : ∀ input,
+      objective input (transformedAlgorithm input) =
+        objective input (algorithm input))
+    (transformedOperationCount_le :
+      ∀ input, transformedOperationCount input ≤ operationBound input) :
+    AlgorithmMaximizerCertificate transformedAlgorithm feasible objective
+      transformedOperationCount operationBound where
+  optimal := by
+    intro input
+    refine ⟨transformed_feasible input, ?_⟩
+    intro output houtput
+    rw [transformed_objective_eq input]
+    exact (cert.optimal input).le houtput
+  operationCount_le := transformedOperationCount_le
 
 /-- The certified algorithm output is feasible for each input. -/
 theorem output_feasible
@@ -736,6 +1067,34 @@ variable {Input Output : Type*} {algorithm : Input → Output}
   {specification : Input → Output → Prop}
   {operationCount operationBound : Input → ℕ}
 
+/--
+Build an algorithm soundness certificate from source-shaped output-spec and
+operation-count fields.
+-/
+theorem of_output_spec
+    (output_spec : ∀ input, specification input (algorithm input))
+    (operationCount_le : ∀ input, operationCount input ≤ operationBound input) :
+    AlgorithmSoundnessCertificate algorithm specification
+      operationCount operationBound where
+  sound := output_spec
+  operationCount_le := operationCount_le
+
+/--
+Build an algorithm soundness certificate from a checked condition and a bridge
+from that condition to the requested output specification.
+-/
+theorem of_condition
+    (condition : Input → Prop)
+    (condition_holds : ∀ input, condition input)
+    (output_spec_of_condition :
+      ∀ input, condition input → specification input (algorithm input))
+    (operationCount_le : ∀ input, operationCount input ≤ operationBound input) :
+    AlgorithmSoundnessCertificate algorithm specification
+      operationCount operationBound :=
+  of_output_spec
+    (fun input => output_spec_of_condition input (condition_holds input))
+    operationCount_le
+
 /-- The certified algorithm output satisfies the requested specification. -/
 theorem output_spec
     (cert :
@@ -746,6 +1105,69 @@ theorem output_spec
   cert.sound input
 
 end AlgorithmSoundnessCertificate
+
+/-! ## Componentwise lower-bound filling -/
+
+/--
+Feasibility predicate for allocation problems where every component must meet
+a nonnegative lower bound.
+-/
+def componentwiseLowerBoundFeasible {ι : Type*}
+    (lower allocation : ι → ℕ) : Prop :=
+  ∀ i, lower i ≤ allocation i
+
+/-- Total cost of a finite vector of nonnegative integral allocations. -/
+def componentwiseNatCost {ι : Type*} [Fintype ι]
+    (allocation : ι → ℕ) : ℝ :=
+  ∑ i, (allocation i : ℝ)
+
+/-- The allocation that fills every component exactly to its lower bound. -/
+def componentwiseLowerBoundFill {ι : Type*} (lower : ι → ℕ) : ι → ℕ :=
+  lower
+
+/--
+Any feasible componentwise allocation has total cost at least the exact lower
+bound fill.
+-/
+theorem componentwiseNatCost_le_of_componentwiseLowerBoundFeasible
+    {ι : Type*} [Fintype ι] {lower allocation : ι → ℕ}
+    (hfeasible : componentwiseLowerBoundFeasible lower allocation) :
+    componentwiseNatCost lower ≤ componentwiseNatCost allocation := by
+  unfold componentwiseNatCost
+  exact Finset.sum_le_sum (by
+    intro i _hi
+    exact_mod_cast hfeasible i)
+
+/--
+Exact componentwise lower-bound filling gives a minimization lower-bound
+certificate for total allocation cost.
+-/
+def componentwiseLowerBoundFill_lowerBoundCertificate
+    {ι : Type*} [Fintype ι] (lower : ι → ℕ) :
+    LowerBoundCertificate
+      (componentwiseLowerBoundFeasible lower)
+      componentwiseNatCost
+      (componentwiseNatCost (componentwiseLowerBoundFill lower)) where
+  candidate := componentwiseLowerBoundFill lower
+  candidate_feasible := by
+    intro i
+    exact le_rfl
+  candidate_value := rfl
+  lower_bound := by
+    intro allocation hfeasible
+    exact componentwiseNatCost_le_of_componentwiseLowerBoundFeasible hfeasible
+
+/--
+Exact componentwise lower-bound filling minimizes total allocation cost among
+all allocations that meet the componentwise lower bounds.
+-/
+theorem componentwiseLowerBoundFill_isMinimizerOn
+    {ι : Type*} [Fintype ι] (lower : ι → ℕ) :
+    IsMinimizerOn
+      (componentwiseLowerBoundFeasible lower)
+      componentwiseNatCost
+      (componentwiseLowerBoundFill lower) :=
+  (componentwiseLowerBoundFill_lowerBoundCertificate lower).isMinimizerOn
 
 end Optimization
 end EconCSLib

@@ -42,6 +42,10 @@
       "publication": "EAAMO, 2021",
       "year": 2021
     },
+    "LBG24SpatialUnderreporting": {
+      "publication": "Nature Computational Science, 2024",
+      "year": 2024
+    },
     "LMMS04FairDivision": {
       "publication": "ACM EC, 2004",
       "year": 2004
@@ -82,6 +86,7 @@
     "GN21DriverSurgePricing": "https://arxiv.org/pdf/1905.07544",
     "GS62CollegeAdmissions": "http://www.jstor.org/stable/2312726",
     "LG21TestOptionalPolicies": "https://arxiv.org/pdf/2107.08922",
+    "LBG24SpatialUnderreporting": "https://www.nature.com/articles/s43588-023-00572-6",
     "LMMS04FairDivision": "https://www.cs.cmu.edu/~arielpro/15896s15/docs/paper12a.pdf",
     "LOS02CombinatorialAuctions": "https://jmvidal.cse.sc.edu/library/lehmann02a.pdf",
     "MBJG25ProducerFairness": "https://arxiv.org/pdf/2207.04369",
@@ -121,8 +126,10 @@
         "LMMS04FairDivision",
         "GN21DriverSurgePricing",
         "LG21TestOptionalPolicies",
+        "LBG24SpatialUnderreporting",
         "GGSG19TopThree",
         "GJ18InformativeRatingSystems",
+        "GJ19OptimalBinaryRatingSystems",
         "GKGMM19IterativeLocalVoting"
       ]
     },
@@ -150,7 +157,8 @@
       "examples": "Binary and ordinal signal models, posterior-mean ratings, bias/variance decompositions, prior-weighted updates, monotonicity/correction lemmas, and minimal bandit-regret interfaces.",
       "papers": [
         "MBJG25ProducerFairness",
-        "GJ18InformativeRatingSystems"
+        "GJ18InformativeRatingSystems",
+        "GJ19OptimalBinaryRatingSystems"
       ]
     },
     {
