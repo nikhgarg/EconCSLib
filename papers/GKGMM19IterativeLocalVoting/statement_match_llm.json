@@ -135,23 +135,23 @@
     },
     "appendix_theorem4_expected_subgradient_boundary": {
       "judgment": "matches",
-      "lean_statement_sha256": "7f0e15d58b8104006248ddfaed1d2ecb25c45f9da3ac2a6683fb701c4444aa6f",
+      "lean_statement_sha256": "0f9b33efe2fb2f583a61f945886cf7b0f6e453736695fa8c42cf11b44a05312f",
       "paper_statement_sha256": "e83f794bb9ecfb39902ff7f7587627b0240597a547d8624c6a86e94ad8742e21",
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the row explicitly exposes the source theorem as a proof-boundary statement; the boundary is visible in the paper statement and Lean surface.",
       "tex_statement_sha256": "9543b245f55f6747dd7f7393b5ff49d999de780b055c824bde0bce0022a5a630",
-      "validated_at": "2026-06-29T20:39:31Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "appendix_theorem5_ssgm_convergence_boundary": {
       "judgment": "matches",
-      "lean_statement_sha256": "582f2987a28ac59ce58ad620a9f892114ea4b3fab4cc11ac3d217c4a6087124e",
+      "lean_statement_sha256": "388419e1dd7027757a50083d86b7bafef317f8af0aa80a6d35dd88dae6ddec8b",
       "paper_statement_sha256": "9dcb69d3377f7358003a32a6f20ecfb6ffaaf0672551b1c78a81815b17e136da",
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the row explicitly exposes the source theorem as a proof-boundary statement; the boundary is visible in the paper statement and Lean surface.",
       "tex_statement_sha256": "a8cc683623889546010826902bee5c527c2a20cffad43371ecfeeafa80f10b95",
-      "validated_at": "2026-06-29T20:39:31Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },

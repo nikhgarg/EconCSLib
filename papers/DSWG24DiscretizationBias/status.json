@@ -10,7 +10,7 @@
   "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 32,
+    "total_rows": 41,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -18,8 +18,8 @@
   "paper_interface": {
     "path": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
     "line_count": 456,
-    "declaration_rows": 32,
-    "review_rows": 32,
+    "declaration_rows": 41,
+    "review_rows": 41,
     "oversized": false,
     "maintainability_issue": null
   },

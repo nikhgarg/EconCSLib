@@ -24,8 +24,8 @@
   "paper_interface": {
     "path": "papers/LBG24SpatialUnderreporting/PaperInterface.lean",
     "line_count": 8658,
-    "declaration_rows": 96,
-    "review_rows": 24,
+    "declaration_rows": 27,
+    "review_rows": 27,
     "oversized": false,
     "maintainability_issue": "Review surface curated to 24 source-facing paper-interface rows plus 3 explicit assumption rows. Alternative theorem routes, proof-support lemmas, sanity checks, and kernel-normalization rows remain Lean-checked but are excluded from the human dashboard."
   },

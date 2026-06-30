@@ -82,7 +82,7 @@
       "validator_type": "model"
     },
     "lemma8_bad_tuple_counterexample_setting": {
-      "lean_statement_sha256": "031a62211edf9c52d99b117a7368f3145876f99ab97b63b4fa7b0fde2200ed3f",
+      "lean_statement_sha256": "ab216750615ea83a23d928b4e4e3f3d774aed458a6f6ef4cbea7c3f4d93e3ced",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {n : \u2115} {C : CollaborationStrategy n} {p : Fin n \\to \u211d} (hp : Interior p) {k : Fin n}, p k \\ne 1 / 2 \\to C p \\ne roundProb (p k) \\to WeakCounterexampleFor (toAccuracySurface C (part1Setting (C p) p hp)) k",
       "translated_at": "2026-06-29T20:39:31Z",
@@ -90,7 +90,7 @@
       "validator_type": "model"
     },
     "proposition6_linear_combination_settings": {
-      "lean_statement_sha256": "e47a00a7760406193a5cd8953d985506490abda4d3c59d42a082f149060dfa3f",
+      "lean_statement_sha256": "c89ec361a1f31b03e96e8c64e6deb41b05aff9eeac72e4c319643da7b14b4b93",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {n ell : \u2115} (S : Fin ell \\to FiniteCollaborationSetting n) (w : Fin ell \\to \u211d), (\\forall (r : Fin ell), 0 \\le w r) \\to \\sum r, w r = 1 \\to \\exists Smix, (\\forall (i : Fin n), agentAccuracy i = \\sum r, w r * (S r).agentAccuracy i) \\land \\forall (C : CollaborationStrategy n), strategyAccuracy C Smix = \\sum r, w r * strategyAccuracy C (S r)",
       "translated_at": "2026-06-29T20:39:31Z",
@@ -98,7 +98,7 @@
       "validator_type": "model"
     },
     "proposition7_reliability_forces_fixed_deferral": {
-      "lean_statement_sha256": "30f6211e29f451cd7048ac4a12bec96929c72c0e698023c47b270cfe45916914",
+      "lean_statement_sha256": "373a39996146cea35d74cc0b44a205dbd16c34b7f4fd153450e4bafac7c67df3",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {n : \u2115} [Nonempty (Fin n)] (C : CollaborationStrategy n), Reliable C \\to \\exists k, DefersAwayFromHalf C k",
       "translated_at": "2026-06-29T20:39:31Z",
@@ -106,7 +106,7 @@
       "validator_type": "model"
     },
     "proposition9_reliability_forces_fixed_tie_label": {
-      "lean_statement_sha256": "10e863631a56913d5b5a689d475bcd8908cae2d6632bd0594d611cfa1f99c644",
+      "lean_statement_sha256": "2c715707d29c1fb37e48dd5296d7c1582ba3d47cbba904e201db3ccdb308612d",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {n : \u2115} [Nonempty (Fin n)] (C : CollaborationStrategy n) (k : Fin n), Reliable C \\to DefersAwayFromHalf C k \\to \\exists \\alpha, ConstantOnHalfSlice C k \\alpha",
       "translated_at": "2026-06-29T20:39:31Z",

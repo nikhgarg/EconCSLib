@@ -10,7 +10,7 @@
   "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 16,
+    "total_rows": 23,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -18,8 +18,8 @@
   "paper_interface": {
     "path": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
     "line_count": 77,
-    "declaration_rows": 16,
-    "review_rows": 16,
+    "declaration_rows": 23,
+    "review_rows": 23,
     "oversized": false,
     "maintainability_issue": null,
     "proof_interface_path": "papers/LG21TestOptionalPolicies/ProofInterface.lean",

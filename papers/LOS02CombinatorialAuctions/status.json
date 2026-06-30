@@ -11,7 +11,7 @@
   "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 30,
+    "total_rows": 39,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -19,8 +19,8 @@
   "paper_interface": {
     "path": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
     "line_count": 371,
-    "declaration_rows": 30,
-    "review_rows": 30,
+    "declaration_rows": 39,
+    "review_rows": 39,
     "oversized": false,
     "maintainability_issue": null,
     "proof_interface_path": "papers/LOS02CombinatorialAuctions/ProofInterface.lean",

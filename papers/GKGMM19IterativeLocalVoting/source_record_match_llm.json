@@ -6,7 +6,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the direct Lean representation of the convexity component of paper condition C1. It is intentionally treated as a source assumption. Full Theorem 3 source records consume this direct C1 source, and the old implication-shaped compatibility row has been removed from the paper-facing interface.",
       "source_location": "source.txt:413. Condition C1 states: \"The solution space X subset R^M is non-empty, bounded, closed, and convex.\"",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -16,7 +16,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Previous provenance text did not actually identify a Lean constructor from primitives; reclassified fail-closed by semantic rejudge.",
       "source_location": "Lean proof listed in judge_summary; the replacement/source-semantics fields remain separately audited and unresolved where they are not proved.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -26,7 +26,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the decomposable-utilities source assumption from Proposition 2.",
       "source_location": "source.txt:546-558 and source.txt:566-568. Definition 3 defines decomposable utilities; Proposition 2 assumes utilities are decomposable.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -36,7 +36,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the coordinatewise median-set object from the Proposition 2 source statement.",
       "source_location": "source.txt:558-564. The paper defines the set of medians on each dimension.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -46,7 +46,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the decomposable-utilities source assumption from Proposition 2.",
       "source_location": "source.txt:546-558 and source.txt:566-568. Definition 3 defines decomposable utilities; Proposition 2 assumes utilities are decomposable.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -56,7 +56,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the Lean set-formula representation of the paper componentwise median target set.",
       "source_location": "source.txt:558-568. Proposition 2 identifies the target set as the componentwise medians of voters ideal points.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -66,7 +66,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the coordinatewise median-set object from the Proposition 2 source statement.",
       "source_location": "source.txt:558-564. The paper defines the set of medians on each dimension.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -76,7 +76,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the Lean set-formula representation of the paper componentwise median target set.",
       "source_location": "source.txt:558-568. Proposition 2 identifies the target set as the componentwise medians of voters ideal points.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -86,7 +86,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is a container/factory for a nested source record, not a primitive source assumption by itself. It is accepted only because the recursive source-record audit expands the returned nested record and all nested fields have their own approved judgments. Previous classification was `validated_source_assumption`; it was tightened to avoid hiding math in a broad source-record field.",
       "source_location": "source.txt:417-418 and source.txt:2048-2053. C3 states that ideal points are drawn independently from a probability distribution with bounded measurable density h_X on M dimensions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -96,7 +96,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is exactly the abstract C3 component stored on ILVEnvironment. It is a paper source assumption, not a theorem.",
       "source_location": "source.txt:417-418 and source.txt:2048-2053. C3 states that ideal points are drawn independently from a probability distribution with bounded measurable density h_X on M dimensions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -106,7 +106,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "The paper states Theorem 3 in finite-dimensional Euclidean notation. Because ILVEnvironment.convergesToPoint is an intentionally opaque source predicate, this field records the finite-coordinate reading of x_t -> x* needed by the analytic proof. It is source semantics, not a derived theorem from the opaque environment field.",
       "source_location": "source.txt:594-606 and source.txt:2224-2234. Theorem 3 states that if a trajectory {x_t} converges to x*, i.e. x_t -> x*, then x* is a directional equilibrium.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -115,7 +115,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container field for the sampled Proposition 1 source semantics; its sampled component trace and weighted objective fields are recursively audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -124,7 +124,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container field for Proposition 2 source semantics; its nested median and response fields are recursively audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -133,7 +133,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container field for sampled Theorem 2 source semantics; radius, finite norm/C3 carrier, and sampled trace fields are recursively audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -142,7 +142,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container field for the split Theorem 3 global projected Algorithm 1 update source; nested raw update and projection fields are recursively audited separately. The old aggregate feasible-direction source is intentionally not part of this projected source package.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -151,7 +151,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container field for concrete Theorem 3 field-continuity source; nested continuity fields are recursively audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -160,7 +160,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container field for finite-coordinate convergence source; nested convergence-reading field is separately audited.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -169,7 +169,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container field for C1 convex solution-space source; nested convexity field is separately audited.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -178,7 +178,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container field for the concrete finite Theorem 3 directional field model; nested field formula/witness rows are recursively audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -188,7 +188,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This is the one-dimensional base marginal witness for the finite product-density reading of C3; it is carrier data, not a derived theorem.",
       "source_location": "source.txt:417-418 and source.txt:2049-2050. C3 states that each ideal point is drawn independently from a distribution with bounded measurable density; the appendix restates the bounded measurable density on M dimensions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -198,7 +198,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This is the atomless finite-coordinate base-measure assumption used by the coordinate-noncollision proof; it is part of the explicit finite product-density C3 source carrier.",
       "source_location": "source.txt:417-418 and source.txt:2049-2050. C3 states that each ideal point is drawn independently from a distribution with bounded measurable density; the appendix restates the bounded measurable density on M dimensions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -208,7 +208,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This is the finite-coordinate measure-regularity assumption needed to express the product-density version of C3 in Lean.",
       "source_location": "source.txt:417-418 and source.txt:2049-2050. C3 states that each ideal point is drawn independently from a distribution with bounded measurable density; the appendix restates the bounded measurable density on M dimensions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -218,7 +218,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This is the nonnegative bound witness for the finite product-density reading of C3; the bounded-density proposition is audited separately.",
       "source_location": "source.txt:417-418 and source.txt:2049-2050. C3 states that each ideal point is drawn independently from a distribution with bounded measurable density; the appendix restates the bounded measurable density on M dimensions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -228,7 +228,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This is the direct finite-coordinate Lean statement of the C3 bounded measurable density assumption for the ideal-point distribution.",
       "source_location": "source.txt:417-418 and source.txt:2049-2050. C3 states that each ideal point is drawn independently from a distribution with bounded measurable density; the appendix restates the bounded measurable density on M dimensions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -238,7 +238,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This is the finite-coordinate ideal-point probability measure witness used to instantiate C3; it is data, not a theorem claim by itself.",
       "source_location": "source.txt:417-418 and source.txt:2049-2050. C3 states that each ideal point is drawn independently from a distribution with bounded measurable density; the appendix restates the bounded measurable density on M dimensions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -248,7 +248,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the finite-coordinate product-box source semantics needed for the dimension-by-dimension L_infty Proposition 2 proof.",
       "source_location": "source.txt:545-552. The decomposable L_infty setting motivates changing each dimension independently; the finite-coordinate route represents this as product-box solution-space closure.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -259,7 +259,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "For the active sampled closeout route, this deterministic all-time noncollision field is derived by `proof_finiteModelBILVAlgorithm1PrimitiveTraceSource_of_sampledTrace`. Lean uses marginal-law alignment with the finite C3 ideal distribution, bad-event measurability, and countable a.e. intersection to choose one sample path satisfying coordinate noncollision. The legacy direct primitive-source formula still displays this field for low-level inspection, but the sampled full-source route no longer assumes it directly.",
       "source_location": "source.txt:2048-2053 for the C3 bounded-density ideal distribution; source.txt:2112-2123 for the Appendix C.4 Lemma 3 bad-event argument.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -269,7 +269,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the initial feasibility condition stated in the algorithm input.",
       "source_location": "source.txt:173 and source.txt:2015. Algorithm 1/2 starts with x0 in X.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -279,7 +279,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the projection operator used by the paper algorithm.",
       "source_location": "source.txt:184-187 and source.txt:2015-2019. Algorithm 1/2 uses projection [.]_X onto the feasible space X.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -289,7 +289,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field records the Lean norm-projection semantics of the paper projection notation [.]_X.",
       "source_location": "source.txt:184-187 and source.txt:1961. The paper uses [.]_X as the projection operator onto X under the selected movement norm.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -299,7 +299,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the projected-update equation from the paper algorithm.",
       "source_location": "source.txt:184-187 and source.txt:2015-2019. Algorithm 1 computes x_t = [x_t']_X / Algorithm 2 computes x_t = [x_{t-1} - r_t g~_{v_t}(x_t)]_X.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -309,7 +309,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the raw pre-projection response/movement variable in the paper algorithm.",
       "source_location": "source.txt:178-187 and source.txt:2015-2019. Algorithm 1 elicits a reported point x_t' before projecting it; Algorithm 2 writes the pre-projection movement before applying [.]_X.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -319,7 +319,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This is the paper-facing primitive Model B Algorithm 1 raw update formula after the finite Holder-dual sign bridge: the selected voter ideal determines the Lp cost-gradient candidate, and the raw move uses radius r0/(t+1).",
       "source_location": "source.txt:184-187 and source.txt:2015-2019. Algorithm 1 projects the local response back to X; Appendix C.4/Lemma 3 supplies the finite-coordinate Lp gradient candidate used for Model B.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -329,7 +329,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the selected-voter stream from the paper algorithm.",
       "source_location": "source.txt:178 and source.txt:2015-2018. Algorithm 1/2 samples a voter v_t from the population at each step.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -339,7 +339,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Technical measurability of the finite coordinate-equality bad event under the chosen source measurable structure; needed for the Lean `ae_map_iff` bridge.",
       "source_location": "source.txt:2112-2123 Lemma 3 bad event; technical Lean measurability side condition.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -349,7 +349,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Measurability of the sampled ideal process is an explicit source-model measurability condition needed to transport marginal laws through `Measure.map`.",
       "source_location": "source.txt:2048-2053 C3 distributional assumption; technical Lean measurability side condition.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -359,7 +359,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "The selected voter ideal at each time has the C3 ideal marginal law, which is the distributional paper premise used by the bad-event argument.",
       "source_location": "source.txt:2048-2053 C3 bounded-density ideal distribution.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -369,7 +369,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Algorithm 1 starts from a feasible initial point in the solution space.",
       "source_location": "source.txt:372-395 Algorithm 1 initialization/projection semantics.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -379,7 +379,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "The sampled-voter construction is modeled on a probability space, matching the paper stochastic convergence setting.",
       "source_location": "source.txt:372-395 Algorithm 1 selected-voter process and convergence with probability one.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -388,7 +388,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Projection operator witness; its projection property is carried by `project_norm`.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -398,7 +398,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Projection is the paper Algorithm 1 projection back to the feasible solution space in the selected norm.",
       "source_location": "source.txt:372-395 Algorithm 1 projection step.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -408,7 +408,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Algorithm 1 projected update step from the raw local response to the next trajectory point.",
       "source_location": "source.txt:372-395 Algorithm 1 projection step.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -417,7 +417,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Raw response path data; the raw update equation and projection step are audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -427,7 +427,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Paper Model B raw movement equation instantiated with the sign-correct finite Holder-dual gradient candidate before projection.",
       "source_location": "source.txt:436-452 Model B response and source.txt:2112-2123 Lemma 3 gradient argument.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -436,7 +436,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Sampled selected-voter path data; distributional and update constraints are audited in separate fields.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -446,7 +446,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the finite-coordinate coordinatewise continuity consequence used by the analytic proof from the paper assumption that G is uniformly continuous. Because the environment stores uniform continuity as an opaque source predicate, this row is validated as source semantics rather than derived from that opaque field.",
       "source_location": "source.txt:604 and source.txt:2232. Theorem 3 assumes G(x) is uniformly continuous.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -456,7 +456,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -466,7 +466,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -476,7 +476,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -486,7 +486,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -496,7 +496,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -506,7 +506,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -516,7 +516,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -526,7 +526,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -536,7 +536,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -546,7 +546,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the finite-coordinate source-semantics representation of Theorem 3 directional field formula, voter expectation, utility gradient, zero direction, or L2 norm interpretation. It is source/model semantics for the finite-coordinate theorem route, not an SSGM convergence boundary.",
       "source_location": "source.txt:596-604 and source.txt:2224-2232. Theorem 3 defines G(x) as E_v[grad f_v(x)/||grad f_v(x)||_2] and assumes L2 movement norm constraints.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -556,7 +556,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the split finite-coordinate reading of Algorithm 1 and Theorem 3: positive radius, L2 movement norm semantics, and projection onto X are source-model interpretations of the paper's algorithmic setup.",
       "source_location": "source.txt:186 describes projection onto X; source.txt:2232-2235 states L2 movement constraints and Model B for Theorem 3.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -566,7 +566,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is witness data for the paper radius/projection operator in the split Algorithm 1 update source. Its mathematical properties are audited in the companion propositional fields.",
       "source_location": "source.txt:186 and source.txt:2232-2235.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -576,7 +576,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the split finite-coordinate reading of Algorithm 1 and Theorem 3: positive radius, L2 movement norm semantics, and projection onto X are source-model interpretations of the paper's algorithmic setup.",
       "source_location": "source.txt:186 describes projection onto X; source.txt:2232-2235 states L2 movement constraints and Model B for Theorem 3.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -586,7 +586,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This is the direct finite-coordinate Algorithm 1 projected update equation for the global-tail Theorem 3 route: the selected Model B raw response is projected back to X to produce the next trajectory point. It is a source-model interpretation of Algorithm 1, not a derived theorem.",
       "source_location": "source.txt:186 describes Algorithm 1 as projecting the reported point onto X; source.txt:2232-2235 states Theorem 3 uses L2 movement constraints and Model B voters.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -596,7 +596,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is witness data for the paper radius/projection operator in the split Algorithm 1 update source. Its mathematical properties are audited in the companion propositional fields.",
       "source_location": "source.txt:186 and source.txt:2232-2235.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -606,7 +606,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is part of the split finite-coordinate reading of Algorithm 1 and Theorem 3: positive radius, L2 movement norm semantics, and projection onto X are source-model interpretations of the paper's algorithmic setup.",
       "source_location": "source.txt:186 describes projection onto X; source.txt:2232-2235 states L2 movement constraints and Model B for Theorem 3.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -615,7 +615,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container-producing field for sampled Proposition 1 weighted L2 component inputs. The returned sampled trace source is recursively audited through its component-distance, marginal-law, raw-generation, and projection fields.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -624,7 +624,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container-producing field for the weighted social-objective source formula; the returned formula source is recursively audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -634,7 +634,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is a container/factory for a nested source record, not a primitive source assumption by itself. It is accepted only because the recursive source-record audit expands the returned nested record and all nested fields have their own approved judgments. Previous classification was `proved_from_primitives`; it was tightened to avoid hiding math in a broad source-record field.",
       "source_location": "source.txt:532-545 and Proposition 1. The paper defines weighted-Euclidean utilities and asserts convergence under Model A/B; the current Lean source semantics still has to derive the SSGM trace inputs from those assumptions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -644,7 +644,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is a container/factory for a nested source record, not a primitive source assumption by itself. It is accepted only because the recursive source-record audit expands the returned nested record and all nested fields have their own approved judgments. Previous classification was `validated_source_assumption`; it was tightened to avoid hiding math in a broad source-record field.",
       "source_location": "source.txt:420-422 and source.txt:484-528. The paper defines social optima and Weighted Euclidean utilities for Proposition 1.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -654,7 +654,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is a container/factory for a nested source record, not a primitive source assumption by itself. It is accepted only because the recursive source-record audit expands the returned nested record and all nested fields have their own approved judgments. Previous classification was `validated_source_assumption`; it was tightened to avoid hiding math in a broad source-record field.",
       "source_location": "source.txt:558-568. Proposition 2 identifies the target as the set of componentwise medians for decomposable utilities.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -664,7 +664,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the Lean finite-coordinate representation of the paper Lq norm-distance semantics for ILV neighborhoods.",
       "source_location": "source.txt:107-117 and source.txt:173-178. The paper defines local neighborhoods as finite-dimensional Lq balls and Algorithm 1 takes norm q for the local neighborhood.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -673,7 +673,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is a container whose type is another source record already expanded by the recursive audit; the nested product-box closure field carries the substantive source judgment.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -683,7 +683,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is a container/factory for a nested source record, not a primitive source assumption by itself. It is accepted only because the recursive source-record audit expands the returned nested record and all nested fields have their own approved judgments. Previous classification was `proved_from_primitives`; it was tightened to avoid hiding math in a broad source-record field.",
       "source_location": "Lean constructors listed in judge_summary; the replacement/source-model obligation remains separately audited.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -693,7 +693,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is a container/factory for a nested source record, not a primitive source assumption by itself. It is accepted only because the recursive source-record audit expands the returned nested record and all nested fields have their own approved judgments. Previous classification was `validated_source_assumption`; it was tightened to avoid hiding math in a broad source-record field.",
       "source_location": "source.txt:546-568. Definition 3 and Proposition 2 provide decomposable utilities and componentwise median target semantics.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -703,7 +703,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is a container/factory for a nested source record, not a primitive source assumption by itself. It is accepted only because the recursive source-record audit expands the returned nested record and all nested fields have their own approved judgments. Previous classification was `validated_source_assumption`; it was tightened to avoid hiding math in a broad source-record field.",
       "source_location": "source.txt:417-418 and source.txt:2048-2053. C3 gives a bounded measurable density h_X on M dimensions.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -713,7 +713,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the Lean finite-coordinate representation of the paper Lq norm-distance semantics for ILV neighborhoods.",
       "source_location": "source.txt:107-117 and source.txt:173-178. The paper defines local neighborhoods as finite-dimensional Lq balls and Algorithm 1 takes norm q for the local neighborhood.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -722,7 +722,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is an indexed constructor for the primitive Model B trace record. The recursive audit expands the resulting FiniteModelBILVAlgorithm1PrimitiveTraceSource fields, so the nested primitive trace fields carry the substantive provenance judgments.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -732,7 +732,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field carries Algorithm 1 initial radius parameter r0. It is paper source data, with positivity tracked separately by r0_pos.",
       "source_location": "source.txt:173 and source.txt:178. Algorithm 1 lists initial radius r0 > 0 and sets r_t = r0/t for t >= 1.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -742,7 +742,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the positivity part of Algorithm 1 initial radius r0 > 0.",
       "source_location": "source.txt:173 and source.txt:178. Algorithm 1 lists initial radius r0 > 0 and sets r_t = r0/t for t >= 1.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -751,7 +751,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container field for finite-coordinate C3 distribution data; its bounded-density/distribution fields are recursively audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -761,7 +761,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Finite-coordinate norm-distance interpretation used to read the paper finite-dimensional Lp formulas inside the abstract environment interface.",
       "source_location": "source.txt:400-410 and Appendix C.4 finite-dimensional notation.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -770,7 +770,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container-producing field for sampled Model B Algorithm 1 traces; the returned sampled trace source is recursively audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -779,7 +779,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Positive radius witness for Algorithm 1; its mathematical constraint is carried by the separate `r0_pos` field.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -789,7 +789,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Positive Algorithm 1 initial radius, matching the paper radius schedule premise needed for SSGM step sizes.",
       "source_location": "source.txt:372-384 Algorithm 1 radius schedule.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -799,7 +799,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Technical measurability of finite coordinate-equality bad events under the chosen source measurable structure.",
       "source_location": "source.txt:2112-2123 Lemma 3 bad event; technical Lean measurability side condition.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -808,7 +808,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Bias path witness for the sampled weighted-Euclidean update; stochastic assumptions are part of the SSGM boundary.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -818,7 +818,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Weighted-Euclidean components use nonnegative normalized weights in the Proposition 1 source model.",
       "source_location": "source.txt:518-545 Definition 2/Proposition 1 weighted-Euclidean utility decomposition.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -827,7 +827,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container-producing field assigning each weighted component a finite-coordinate ideal distribution; the distribution-data fields are recursively audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -836,7 +836,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Component ideal function witness; finite L2 component-distance and marginal-law constraints are audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -846,7 +846,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Each weighted component distance is represented as a finite L2 distance to the component ideal, matching the concrete component-distance reading used for Proposition 1.",
       "source_location": "source.txt:518-545 Definition 2 and Proposition 1 weighted-Euclidean construction.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -856,7 +856,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Measurability of sampled component ideals is an explicit source-model condition needed to transport marginal component laws through `Measure.map`.",
       "source_location": "source.txt:2048-2053 C3 distributional assumption; technical Lean measurability side condition.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -866,7 +866,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Each sampled component ideal has the supplied bounded-density finite-coordinate marginal law, enabling the component bad-event argument.",
       "source_location": "source.txt:2048-2053 C3 bounded-density ideal distribution.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -876,7 +876,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Algorithm 1 starts from a feasible initial point in the solution space.",
       "source_location": "source.txt:372-395 Algorithm 1 initialization/projection semantics.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -885,7 +885,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Noise path witness for the sampled weighted-Euclidean update; stochastic assumptions are part of the SSGM boundary.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -895,7 +895,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "The Proposition 1 sampled selected-voter process is modeled on a probability space, matching the paper stochastic convergence setting.",
       "source_location": "source.txt:372-395 Algorithm 1 selected-voter process and convergence with probability one.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -904,7 +904,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Projection operator witness; its projection property is carried by `project_norm`.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -914,7 +914,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Projection is the Algorithm 1 projection back to the feasible solution space in L2.",
       "source_location": "source.txt:372-395 Algorithm 1 projection step.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -924,7 +924,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Positive Algorithm 1 initial radius for the weighted-Euclidean Proposition 1 route.",
       "source_location": "source.txt:372-384 Algorithm 1 radius schedule.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -933,7 +933,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Raw weighted update path witness; raw generation and projection equations are audited separately.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -943,7 +943,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Raw weighted-Euclidean Algorithm 2/Proposition 1 generation equation before projection, with component gradient candidate, noise, and bias fields explicit.",
       "source_location": "source.txt:530-545 Proposition 1 weighted-Euclidean update/subgradient construction.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -953,7 +953,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Algorithm projection step from the raw weighted-Euclidean update to the next L2 trajectory point.",
       "source_location": "source.txt:372-395 Algorithm 1 projection step and source.txt:530-545 Proposition 1 update construction.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -962,7 +962,7 @@
       "classification": "nonpropositional_witness_data",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Sampled selected-voter path data; distributional and update constraints are audited in separate fields.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -972,7 +972,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Conservative recursive source-record audit: this field is exposed as part of a record/certificate/source-model premise or consequence surface. It is not yet shown in the audit payload to be derived from primitive paper assumptions by a separate reviewed Lean constructor, nor is it the approved SSGM external theorem boundary. Do not count this field as fully formalized until it is proved from primitives, validated as a source assumption with exact paper-source location, or explicitly reclassified as an approved boundary.",
       "source_location": "Not a proposition-valued field; no formula is accepted from this field alone.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -982,7 +982,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the initial feasibility condition stated in the algorithm input.",
       "source_location": "source.txt:173 and source.txt:2015. Algorithm 1/2 starts with x0 in X.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -992,7 +992,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Conservative recursive source-record audit: this field is exposed as part of a record/certificate/source-model premise or consequence surface. It is not yet shown in the audit payload to be derived from primitive paper assumptions by a separate reviewed Lean constructor, nor is it the approved SSGM external theorem boundary. Do not count this field as fully formalized until it is proved from primitives, validated as a source assumption with exact paper-source location, or explicitly reclassified as an approved boundary.",
       "source_location": "Not a proposition-valued field; no formula is accepted from this field alone.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1002,7 +1002,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the projection operator used by the paper algorithm.",
       "source_location": "source.txt:184-187 and source.txt:2015-2019. Algorithm 1/2 uses projection [.]_X onto the feasible space X.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1012,7 +1012,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field records the Lean norm-projection semantics of the paper projection notation [.]_X.",
       "source_location": "source.txt:184-187 and source.txt:1961. The paper uses [.]_X as the projection operator onto X under the selected movement norm.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1022,7 +1022,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the projected-update equation from the paper algorithm.",
       "source_location": "source.txt:184-187 and source.txt:2015-2019. Algorithm 1 computes x_t = [x_t']_X / Algorithm 2 computes x_t = [x_{t-1} - r_t g~_{v_t}(x_t)]_X.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1032,7 +1032,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the positivity part of Algorithm 1 initial radius r0 > 0.",
       "source_location": "source.txt:173 and source.txt:178. Algorithm 1 lists initial radius r0 > 0 and sets r_t = r0/t for t >= 1.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1042,7 +1042,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Conservative recursive source-record audit: this field is exposed as part of a record/certificate/source-model premise or consequence surface. It is not yet shown in the audit payload to be derived from primitive paper assumptions by a separate reviewed Lean constructor, nor is it the approved SSGM external theorem boundary. Do not count this field as fully formalized until it is proved from primitives, validated as a source assumption with exact paper-source location, or explicitly reclassified as an approved boundary.",
       "source_location": "Not a proposition-valued field; no formula is accepted from this field alone.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1052,7 +1052,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Conservative recursive source-record audit: this field is exposed as part of a record/certificate/source-model premise or consequence surface. It is not yet shown in the audit payload to be derived from primitive paper assumptions by a separate reviewed Lean constructor, nor is it the approved SSGM external theorem boundary. Do not count this field as fully formalized until it is proved from primitives, validated as a source assumption with exact paper-source location, or explicitly reclassified as an approved boundary.",
       "source_location": "source.txt:2024-2027, source.txt:2056-2057, source.txt:2177-2184",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1063,7 +1063,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "The old sample-subgradient field is derived from concrete component source semantics and is no longer primitive on the Proposition 1 full route.",
       "source_location": "MainTheorems.lean: weightedEuclideanL2ComponentTraceSource_of_concreteComponentTraceSource and weightedEuclideanL2SSGMTraceSource_of_componentTraceSource.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1073,7 +1073,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the selected-voter stream from the paper algorithm.",
       "source_location": "source.txt:178 and source.txt:2015-2018. Algorithm 1/2 samples a voter v_t from the population at each step.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1083,7 +1083,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Conservative recursive source-record audit: this field is exposed as part of a record/certificate/source-model premise or consequence surface. It is not yet shown in the audit payload to be derived from primitive paper assumptions by a separate reviewed Lean constructor, nor is it the approved SSGM external theorem boundary. Do not count this field as fully formalized until it is proved from primitives, validated as a source assumption with exact paper-source location, or explicitly reclassified as an approved boundary.",
       "source_location": "Not a proposition-valued field; no formula is accepted from this field alone.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1093,37 +1093,37 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "This field is the direct Lean set-formula representation of the paper social-optimal definition.",
       "source_location": "source.txt:420-422. The paper defines social optimal solutions as feasible argmax points of expected societal utility.",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "lemma3_coordinate_equality_bad_event_null_from_boundedDensity.hbd : EconCSLib.Probability.HasBoundedDensity \u03bd \u03bc C": {
+    "lemma3_coordinate_equality_bad_event_null_from_boundedDensity.hbd : EconCSLib.Probability.HasBoundedDensity ν μ C": {
       "classification": "approved_external_boundary",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Documented partial-formalization boundary for this paper; the current theorem checks consequences conditional on this source-record/certificate field.",
       "source_location": "status.json main_caveat / paper-local validation report",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "lemma3_coordinate_equality_bad_event_null_from_productMeasure.hbd : EconCSLib.Probability.HasBoundedDensity (Measure.pi (fun _ : Coord => \u03c1)) \u03bc C": {
+    "lemma3_coordinate_equality_bad_event_null_from_productMeasure.hbd : EconCSLib.Probability.HasBoundedDensity (Measure.pi (fun _ : Coord => ρ)) μ C": {
       "classification": "approved_external_boundary",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Documented partial-formalization boundary for this paper; the current theorem checks consequences conditional on this source-record/certificate field.",
       "source_location": "status.json main_caveat / paper-local validation report",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "lemma3_coordinate_noncollision_ae_from_productMeasure.hbd : EconCSLib.Probability.HasBoundedDensity (Measure.pi (fun _ : Coord => \u03c1)) \u03bc C": {
+    "lemma3_coordinate_noncollision_ae_from_productMeasure.hbd : EconCSLib.Probability.HasBoundedDensity (Measure.pi (fun _ : Coord => ρ)) μ C": {
       "classification": "approved_external_boundary",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Documented partial-formalization boundary for this paper; the current theorem checks consequences conditional on this source-record/certificate field.",
       "source_location": "status.json main_caveat / paper-local validation report",
-      "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+      "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -1132,7 +1132,7 @@
   "paper": "GKGMM19IterativeLocalVoting",
   "prompt_version": "source-record-v2-semantic-boundary-inputs",
   "schema": 1,
-  "source_record_audit_sha256": "99dc89ea3b42c7f0f59e24bfaa6793130fe621c4005961610278f9b78fa5f125",
+  "source_record_audit_sha256": "4e86ae608dd617583b4e4393e19a1a7ecc81668bc98149a636700c9196749af1",
   "validated_at": "2026-06-29T18:08:26Z",
   "validator": "codex-gpt-5.5-semantic-rejudge",
   "validator_type": "model"

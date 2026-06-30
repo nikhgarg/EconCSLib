@@ -106,10 +106,10 @@
       "validator_type": "model"
     },
     "proposition4": {
-      "lean_statement_sha256": "4262fef8839493b3d32c9b42a5a8524fe1752fced19f6644f57d61aae7989e28",
+      "lean_statement_sha256": "3426e381a8f6e06cd27249abcc52b1eb6fdd8a838b9711fdd1c4c058f2b88e8a",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "For a finite-dimensional nontrivial real inner-product space E, any full-support preference probability measure on the unit sphere, and any continuous radial function p positive on the unit-sphere distance range [0,2], the normalized sphere-volume uniform probability profile minimizes the Laplace-defined supremum objective among all probability-measure item profiles.",
-      "translated_at": "2026-06-29T21:50:58Z",
+      "translated_at": "2026-06-29T18:08:26Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },

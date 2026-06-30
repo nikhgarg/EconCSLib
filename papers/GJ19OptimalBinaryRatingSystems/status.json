@@ -12,16 +12,16 @@
   "review_entrypoint": "papers/GJ19OptimalBinaryRatingSystems/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 55,
+    "total_rows": 56,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
   },
   "paper_interface": {
     "path": "papers/GJ19OptimalBinaryRatingSystems/PaperInterface.lean",
-    "line_count": 12532,
-    "declaration_rows": 490,
-    "review_rows": 55,
+    "line_count": 12481,
+    "declaration_rows": 56,
+    "review_rows": 56,
     "oversized": true,
     "maintainability_issue": "Large paper-facing interface retained for proof navigation; review_surface.include_names is intentionally limited to a compact source-level dashboard rather than every helper row."
   },

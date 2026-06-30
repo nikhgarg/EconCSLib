@@ -16,19 +16,19 @@
     "reviewed_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs",
     "stale_rows": 0,
-    "total_rows": 34
+    "total_rows": 36
   },
   "id": "GN21DriverSurgePricing",
   "main_caveat": "",
   "paper_interface": {
-    "declaration_rows": 24,
-    "line_count": 379,
+    "declaration_rows": 36,
+    "line_count": 400,
     "maintainability_issue": null,
     "oversized": false,
     "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
     "proof_interface_line_count": 5534,
     "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
-    "review_rows": 34
+    "review_rows": 36
   },
   "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
   "review_surface": {

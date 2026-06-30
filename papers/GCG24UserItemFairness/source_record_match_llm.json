@@ -6,7 +6,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Primitive estimated utility matrix in the paper-facing estimated recommendation model.",
       "source_location": "paper_statement_map.json / source-domain review row",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -15,7 +15,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container pointer to the underlying recommendation model; the nested RecommendationModel.utility field is audited separately as the primitive source utility matrix.",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -25,7 +25,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Primitive source utility matrix for users and items.",
       "source_location": "paper_statement_map.json / source-domain review row",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -34,7 +34,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container pointer to the symmetric source data; the nested model, type assignment, and within-type agreement fields are audited separately.",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -43,7 +43,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container pointer to the reduced type-weighted model; its utility and weight fields are audited separately and are not treated as independent hidden source assumptions.",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -52,7 +52,7 @@
       "classification": "derived_consequence_record",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Definition-level reduction equality connecting the source utility matrix to the reduced type utility; it is a derivation/bridge condition, not a standalone source assumption.",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -61,7 +61,7 @@
       "classification": "derived_consequence_record",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Definition-level reduction equality identifying reduced weights with source type counts; it is a derivation/bridge condition, not a standalone source assumption.",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -71,7 +71,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Paper-facing symmetry condition: users in the same type have the same utility vector.",
       "source_location": "paper_statement_map.json / source-domain review row",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -80,7 +80,7 @@
       "classification": "container_recursively_audited",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Container pointer to the source recommendation model; RecommendationModel.utility is audited separately as the primitive source utility matrix.",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -90,7 +90,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Primitive type assignment used to state the paper's type-symmetry reduction.",
       "source_location": "paper_statement_map.json / source-domain review row",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -99,7 +99,7 @@
       "classification": "derived_consequence_record",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Reduced type utility obtained from the source utility matrix and type assignment; the audit treats it as a derived bridge field rather than an independent paper assumption.",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -108,7 +108,7 @@
       "classification": "derived_consequence_record",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Reduced type weight obtained from source type counts; the audit treats it as a derived bridge field rather than an independent paper assumption.",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -118,7 +118,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -128,7 +128,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -138,7 +138,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Source-record field/input is part of the paper-facing source model or theorem-domain package exposed by the review row.",
       "source_location": "paper_statement_map.json / paper-facing source model",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -148,7 +148,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -158,7 +158,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Source-record field/input is part of the paper-facing source model or theorem-domain package exposed by the review row.",
       "source_location": "paper_statement_map.json / paper-facing source model",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -168,7 +168,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -178,7 +178,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -188,7 +188,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -198,7 +198,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Source-record field/input is part of the paper-facing source model or theorem-domain package exposed by the review row.",
       "source_location": "paper_statement_map.json / paper-facing source model",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -208,7 +208,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -218,7 +218,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -228,7 +228,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -238,7 +238,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Source-record field/input is part of the paper-facing source model or theorem-domain package exposed by the review row.",
       "source_location": "paper_statement_map.json / paper-facing source model",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -248,7 +248,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Source-record field/input is part of the paper-facing source model or theorem-domain package exposed by the review row.",
       "source_location": "paper_statement_map.json / paper-facing source model",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -258,7 +258,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -268,7 +268,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -278,7 +278,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -288,7 +288,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Source-record field/input is part of the paper-facing source model or theorem-domain package exposed by the review row.",
       "source_location": "paper_statement_map.json / paper-facing source model",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -298,7 +298,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Source-record field/input is part of the paper-facing source model or theorem-domain package exposed by the review row.",
       "source_location": "paper_statement_map.json / paper-facing source model",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -308,7 +308,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -318,7 +318,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -328,7 +328,7 @@
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+      "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -337,7 +337,7 @@
   "paper": "GCG24UserItemFairness",
   "prompt_version": "source-record-v2-semantic-boundary-inputs",
   "schema": 1,
-  "source_record_audit_sha256": "f66cc6bee9567362eedd3975142038f37546e5ce383e2a0a68a86e286df0e099",
+  "source_record_audit_sha256": "31dc931a45bafb899e54d9ee8a1c2bca8d6ca1a9b10be433deaea9edee8be810",
   "validated_at": "2026-06-29T18:08:26Z",
   "validator": "codex-gpt-5.5-semantic-rejudge",
   "validator_type": "model"

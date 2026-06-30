@@ -1,22 +1,22 @@
 {
   "comment": "Semantic source-record provenance rejudge. Record/certificate/replay/process premises are not accepted by source-looking names alone.",
   "items": {
-    "paper_lemmaC3_partition_integral_hasExponentialRate_of_min_component_uniform_logRate.hweight_bound : \u2200 component, \u2200\u1d50 x \u2202\u03bc.restrict (P.pieceSet component), weight x \u2264 W component": {
+    "paper_lemmaC3_partition_integral_hasExponentialRate_of_min_component_uniform_logRate.hweight_bound : ∀ component, ∀ᵐ x ∂μ.restrict (P.pieceSet component), weight x ≤ W component": {
       "classification": "validated_source_assumption",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "a1f2f7965b11dae1966087593a6d4248aee1f2e6310278e52d332125aee744d1",
+      "source_record_audit_sha256": "6560d3afaee3d400520a0e29b7b4eefaa39df158a279e1e2fe5e35f5bc0a9ef9",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf.hweight_bound : \u2200\u1d50 x \u2202\u03bc, weight x \u2264 W": {
+    "paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf.hweight_bound : ∀ᵐ x ∂μ, weight x ≤ W": {
       "classification": "validated_source_assumption",
       "prompt_version": "source-record-v2-semantic-boundary-inputs",
       "reason": "Visible theorem input is a named paper/source-domain assumption already exposed in the assumption provenance lane.",
       "source_location": "paper_statement_map.json / Assumptions.lean",
-      "source_record_audit_sha256": "a1f2f7965b11dae1966087593a6d4248aee1f2e6310278e52d332125aee744d1",
+      "source_record_audit_sha256": "6560d3afaee3d400520a0e29b7b4eefaa39df158a279e1e2fe5e35f5bc0a9ef9",
       "validated_at": "2026-06-29T18:08:26Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
@@ -25,7 +25,7 @@
   "paper": "GJ19OptimalBinaryRatingSystems",
   "prompt_version": "source-record-v2-semantic-boundary-inputs",
   "schema": 1,
-  "source_record_audit_sha256": "a1f2f7965b11dae1966087593a6d4248aee1f2e6310278e52d332125aee744d1",
+  "source_record_audit_sha256": "6560d3afaee3d400520a0e29b7b4eefaa39df158a279e1e2fe5e35f5bc0a9ef9",
   "validated_at": "2026-06-29T18:08:26Z",
   "validator": "codex-gpt-5.5-semantic-rejudge",
   "validator_type": "model"

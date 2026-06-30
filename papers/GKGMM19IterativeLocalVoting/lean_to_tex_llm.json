@@ -98,7 +98,7 @@
       "validator_type": "model"
     },
     "appendix_theorem4_expected_subgradient_boundary": {
-      "lean_statement_sha256": "7f0e15d58b8104006248ddfaed1d2ecb25c45f9da3ac2a6683fb701c4444aa6f",
+      "lean_statement_sha256": "0f9b33efe2fb2f583a61f945886cf7b0f6e453736695fa8c42cf11b44a05312f",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Point : Type u_1} {Theta : Type u_2} {Grad : Type u_3} (isSampleSubgradient : Point \\to Theta \\to Grad \\to Prop) (expected : (Theta \\to Grad) \\to Grad) (isExpectedSubgradient : Point \\to Grad \\to Prop), ExpectedSubgradientTheoremStatement isSampleSubgradient expected isExpectedSubgradient",
       "translated_at": "2026-06-29T20:39:31Z",
@@ -106,7 +106,7 @@
       "validator_type": "model"
     },
     "appendix_theorem5_ssgm_convergence_boundary": {
-      "lean_statement_sha256": "582f2987a28ac59ce58ad620a9f892114ea4b3fab4cc11ac3d217c4a6087124e",
+      "lean_statement_sha256": "388419e1dd7027757a50083d86b7bafef317f8af0aa80a6d35dd88dae6ddec8b",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Voter : Type u_1} {Coord : Type u_2} [inst : Fintype Coord] [inst_1 : Nonempty Coord] (E : ILVEnvironment Voter (Coord \\to \u211d)), FiniteCoordinateILVSSGMConvergenceTheorems E",
       "translated_at": "2026-06-29T20:39:31Z",

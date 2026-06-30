@@ -20,7 +20,7 @@
     "reviewed_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs",
     "stale_rows": 0,
-    "total_rows": 42
+    "total_rows": 47
   },
   "human_summary": "Full formalization requires proving stochastic subgradient descent convergence. Theorem 3 is proved as a constrained alternative in general and as the original statement under the explicit full-space condition.",
   "human_summary_review": {
@@ -30,12 +30,12 @@
   "id": "GKGMM19IterativeLocalVoting",
   "main_caveat": "The source-facing Lean interface builds and the only Lean axiom is the theorem-shaped SSGM boundary `assumption_ssgm_convergence_theorem`. The recursive source-record audit is synced to digest `95b8554bfdc06bcb346443e11bdaa7cd49de7da918adedef8339c71b7cda45d9` and reports no unresolved/unapproved source-record fields. For general constrained solution spaces, the paper-facing formalization no longer claims the exact Theorem 3 endpoint from a hidden aggregate-feasibility source record: Lean proves the constrained alternative `theorem3_zero_or_no_aggregate_feasible_direction_formula`, and proves the exact original `theorem3Statement` from the sampled projected source package only under the explicit full-space condition `E.solutionSpace = Set.univ`. The prior counterexample lemmas still document why C1/convexity, projection, convergence, and directional-field continuity alone do not imply positive aggregate feasible directions in arbitrary constrained spaces.",
   "paper_interface": {
-    "declaration_rows": 107,
-    "line_count": 2723,
+    "declaration_rows": 47,
+    "line_count": 2772,
     "maintainability_issue": "Review surface is above the 30-row LLM audit threshold but below the 50-row oversize threshold; review_surface_llm.json must match the current rows.",
     "oversized": false,
     "path": "papers/GKGMM19IterativeLocalVoting/PaperInterface.lean",
-    "review_rows": 42
+    "review_rows": 47
   },
   "review_entrypoint": "papers/GKGMM19IterativeLocalVoting/FINAL_VALIDATION_REPORT.md",
   "review_surface": {

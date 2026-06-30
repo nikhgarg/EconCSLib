@@ -13,7 +13,7 @@
     "reviewed_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs",
     "stale_rows": 0,
-    "total_rows": 6
+    "total_rows": 15
   },
   "human_summary": "",
   "human_summary_review": {
@@ -23,12 +23,12 @@
   "id": "PKG25NoFreeLunch",
   "main_caveat": "None",
   "paper_interface": {
-    "declaration_rows": 6,
-    "line_count": 71,
+    "declaration_rows": 15,
+    "line_count": 163,
     "maintainability_issue": null,
     "oversized": false,
     "path": "papers/PKG25NoFreeLunch/PaperInterface.lean",
-    "review_rows": 6
+    "review_rows": 15
   },
   "review_entrypoint": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
   "review_surface": {
@@ -74,7 +74,7 @@
     "source_file": "papers/PKG25NoFreeLunch/PaperInterface.lean"
   },
   "schema": 1,
-  "source_version": "Proceedings of the AAAI Conference on Artificial Intelligence, 39(13), 14369\u201314376 (AAAI 2025)",
+  "source_version": "Proceedings of the AAAI Conference on Artificial Intelligence, 39(13), 14369–14376 (AAAI 2025)",
   "status": "formalized",
   "title": "A No Free Lunch Theorem for Human-AI Collaboration"
 }

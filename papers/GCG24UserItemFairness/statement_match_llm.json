@@ -195,7 +195,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "729c02e00a866e38d8b9c4fbf0bf9e55fd958613c6096f2cff41c88ce6e4e86a",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -206,7 +206,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -217,7 +217,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -228,7 +228,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -239,7 +239,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "598434661e2f947791bc41fa5cb961160650af9ab7f59891571f780853d03ccb",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -250,7 +250,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -261,7 +261,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -272,7 +272,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "84b9617b8fd401866fda06f460991079f99d025f546403aedb1c73f2063ae1bf",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -283,7 +283,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -294,40 +294,40 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the assumption row matches the linked source condition at paper-facing granularity.",
       "tex_statement_sha256": "7fdf942c9a574aa1af63f4a8b232486a8555708df9a33cf3da28afdec939b936",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "example1_diverse_favorite_policy_item_fairness": {
       "judgment": "matches",
-      "lean_statement_sha256": "7936cd1389868476d349f29ed7b06799cd47aa1fcc2e44728fae96bc3191b1da",
+      "lean_statement_sha256": "643331264a9a5bd4e6fb0e1e0c430f2673cdf14939cd89ec62d409b98e55aaf5",
       "paper_statement_sha256": "776341db75346ed0369453df17f57be0bbb558e5be0ea1d15082241de43874fe",
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the dashboard row preserves the linked source statement at paper-facing granularity.",
       "tex_statement_sha256": "6a5f857dde01f867bedd005c7d27630e0f5f9d265926334651b3094cebd30da7",
-      "validated_at": "2026-06-29T20:39:31Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "example1_diverse_favorite_policy_user_fairness": {
       "judgment": "matches",
-      "lean_statement_sha256": "cae5de419acf288f691f4d892d03b0ae3432e3846defe37217747a8136b1e323",
+      "lean_statement_sha256": "7ccfade9cc155dc136c6f786b75aa4d955d137f6b3fe9f1d9433e5fd787dac7f",
       "paper_statement_sha256": "3799b18441450840c61e42e3ce2475bea1c86ed039c0f33d5eb5e0c08c843c9b",
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the dashboard row preserves the linked source statement at paper-facing granularity.",
       "tex_statement_sha256": "974a1758bc5628f90f464b194aba39907b80afd00b51e205ef758ea7cc83f432",
-      "validated_at": "2026-06-29T20:39:31Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "example1_homogeneous_tradeoff_bound": {
       "judgment": "matches",
-      "lean_statement_sha256": "4fcc701370ed3e9ee2db1c4d9467999aaf4d21c3bc67b9e855cb55893efe58ef",
+      "lean_statement_sha256": "64189c0f8bea6f584457ca1d394c2b5d0034826c76d88aa43533b68ffb357a93",
       "paper_statement_sha256": "19f15f3971cd4ce9f44a60a92bc8b3f31b385cae2bbed309b8e0f463e2dd8946",
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "Semantic rejudge: the dashboard row preserves the linked source statement at paper-facing granularity.",
       "tex_statement_sha256": "2cb71b32bcd4b4d180950036c923e24f15d1e8102ca4a97ec81afdd056fbe78e",
-      "validated_at": "2026-06-29T20:39:31Z",
+      "validated_at": "2026-06-29T21:45:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -481,7 +481,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "The new paper-facing row states the closed first-half Theorem 3 source claim: as alpha moves toward 1/2 in the opposing two-type model, the price of fairness weakly decreases. Refreshed Lean digest only; paper statement and Lean-to-TeX text are unchanged from the previous judgment.",
       "tex_statement_sha256": "6b4d8d2aefc675d2d19228efd553e3e3b6380cf5758884ef935043ba792e8c97",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:55:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -503,7 +503,7 @@
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. Refreshed Lean digest only; paper statement and Lean-to-TeX text are unchanged from the previous judgment.",
       "tex_statement_sha256": "6f6dce5712a7910e67a8c0338893b41d2caa1775b48b98c5099a4796cf551094",
-      "validated_at": "2026-06-29T18:13:14Z",
+      "validated_at": "2026-06-29T21:55:00Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },

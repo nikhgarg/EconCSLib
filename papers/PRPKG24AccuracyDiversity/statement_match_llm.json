@@ -337,12 +337,12 @@
     },
     "proposition4": {
       "judgment": "matches",
-      "lean_statement_sha256": "4262fef8839493b3d32c9b42a5a8524fe1752fced19f6644f57d61aae7989e28",
+      "lean_statement_sha256": "3426e381a8f6e06cd27249abcc52b1eb6fdd8a838b9711fdd1c4c058f2b88e8a",
       "paper_statement_sha256": "e8d0df7c70ed2190c277e7b73f4d5291422372a3438154242436766d1d8cf62e",
       "prompt_version": "statement-match-v3-semantic-full-statement",
       "reason": "The current Lean row exposes the concrete sphere endpoint for Proposition 4. It matches the source result at the formalized granularity, with continuity/Gamma interpretation recorded separately as a validation note rather than a caveat. Refreshed Lean digest only; paper statement and Lean-to-TeX text are unchanged from the previous judgment. Refreshed against the current dashboard source statement and Lean/TeX digest surface.",
       "tex_statement_sha256": "76757dc0910ecf175b8ec223f645b0358b4b79b7242b5453f8e7054099b91cc9",
-      "validated_at": "2026-06-29T21:50:58Z",
+      "validated_at": "2026-06-29T18:13:14Z",
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },

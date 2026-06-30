@@ -15,7 +15,7 @@
   "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 18,
+    "total_rows": 30,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -23,8 +23,8 @@
   "paper_interface": {
     "path": "papers/GHW01DigitalGoods/PaperInterface.lean",
     "line_count": 326,
-    "declaration_rows": 18,
-    "review_rows": 18,
+    "declaration_rows": 30,
+    "review_rows": 30,
     "oversized": false,
     "maintainability_issue": null
   },

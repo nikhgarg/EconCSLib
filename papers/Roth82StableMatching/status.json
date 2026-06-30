@@ -10,7 +10,7 @@
   "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 27,
+    "total_rows": 29,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -18,8 +18,8 @@
   "paper_interface": {
     "path": "papers/Roth82StableMatching/PaperInterface.lean",
     "line_count": 490,
-    "declaration_rows": 27,
-    "review_rows": 27,
+    "declaration_rows": 29,
+    "review_rows": 29,
     "oversized": false,
     "maintainability_issue": null
   },

@@ -1,14 +1,20 @@
 {
-  "comment": "",
+  "comment": "Pending placeholder. This sidecar is not audit evidence until a current no-paper-context review-surface judge fills judgment, row count, surface digest, validator, and validated_at.",
   "items": {},
-  "judgment": "passes",
+  "judgment": "",
   "paper": "TEMPLATE",
-  "prompt_version": "review-surface-v1",
-  "reason": "Current dashboard rows are paper-facing definitions, named statements, explicit source-condition rows, or documented boundary rows; premise provenance is audited separately.",
-  "review_rows": 2,
-  "review_surface_sha256": "108e7e3b0779fb1d306c2e5169ecd4b422fae7f0932a50a227771dd5bddaef5c",
+  "prompt_summary": [
+    "Judge whether each dashboard row is genuinely paper-facing, not just source-sounding.",
+    "Rows should expose source definitions, formulas, named statements, explicit source conditions, or documented boundaries.",
+    "Reject or mark needs_curation for rows that are merely proof plumbing, broad packages, replay/certificate/process/bridge internals, or theorem-label paraphrases without source-facing mathematical content.",
+    "Do not approve by Lean declaration name, phrase overlap, or source-looking terminology."
+  ],
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "",
+  "review_rows": 0,
+  "review_surface_sha256": "",
   "schema": 1,
-  "validated_at": "2026-06-13T21:50:39Z",
-  "validator": "gpt-5-codex",
-  "validator_type": "model"
+  "validated_at": "",
+  "validator": "",
+  "validator_type": ""
 }

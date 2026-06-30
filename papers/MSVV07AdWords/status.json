@@ -10,16 +10,16 @@
   "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 26,
+    "total_rows": 43,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
   },
   "paper_interface": {
     "path": "papers/MSVV07AdWords/PaperInterface.lean",
-    "line_count": 902,
-    "declaration_rows": 26,
-    "review_rows": 26,
+    "line_count": 1015,
+    "declaration_rows": 43,
+    "review_rows": 43,
     "oversized": false,
     "maintainability_issue": null,
     "proof_interface_path": "papers/MSVV07AdWords/ProofInterface.lean",

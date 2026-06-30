@@ -15,17 +15,17 @@
     "reviewed_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs",
     "stale_rows": 0,
-    "total_rows": 18
+    "total_rows": 48
   },
   "id": "GCG24UserItemFairness",
   "main_caveat": "",
   "paper_interface": {
-    "declaration_rows": 18,
-    "line_count": 286,
+    "declaration_rows": 48,
+    "line_count": 387,
     "maintainability_issue": null,
     "oversized": false,
     "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
-    "review_rows": 18
+    "review_rows": 48
   },
   "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
   "review_surface": {

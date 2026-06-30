@@ -20,19 +20,19 @@
     "reviewed_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs",
     "stale_rows": 0,
-    "total_rows": 10
+    "total_rows": 17
   },
   "id": "GGSG19TopThree",
   "main_caveat": "",
   "paper_interface": {
-    "declaration_rows": 10,
-    "line_count": 317,
+    "declaration_rows": 17,
+    "line_count": 340,
     "maintainability_issue": null,
     "oversized": false,
     "path": "papers/GGSG19TopThree/PaperInterface.lean",
     "proof_interface_line_count": 12771,
     "proof_interface_path": "papers/GGSG19TopThree/ProofInterface.lean",
-    "review_rows": 10
+    "review_rows": 17
   },
   "publication_venue": "HCOMP 2019",
   "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",

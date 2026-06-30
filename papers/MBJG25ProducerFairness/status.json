@@ -20,7 +20,7 @@
   "paper_interface": {
     "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
     "line_count": 332,
-    "declaration_rows": 17,
+    "declaration_rows": 27,
     "review_rows": 27,
     "oversized": false,
     "maintainability_issue": null,

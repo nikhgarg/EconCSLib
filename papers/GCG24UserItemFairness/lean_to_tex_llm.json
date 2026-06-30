@@ -138,7 +138,7 @@
       "validator_type": "model"
     },
     "example1_diverse_favorite_policy_item_fairness": {
-      "lean_statement_sha256": "7936cd1389868476d349f29ed7b06799cd47aa1fcc2e44728fae96bc3191b1da",
+      "lean_statement_sha256": "643331264a9a5bd4e6fb0e1e0c430f2673cdf14939cd89ec62d409b98e55aaf5",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "itemFairness diagonalPolicy = 10 / 11",
       "translated_at": "2026-06-29T20:39:31Z",
@@ -146,7 +146,7 @@
       "validator_type": "model"
     },
     "example1_diverse_favorite_policy_user_fairness": {
-      "lean_statement_sha256": "cae5de419acf288f691f4d892d03b0ae3432e3846defe37217747a8136b1e323",
+      "lean_statement_sha256": "7ccfade9cc155dc136c6f786b75aa4d955d137f6b3fe9f1d9433e5fd787dac7f",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "userFairness diagonalPolicy = 1",
       "translated_at": "2026-06-29T20:39:31Z",
@@ -154,7 +154,7 @@
       "validator_type": "model"
     },
     "example1_homogeneous_tradeoff_bound": {
-      "lean_statement_sha256": "4fcc701370ed3e9ee2db1c4d9467999aaf4d21c3bc67b9e855cb55893efe58ef",
+      "lean_statement_sha256": "64189c0f8bea6f584457ca1d394c2b5d0034826c76d88aa43533b68ffb357a93",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {epsilon rho1 rho2 Umin Imin : \u211d}, rho2 = 1 - rho1 \\to Imin \\le rho2 \\to Umin \\le rho1 + epsilon \\to Umin + Imin \\le 1 + epsilon",
       "translated_at": "2026-06-29T20:39:31Z",

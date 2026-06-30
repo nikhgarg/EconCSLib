@@ -16,7 +16,7 @@
       "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 32,
+        "total_rows": 41,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -24,8 +24,8 @@
       "paper_interface": {
         "path": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
         "line_count": 456,
-        "declaration_rows": 32,
-        "review_rows": 32,
+        "declaration_rows": 41,
+        "review_rows": 41,
         "oversized": false,
         "maintainability_issue": null
       },
@@ -147,17 +147,17 @@
         "reviewed_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs",
         "stale_rows": 0,
-        "total_rows": 18
+        "total_rows": 48
       },
       "id": "GCG24UserItemFairness",
       "main_caveat": "",
       "paper_interface": {
-        "declaration_rows": 18,
-        "line_count": 286,
+        "declaration_rows": 48,
+        "line_count": 387,
         "maintainability_issue": null,
         "oversized": false,
         "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
-        "review_rows": 18
+        "review_rows": 48
       },
       "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
@@ -274,19 +274,19 @@
         "reviewed_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs",
         "stale_rows": 0,
-        "total_rows": 10
+        "total_rows": 17
       },
       "id": "GGSG19TopThree",
       "main_caveat": "",
       "paper_interface": {
-        "declaration_rows": 10,
-        "line_count": 317,
+        "declaration_rows": 17,
+        "line_count": 340,
         "maintainability_issue": null,
         "oversized": false,
         "path": "papers/GGSG19TopThree/PaperInterface.lean",
         "proof_interface_line_count": 12771,
         "proof_interface_path": "papers/GGSG19TopThree/ProofInterface.lean",
-        "review_rows": 10
+        "review_rows": 17
       },
       "publication_venue": "HCOMP 2019",
       "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
@@ -357,7 +357,7 @@
       "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 18,
+        "total_rows": 30,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -365,8 +365,8 @@
       "paper_interface": {
         "path": "papers/GHW01DigitalGoods/PaperInterface.lean",
         "line_count": 326,
-        "declaration_rows": 18,
-        "review_rows": 18,
+        "declaration_rows": 30,
+        "review_rows": 30,
         "oversized": false,
         "maintainability_issue": null
       },
@@ -459,7 +459,7 @@
       "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 7,
+        "total_rows": 15,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -467,8 +467,8 @@
       "paper_interface": {
         "path": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
         "line_count": 2940,
-        "declaration_rows": 85,
-        "review_rows": 7,
+        "declaration_rows": 15,
+        "review_rows": 15,
         "oversized": false,
         "maintainability_issue": null
       },
@@ -548,16 +548,16 @@
       "review_entrypoint": "papers/GJ19OptimalBinaryRatingSystems/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 55,
+        "total_rows": 56,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/GJ19OptimalBinaryRatingSystems/PaperInterface.lean",
-        "line_count": 12532,
-        "declaration_rows": 490,
-        "review_rows": 55,
+        "line_count": 12481,
+        "declaration_rows": 56,
+        "review_rows": 56,
         "oversized": true,
         "maintainability_issue": "Large paper-facing interface retained for proof navigation; review_surface.include_names is intentionally limited to a compact source-level dashboard rather than every helper row."
       },
@@ -2261,7 +2261,7 @@
         "reviewed_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs",
         "stale_rows": 0,
-        "total_rows": 42
+        "total_rows": 47
       },
       "human_summary": "Full formalization requires proving stochastic subgradient descent convergence. Theorem 3 is proved as a constrained alternative in general and as the original statement under the explicit full-space condition.",
       "human_summary_review": {
@@ -2271,12 +2271,12 @@
       "id": "GKGMM19IterativeLocalVoting",
       "main_caveat": "The source-facing Lean interface builds and the only Lean axiom is the theorem-shaped SSGM boundary `assumption_ssgm_convergence_theorem`. The recursive source-record audit is synced to digest `95b8554bfdc06bcb346443e11bdaa7cd49de7da918adedef8339c71b7cda45d9` and reports no unresolved/unapproved source-record fields. For general constrained solution spaces, the paper-facing formalization no longer claims the exact Theorem 3 endpoint from a hidden aggregate-feasibility source record: Lean proves the constrained alternative `theorem3_zero_or_no_aggregate_feasible_direction_formula`, and proves the exact original `theorem3Statement` from the sampled projected source package only under the explicit full-space condition `E.solutionSpace = Set.univ`. The prior counterexample lemmas still document why C1/convexity, projection, convergence, and directional-field continuity alone do not imply positive aggregate feasible directions in arbitrary constrained spaces.",
       "paper_interface": {
-        "declaration_rows": 107,
-        "line_count": 2723,
+        "declaration_rows": 47,
+        "line_count": 2772,
         "maintainability_issue": "Review surface is above the 30-row LLM audit threshold but below the 50-row oversize threshold; review_surface_llm.json must match the current rows.",
         "oversized": false,
         "path": "papers/GKGMM19IterativeLocalVoting/PaperInterface.lean",
-        "review_rows": 42
+        "review_rows": 47
       },
       "review_entrypoint": "papers/GKGMM19IterativeLocalVoting/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
@@ -2541,19 +2541,19 @@
         "reviewed_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs",
         "stale_rows": 0,
-        "total_rows": 34
+        "total_rows": 36
       },
       "id": "GN21DriverSurgePricing",
       "main_caveat": "",
       "paper_interface": {
-        "declaration_rows": 24,
-        "line_count": 379,
+        "declaration_rows": 36,
+        "line_count": 400,
         "maintainability_issue": null,
         "oversized": false,
         "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
         "proof_interface_line_count": 5534,
         "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
-        "review_rows": 34
+        "review_rows": 36
       },
       "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
@@ -2732,8 +2732,8 @@
       "paper_interface": {
         "path": "papers/LBG24SpatialUnderreporting/PaperInterface.lean",
         "line_count": 8658,
-        "declaration_rows": 96,
-        "review_rows": 24,
+        "declaration_rows": 27,
+        "review_rows": 27,
         "oversized": false,
         "maintainability_issue": "Review surface curated to 24 source-facing paper-interface rows plus 3 explicit assumption rows. Alternative theorem routes, proof-support lemmas, sanity checks, and kernel-normalization rows remain Lean-checked but are excluded from the human dashboard."
       },
@@ -2934,7 +2934,7 @@
       "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 16,
+        "total_rows": 23,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -2942,8 +2942,8 @@
       "paper_interface": {
         "path": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
         "line_count": 77,
-        "declaration_rows": 16,
-        "review_rows": 16,
+        "declaration_rows": 23,
+        "review_rows": 23,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/LG21TestOptionalPolicies/ProofInterface.lean",
@@ -3030,7 +3030,7 @@
       "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 35,
+        "total_rows": 48,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -3038,8 +3038,8 @@
       "paper_interface": {
         "path": "papers/LMMS04FairDivision/PaperInterface.lean",
         "line_count": 303,
-        "declaration_rows": 35,
-        "review_rows": 35,
+        "declaration_rows": 48,
+        "review_rows": 48,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/LMMS04FairDivision/ProofInterface.lean",
@@ -3188,7 +3188,7 @@
       "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 30,
+        "total_rows": 39,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -3196,8 +3196,8 @@
       "paper_interface": {
         "path": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
         "line_count": 371,
-        "declaration_rows": 30,
-        "review_rows": 30,
+        "declaration_rows": 39,
+        "review_rows": 39,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/LOS02CombinatorialAuctions/ProofInterface.lean",
@@ -3335,7 +3335,7 @@
       "paper_interface": {
         "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
         "line_count": 332,
-        "declaration_rows": 17,
+        "declaration_rows": 27,
         "review_rows": 27,
         "oversized": false,
         "maintainability_issue": null,
@@ -3434,16 +3434,16 @@
       "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 26,
+        "total_rows": 43,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/MSVV07AdWords/PaperInterface.lean",
-        "line_count": 902,
-        "declaration_rows": 26,
-        "review_rows": 26,
+        "line_count": 1015,
+        "declaration_rows": 43,
+        "review_rows": 43,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/MSVV07AdWords/ProofInterface.lean",
@@ -3535,7 +3535,7 @@
         "reviewed_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs",
         "stale_rows": 0,
-        "total_rows": 6
+        "total_rows": 15
       },
       "human_summary": "",
       "human_summary_review": {
@@ -3545,12 +3545,12 @@
       "id": "PKG25NoFreeLunch",
       "main_caveat": "None",
       "paper_interface": {
-        "declaration_rows": 6,
-        "line_count": 71,
+        "declaration_rows": 15,
+        "line_count": 163,
         "maintainability_issue": null,
         "oversized": false,
         "path": "papers/PKG25NoFreeLunch/PaperInterface.lean",
-        "review_rows": 6
+        "review_rows": 15
       },
       "review_entrypoint": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
@@ -3734,7 +3734,7 @@
       "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 27,
+        "total_rows": 29,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -3742,8 +3742,8 @@
       "paper_interface": {
         "path": "papers/Roth82StableMatching/PaperInterface.lean",
         "line_count": 490,
-        "declaration_rows": 27,
-        "review_rows": 27,
+        "declaration_rows": 29,
+        "review_rows": 29,
         "oversized": false,
         "maintainability_issue": null
       },
