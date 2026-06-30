@@ -1,0 +1,226 @@
+\documentclass[11pt]{article}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newenvironment{proof}{\par\noindent{\it Proof. }}{\hfill$\diamond$\par}
+
+\newcommand{\Applicants}{\mathcal A}
+\newcommand{\Slots}{\mathcal S}
+\newcommand{\chosen}{C}
+\newcommand{\border}{V_{\chosen}}
+\newcommand{\weight}{w}
+\newcommand{\class}{\kappa}
+
+\title{Clean Proof of the LAP Variability Bound}
+\author{Lean formalization note for DGD26}
+\date{}
+
+\begin{document}
+\maketitle
+
+\paragraph{Purpose.}
+This note records the paper-facing proof of the finite linear-assignment
+variability result.  The source paper states this result at a high level.  The
+Lean development supplies the detailed finite exchange argument: exact
+one-for-one insertion, directed alternating splices, a tail-dominance inequality,
+same-order injectivity for borderline applicants, and the final counting bound.
+
+\section*{Model and theorem}
+
+Let $\Applicants$ be a finite applicant universe and let $\Slots$ be a finite
+set of assignment slots.  A feasible assignment for an applicant pool
+$X \subseteq \Applicants$ assigns each slot either no applicant or one applicant
+from $X$, and assigns no applicant to two slots.  In the capacity-filling regime
+used here, a feasible assignment fills all slots when $|X| \ge |\Slots|$.
+
+Each applicant-slot pair has an integer weight $\weight(a,s)$.  A selector
+chooses, for each pool $X$, a unique global optimum feasible capacity-filling
+assignment $A_X$.  The induced choice rule is
+\[
+  \chosen(X) = \{a : a \hbox{ is assigned in } A_X\}.
+\]
+For a fixed slot $s$, write $a <_s b$ when
+\[
+  \weight(a,s) < \weight(b,s),
+\]
+so $b$ is strictly preferred to $a$ at slot $s$.  Assume every slot has no ties:
+for distinct applicants $a,b$, exactly one of $a <_s b$ or $b <_s a$ holds.
+
+Let $\class : \Slots \to K$ be any classifier such that
+\[
+  \class(s)=\class(t)
+  \quad\Longrightarrow\quad
+  (a <_s b \iff a <_t b)
+\]
+for every pair of applicants $a,b$.  Thus each classifier value is a slot-order
+class.
+
+\begin{theorem}[linear-assignment variability bound]
+For every pool $X$,
+\[
+  |\border(X)| \le |\class(\Slots)|,
+\]
+where $\border(X)$ is the set of applicants in $\chosen(X)$ who can be displaced
+by adding one fresh applicant.  Equivalently, the assignment-induced choice rule
+has variability bounded by the number of represented slot-order classes.
+\end{theorem}
+
+\section*{Exact exchange and directed paths}
+
+Fix a pool $X$, a fresh applicant $x \notin X$, and let
+\[
+  A = A_X,\qquad B = A_{X\cup\{x\}}.
+\]
+Suppose $y \in \chosen(X)\setminus \chosen(X\cup\{x\})$.  The formalization first
+proves the exact one-for-one exchange property: under the unique-optimum and
+capacity-filling hypotheses, the new chosen set is
+\[
+  \chosen(X\cup\{x\}) = (\chosen(X)\setminus \{y\})\cup\{x\}.
+\]
+In particular every old chosen applicant other than $y$ remains chosen after
+the insertion.
+
+The old and new assignments define a directed alternating slot graph: there is
+an edge from slot $s$ to slot $t$ if the old occupant of $s$ in $A$ is assigned
+to $t$ in $B$.  Let $s_0$ be the new slot containing $x$ in $B$ and let $s_k$ be
+the old slot containing $y$ in $A$.  The one-for-one exchange yields a directed
+path
+\[
+  s_0,s_1,\ldots,s_k
+\]
+from the fresh slot to the lost slot.  Write
+\[
+  a_i = A(s_i) \qquad (0\le i\le k),
+\]
+so $a_k=y$, and the path identities are
+\[
+  B(s_0)=x,\qquad B(s_{i+1})=a_i \quad (0\le i<k).
+\]
+
+\section*{Two exchange lemmas}
+
+\begin{lemma}[dominated old slots lie on the fresh-to-lost path]
+Let $s$ be an old slot with old occupant $z=A(s)$.  If
+\[
+  z <_s y,
+\]
+then $s$ is on the directed path from $s_0$ to $s_k$.
+\end{lemma}
+
+\begin{proof}
+Suppose $s$ is not on that path.  Splice the new assignment $B$ into the old
+assignment $A$ on the fresh-root reachable component and keep $A$ elsewhere.
+The finite component-closure facts verified in Lean show that the splice is a
+feasible old-pool assignment, still capacity-filling, and still globally
+optimal: the complementary splice is feasible for the enlarged pool, and the
+two objective inequalities cancel.
+
+Because $s$ is outside the fresh-root component, the spliced old-pool optimum
+still assigns $z$ to $s$.  Because $y$ is the unique old applicant lost in
+$B$, the same splice still rejects $y$.  Replacing $z$ by $y$ at slot $s$ would
+be a feasible one-slot change and would strictly increase the objective, since
+$z<_s y$.  This contradicts local optimality, which is derived in Lean from
+global objective optimality.  Therefore $s$ must lie on the fresh-to-lost path.
+\end{proof}
+
+\begin{lemma}[tail dominance along the path]
+For every $i<k$,
+\[
+  \weight(y,s_i) \le \weight(a_i,s_i).
+\]
+\end{lemma}
+
+\begin{proof}
+Fix $i<k$.  Define
+\[
+  P_i=\sum_{j=i}^{k-1}\weight(a_j,s_{j+1}),
+  \qquad
+  Q_i=\sum_{j=i+1}^{k}\weight(a_j,s_j).
+\]
+Construct an old-pool competitor $E_i$ from $A$ by rotating the suffix
+$s_i,s_{i+1},\ldots,s_k$ forward and putting the lost applicant $y=a_k$ into
+$s_i$:
+\[
+  E_i(s_i)=y,\qquad
+  E_i(s_{j+1})=a_j \quad (i\le j<k),
+\]
+and $E_i$ agrees with $A$ outside the suffix.  This is feasible because it only
+permutes applicants already used by $A$ on distinct suffix slots.  Since $A$ is
+old-pool optimal and the outside terms cancel,
+\[
+  \weight(y,s_i)+P_i \le \weight(a_i,s_i)+Q_i. \qquad (1)
+\]
+
+Construct an enlarged-pool competitor $F_i$ from $B$ by setting the tail
+$s_{i+1},\ldots,s_k$ back to the old assignment:
+\[
+  F_i(s_j)=a_j \quad (i<j\le k),
+\]
+and leaving $B$ unchanged outside that tail.  This drops $a_i$ from the shifted
+tail and inserts $y$ at the lost slot, so feasibility follows from the exact
+one-for-one exchange and no-duplicate assignment facts.  Since $B$ is
+enlarged-pool optimal and outside terms cancel,
+\[
+  Q_i \le P_i. \qquad (2)
+\]
+
+Combining (1) and (2) gives
+\[
+  \weight(y,s_i)+P_i
+  \le
+  \weight(a_i,s_i)+Q_i
+  \le
+  \weight(a_i,s_i)+P_i.
+\]
+Canceling $P_i$ proves $\weight(y,s_i)\le \weight(a_i,s_i)$.
+\end{proof}
+
+\section*{Same-order injectivity}
+
+\begin{lemma}[same-order borderline injectivity]
+Fix $X$.  Let $y,z\in \border(X)$, and suppose the selected old assignment
+$A_X$ assigns $y$ to slot $s_y$ and $z$ to slot $s_z$.  If
+$\class(s_y)=\class(s_z)$, then $y=z$.
+\end{lemma}
+
+\begin{proof}
+Assume $y\ne z$.  By no ties at slot $s_z$, either $z<_{s_z}y$ or
+$y<_{s_z}z$.
+
+If $z<_{s_z}y$, use the fresh insertion witnessing $y\in\border(X)$, so $y$ is
+the unique old applicant lost.  Since $z$ remains chosen and is below $y$ at
+its old slot $s_z$, the dominated-slot lemma puts $s_z$ on the fresh-to-lost
+path.  Applying tail dominance at that path position yields
+\[
+  \weight(y,s_z)\le \weight(z,s_z),
+\]
+contradicting $z<_{s_z}y$.
+
+If $y<_{s_z}z$, the common slot-order hypothesis transports the same strict
+comparison to $s_y$, so $y<_{s_y}z$.  Now use the fresh insertion witnessing
+$z\in\border(X)$, with $z$ as the unique old applicant lost.  The same argument
+puts $s_y$ on the corresponding fresh-to-lost path and gives
+\[
+  \weight(z,s_y)\le \weight(y,s_y),
+\]
+contradicting $y<_{s_y}z$.
+
+Both cases are impossible, so $y=z$.
+\end{proof}
+
+\section*{Counting}
+
+For each borderline applicant $y\in\border(X)$, let $s_y$ be the unique slot
+where $A_X$ assigns $y$.  Define
+\[
+  \phi(y)=\class(s_y).
+\]
+The map is well-defined because $y\in\chosen(X)$ and assignments do not
+duplicate applicants.  The same-order injectivity lemma says exactly that
+$\phi$ is injective.  Since both sets are finite,
+\[
+  |\border(X)| \le |\class(\Slots)|.
+\]
+This proves the linear-assignment variability bound.
+
+\end{document}

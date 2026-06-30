@@ -27,6 +27,10 @@ publication/documentation link.
 - Final validation report: `DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md`
 - Dependency DAG: `DGD26AdmissionsPredictability/DependencyDAG.tex`
 - Rendered DAG: `DGD26AdmissionsPredictability/DependencyDAG.pdf`
+- Clean LAP variability proof note:
+  `DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.tex`
+- Rendered LAP variability proof note:
+  `DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.pdf`
 
 `PaperInterface.lean` should be readable on its own: expose source formulas and
 direct theorem statements there, with short proofs that call into

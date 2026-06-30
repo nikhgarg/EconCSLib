@@ -26,6 +26,9 @@ assumptions.
 - Paper assumption file: `papers/DGD26AdmissionsPredictability/Assumptions.lean`
 - DAG artifacts: `papers/DGD26AdmissionsPredictability/DependencyDAG.tex` and
   `papers/DGD26AdmissionsPredictability/DependencyDAG.pdf`
+- Clean LAP variability proof note:
+  `papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.tex` and
+  `papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.pdf`
 - Lean build target: `lake build DGD26AdmissionsPredictability`
 
 ## 4. Researcher Summary of Checked Results
@@ -51,7 +54,9 @@ q-representative queue corollary.
 It proves the finite linear-assignment results. Unique global-optimum finite
 assignment selectors induce 1-unstable choice rules, and under slotwise no-ties
 their variability is bounded by the number of distinct slot-induced applicant
-orderings.
+orderings. Lean supplies the detailed alternating-splice proof behind this LAP
+variability result; the public folder includes a clean paper-facing proof note
+rendered as `LAP_VARIABILITY_CLEAN_PROOF.pdf`.
 
 ## 5. Remaining Boundaries and Gaps
 No remaining mathematical boundary is used for the finite choice-function and
@@ -99,6 +104,8 @@ corrected form `V_C(X_1) = V_C(X_2)`.
 - `papers/DGD26AdmissionsPredictability/LAP.lean`: finite assignment model,
   objective optimality, alternating-splice exchange, LAP 1-instability, and the
   distinct slot-order variability theorem.
+- `papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.pdf`: clean
+  paper-facing writeup of the detailed LAP variability proof supplied by Lean.
 - `papers/DGD26AdmissionsPredictability/MainTheorems.lean`: source-facing
   theorem layer.
 - `papers/DGD26AdmissionsPredictability/PaperInterface.lean`: 101 dashboard

@@ -463,7 +463,9 @@
         "assumptions": "papers/DGD26AdmissionsPredictability/Assumptions.lean",
         "final_validation_report": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/DGD26AdmissionsPredictability/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/DGD26AdmissionsPredictability/DependencyDAG.pdf"
+        "dependency_dag_pdf": "papers/DGD26AdmissionsPredictability/DependencyDAG.pdf",
+        "lap_variability_clean_proof_tex": "papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.tex",
+        "lap_variability_clean_proof_pdf": "papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.pdf"
       }
     },
     {

@@ -1,5 +1,6 @@
 *.pdf
 !DependencyDAG.pdf
+!LAP_VARIABILITY_CLEAN_PROOF.pdf
 *.aux
 *.log
 *.fls
