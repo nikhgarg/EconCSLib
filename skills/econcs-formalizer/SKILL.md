@@ -329,6 +329,13 @@ progress. Save broad builds for natural stopping points: the paper is complete
 or being handed off, you are about to commit/push a significant integration
 batch, preparing a public PR/release, or the user explicitly asks for a broad
 integration check.
+Do not treat a fresh clean worktree build as part of the closeout requirement
+when it would trigger a cold dependency or mathlib build. Closeout should use
+the active warmed worktree for targeted Lean builds plus the status/dashboard
+and repository audit checks. A temporary clean worktree is acceptable only for
+cheap committed-state checks such as generated metadata, `git diff --check`, or
+status-sync validation, or when CI/public release work explicitly requires it
+and the needed dependency cache is already available.
 Do not run concurrent `lake build` commands in the same worktree: Lean cache
 writes can race on `.olean`/`.ilean` outputs and produce spurious missing-file
 failures. Prefer one targeted Lean build at a time, especially in shared
@@ -2973,6 +2980,10 @@ exit $status
   library module and the active paper root. Do not broaden to full `lake build`
   until a natural stopping point: paper completion/handoff, commit/push of an
   integration batch, public PR/release preparation, or explicit user request.
+- Do not start a fresh worktree or cold-cache build merely to validate closeout.
+  Use the warmed worktree's targeted paper build and the required audit scripts;
+  rely on CI for a clean-environment check when a public PR or release needs
+  one.
 - After splitting out a proof-route file, build that route module first, then
   the parent theorem root such as `PaperName.MainTheorems`. Do not broaden to a
   full `lake build` until the route import boundary is stable or the task is at
