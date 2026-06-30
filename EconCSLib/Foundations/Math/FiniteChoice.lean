@@ -52,11 +52,11 @@ always rejected whenever available.
 def Independent (C : ChoiceRule α) : Prop :=
   ∀ x, (∀ X, x ∈ X → x ∈ C X) ∨ (∀ X, x ∈ X → x ∉ C X)
 
-/-- The rejection-to-acceptance term in the paper's choice distance. -/
+/-- The rejection-to-acceptance term in finite choice distance. -/
 def choiceGainTerm (C : ChoiceRule α) (X₁ X₂ : Finset α) : ℕ :=
   ((X₁ ∩ C X₂) \ C X₁).card
 
-/-- The acceptance-to-rejection term in the paper's choice distance. -/
+/-- The acceptance-to-rejection term in finite choice distance. -/
 def choiceLossTerm (C : ChoiceRule α) (X₁ X₂ : Finset α) : ℕ :=
   (C X₁ \ C X₂).card
 
@@ -94,7 +94,7 @@ theorem tightlyDUnstable_of_dUnstable_of_choiceDistance_witness
 def ZeroUnstable (C : ChoiceRule α) : Prop :=
   ∀ {X₁ X₂}, X₁ ⊆ X₂ → choiceDistance C X₁ X₂ = 0
 
-/-- A strict total order in the paper's asymmetric/transitive/complete sense. -/
+/-- A strict total order in the asymmetric/transitive/complete sense. -/
 def StrictTotalOrder (r : α → α → Prop) : Prop :=
   (∀ x, ¬ r x x) ∧
     (∀ {x y z}, r x y → r y z → r x z) ∧
@@ -1946,9 +1946,8 @@ theorem choiceDistance_insert_pos_of_choice_ne_of_fresh_not_chosen
   exact hne (Finset.Subset.antisymm hpost_subset_pre hpre_subset_post)
 
 /--
-Converse direction of the paper's even-instability observation: if a feasible
-q-acceptant rule is not consistent, then some single fresh addition has positive
-even choice distance.
+Converse even-instability observation: if a feasible q-acceptant rule is not
+consistent, then some single fresh addition has positive even choice distance.
 -/
 theorem exists_positive_even_choiceDistance_insert_of_not_consistent
     {q : ℕ} {C : ChoiceRule α}
@@ -2065,8 +2064,8 @@ theorem choiceDistance_insert_eq_zero_of_qAcceptant_of_card_lt
 
 /--
 For feasible q-acceptant consistent rules, a two-instability bound collapses
-to one-instability.  This is the first even case of the paper's observation
-that consistent rules cannot be tightly even-unstable.
+to one-instability. This is the first even case of the general observation that
+consistent rules cannot be tightly even-unstable.
 -/
 theorem dUnstable_one_of_dUnstable_two_of_feasible_of_qAcceptant_of_consistent
     {q : ℕ} {C : ChoiceRule α}
