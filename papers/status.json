@@ -35,10 +35,6 @@
         "maintainability_issue": null
       },
       "artifacts": {
-        "readme": "papers/DGD26AdmissionsPredictability/README.md",
-        "source_text": "papers/DGD26AdmissionsPredictability/source.txt",
-        "source_tex_main": "papers/DGD26AdmissionsPredictability/source_tex/main.tex",
-        "source_tex_appendix": "papers/DGD26AdmissionsPredictability/source_tex/appendix.tex",
         "paper_interface": "papers/DGD26AdmissionsPredictability/PaperInterface.lean",
         "assumptions": "papers/DGD26AdmissionsPredictability/Assumptions.lean",
         "final_validation_report": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
