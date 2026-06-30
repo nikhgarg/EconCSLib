@@ -843,7 +843,47 @@ def paper_dirs(include_template: bool = False) -> list[Path]:
 
 
 def is_source_pdf(path: Path) -> bool:
-    return path.suffix == ".pdf" and path.name not in ALLOWED_TRACKED_PAPER_PDFS
+    return (
+        path.suffix == ".pdf"
+        and path.name not in ALLOWED_TRACKED_PAPER_PDFS
+        and not is_declared_tracked_pdf_artifact(path)
+    )
+
+
+def declared_tracked_pdf_artifacts(folder: Path) -> set[Path]:
+    """Return non-source PDF artifacts explicitly declared by paper status."""
+
+    payload = load_json_object(folder / "status.json")
+    artifacts = payload.get("artifacts") if payload else None
+    if not isinstance(artifacts, dict):
+        return set()
+    declared: set[Path] = set()
+    for key, raw_path in artifacts.items():
+        if not isinstance(key, str) or "source" in key.lower():
+            continue
+        if not isinstance(raw_path, str) or not raw_path.endswith(".pdf"):
+            continue
+        artifact_path = ROOT / raw_path
+        try:
+            artifact_path.relative_to(folder)
+        except ValueError:
+            continue
+        declared.add(artifact_path)
+    return declared
+
+
+def is_declared_tracked_pdf_artifact(path: Path) -> bool:
+    if path.suffix != ".pdf":
+        return False
+    absolute = path if path.is_absolute() else ROOT / path
+    try:
+        rel = absolute.relative_to(PAPERS)
+    except ValueError:
+        return False
+    if len(rel.parts) < 2:
+        return False
+    folder = PAPERS / rel.parts[0]
+    return absolute in declared_tracked_pdf_artifacts(folder)
 
 
 def has_source_pdf(folder: Path) -> bool:
@@ -5299,7 +5339,11 @@ def check_tracked_artifacts(include_active: bool) -> list[Finding]:
             continue
         if artifact_re.search(path.name):
             findings.append(Finding("ERROR", ROOT / path, "tracked LaTeX build artifact"))
-        if path.suffix == ".pdf" and path.name not in ALLOWED_TRACKED_PAPER_PDFS:
+        if (
+            path.suffix == ".pdf"
+            and path.name not in ALLOWED_TRACKED_PAPER_PDFS
+            and not is_declared_tracked_pdf_artifact(path)
+        ):
             findings.append(Finding("ERROR", ROOT / path, "tracked PDF artifact; source PDFs should stay ignored"))
     return findings
 
