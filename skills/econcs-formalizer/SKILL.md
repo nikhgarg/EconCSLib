@@ -30,6 +30,12 @@ loops, also consult `skills/ai-formalization-workflows/SKILL.md`. That skill is
 a source-credited ledger of external AI-formalization workflow patterns; this
 formalizer skill remains the operational rulebook for EconCSLib.
 
+When syncing `EconCSLib-private` and `EconCSLib-public`, preparing public PRs
+from private work, copying generated DAG/report PDFs, or reconciling audit
+sidecars across sibling checkouts, read
+`skills/econcs-formalizer/references/public-private-sync.md` first. Use that
+semantic sync workflow instead of raw repository merges or broad folder copies.
+
 ## Component 1: Workflow and Organization
 
 ### 1.1 Core Rule

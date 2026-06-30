@@ -13206,13 +13206,13 @@ the outside payoff equal to `1 / 2`.
 -/
 theorem paper_interface_theorem3_2_affine_outside_payoff_eq_half_of_baseTerm_eq_half_denom_sub_signal_mean
     {baseTerm signalWeight denom mean : ℝ}
-    (hdenom_ne : denom ≠ 0)
+    (hdenom : 0 < denom)
     (hbase :
       baseTerm = denom / 2 - signalWeight * mean) :
     (1 / 2 : ℝ) =
       (baseTerm + signalWeight * mean) / denom :=
   paper_theorem3_2_affine_outside_payoff_eq_half_of_baseTerm_eq_half_denom_sub_signal_mean
-    hdenom_ne hbase
+    hdenom hbase
 
 /--
 Theorem 3.2 report-required affine algebra: centered upper-tail payoffs satisfy

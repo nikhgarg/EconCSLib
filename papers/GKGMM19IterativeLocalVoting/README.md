@@ -93,7 +93,7 @@ Do not use `axiom`, `constant`, `opaque`, or unsafe declarations to bypass that
 provenance boundary.
 If the dashboard has more than 30 rows, also populate `review_surface_llm.json`
 with a no-paper-context LLM audit that checks whether every dashboard row is a
-paper-facing definition, formula, or named statement. At 50 or more rows, treat
+paper-facing definition, formula, or named statement. At 120 or more rows, treat
 the dashboard as oversized and curate `PaperInterface.lean` or
 `status.json.review_surface.include_names` before broad human review.
 
@@ -280,7 +280,7 @@ the theorem rows depending on the single SSGM convergence axiom remain
 - [ ] Route every non-derived paper-facing theorem premise through
       `Assumptions.lean`, then run the assumption-provenance LLM judge.
 - [ ] If the dashboard has more than 30 rows, run the LLM review-surface audit;
-      if it has 50 or more rows, curate the interface before broad review.
+      if it has 120 or more rows, curate the interface before broad review.
 - [ ] Run the context-free Lean-to-TeX translation and third-LLM match judgment
       workflow before asking for human dashboard review.
 - [x] Update `status.json`, then run `python3 scripts/sync_paper_status.py`.

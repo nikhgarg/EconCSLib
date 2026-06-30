@@ -8764,13 +8764,13 @@ corresponding affine payoff is the report-required outside payoff `1 / 2`.
 -/
 theorem paper_theorem3_2_affine_outside_payoff_eq_half_of_centered_numerator
     {baseTerm signalWeight denom mean : ℝ}
-    (hdenom_ne : denom ≠ 0)
+    (hdenom : 0 < denom)
     (hcenter :
       2 * (baseTerm + signalWeight * mean) = denom) :
     (1 / 2 : ℝ) =
       (baseTerm + signalWeight * mean) / denom :=
     EconCSLib.half_eq_affine_div_of_two_mul_affine_eq_denom
-      hdenom_ne hcenter
+      (ne_of_gt hdenom) hcenter
 
 /--
 Report-required affine outside-payoff algebra in base-term form: setting the
@@ -8792,13 +8792,13 @@ base-term identity makes the affine outside payoff equal to `1 / 2`.
 -/
 theorem paper_theorem3_2_affine_outside_payoff_eq_half_of_baseTerm_eq_half_denom_sub_signal_mean
     {baseTerm signalWeight denom mean : ℝ}
-    (hdenom_ne : denom ≠ 0)
+    (hdenom : 0 < denom)
     (hbase :
       baseTerm = denom / 2 - signalWeight * mean) :
     (1 / 2 : ℝ) =
       (baseTerm + signalWeight * mean) / denom :=
   EconCSLib.half_eq_affine_div_of_intercept_eq_half_denom_sub_slope_mul
-    hdenom_ne hbase
+    (ne_of_gt hdenom) hbase
 
 /--
 Centered report-required affine payoffs satisfy the upper-tail fixed-point
@@ -8836,7 +8836,7 @@ theorem paper_theorem3_2_centered_upper_tail_fixed_point_of_threshold
   rw [hcutoff_eq]
   exact
     paper_theorem3_2_affine_outside_payoff_eq_half_of_baseTerm_eq_half_denom_sub_signal_mean
-      (ne_of_gt (hdenom e base)) rfl
+      (hdenom e base) rfl
 
 /--
 Theorem 3.2 best-response contradiction from a below-mean actor.  If equality
@@ -16408,7 +16408,7 @@ theorem paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base
     baseTerm signalWeight denom hEq
     (fun e base hPMF =>
       paper_theorem3_2_affine_outside_payoff_eq_half_of_centered_numerator
-        (ne_of_gt (hdenom e base))
+        (hdenom e base)
         (houtside_center_of_pmfEq e base hPMF))
     hweight hdenom hmass
 
@@ -17068,7 +17068,7 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_requir
       (fun _actor => rfl)
       (fun _actor hPMF =>
         paper_theorem3_2_affine_outside_payoff_eq_half_of_centered_numerator
-          (ne_of_gt (hdenom e base))
+          (hdenom e base)
           (houtside_center_of_pmfEq e base hPMF))
       (hweight e base) (hdenom e base)
       (actorOfTest e base test₁) (actorOfTest e base test₂)
@@ -17733,7 +17733,7 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_requir
       (fun _actor => rfl)
       (fun _actor _hPMF =>
         paper_theorem3_2_affine_outside_payoff_eq_half_of_baseTerm_eq_half_denom_sub_signal_mean
-          (ne_of_gt (hdenom e base)) rfl)
+          (hdenom e base) rfl)
       (hweight e base) (hdenom e base)
       (actorOfTest e base test₁) (actorOfTest e base test₂)
       hactor_mass₁ hactor_mass₂ hne
@@ -32794,7 +32794,7 @@ theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_ev
     hdenom hwitness
     (fun e base _hPMF =>
       paper_theorem3_2_affine_outside_payoff_eq_half_of_baseTerm_eq_half_denom_sub_signal_mean
-        (ne_of_gt (hdenom e base)) rfl)
+        (hdenom e base) rfl)
     e base
 
 /--

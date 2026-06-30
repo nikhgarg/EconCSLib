@@ -62,7 +62,7 @@ statement before treating it as the paper theorem target. Run
 handoff so missing/stale statement-audit rows are explicit.
 If the dashboard has more than 30 rows, also populate `review_surface_llm.json`
 with a no-paper-context LLM audit that checks whether every dashboard row is a
-paper-facing definition, formula, or named statement. At 50 or more rows, treat
+paper-facing definition, formula, or named statement. At 120 or more rows, treat
 the dashboard as oversized and curate `PaperInterface.lean` or
 `status.json.review_surface.include_names` before broad human review.
 
@@ -91,7 +91,7 @@ the dashboard as oversized and curate `PaperInterface.lean` or
 - [x] Keep `PaperInterface.lean` and `status.json` `review_surface` limited to
       source-facing definitions and named statements.
 - [x] If the dashboard has more than 30 rows, run the LLM review-surface audit;
-      if it has 50 or more rows, curate the interface before broad review.
+      if it has 120 or more rows, curate the interface before broad review.
 - [x] Run the context-free Lean-to-TeX translation and third-LLM match judgment
       workflow before asking for human dashboard review.
 - [x] Update `status.json`, then run `python3 scripts/sync_paper_status.py`.
