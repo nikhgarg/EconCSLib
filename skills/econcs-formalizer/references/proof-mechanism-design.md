@@ -258,6 +258,17 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   remaining analytic seam precise: bivariate Gaussian identification and
   regularity of the application-gated mass, rather than vague "equilibrium
   consistency".
+- Reuse the shared admissions, testing, optimization, and game modules before
+  adding paper-local strategic scaffolding. Search
+  `EconCSLib.Applications.Admissions.PolicySurface`,
+  `EconCSLib.Applications.Admissions.StrategicPolicy`,
+  `EconCSLib.Applications.Admissions.StrategicApplication`,
+  `EconCSLib.Foundations.Optimization.StrategicEquilibrium`,
+  `EconCSLib.Foundations.Optimization.ChoiceEquilibriumAE`, and
+  `EconCSLib.Foundations.Optimization.BinaryPolicyGame` during intake. If a
+  paper-local alias unfolds to a shared definition, add the shared definition
+  to the local `simp` or `unfold` list rather than changing the source-facing
+  theorem statement.
 - For application-gated strategic applicant masses, a fast source-faithful route
   is to formalize the joint event before the closed-form CDF. Define
   `π_g * P(q_sub >= qApply, q_full >= qAdmit)` as a measure-backed upper-orthant

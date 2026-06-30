@@ -809,6 +809,51 @@ theorem card_mul_le_sum_of_forall_le
           intro i hi
           exact hle i hi)
 
+/-- If every term in a finite natural-number sum is at least `x`, then the
+whole sum is at least `x * |s|`. -/
+theorem nat_card_mul_le_sum_of_forall_le
+    {α : Type*} (s : Finset α) (f : α → ℕ) {x : ℕ}
+    (hle : ∀ i ∈ s, x ≤ f i) :
+    x * s.card ≤ ∑ i ∈ s, f i := by
+  calc
+    x * s.card = ∑ _i ∈ s, x := by
+        simp [Nat.mul_comm]
+    _ ≤ ∑ i ∈ s, f i :=
+        Finset.sum_le_sum (by
+          intro i hi
+          exact hle i hi)
+
+/--
+If a finite family of pairwise-disjoint blocks is contained in a capacity set
+and every block has at least `quota` elements, then the capacity has at least
+`quota * |s|` elements.
+-/
+theorem quota_mul_card_le_card_of_pairwiseDisjoint_blocks
+    {ι α : Type*} [DecidableEq α]
+    (s : Finset ι) (capacity : Finset α) (block : ι → Finset α) {quota : ℕ}
+    (hdisjoint : (s : Set ι).PairwiseDisjoint block)
+    (hsubset : ∀ i ∈ s, block i ⊆ capacity)
+    (hquota : ∀ i ∈ s, quota ≤ (block i).card) :
+    quota * s.card ≤ capacity.card := by
+  have hquota_sum :
+      quota * s.card ≤ ∑ i ∈ s, (block i).card := by
+    calc
+      quota * s.card = ∑ _i ∈ s, quota := by
+        simp [Nat.mul_comm]
+      _ ≤ ∑ i ∈ s, (block i).card :=
+        Finset.sum_le_sum (by
+          intro i hi
+          exact hquota i hi)
+  have hunion_subset : s.biUnion block ⊆ capacity := by
+    intro a ha
+    rcases Finset.mem_biUnion.mp ha with ⟨i, hi, ha_block⟩
+    exact hsubset i hi ha_block
+  have hsum_le_capacity :
+      (∑ i ∈ s, (block i).card) ≤ capacity.card := by
+    rw [← Finset.card_biUnion hdisjoint]
+    exact Finset.card_le_card hunion_subset
+  exact le_trans hquota_sum hsum_le_capacity
+
 /--
 Finite averaging upper bound: if every term in `s` is at least `x`, but the
 sum over `s` is at most `total`, then `x <= total / |s|`.

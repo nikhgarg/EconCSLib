@@ -8,6 +8,7 @@ import EconCSLib.Learning.Bandits.ThompsonSampling
 import EconCSLib.MechanismDesign.Auctions
 import EconCSLib.SocialChoice
 import EconCSLib.Markets.Matching
+import EconCSLib.Applications.Admissions
 import EconCSLib.Applications.RecommenderSystems
 
 /-!
@@ -22,6 +23,8 @@ start from one stable foundation.
 - `EconCSLib.Basic`: imports the standard `EconCSLib` reusable surface used across the library.
 - Shared namespace defaults (`open scoped BigOperators`) for concise theorem scripts.
 - A curated aggregate import set to reduce fragile per-file import drift across papers.
+- Admissions policy/equilibrium surfaces used by testing, matching, and
+  strategic admissions formalizations.
 -/
 
 open scoped BigOperators

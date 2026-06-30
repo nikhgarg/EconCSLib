@@ -5,11 +5,14 @@ import EconCSLib.Foundations.Optimization.ChoiceEquilibrium
 import EconCSLib.Foundations.Optimization.ChoiceEquilibriumAE
 import EconCSLib.Foundations.Optimization.BinaryChoice
 import EconCSLib.Foundations.Optimization.BinaryChoiceAE
+import EconCSLib.Foundations.Optimization.BinaryPolicyGame
 import EconCSLib.Foundations.Optimization.Certificate
 import EconCSLib.Foundations.Optimization.Endpoint
 import EconCSLib.Foundations.Optimization.FiniteSearch
 import EconCSLib.Foundations.Optimization.LinearProgram
 import EconCSLib.Foundations.Optimization.MoveGraph
+import EconCSLib.Foundations.Optimization.StochasticSubgradient
+import EconCSLib.Foundations.Optimization.StrategicEquilibrium
 
 /-!
 # Optimization Foundations
@@ -31,6 +34,11 @@ Aggregate import for reusable optimization primitives.
 - `EconCSLib.Foundations.Optimization.BinaryChoiceAE`: a.e. binary
   best-response predicates, null-tie threshold identification, and affine
   cutoff consequences.
+- `EconCSLib.Foundations.Optimization.BinaryPolicyGame`: two-player
+  binary-policy best-response games and policy-pair objective rewrites.
+- `EconCSLib.Foundations.Optimization.StrategicEquilibrium`: combined
+  individual-action and planner-policy equilibrium interfaces, including an
+  a.e. individual-obligation variant.
 - `EconCSLib.Foundations.Optimization.Approximation`: primal-dual/benchmark
   sandwich certificates for approximation and competitive-ratio proofs.
 - `EconCSLib.Foundations.Optimization.Bisection`: concrete loop-count helpers
@@ -46,4 +54,6 @@ Aggregate import for reusable optimization primitives.
   primal/dual feasibility, weak duality, and optimality certificates.
 - `EconCSLib.Foundations.Optimization.MoveGraph`: exchange/local-move
   optimality from reachability and monotone moves.
+- `EconCSLib.Foundations.Optimization.StochasticSubgradient`: the audited
+  library-level boundary for stochastic subgradient convergence consequences.
 -/

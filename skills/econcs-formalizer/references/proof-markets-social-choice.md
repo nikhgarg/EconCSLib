@@ -10,6 +10,12 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   primitives, active-set updates, tallies, winners, eliminations, transfers,
   tie-breakers, and replay/process predicates in the shared layer when they are
   paper-neutral.
+- Search the shared voting modules before scaffolding paper-local definitions:
+  use `Voting.Ballot` for finite ballots and next-active preference,
+  `Voting.STV` for deterministic STV traces and transfer-rule interfaces,
+  `Voting.STV.Structures` for final-order and win/loss replay predicates,
+  `Voting.STV.SolidCoalition` for same-party quota-process invariants, and
+  `Voting.Thiele` for approval/committee-score comparisons.
 - Distinguish three objects that are easy to conflate: bare trace or transfer
   data, the proposition-valued replay/process validity predicate over that
   data, and the source theorem conclusion. Bare traces can be source-model
@@ -17,6 +23,11 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   process claims, and ballot-to-candidate isolation should be proved from the
   primitive ballots, tie-breaking, and transfer rule, or marked as explicit
   partial boundaries.
+- Do not treat a `Replay`, `Trace`, `Process`, `Bridge`, `Certificate`, or
+  `SourcePrimitive`-named premise as source-backed just because it resembles a
+  process description. The premise must either be proved from primitive
+  ballots/tie-breaking/transfer rules, linked to a specific source assumption,
+  or exposed as a boundary in the audit artifacts.
 - Keep empirical election audits, simulations, redistricting experiments, and
   real-data claims as data/code boundaries unless their data pipeline is also
   formalized. The Lean target should be the deterministic election semantics,

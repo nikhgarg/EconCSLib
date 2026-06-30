@@ -2,6 +2,7 @@ import EconCSLib.Foundations.Probability.Admissions
 import EconCSLib.Foundations.Probability.Averaging
 import EconCSLib.Foundations.Probability.Bernoulli
 import EconCSLib.Foundations.Probability.BinaryRatingLDP
+import EconCSLib.Foundations.Probability.BoundedDensity
 import EconCSLib.Foundations.Probability.BivariateGaussian
 import EconCSLib.Foundations.Probability.CTMC
 import EconCSLib.Foundations.Probability.Conditional
@@ -70,6 +71,7 @@ Aggregate import for reusable probability infrastructure.
 - Continuous measure and concentration helpers:
   `EconCSLib.Foundations.Probability.Averaging`,
   `EconCSLib.Foundations.Probability.Bernoulli`,
+  `EconCSLib.Foundations.Probability.BoundedDensity`,
   `EconCSLib.Foundations.Probability.ContinuousReward`,
   `EconCSLib.Foundations.Probability.MeasureInequalities`,
   `EconCSLib.Foundations.Probability.FairCoin`, and

@@ -1,4 +1,5 @@
 import EconCSLib.Foundations.Probability.MDP
+import Mathlib.Analysis.Convex.Function
 import Mathlib.Tactic.Linarith
 
 open scoped BigOperators
@@ -22,7 +23,132 @@ can instantiate from explicit constructions.
 - `PMF.firstOrderLe_of_monotoneCoupling`: monotone coupling implies first-order
   stochastic dominance.
 - `FiniteMarkovKernel.FirstOrderLe`: pointwise stochastic dominance of kernels.
+- `IncreasingConcaveUtilityWeakOrder`: expected-utility order against every
+  weakly increasing concave utility.
+- `underrepresented_share_iff_capacity_lt_crossing_tail`: threshold-admissions
+  crossing algebra for group underrepresentation.
 -/
+
+/--
+Expected-utility order against every weakly increasing concave real utility.
+
+This is the utility side of the standard second-order stochastic dominance /
+mean-preserving spread equivalence.  It intentionally abstracts away from a
+specific measure representation, so paper formalizations can instantiate it
+from a continuous, finite, or externally established dominance theorem.
+-/
+def IncreasingConcaveUtilityWeakOrder
+    (expectedLow expectedHigh : (ℝ → ℝ) → ℝ) : Prop :=
+  ∀ u : ℝ → ℝ, Monotone u → ConcaveOn ℝ Set.univ u →
+    expectedLow u ≤ expectedHigh u
+
+namespace IncreasingConcaveUtilityWeakOrder
+
+/--
+The linear utility implication used by academic-merit comparisons: an
+increasing-concave utility order immediately compares expected values.
+-/
+theorem id_le {expectedLow expectedHigh : (ℝ → ℝ) → ℝ}
+    (horder : IncreasingConcaveUtilityWeakOrder expectedLow expectedHigh) :
+    expectedLow (fun x : ℝ => x) ≤ expectedHigh (fun x : ℝ => x) := by
+  have hid_mono : Monotone (fun x : ℝ => x) := monotone_id
+  have hid_concave : ConcaveOn ℝ Set.univ (fun x : ℝ => x) := by
+    simpa [id] using
+      (concaveOn_id (𝕜 := ℝ) (s := (Set.univ : Set ℝ)) convex_univ)
+  exact horder (fun x : ℝ => x) hid_mono hid_concave
+
+end IncreasingConcaveUtilityWeakOrder
+
+/--
+Threshold-admissions crossing algebra for group underrepresentation.
+
+If the aggregate score CDF is `(1 - pi) * FA + pi * FB`, a common threshold
+`qStar` fills capacity, and the two group CDFs cross in the high tail at
+`qPlus`, then group-B admitted share is below the population share exactly when
+capacity lies below the aggregate upper tail at the crossing point.
+-/
+theorem underrepresented_share_iff_capacity_lt_crossing_tail
+    {Fhat FA FB : ℝ → ℝ}
+    {pi capacity qStar qPlus tauB : ℝ}
+    (hpi_pos : 0 < pi) (hpi_lt_one : pi < 1)
+    (hcapacity_pos : 0 < capacity)
+    (hFhat :
+      ∀ q : ℝ, Fhat q = (1 - pi) * FA q + pi * FB q)
+    (hcapacity :
+      capacity =
+        (1 - pi) * (1 - FA qStar) + pi * (1 - FB qStar))
+    (hthreshold : Fhat qStar = 1 - capacity)
+    (hFhat_strictMono : StrictMono Fhat)
+    (hcross_high : FA qStar < FB qStar ↔ qPlus < qStar)
+    (htauB : tauB = pi * (1 - FB qStar) / capacity) :
+    tauB < pi ↔ capacity < 1 - Fhat qPlus := by
+  have hnotA_pos : 0 < 1 - pi := by
+    linarith
+  have htau_iff : tauB < pi ↔ FA qStar < FB qStar := by
+    constructor
+    · intro htau
+      rw [htauB] at htau
+      have htailB_lt_capacity : 1 - FB qStar < capacity := by
+        have hmul : pi * (1 - FB qStar) < pi * capacity :=
+          (div_lt_iff₀ hcapacity_pos).mp htau
+        exact lt_of_mul_lt_mul_left hmul hpi_pos.le
+      rw [hcapacity] at htailB_lt_capacity
+      have htailB_lt_tailA : 1 - FB qStar < 1 - FA qStar := by
+        nlinarith [hnotA_pos, htailB_lt_capacity]
+      linarith
+    · intro hcdf
+      have htailB_lt_tailA : 1 - FB qStar < 1 - FA qStar := by
+        linarith
+      rw [htauB]
+      have htailB_lt_capacity : 1 - FB qStar < capacity := by
+        rw [hcapacity]
+        nlinarith [hnotA_pos, htailB_lt_tailA]
+      have hmul : pi * (1 - FB qStar) < pi * capacity :=
+        mul_lt_mul_of_pos_left htailB_lt_capacity hpi_pos
+      exact (div_lt_iff₀ hcapacity_pos).mpr hmul
+  rw [htau_iff, hcross_high]
+  constructor
+  · intro hq
+    have hF_lt : Fhat qPlus < Fhat qStar :=
+      hFhat_strictMono hq
+    rw [hthreshold] at hF_lt
+    linarith
+  · intro hcap
+    have hF_lt : Fhat qPlus < Fhat qStar := by
+      rw [hthreshold]
+      linarith
+    exact hFhat_strictMono.lt_iff_lt.mp hF_lt
+
+/--
+If a real-valued gap is the difference of two admission-probability functions,
+and those probabilities cross exactly at `qhat`, then the gap is positive
+exactly above `qhat`.
+-/
+theorem positive_gap_iff_above_threshold_of_sub_eq_and_cross
+    {gap admitHigh admitLow : ℝ → ℝ} {qhat : ℝ}
+    (hgap : ∀ q : ℝ, gap q = admitHigh q - admitLow q)
+    (hcross : ∀ q : ℝ, admitHigh q > admitLow q ↔ qhat < q) :
+    ∀ q : ℝ, 0 < gap q ↔ qhat < q := by
+  intro q
+  rw [hgap q]
+  constructor
+  · intro hpos
+    exact (hcross q).mp (by linarith)
+  · intro hq
+    have hprob : admitHigh q > admitLow q :=
+      (hcross q).mpr hq
+    linarith
+
+/--
+Existential form of
+`positive_gap_iff_above_threshold_of_sub_eq_and_cross`.
+-/
+theorem exists_positive_gap_threshold_of_sub_eq_and_cross
+    {gap admitHigh admitLow : ℝ → ℝ} {qhat : ℝ}
+    (hgap : ∀ q : ℝ, gap q = admitHigh q - admitLow q)
+    (hcross : ∀ q : ℝ, admitHigh q > admitLow q ↔ qhat < q) :
+    ∃ qhat : ℝ, ∀ q : ℝ, 0 < gap q ↔ qhat < q :=
+  ⟨qhat, positive_gap_iff_above_threshold_of_sub_eq_and_cross hgap hcross⟩
 
 namespace PMF
 

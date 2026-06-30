@@ -1,3 +1,4 @@
+import EconCSLib.Foundations.Math.FiniteOptimization
 import EconCSLib.Foundations.Probability.FiniteExpectation
 
 open scoped BigOperators
@@ -6,82 +7,6 @@ namespace EconCSLib
 
 /-- A randomized policy from states/agents `α` to actions `β`. -/
 abbrev Policy (α β : Type*) := α → PMF β
-
-/-- Finite maximum of a real-valued function on a nonempty finite type. -/
-noncomputable def finiteMax {α : Type*} [Fintype α] [Nonempty α]
-    (f : α → ℝ) : ℝ :=
-  (Finset.univ : Finset α).sup' Finset.univ_nonempty f
-
-/-- Finite minimum of a real-valued function on a nonempty finite type. -/
-noncomputable def finiteMin {α : Type*} [Fintype α] [Nonempty α]
-    (f : α → ℝ) : ℝ :=
-  (Finset.univ : Finset α).inf' Finset.univ_nonempty f
-
-/-- A finite maximum is at least every indexed value. -/
-theorem le_finiteMax {α : Type*} [Fintype α] [Nonempty α]
-    (f : α → ℝ) (a : α) :
-    f a ≤ finiteMax f := by
-  unfold finiteMax
-  exact Finset.le_sup' (s := (Finset.univ : Finset α)) (f := f) (by simp)
-
-/-- A finite maximum is attained. -/
-theorem exists_finiteMax_eq {α : Type*} [Fintype α] [Nonempty α]
-    (f : α → ℝ) :
-    ∃ a : α, finiteMax f = f a := by
-  unfold finiteMax
-  obtain ⟨a, _ha, hmax⟩ :=
-    Finset.exists_mem_eq_sup'
-      (s := (Finset.univ : Finset α))
-      (H := Finset.univ_nonempty) (f := f)
-  exact ⟨a, hmax⟩
-
-/-- A finite minimum is at most every indexed value. -/
-theorem finiteMin_le {α : Type*} [Fintype α] [Nonempty α]
-    (f : α → ℝ) (a : α) :
-    finiteMin f ≤ f a := by
-  unfold finiteMin
-  exact Finset.inf'_le (s := (Finset.univ : Finset α)) (f := f) (by simp)
-
-/-- A finite minimum is at least any pointwise lower bound. -/
-theorem le_finiteMin {α : Type*} [Fintype α] [Nonempty α]
-    (f : α → ℝ) {c : ℝ} (h : ∀ a, c ≤ f a) :
-    c ≤ finiteMin f := by
-  unfold finiteMin
-  exact Finset.le_inf' (s := (Finset.univ : Finset α)) (f := f)
-    Finset.univ_nonempty
-    (by intro a _ha; exact h a)
-
-/-- A finite minimum of a constant-valued function equals that constant. -/
-theorem finiteMin_eq_of_forall {α : Type*} [Fintype α] [Nonempty α]
-    (f : α → ℝ) (c : ℝ) (h : ∀ a, f a = c) :
-    finiteMin f = c := by
-  unfold finiteMin
-  apply le_antisymm
-  · let a0 : α := Classical.choice inferInstance
-    exact (Finset.inf'_le
-      (s := (Finset.univ : Finset α)) (f := f) (by simp : a0 ∈ Finset.univ)).trans_eq
-      (h a0)
-  · apply Finset.le_inf'
-    intro a _ha
-    exact le_of_eq (h a).symm
-
-/-- A finite minimum of nonnegative values is nonnegative. -/
-theorem finiteMin_nonneg {α : Type*} [Fintype α] [Nonempty α]
-    (f : α → ℝ) (h : ∀ a, 0 ≤ f a) :
-    0 ≤ finiteMin f := by
-  unfold finiteMin
-  apply Finset.le_inf'
-  intro a _ha
-  exact h a
-
-/-- A finite minimum of strictly positive values is strictly positive. -/
-theorem finiteMin_pos {α : Type*} [Fintype α] [Nonempty α]
-    (f : α → ℝ) (h : ∀ a, 0 < f a) :
-    0 < finiteMin f := by
-  unfold finiteMin
-  rw [Finset.lt_inf'_iff]
-  intro a _ha
-  exact h a
 
 namespace Policy
 
