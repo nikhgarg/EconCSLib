@@ -2,18 +2,18 @@
   "comment": "Regenerated context-free Lean-to-TeX drafts for semantic statement rejudge; every visible binder/hypothesis remains part of the translated surface.",
   "items": {
     "binary_rating_model_log_mgf_derivative_formula": {
-      "lean_statement_sha256": "1cbe5e2c19bf669c7e958334ecd53206efd6f08ac560e968ef80de87bca7381d",
+      "lean_statement_sha256": "f8633bfe589f4f275acd45f1b1ed3576d84467727dedf25c3708f85b63ba2011",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1) (\u03b8 : Seller) (z : \u211d), HasDerivAt (fun t  =>  (binaryRatingModel successProb hprob0 hprob1).logMGF \u03b8 t) (successProb \u03b8 * exp z / (1 - successProb \u03b8 + successProb \u03b8 * exp z)) z",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "binary_rating_model_log_mgf_formula": {
-      "lean_statement_sha256": "14fa754ea04eae7bdf6aac4f7baaa89f30e8af07c06adf7276f5dbc5a2e82536",
+      "lean_statement_sha256": "c4a37914ef4c96c24490e94fecc8adae91a728b82daaec2e54fbe9cc36298cc6",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1) (\u03b8 : Seller) (z : \u211d), (binaryRatingModel successProb hprob0 hprob1).logMGF \u03b8 z = log (1 - successProb \u03b8 + successProb \u03b8 * exp z)",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -34,18 +34,18 @@
       "validator_type": "model"
     },
     "binary_rating_model_rate_function_top_is_bernoulli_kl": {
-      "lean_statement_sha256": "1219b0a0615e3370f37c6267cedbed58cdeaaa20c2701e5409914d6f5a2417b6",
+      "lean_statement_sha256": "fc95fa64e81614df7101b0fc0d375492176bd1fa464aa6b487a7986f4a99470b",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1), (\\forall (\u03b8 : Seller), 0 < successProb \u03b8) \\to (\\forall (\u03b8 : Seller), successProb \u03b8 < 1) \\to \\forall (\u03b8 : Seller) {a : \u211d}, 0 < a \\to a < 1 \\to (binaryRatingModel successProb hprob0 hprob1).rateFunctionTop \u03b8 a = \u2191(paperBernoulliKL a (successProb \u03b8))",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "binary_rating_pairwise_rate_objective_top_is_threshold_kl_rate": {
-      "lean_statement_sha256": "2858d9dbf6ba708e0862f121ca5e4f291e67d62ea8a6c1cbd9234faeb96725b2",
+      "lean_statement_sha256": "3a0a3874fbb1443b836e37f14f2213961e61f171e9ed076c82de96d25451e7d1",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1), (\\forall (\u03b8 : Seller), 0 < successProb \u03b8) \\to (\\forall (\u03b8 : Seller), successProb \u03b8 < 1) \\to \\forall (sampleRate : Seller \\to \u211d) (hi lo : Seller) {a : \u211d}, 0 < a \\to a < 1 \\to (binaryRatingModel successProb hprob0 hprob1).pairwiseRateObjectiveTop sampleRate hi lo a = \u2191(twoBernoulliThresholdRate (sampleRate hi) (sampleRate lo) (successProb hi) (successProb lo) a)",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -58,10 +58,10 @@
       "validator_type": "model"
     },
     "binary_rating_pairwise_threshold_rate_top_is_closed_weighted_rate": {
-      "lean_statement_sha256": "3cf08c10df89c0425e92453c79656200a86344cd0ac1125f53b122abed3782c5",
+      "lean_statement_sha256": "73602119fb9880601d50ddc955bb44634978e8dfec708db467e2b31cf765cdb2",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Seller : Type u_1} (successProb : Seller \\to \u211d) (hprob0 : \\forall (\u03b8 : Seller), 0 \\le successProb \u03b8) (hprob1 : \\forall (\u03b8 : Seller), successProb \u03b8 \\le 1), (\\forall (\u03b8 : Seller), 0 < successProb \u03b8) \\to (\\forall (\u03b8 : Seller), successProb \u03b8 < 1) \\to \\forall (sampleRate : Seller \\to \u211d) (hi lo : Seller), 0 < sampleRate hi \\to 0 < sampleRate lo \\to sampleRate hi + sampleRate lo \\ne 0 \\to pairwiseSellerThresholdRateTop (binaryRatingModel successProb hprob0 hprob1) sampleRate hi lo = \u2191(weightedBernoulliClosedThresholdRate (sampleRate hi) (sampleRate lo) (successProb hi) (successProb lo))",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -74,10 +74,10 @@
       "validator_type": "model"
     },
     "definitionC1_kendall_spearman_population_objectives": {
-      "lean_statement_sha256": "3fadf5e5bc9743bfb1fbb13fa52ee08bbbd959a1c7f4c9427e1db64b3862875c",
+      "lean_statement_sha256": "478b820f1257ed767cc0041c333c84ae7b9b41e03b08b10a501dd54c57566df2",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall (M : \\mathbb{N}) (s : \\mathbb{N} \\to \\mathbb{R}),\\; K_M(s) = \\frac{1 - \\sum_i (s_{i+1}-s_i)^2}{2} \\land S_M(s) = \\frac{1 - \\sum_i (s_{i+1}-s_i)^3}{6}",
-      "translated_at": "2026-06-29T21:25:00Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -90,10 +90,10 @@
       "validator_type": "model"
     },
     "definition_bernoulli_kl_top_formula": {
-      "lean_statement_sha256": "7e43cddc0b237da67adbde795deaf9809858c86ccb165d72f7138cdc4a588e6a",
+      "lean_statement_sha256": "e9417bf4cf62df3589865c8c74817d4bf71f60d4158661403b820da89120be71",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "(a b : \u211d) : paperBernoulliKLTop a b = if 0 \\le a \\land a \\le 1 then (paperBernoulliKL a b : WithTop \u211d) else \u22a4",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -106,26 +106,26 @@
       "validator_type": "model"
     },
     "lemma31_endpoint_aware_equalized_rates_are_isMaximizerOn": {
-      "lean_statement_sha256": "bc5e59ad897b73b4a88447126af99f0d6e323dd845f0bd05dda82c192f76a5a7",
+      "lean_statement_sha256": "dbb8f3ca2c2c55c2ca05a9e08aecbb4a643bd3b214e3b98ad051bc804fc12b02",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall (sampleRate candidate : Fin (m + 2) \\to \u211d) {r : \u211d}, BinaryEndpointLevelVector candidate \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentHighIndex i)) \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentLowIndex i)) \\to (\\forall (i : Fin (m + 1)), binaryEndpointAwareAdjacentRate candidate sampleRate i = r) \\to IsMaximizerOn BinaryEndpointLevelVector (fun levels  =>  binaryEndpointAwareAdjacentRateObjective levels sampleRate) candidate",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "lemma31_endpoint_aware_maximizer_iff_pairwise_equalized": {
-      "lean_statement_sha256": "3f45715a718e86d7e3de57c03735101d83aa4b0ba89364d876dc9cacba631822",
+      "lean_statement_sha256": "d08f711e16c13e6f35518f32c754a0d0d6fac3062389ff8e1c2534a1798cac66",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall (sampleRate candidate alt : Fin (m + 2) \\to \u211d), BinaryEndpointLevelVector candidate \\to BinaryEndpointLevelVector alt \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentHighIndex i)) \\to (\\forall (i : Fin (m + 1)), 0 < sampleRate (adjacentLowIndex i)) \\to BinaryEndpointAwareAdjacentRatesEqualize candidate sampleRate \\to (IsMaximizerOn BinaryEndpointLevelVector (fun levels  =>  binaryEndpointAwareAdjacentRateObjective levels sampleRate) alt \\iff BinaryEndpointAwareAdjacentRatesEqualize alt sampleRate)",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "lemma31_forward_clipped_equalized_rates_exist_unique": {
-      "lean_statement_sha256": "2c1a5ae64471ff900fba1ac69cb312ffa57d3980f76e4c2af9ec8becb1cdcddb",
+      "lean_statement_sha256": "df11b41ab2fcfd9ed311991d7d2dd6cbaa5a5d6443f40be7fbeab3538099ddad",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {m : \u2115}, 1 < m \\to \\forall (sampleRate : Fin (m + 2) \\to \u211d), (\\forall k < m + 2, 0 < binaryEndpointSampleRateNat sampleRate k) \\to \\exists! levels, BinaryEndpointLevelVector levels \\land BinaryEndpointAwareAdjacentRatesEqualize levels sampleRate",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -138,18 +138,18 @@
       "validator_type": "model"
     },
     "lemmaC5_uniform_doubled_endpoint_levels_equalizes": {
-      "lean_statement_sha256": "3876a258e597862be4545f651090cef0ddfe144550569b0c5893afe2cfe53fb5",
+      "lean_statement_sha256": "73a92d3981c24a60c9a43d303f37f9cc1866be65faa41e215fcffcf4a7ee6b82",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {oldLevels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector oldLevels \\to (BinaryEndpointAwareAdjacentRatesEqualize oldLevels fun x  =>  1) \\to BinaryEndpointAwareAdjacentRatesEqualize (lemmaC5_uniform_doubled_endpoint_levels oldLevels) fun x  =>  1",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "lemmaC5_uniform_doubled_endpoint_levels_even": {
-      "lean_statement_sha256": "2f32201de4a7c88d345f96f28db616c45fdcf6b6e14252153f2564a4571794e5",
+      "lean_statement_sha256": "f9d00f417a1cbd6512942905ad5b408a0f0c84cd335b094fa1606bb43d6366a5",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {m : \u2115} (oldLevels : Fin (m + 2) \\to \u211d) (i : Fin (m + 2)), lemmaC5_uniform_doubled_endpoint_levels oldLevels \u27e82 * \u2191i, \u22ef\u27e9 = oldLevels i",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -194,10 +194,10 @@
       "validator_type": "model"
     },
     "lemmaC7_uniform_refined_last_rate_ge_one_fifth": {
-      "lean_statement_sha256": "ca357a1183d8bdbac8c28125983fb8c063b723a45ab73cc62cc4078d06c7a466",
+      "lean_statement_sha256": "d2305a7ed6dd05025a5cbe4cd91e07af54cb2c24cc9ae9ec613692a787ecf44b",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to \\forall {refinedLastLow : \u211d}, refinedLastLow = (1 + \u221a(levels (adjacentLowIndex lastAdjacentIndex))) / 2 \\to 1 / 5 * binaryEndpointAwareAdjacentRate levels (fun x  =>  1) lastAdjacentIndex \\le -log refinedLastLow",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -210,10 +210,10 @@
       "validator_type": "model"
     },
     "lemmaC8_uniform_first_level_ge_half_of_equalized_last_rate_lower": {
-      "lean_statement_sha256": "aa7f207b93486637a8af9a71063167ab776b1dc0d2f797ce7d38749cde30361b",
+      "lean_statement_sha256": "c26247aa307aad8b76edabf926173ed8007a4418264bfd91045cd558be82a972",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall {levels : Fin (m + 2) \\to \u211d}, BinaryEndpointLevelVector levels \\to (BinaryEndpointAwareAdjacentRatesEqualize levels fun x  =>  1) \\to \\forall {lower : \u211d}, 0 \\le lower \\to lower \\le 1 \\to lower \\le binaryEndpointAwareAdjacentRate levels (fun x  =>  1) lastAdjacentIndex \\to lower / 2 \\le levels (adjacentHighIndex firstAdjacentIndex)",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -298,18 +298,18 @@
       "validator_type": "model"
     },
     "paper_lemmaC11_kendall_constant_weight_ordered_pair_interval_objective_le_equispaced": {
-      "lean_statement_sha256": "7dea7c22a1d5cfde813b62dc04555ebca6356da4ab6fbb3944bbeb71a676278f",
+      "lean_statement_sha256": "e2d098a36eed4f258d2111c900c4245d93e5d479bbb1f8348bcdf8b92623a7bd",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {M : \u2115} [Nonempty (Fin M)] (s : \u2115 \\to \u211d), s 0 = 0 \\to s M = 1 \\to (\\sum i, \\sum j, if i < j then (s (\u2191i + 1) - s \u2191i) * (s (\u2191j + 1) - s \u2191j) else 0) \\le (1 - (\u2191M)\u207b\u00b9) / 2",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "paper_lemmaC12_spearman_linear_weight_ordered_pair_interval_objective_le_equispaced": {
-      "lean_statement_sha256": "a9e9a9292d5c49148081f526ef31a8f42b778962535bdeb4f7a063698741c74f",
+      "lean_statement_sha256": "ad5a8d32260323584f60e3cc869ae8bd8fe4bbdb6805fdd538e96ecb1317f519",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {M : \u2115} [Nonempty (Fin M)] (s : \u2115 \\to \u211d), Monotone s \\to s 0 = 0 \\to s M = 1 \\to spearmanLinearWeightOrderedPairIntervalObjective M s \\le (1 - (\u2191M)\u207b\u00b9 ^ 2) / 6",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -322,10 +322,10 @@
       "validator_type": "model"
     },
     "paper_lemmaC3_partition_integral_hasExponentialRate_of_min_component_uniform_logRate": {
-      "lean_statement_sha256": "1bd61ee9ec01d29d632c5a5ae4f68bd2319a5d2f631c3258b253ed4c630b561f",
+      "lean_statement_sha256": "f8ec084655d7ae88612c74ab8e4212b5e1dcb3ec0695de17cab81a2843afa531",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {\\Omega : Type u_1} {Component : Type u_2} [inst : MeasurableSpace \\Omega] [inst_1 : Fintype Component] [DecidableEq Component] (\\mu : Measure \\Omega) [IsFiniteMeasure \\mu] (P : FiniteMeasurableSetPartition \\mu Component) (weight : \\Omega \\to \u211d) (kernel : \u2115 \\to \\Omega \\to \u211d) (phi : Component \\to \\Omega \\to \u211d) (rate W : Component \\to \u211d), (\\forall (k : \u2115) (component : Component), IntegrableOn (fun x  =>  weight x * kernel k x) (pieceSet component) \\mu) \\to (\\forall (component : Component), IntegrableOn weight (pieceSet component) \\mu) \\to (\\forall (component : Component), 0 < W component) \\to (\\forall (component : Component), \\forall\u1d50 (x : \\Omega) \u2202\\mu.restrict (pieceSet component), 0 \\le weight x) \\to (\\forall (component : Component), \\forall\u1d50 (x : \\Omega) \u2202\\mu.restrict (pieceSet component), weight x \\le W component) \\to (\\forall (component : Component), HasAEEssentialInfimum (\\mu.restrict (pieceSet component)) (phi component) (rate component)) \\to (\\forall (component : Component), HasPositiveWeightNearAEEssentialInfimum (\\mu.restrict (pieceSet component)) weight (phi component) (rate component)) \\to (\\forall (k : \u2115) (x : \\Omega), 0 < kernel k x) \\to (\\forall (component : Component), \\forall \\epsilon > 0, \\forall\u1da0 (k : \u2115) in atTop, \\forall (x : \\Omega), |-log (kernel k x) / \u2191k - phi component x| \\le \\epsilon) \\to \\forall (minComponent : Component), (\\forall (component : Component), rate minComponent \\le rate component) \\to HasExponentialRate (fun k  =>  \\int (x : \\Omega) in support, weight x * kernel k x \u2202\\mu) (rate minComponent)",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -346,10 +346,10 @@
       "validator_type": "model"
     },
     "paper_theorem31_endpoint_aware_adjacent_witness_dominates_ordered_pair": {
-      "lean_statement_sha256": "086dfead322eea324568e2ec6dfdfafec24513e5e12c48b6884fcd40b7bb4fb3",
+      "lean_statement_sha256": "c06c7d13a2825869a9757c9875704c1bf20449bfdc3fffde6abe062d8bba096c",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {m : \u2115} (sampleRate successProb : Fin (m + 2) \\to \u211d), (\\forall (idx : Fin (m + 2)), 0 < sampleRate idx) \\to (\\forall {a b : Fin (m + 2)}, \u2191a \\le \u2191b \\to sampleRate a \\le sampleRate b) \\to (\\forall {a b : Fin (m + 2)}, \u2191a \\le \u2191b \\to successProb a \\le successProb b) \\to (\\forall (idx : Fin (m + 2)), 0 \\le successProb idx) \\to (\\forall (idx : Fin (m + 2)), \u2191idx \\ne 0 \\to 0 < successProb idx) \\to (\\forall (idx : Fin (m + 2)), \u2191idx \\ne m + 1 \\to successProb idx < 1) \\to \\forall (low high : Fin (m + 2)), \u2191low + 1 \\le \u2191high \\to \u2191low \\ne 0 \\lor \u2191high \\ne m + 1 \\to \\exists adj, binaryEndpointAwareAdjacentRate successProb sampleRate adj \\le binaryEndpointAwarePairRate successProb sampleRate low high",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -362,34 +362,34 @@
       "validator_type": "model"
     },
     "paper_theorem31_kendall_constant_weight_equispaced_canonical_uniform_endpoint_lexicographic_optimality": {
-      "lean_statement_sha256": "0f51a59047d140715f3f3f93d44fa13b1c57708ab1988c1c67aef1fa9927e99d",
+      "lean_statement_sha256": "5cf306380cea7f149dcc40b69126b76a0fad55da792242ad544961f601f9f72d",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {M : \u2115} [Nonempty (Fin M)], 0 < M \\to IsLexicographicMaximizerOn (fun design  =>  intervalCutpointsEndpointFeasible M design.1 \\land BinaryEndpointLevelVector design.2) (fun design  =>  kendallConstantWeightOrderedPairIntervalObjective M design.1) (fun design  =>  binaryEndpointAwareAdjacentRateObjective design.2 fun x  =>  1) (equispacedIntervalCutpoint M, canonicalUniformEqualizedEndpointLevels M)",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "paper_theorem31_monotone_chain_adjacent_rate_le_nonadjacent_rate": {
-      "lean_statement_sha256": "0a19d0d10292ef26c66fad7374cac056cf605a83753b5eea8f14d2cca2bdaa76",
+      "lean_statement_sha256": "e69925647918a18e2caa60ef71b48ff11d1182d3756cc1591ff0e548e0ecc8a7",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {sampleRate successProb : \u2115 \\to \u211d} {i j : \u2115}, (\\forall (n : \u2115), 0 < sampleRate n) \\to Monotone sampleRate \\to Monotone successProb \\to 0 < successProb i \\to successProb j < 1 \\to i + 1 \\le j \\to weightedBernoulliClosedThresholdRate (sampleRate (i + 1)) (sampleRate i) (successProb (i + 1)) (successProb i) \\le weightedBernoulliClosedThresholdRate (sampleRate j) (sampleRate i) (successProb j) (successProb i)",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "paper_theorem31_spearman_linear_weight_equispaced_canonical_uniform_endpoint_lexicographic_optimality": {
-      "lean_statement_sha256": "42807a128b66b208a0a4c1fc7447edfd0fd391ae3b7fff89a06d3e3308452489",
+      "lean_statement_sha256": "5a0e155cd4b28f2d7cc26b3d446bd91182502dceb64a14fd79566cbc9fa1cb55",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {M : \u2115} [Nonempty (Fin M)], 0 < M \\to IsLexicographicMaximizerOn (fun design  =>  monotoneIntervalCutpointsEndpointFeasible M design.1 \\land BinaryEndpointLevelVector design.2) (fun design  =>  spearmanLinearWeightOrderedPairIntervalObjective M design.1) (fun design  =>  binaryEndpointAwareAdjacentRateObjective design.2 fun x  =>  1) (equispacedIntervalCutpoint M, canonicalUniformEqualizedEndpointLevels M)",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "paper_theorem31_two_stage_lexicographic_optimality": {
-      "lean_statement_sha256": "6e18d979be15c5b528fb66fe8286f9652f412f5af0c0155c9d8b427d505c8db8",
+      "lean_statement_sha256": "891ec89733a4f9813430943651b31a17849a5fd90cc1612fa50e2a96a326d38d",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Design : Type u_1} (feasible : Design \\to Prop) (limitingValue rate : Design \\to \u211d) (candidate : Design), IsMaximizerOn feasible limitingValue candidate \\to (\\forall (alternative : Design), feasible alternative \\to limitingValue alternative = limitingValue candidate \\to rate alternative \\le rate candidate) \\to IsLexicographicMaximizerOn feasible limitingValue rate candidate",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -410,26 +410,26 @@
       "validator_type": "model"
     },
     "paper_theoremC1_weighted_laplace_integral_exponential_rate_of_uniform_tendsto_weightedEssentialInf": {
-      "lean_statement_sha256": "18e9d8ff9c7bceeca1d49c2c2a22eba02bc8e578fe108ab250ae890a979b9b49",
+      "lean_statement_sha256": "8e5e14fd2bf2c595a438d5070f2b9ca98913dd6029673e33c16f926f6b2b5525",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] (\\mu : Measure \\Omega) [IsFiniteMeasure \\mu] (weight : \\Omega \\to \u211d) (phiSeq : \u2115 \\to \\Omega \\to \u211d) (phi : \\Omega \\to \u211d) {rate W : \u211d}, (\\forall (k : \u2115), Integrable (fun x  =>  weight x * exp (-\u2191k * phiSeq k x)) \\mu) \\to 0 < W \\to (\\forall\u1d50 (x : \\Omega) \u2202\\mu, 0 \\le weight x) \\to (\\forall\u1d50 (x : \\Omega) \u2202\\mu, weight x \\le W) \\to HasAEEssentialInfimum \\mu phi rate \\to HasPositiveWeightNearAEEssentialInfimum \\mu weight phi rate \\to (\\forall \\epsilon > 0, \\forall\u1da0 (k : \u2115) in atTop, \\forall (x : \\Omega), |phiSeq k x - phi x| \\le \\epsilon) \\to HasExponentialRate (fun k  =>  \\int (x : \\Omega), weight x * exp (-\u2191k * phiSeq k x) \u2202\\mu) rate",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "theorem31_adjacent_binary_rate_formula": {
-      "lean_statement_sha256": "aa3d0de7a31f3f004d69c0e2e8724b558da132097e068b7c78fb099cd1711266",
+      "lean_statement_sha256": "f9f501c10caec9f6354aa58cfa26a3bd60db2d2d9b25acb5fb78bc26fb906b6e",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "(gHi gLo tHi tLo : \u211d) : paperAdjacentBinaryRatingRate gHi gLo tHi tLo = sInf (Set.range fun a : \u211d  =>  gHi * paperBernoulliKL a tHi + gLo * paperBernoulliKL a tLo)",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
     "theorem31_adjacent_binary_rate_top_formula": {
-      "lean_statement_sha256": "a8895bb5ca27b9ce08bc38ed8634dfbf61c2b6a591bf3537b3ccda96524d1a13",
+      "lean_statement_sha256": "f809eacc0b66f1449199834ba233333279dd57d2d993222ac55857b89c5c207a",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "(gHi gLo tHi tLo : \u211d) : paperAdjacentBinaryRatingRateTop gHi gLo tHi tLo = sInf (Set.range fun a : \u211d  =>  withTopRealScale gHi (paperBernoulliKLTop a tHi) + withTopRealScale gLo (paperBernoulliKLTop a tLo))",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
@@ -442,10 +442,10 @@
       "validator_type": "model"
     },
     "theorem32_rate_loss_le_of_nested_bisection_width_minimal": {
-      "lean_statement_sha256": "53c8622cfe123cf92870cc417a38b0681496dfff9ca2316c9c96bc9f39139925",
+      "lean_statement_sha256": "9cb6ff8c1f174b44ad7c9c0c58d1406e97f94953e6073eebe79c7a37c0a0f6aa",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {m : \u2115}, 0 < m \\to \\forall (optimal returned sampleRate : Fin (m + 2) \\to \u211d) {rStar gLast tFirstStar firstLower delta eps : \u211d}, 0 < gLast \\to 0 \\le eps \\to BinaryEndpointLevelVector optimal \\to (\\forall (i : Fin (m + 1)), optimal (adjacentHighIndex lastAdjacentIndex) - optimal (adjacentLowIndex lastAdjacentIndex) \\le optimal (adjacentHighIndex i) - optimal (adjacentLowIndex i)) \\to 0 < firstLower \\to firstLower \\le tFirstStar \\to delta = eps / (gLast * ((1 - 1 / \u2191(m + 1))\u207b\u00b9 + firstLower\u207b\u00b9)) \\to (\\forall (i : Fin (m + 1)), binaryEndpointAwareAdjacentRate optimal sampleRate i = rStar) \\to rStar - gLast * log ((optimal (adjacentLowIndex lastAdjacentIndex) + delta) / optimal (adjacentLowIndex lastAdjacentIndex)) \\le binaryEndpointAwareAdjacentRate returned sampleRate lastAdjacentIndex \\to (\\forall (i : Fin (m + 1)), binaryEndpointAwareAdjacentRate returned sampleRate lastAdjacentIndex - gLast * log ((tFirstStar + delta) / tFirstStar) \\le binaryEndpointAwareAdjacentRate returned sampleRate i) \\to binaryEndpointAwareAdjacentRateObjective optimal sampleRate - binaryEndpointAwareAdjacentRateObjective returned sampleRate \\le eps",
-      "translated_at": "2026-06-29T18:08:26Z",
+      "translated_at": "2026-06-29T21:50:58Z",
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     }
