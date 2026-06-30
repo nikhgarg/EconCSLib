@@ -469,6 +469,19 @@ Use `documented_additional_assumption` for a non-source condition that a human
 has approved as an additional-assumption note while keeping the paper status
 formalized, such as an endpoint restriction that is recorded in the validation
 report and explicitly marked non-caveat.
+Use the following anonymous classification examples when deciding status and
+report language:
+
+| Situation | Classification | Public/report language |
+|---|---|---|
+| The printed theorem is false as stated, or Lean proves only a corrected/sign-repaired/constant-repaired endpoint that changes the source claim. | Real caveat; usually `formalized with caveat` if the repaired endpoint is closed. | "Paper issue/caveat: the source statement appears to need <repair>; Lean proves the repaired statement." |
+| The paper/source model already implicitly or explicitly assumes the domain condition, such as positive capacity, more objects than slots, interior parameters, finite support, no ties, or a nondegenerate witness needed for an exact rather than at-most statement. | Not a caveat. Treat as a source theorem condition or source-model condition; use `paper_condition`, `source_text`, or `human_verified_source_implicit` in assumption/provenance sidecars. | "Additional/source condition: the theorem is stated with <condition>." Keep `main_caveat` blank if fully proved. |
+| The user approves an extra non-source restriction while still calling the paper formalized, such as an interior-quality condition needed for a strict inequality where boundary cases are equality. | `documented_additional_assumption`, not `documented_caveat`, unless the user/source review says this is a paper error. | "Additional assumption: strict <claim> is proved under <condition>; this is recorded as non-caveat." |
+| The source has a likely typo or finite-bound slip, but Lean proves the main asymptotic/source theorem through a corrected intermediate statement and the correction does not change the public theorem endpoint. | Source-quality note or proof-strategy deviation, not a paper caveat. | Put it under mathematical typos/source notes; keep status `formalized` and `main_caveat` blank. |
+| The source uses private data, empirical plots, implementation measurements, or descriptive program/class instantiations not needed for the mathematical theorem target. | Out of Lean theorem scope, not a caveat and not an additional assumption. | "Empirical/descriptive material is out of theorem scope." Do not list as remaining proof debt. |
+| Lean currently assumes a solver theorem, convergence theorem, process law, runtime bound, certificate, source-record field, or bridge predicate that should be proved from paper primitives. | Proof/library boundary: `partial_boundary`, `conditional`, or `partially formalized` until proved. | "Full formalization requires proving <single boundary>." Do not call it a caveat unless the final theorem statement itself differs from the paper. |
+| A converse, bridge lemma, or source derivation is missing but looks provable from the current source assumptions. | Missing proof debt. | Either prove it, or mark a proof boundary. Do not call it a caveat merely because it is not proved yet. |
+
 For a user-approved axiom boundary, keep the axiom in the paper folder's
 `Assumptions.lean` or another paper-local assumptions file, give it a precise
 `assumption_*` name, and validate it as `partial_boundary`. Do not put

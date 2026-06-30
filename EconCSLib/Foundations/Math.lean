@@ -1,5 +1,6 @@
 import EconCSLib.Foundations.Math.FiniteSum
 import EconCSLib.Foundations.Math.FiniteOptimization
+import EconCSLib.Foundations.Math.FiniteChoice
 import EconCSLib.Foundations.Math.FiniteDimensionalNorms
 import EconCSLib.Foundations.Math.FiniteDimensionalNormsDerivative
 import EconCSLib.Foundations.Math.BinomialBounds

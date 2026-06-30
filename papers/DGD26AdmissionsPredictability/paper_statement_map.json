@@ -1,0 +1,207 @@
+{
+  "schema": 1,
+  "paper": "DGD26AdmissionsPredictability",
+  "title": "Capacity Constraints Make Admissions Processes Less Predictable",
+  "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/41179; TeX/formula source: https://arxiv.org/abs/2601.11513",
+  "source_inventory_kind": "source_curated",
+  "source_curated": true,
+  "source_inventory_policy": "Initial source-curated inventory from arXiv TeX source_tex/main.tex and source_tex/appendix.tex, with AAAI page as canonical publication metadata. Empirical private-data performance claims are tracked as descriptive/out-of-theorem-scope unless reduced to a formal choice-function proposition.",
+  "generated_at": "2026-06-30T00:00:00Z",
+  "items": {
+    "definition_q_acceptance": {
+      "statement": "Definition: a choice function is q-acceptant when it chooses exactly min(q, |X|) applicants from every finite input set X.",
+      "source_location": "Main text Definition q-Acceptance / Appendix restatement",
+      "aliases": []
+    },
+    "definition_total_order_and_queue": {
+      "statement": "Definition/prose: a total order is transitive, asymmetric, and complete; a q-acceptant choice function is characterized by a total order when it chooses the top-q elements of each set.",
+      "source_location": "Main text Definition Total order and following queue prose",
+      "aliases": []
+    },
+    "definition_choice_distance": {
+      "statement": "Definition: r_C(X1,X2) is |X1 ∩ C(X2) \\ C(X1)| + |C(X1) \\ C(X2)| for X1 subset X2.",
+      "source_location": "Main text Definition Choice Distance",
+      "aliases": []
+    },
+    "definition_d_instability": {
+      "statement": "Definition: C is d-unstable when adding one applicant changes at most d existing decisions, measured by choice distance; tightly d-unstable means d-unstable but not (d-1)-unstable.",
+      "source_location": "Main text Definition d-Instability",
+      "aliases": []
+    },
+    "definition_variability": {
+      "statement": "Definition: for a 1-unstable q-acceptant choice function, variability is max_X | union over x' of C(X) \\ C(X ∪ {x'}) |.",
+      "source_location": "Main text Definition Variability",
+      "aliases": []
+    },
+    "proposition_ml_representation": {
+      "statement": "Proposition: independent pointwise ML rules only represent 0-unstable choice functions; rank-threshold ML rules can represent 1-variable, 1-unstable choice functions and cannot represent instability or variability greater than one.",
+      "source_location": "Main text Proposition ML Representation",
+      "aliases": []
+    },
+    "definition_substitutability": {
+      "statement": "Definition: C is substitutable when X1 subset X2 implies X1 ∩ C(X2) subset C(X1).",
+      "source_location": "Main text Definition Substitutability / Appendix restatement",
+      "aliases": []
+    },
+    "theorem_instability": {
+      "statement": "Theorem: for a q-acceptant choice function, it cannot be 0-unstable under the nontrivial-universe condition, it is exactly 1-unstable iff substitutable, and tightly d-unstable examples exist for every 1 <= d <= 2q.",
+      "source_location": "Main text Theorem Instability and appendix proof",
+      "aliases": []
+    },
+    "definition_sequential_composition": {
+      "statement": "Definition: C is a sequential composition of C_n,...,C_1 when it chooses from each stage's remaining set and unions the chosen sets.",
+      "source_location": "Main text Definition Sequential Composition / Appendix restatement",
+      "aliases": []
+    },
+    "theorem_variability": {
+      "statement": "Theorem: a q-acceptant 1-unstable choice function represented as a sequential composition of n total-order queues has variability m with 1 <= m <= n, and variability 1 iff it is characterized by a single total order.",
+      "source_location": "Main text Theorem Variability and appendix proof",
+      "aliases": []
+    },
+    "proposition_program_variability": {
+      "statement": "Proposition: the considered NYC program choice functions are 1-unstable, with tight variability equal to their number of queues: 1, 2, 3, and 6 for the listed program classes.",
+      "source_location": "Main text Proposition Program Variability",
+      "aliases": []
+    },
+    "definition_monotonicity": {
+      "statement": "Definition: C is monotonic when X1 subset X2 implies C(X1) subset C(X2).",
+      "source_location": "Appendix Definition Monotonicity",
+      "aliases": []
+    },
+    "definition_consistency": {
+      "statement": "Definition: C is consistent when C(X2) subset X1 subset X2 implies C(X2) = C(X1).",
+      "source_location": "Appendix Definition Consistency",
+      "aliases": []
+    },
+    "definition_q_representativeness": {
+      "statement": "Definition: a q-acceptant choice function is q-representative when some strict total order makes C(X) the top q elements of X for all X.",
+      "source_location": "Appendix Definition q-representativeness",
+      "aliases": []
+    },
+    "lemma_monotonicity_q_acceptance_incompatible": {
+      "statement": "Lemma: if the universe has size greater than q and q >= 1, no choice function is both monotonic and q-acceptant.",
+      "source_location": "Appendix Lemma Incompatibility of Monotonicity and q-Acceptance",
+      "aliases": []
+    },
+    "lemma_unsubstitutable_single_add": {
+      "statement": "Lemma: if C is not substitutable, then some single added applicant x' causes a previously rejected existing applicant x* to become accepted.",
+      "source_location": "Appendix Lemma Non-Substitutable Functions",
+      "aliases": []
+    },
+    "lemma_substitutability_distance_term": {
+      "statement": "Lemma: C is substitutable iff |X1 ∩ C(X2) \\ C(X1)| = 0 for all X1 subset X2.",
+      "source_location": "Appendix Lemma Substitutability Term",
+      "aliases": []
+    },
+    "lemma_monotonicity_distance_term": {
+      "statement": "Lemma: C is monotonic iff |C(X1) \\ C(X2)| = 0 for all X1 subset X2.",
+      "source_location": "Appendix Lemma Monotonicity Term",
+      "aliases": []
+    },
+    "theorem_choice_distance_triangle": {
+      "statement": "Theorem: choice distance satisfies the triangle inequality for X1 subset X2 subset X3.",
+      "source_location": "Appendix Theorem Triangle Inequality",
+      "aliases": []
+    },
+    "definition_zero_instability": {
+      "statement": "Definition: C is 0-unstable iff r_C(X1,X2)=0 for all X1 subset X2.",
+      "source_location": "Appendix Definition 0-Instability",
+      "aliases": []
+    },
+    "corollary_zero_distance": {
+      "statement": "Corollary: C is 0-unstable iff it is both substitutable and monotonic.",
+      "source_location": "Appendix Corollary Zero-Distance",
+      "aliases": []
+    },
+    "definition_independence": {
+      "statement": "Definition: C is independent when every applicant is either always accepted whenever available or always rejected whenever available.",
+      "source_location": "Appendix Definition Independence",
+      "aliases": []
+    },
+    "theorem_independent_substitutable_monotonic": {
+      "statement": "Theorem: C is independent iff it is both substitutable and monotonic.",
+      "source_location": "Appendix Theorem Independent Rules are Substitutable and Monotonic",
+      "aliases": []
+    },
+    "corollary_independent_zero_unstable": {
+      "statement": "Corollary: C is 0-unstable iff it is independent; therefore no q-acceptant C is 0-unstable under the nontrivial-universe condition.",
+      "source_location": "Appendix Corollary Only Independent Rules are 0-unstable",
+      "aliases": []
+    },
+    "theorem_substitutability_one_instability": {
+      "statement": "Theorem: any q-acceptant choice function is 1-unstable iff substitutable.",
+      "source_location": "Appendix Theorem Substitutability and 1-Instability are Equivalent Under Capacity Constraints",
+      "aliases": []
+    },
+    "theorem_substitutable_q_acceptant_consistent": {
+      "statement": "Theorem: any q-acceptant substitutable choice function is consistent.",
+      "source_location": "Appendix Theorem BoundedDistance",
+      "aliases": []
+    },
+    "lemma_calculating_instability": {
+      "statement": "Lemma: for q-acceptant C, X'=X∪{x'}, |X|>=q, and n=|C(X)\\C(X')|, r_C(X,X') = 2n - 1_{x' in C(X')}.",
+      "source_location": "Appendix Lemma Calculating Instability",
+      "aliases": []
+    },
+    "theorem_even_instability_inconsistency": {
+      "statement": "Theorem: for q-acceptant C, C is inconsistent iff there exist X and X'=X∪{x'} with positive even choice distance.",
+      "source_location": "Appendix Theorem Even Instability is Inconsistent",
+      "aliases": []
+    },
+    "corollary_no_consistent_even_instability": {
+      "statement": "Corollary: there is no q-acceptant consistent C that is tightly d-unstable for even d.",
+      "source_location": "Appendix Corollary No Consistent Tightly Even Instability",
+      "aliases": []
+    },
+    "definition_general_variability": {
+      "statement": "Definition: general variability is the max of the largest borderline set V_C(X) and waitlisted set A_C(X).",
+      "source_location": "Appendix Definition Variability, General",
+      "aliases": []
+    },
+    "theorem_append_remove_variability": {
+      "statement": "Theorem: for q-acceptant 1-unstable C and universe size at least 2q, the maximum waitlisted-set size equals the maximum borderline-set size.",
+      "source_location": "Appendix Theorem append-remove-size",
+      "aliases": []
+    },
+    "lemma_corrected_consistency_of_removable_sets": {
+      "statement": "Corrected lemma: if C is 1-unstable and q-acceptant and C(X1)=C(X2), then V_C(X1)=V_C(X2). The TeX source has the typo V_C(X1)=V_C(X1).",
+      "source_location": "Appendix Lemma Consistency of Removable Sets",
+      "aliases": []
+    },
+    "lemma_ranking_m": {
+      "statement": "Lemma: for q-acceptant 1-unstable C with variability 1, V_C(X)=A_C(X∪{x'}) when adding x' changes the chosen set.",
+      "source_location": "Appendix Lemma Ranking m",
+      "aliases": []
+    },
+    "theorem_q_representative_variability": {
+      "statement": "Theorem: C is q-representative iff it is q-acceptant and 1-unstable with variability 1.",
+      "source_location": "Appendix Theorem q-Representativeness and 1-Variability are Equivalent",
+      "aliases": []
+    },
+    "theorem_sequential_composition_substitutable": {
+      "statement": "Theorem: sequential composition of substitutable choice functions is substitutable.",
+      "source_location": "Appendix Theorem Composition Preserves Substitutability",
+      "aliases": []
+    },
+    "theorem_additive_variability_bound": {
+      "statement": "Theorem: a sequential composition of q-acceptant 1-unstable functions with variabilities m1,...,mn has variability at most sum_i m_i.",
+      "source_location": "Appendix Theorem Additive Variability Bound",
+      "aliases": []
+    },
+    "lemma_lap_ordering": {
+      "statement": "Lemma: in a linear assignment problem, the applicant assigned to slot s is ordered above every rejected applicant by slot s's ordering.",
+      "source_location": "Appendix Lemma LAP Ordering",
+      "aliases": []
+    },
+    "theorem_lap_instability": {
+      "statement": "Theorem: linear assignment problems are 1-unstable.",
+      "source_location": "Appendix Theorem Linear Assignment Instability",
+      "aliases": []
+    },
+    "theorem_lap_variability": {
+      "statement": "Theorem: the variability of a linear assignment problem is upper bounded by the number of distinct preference orderings induced by its slots.",
+      "source_location": "Appendix Theorem Linear Assignment Variability",
+      "aliases": []
+    }
+  }
+}

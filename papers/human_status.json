@@ -433,6 +433,40 @@
       }
     },
     {
+      "id": "DGD26AdmissionsPredictability",
+      "title": "Capacity Constraints Make Admissions Processes Less Predictable",
+      "authors": "Evan Dong; Nikhil Garg; Sarah Dean",
+      "publication": "AAAI-26 published version, DOI 10.1609/aaai.v40i45.41179; TeX/formula source arXiv:2601.11513v1",
+      "publication_year": 9999,
+      "source_url": "",
+      "paper_info": "Capacity Constraints Make Admissions Processes Less Predictable by Evan Dong; Nikhil Garg; Sarah Dean; AAAI-26 published version, DOI 10.1609/aaai.v40i45.41179; TeX/formula source arXiv:2601.11513v1.",
+      "status": "Formalized",
+      "human_review": "0/101",
+      "human_translation": "0/101 reviewed",
+      "llm_as_judge_translation": "101/101 match",
+      "llm_as_judge_paper_coverage": "39/39 covered",
+      "lean_loc": 11536,
+      "main_note": "Finite choice-function instability, q-representative and sequential variability, tight-instability constructions, append/remove variability, and linear-assignment variability results are formalized; empirical NYC performance plots are out of theorem scope.",
+      "main_note_citation": null,
+      "main_note_review": {
+        "status": "draft",
+        "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
+      },
+      "paper_folder": "papers/DGD26AdmissionsPredictability",
+      "review_entrypoint": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
+      "artifacts": {
+        "readme": "papers/DGD26AdmissionsPredictability/README.md",
+        "source_text": "papers/DGD26AdmissionsPredictability/source.txt",
+        "source_tex_main": "papers/DGD26AdmissionsPredictability/source_tex/main.tex",
+        "source_tex_appendix": "papers/DGD26AdmissionsPredictability/source_tex/appendix.tex",
+        "paper_interface": "papers/DGD26AdmissionsPredictability/PaperInterface.lean",
+        "assumptions": "papers/DGD26AdmissionsPredictability/Assumptions.lean",
+        "final_validation_report": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/DGD26AdmissionsPredictability/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/DGD26AdmissionsPredictability/DependencyDAG.pdf"
+      }
+    },
+    {
       "id": "GGRS26CombattingGerrymanderingRCV",
       "title": "Combatting Gerrymandering with Ranked Choice Voting: an Experimental Analysis of Multi-member Districts in the United States",
       "authors": "Nikhil Garg; Wes Gurnee; David Rothschild; David Shmoys",

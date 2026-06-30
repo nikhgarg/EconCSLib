@@ -1,0 +1,239 @@
+\begin{thebibliography}{47}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[{Arnosti, Bonet, and Sethuraman(2024)}]{arnosti2024explainable}
+Arnosti, N.; Bonet, C.; and Sethuraman, J. 2024.
+\newblock Explainable affirmative action.
+\newblock In \emph{Proceedings of the 25th ACM Conference on Economics and Computation}, 310--310.
+
+\bibitem[{Arrow(1959)}]{arrow1959rational}
+Arrow, K.~J. 1959.
+\newblock Rational choice functions and orderings.
+\newblock \emph{Economica}, 26(102): 121--127.
+
+\bibitem[{Bommasani et~al.(2022)Bommasani, Creel, Kumar, Jurafsky, and Liang}]{bommasani2022pickingpersondoesalgorithmic}
+Bommasani, R.; Creel, K.~A.; Kumar, A.; Jurafsky, D.; and Liang, P.~S. 2022.
+\newblock Picking on the same person: Does algorithmic monoculture lead to outcome homogenization?
+\newblock \emph{Advances in Neural Information Processing Systems}, 35: 3663--3678.
+
+\bibitem[{Bruggink and Gambhir(1996)}]{bruggink1996statistical}
+Bruggink, T.~H.; and Gambhir, V. 1996.
+\newblock Statistical models for college admission and enrollment: A case study for a selective liberal arts college.
+\newblock \emph{Research in Higher Education}, 37(2): 221--240.
+
+\bibitem[{Celebi(2023)}]{celebi2023diversity}
+Celebi, O. 2023.
+\newblock Diversity preferences, affirmative action and choice rules.
+\newblock \emph{arXiv preprint arXiv:2310.14442}.
+
+\bibitem[{Chernoff(1954)}]{chernoff1954rational}
+Chernoff, H. 1954.
+\newblock Rational selection of decision functions.
+\newblock \emph{Econometrica: journal of the Econometric Society}, 422--443.
+
+\bibitem[{Creel and Hellman(2022)}]{creel2022algorithmic}
+Creel, K.; and Hellman, D. 2022.
+\newblock The algorithmic leviathan: Arbitrariness, fairness, and opportunity in algorithmic decision-making systems.
+\newblock \emph{Canadian Journal of Philosophy}, 52(1): 26--43.
+
+\bibitem[{Deng, Panigrahi, and Waggoner(2017)}]{deng2017complexity}
+Deng, Y.; Panigrahi, D.; and Waggoner, B. 2017.
+\newblock The complexity of stable matchings under substitutable preferences.
+\newblock In \emph{Proceedings of the AAAI Conference on Artificial Intelligence}, volume~31, 480--486.
+
+\bibitem[{Dong et~al.(2025)Dong, Schein, Wang, and Garg}]{dongdiscretization2025}
+Dong, E.; Schein, A.; Wang, Y.; and Garg, N. 2025.
+\newblock Addressing discretization-induced bias in demographic prediction.
+\newblock \emph{PNAS Nexus}, 4(2): pgaf027.
+
+\bibitem[{Echenique and Yenmez(2015)}]{echenique2015control}
+Echenique, F.; and Yenmez, M.~B. 2015.
+\newblock How to control controlled school choice.
+\newblock \emph{American Economic Review}, 105(8): 2679--2694.
+
+\bibitem[{Gardner, Popovic, and Schmidt(2023)}]{gardner2023benchmarking}
+Gardner, J.; Popovic, Z.; and Schmidt, L. 2023.
+\newblock Benchmarking distribution shift in tabular data with tableshift.
+\newblock \emph{Advances in Neural Information Processing Systems}, 36: 53385--53432.
+
+\bibitem[{Gray et~al.(2022)Gray, McCotter, Berry, Buschbacher, and Kelson}]{sffaamicus}
+Gray, C.~B.; McCotter, R.~T.; Berry, J.; Buschbacher, M.; and Kelson, J.~M. 2022.
+\newblock Brief of Economists as Amici Curiae in Support of Petitioner.
+\newblock Students for Fair Admissions, Inc. v. President and Fellows of Harvard College and SFFA v. University of North Carolina (UNC), Supreme Court of the United States, 2023.
+
+\bibitem[{Gupta, Sawhney, and Roth(2016)}]{gupta2016will}
+Gupta, N.; Sawhney, A.; and Roth, D. 2016.
+\newblock Will I get in? modeling the graduate admission process for American universities.
+\newblock In \emph{2016 IEEE 16th international conference on data mining workshops (ICDMW)}, 631--638. IEEE.
+
+\bibitem[{Jain, Creel, and Wilson(2024)}]{jain2024scarce}
+Jain, S.; Creel, K.; and Wilson, A. 2024.
+\newblock Scarce Resource Allocations That Rely On Machine Learning Should Be Randomized.
+\newblock \emph{arXiv preprint arXiv:2404.08592}.
+
+\bibitem[{Jain et~al.(2024)Jain, Suriyakumar, Creel, and Wilson}]{jain2023algorithmic}
+Jain, S.; Suriyakumar, V.; Creel, K.; and Wilson, A. 2024.
+\newblock Algorithmic pluralism: A structural approach to equal opportunity.
+\newblock In \emph{Proceedings of the 2024 ACM Conference on Fairness, Accountability, and Transparency}, 197--206.
+
+\bibitem[{Kalai, Rubinstein, and Spiegler(2002)}]{kalai2002rationalizing}
+Kalai, G.; Rubinstein, A.; and Spiegler, R. 2002.
+\newblock Rationalizing choice functions by multiple rationales.
+\newblock \emph{Econometrica}, 70(6): 2481--2488.
+
+\bibitem[{Kaur, Kiciman, and Sharma(2023)}]{kaurmodeling}
+Kaur, J.~N.; Kiciman, E.; and Sharma, A. 2023.
+\newblock Modeling the Data-Generating Process is Necessary for Out-of-Distribution Generalization.
+\newblock In \emph{The Eleventh International Conference on Learning Representations}.
+
+\bibitem[{Kiaghadi and Hoseinpour(2023)}]{kiaghadi2023university}
+Kiaghadi, M.; and Hoseinpour, P. 2023.
+\newblock University admission process: a prescriptive analytics approach.
+\newblock \emph{Artificial Intelligence Review}, 56(1): 233--256.
+
+\bibitem[{Kim et~al.(2025)Kim, Garg, Peng, and Garg}]{kim2025correlated}
+Kim, E.~M.; Garg, A.; Peng, K.; and Garg, N. 2025.
+\newblock Correlated Errors in Large Language Models.
+\newblock In \emph{Forty-second International Conference on Machine Learning}.
+
+\bibitem[{Kleinberg and Raghavan(2021)}]{kleinberg2021algorithmic}
+Kleinberg, J.; and Raghavan, M. 2021.
+\newblock Algorithmic monoculture and social welfare.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 118(22): e2018340118.
+
+\bibitem[{Koh et~al.(2021)Koh, Sagawa, Marklund, Xie, Zhang, Balsubramani, Hu, Yasunaga, Phillips, Gao et~al.}]{koh2021wilds}
+Koh, P.~W.; Sagawa, S.; Marklund, H.; Xie, S.~M.; Zhang, M.; Balsubramani, A.; Hu, W.; Yasunaga, M.; Phillips, R.~L.; Gao, I.; et~al. 2021.
+\newblock Wilds: A benchmark of in-the-wild distribution shifts.
+\newblock In \emph{International conference on machine learning}, 5637--5664. PMLR.
+
+\bibitem[{Lee, Kizilcec, and Joachims(2023)}]{lee2023evaluating}
+Lee, H.; Kizilcec, R.~F.; and Joachims, T. 2023.
+\newblock Evaluating a learned admission-prediction model as a replacement for standardized tests in college admissions.
+\newblock In \emph{Proceedings of the Tenth ACM Conference on Learning@ Scale}, 195--203.
+
+\bibitem[{Lee et~al.(2024)Lee, Harvey, Zhou, Garg, Joachims, and Kizilcec}]{lee2024ending}
+Lee, J.; Harvey, E.; Zhou, J.; Garg, N.; Joachims, T.; and Kizilcec, R.~F. 2024.
+\newblock Ending affirmative action harms diversity without improving academic merit.
+\newblock In \emph{Proceedings of the 4th ACM Conference on Equity and Access in Algorithms, Mechanisms, and Optimization}, 1--17.
+
+\bibitem[{Lee et~al.(2023)Lee, Thymes, Zhou, Joachims, and Kizilcec}]{lee2023augmenting}
+Lee, J.; Thymes, B.; Zhou, J.; Joachims, T.; and Kizilcec, R.~F. 2023.
+\newblock Augmenting holistic review in university admission using natural language processing for essays and recommendation letters.
+\newblock \emph{arXiv preprint arXiv:2306.17575}.
+
+\bibitem[{Liu et~al.(2023)Liu, Wang, Britton, and Abebe}]{liu2023reimagining}
+Liu, L.~T.; Wang, S.; Britton, T.; and Abebe, R. 2023.
+\newblock Reimagining the machine learning life cycle to improve educational outcomes of students.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 120(9): e2204781120.
+
+\bibitem[{Lux et~al.(2016)Lux, Pittman, Shende, and Shende}]{lux2016applications}
+Lux, T.; Pittman, R.; Shende, M.; and Shende, A. 2016.
+\newblock Applications of supervised learning techniques on undergraduate admissions data.
+\newblock In \emph{Proceedings of the ACM International Conference on Computing Frontiers}, 412--417.
+
+\bibitem[{Moore(1998)}]{moore1998expert}
+Moore, J.~S. 1998.
+\newblock An expert system approach to graduate school admission decisions and academic performance prediction.
+\newblock \emph{Omega}, 26(5): 659--670.
+
+\bibitem[{Moulin(1985)}]{moulin1985choice}
+Moulin, H. 1985.
+\newblock Choice functions over a finite set: a summary.
+\newblock \emph{Social Choice and Welfare}, 2(2): 147--160.
+
+\bibitem[{Neda and Gago-Masague(2022)}]{neda2022feasibility}
+Neda, B.~M.; and Gago-Masague, S. 2022.
+\newblock Feasibility of machine learning support for holistic review of undergraduate applications.
+\newblock In \emph{2022 International Conference on Applied Artificial Intelligence (ICAPAI)}, 1--6. IEEE.
+
+\bibitem[{{NYC DOE}(2022)}]{nycdoe2022hsdata}
+{NYC DOE}. 2022.
+\newblock Fall 2022 {High School} {Data}.
+\newblock InfoHub Directory Data.
+
+\bibitem[{Peng and Garg(2024{\natexlab{a}})}]{peng2024monoculture}
+Peng, K.; and Garg, N. 2024{\natexlab{a}}.
+\newblock Monoculture in Matching Markets.
+\newblock In \emph{The Thirty-eighth Annual Conference on Neural Information Processing Systems}.
+
+\bibitem[{Peng and Garg(2024{\natexlab{b}})}]{peng2024wisdomfoolishnessnoisymatching}
+Peng, K.; and Garg, N. 2024{\natexlab{b}}.
+\newblock Wisdom and Foolishness of Noisy Matching Markets.
+\newblock In \emph{Proceedings of the 25th ACM Conference on Economics and Computation}, 675--675.
+
+\bibitem[{Peng et~al.(2025)Peng, Ryu, Kleinberg, Tardos, and Garg}]{peng2025undermatching}
+Peng, K.; Ryu, E.; Kleinberg, J.; Tardos, E.; and Garg, N. 2025.
+\newblock Undermatching in New York City School Choice: Application Behavior and the Potential of Personalized Feedback.
+\newblock \emph{arXiv preprint}.
+
+\bibitem[{Perdomo et~al.(2025)Perdomo, Britton, Hardt, and Abebe}]{perdomo2025difficult}
+Perdomo, J.~C.; Britton, T.; Hardt, M.; and Abebe, R. 2025.
+\newblock Difficult lessons on social prediction from wisconsin public schools.
+\newblock In \emph{Proceedings of the 2025 ACM Conference on Fairness, Accountability, and Transparency}, 2682--2704.
+
+\bibitem[{Raji et~al.(2022)Raji, Kumar, Horowitz, and Selbst}]{raji2022fallacy}
+Raji, I.~D.; Kumar, I.~E.; Horowitz, A.; and Selbst, A. 2022.
+\newblock The fallacy of AI functionality.
+\newblock In \emph{Proceedings of the 2022 ACM Conference on Fairness, Accountability, and Transparency}, 959--972.
+
+\bibitem[{Rauls(2021)}]{collegevine}
+Rauls, L. 2021.
+\newblock Is CollegeVine’s Chancing Engine Actually Accurate?
+
+\bibitem[{Rees and Ryder(2023)}]{rees2023machine}
+Rees, C.~A.; and Ryder, H.~F. 2023.
+\newblock Machine learning for the prediction of ranked applicants and matriculants to an internal medicine residency program.
+\newblock \emph{Teaching and Learning in Medicine}, 35(3): 277--286.
+
+\bibitem[{Roth(1984)}]{roth1984stability}
+Roth, A.~E. 1984.
+\newblock Stability and polarization of interests in job matching.
+\newblock \emph{Econometrica: Journal of the Econometric Society}, 47--57.
+
+\bibitem[{Sen(1971)}]{sen1971choice}
+Sen, A.~K. 1971.
+\newblock Choice functions and revealed preference.
+\newblock \emph{The Review of Economic Studies}, 38(3): 307--317.
+
+\bibitem[{Shen-Berro(2024)}]{ShenBerro2024HighSchoolAdmissions}
+Shen-Berro, J. 2024.
+\newblock NYC Education Department developing tool to help applicants gauge high school admissions chances.
+\newblock \emph{Chalkbeat New York}.
+\newblock Accessed: 2024-10-20.
+
+\bibitem[{Sirolly, Kanoria, and Ma(2024)}]{sirolly2024impact}
+Sirolly, A.; Kanoria, Y.; and Ma, H. 2024.
+\newblock The Impact of Race-Blind and Test-Optional Admissions on Racial Diversity and Merit.
+\newblock In \emph{Proceedings of the 25th ACM Conference on Economics and Computation}, 308--308.
+
+\bibitem[{Staudaher, Lee, and Soleimani(2020)}]{staudaher2020predicting}
+Staudaher, S.; Lee, J.; and Soleimani, F. 2020.
+\newblock Predicting Applicant Admission Status for Georgia Tech's Online Master's in Analytics Program.
+\newblock In \emph{Proceedings of the Seventh ACM Conference on Learning@ Scale}, 309--312.
+
+\bibitem[{Toups et~al.(2023)Toups, Bommasani, Creel, Bana, Jurafsky, and Liang}]{toups2023ecosystem}
+Toups, C.; Bommasani, R.; Creel, K.; Bana, S.; Jurafsky, D.; and Liang, P.~S. 2023.
+\newblock Ecosystem-level analysis of deployed machine learning reveals homogeneous outcomes.
+\newblock \emph{Advances in Neural Information Processing Systems}, 36: 51178--51201.
+
+\bibitem[{Wang et~al.(2024)Wang, Kapoor, Barocas, and Narayanan}]{wang2024against}
+Wang, A.; Kapoor, S.; Barocas, S.; and Narayanan, A. 2024.
+\newblock Against predictive optimization: On the legitimacy of decision-making algorithms that optimize predictive accuracy.
+\newblock \emph{ACM Journal on Responsible Computing}, 1(1): 1--45.
+
+\bibitem[{Waters and Miikkulainen(2014)}]{waters2014grade}
+Waters, A.; and Miikkulainen, R. 2014.
+\newblock Grade: Machine learning support for graduate admissions.
+\newblock \emph{Ai Magazine}, 35(1): 64--64.
+
+\bibitem[{Yao et~al.(2022)Yao, Choi, Cao, Lee, Koh, and Finn}]{yao2022wild}
+Yao, H.; Choi, C.; Cao, B.; Lee, Y.; Koh, P. W.~W.; and Finn, C. 2022.
+\newblock Wild-time: A benchmark of in-the-wild distribution shift over time.
+\newblock \emph{Advances in Neural Information Processing Systems}, 35: 10309--10324.
+
+\bibitem[{Yokoi(2019)}]{yokoi2019matroidal}
+Yokoi, Y. 2019.
+\newblock Matroidal choice functions.
+\newblock \emph{SIAM Journal on Discrete Mathematics}, 33(3): 1712--1724.
+
+\end{thebibliography}

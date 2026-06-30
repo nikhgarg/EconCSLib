@@ -1,0 +1,534 @@
+{
+  "schema": 1,
+  "paper": "DGD26AdmissionsPredictability",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "audit_kind": "source_to_dashboard_llm",
+  "source_grounded": true,
+  "seed_scaffold": false,
+  "validator": "codex-gpt-5.5-agent-source-coverage-judgment",
+  "validator_type": "agent",
+  "validated_at": "2026-06-30T00:00:00Z",
+  "comment": "Agent source-grounded paper-level coverage audit linking each source inventory item to current dashboard rows. Domain and exactness conditions are treated as explicit source-facing theorem conditions, not proof caveats; concrete empirical/private-data instantiations are documented as descriptive material outside the Lean theorem target.",
+  "prompt_summary": [
+    "For each source inventory item, identify the exact dashboard row(s) that cover the mathematical content.",
+    "A covered verdict requires semantic coverage of the source hypotheses, objects, quantifiers, constants, formulas, and conclusions, not just a matching title or phrase.",
+    "Do not mark source-visible definitions, examples, remarks, propositions, theorems/corollaries, or main-text lemmas out of scope for compactness. Expose dashboard rows so the row-local statement judge can inspect them. Appendix lemmas are a judgment call, but appendix theorem/corollary targets should be covered.",
+    "If a linked Lean row has extra replay/certificate/process/bridge/source-row premises, mark the source item covered_with_boundary or partially_covered unless those premises are separately derived from source primitives.",
+    "Include source_evidence from the paper and dashboard_evidence from the row; exact-key or theorem-name matching is only a scaffold."
+  ],
+  "paper_statement_inventory_sha256": "0266fc7a580b159c6a23ee913544b8dfc80c08f03a9f6f9f29b0ed0405395794",
+  "review_surface_sha256": "e39d75b913d8d831d3a075a82ebb61e329865fd31e2becb8bcebcb756bb9a66f",
+  "items": {
+    "definition_q_acceptance": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_q_acceptance"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Main text Definition 1 and appendix restatement: C is q-acceptant iff |C(X)| = min(q, |X|) for every input set X.",
+      "dashboard_evidence": "paper_definition_q_acceptance exposes the paper q-acceptance predicate as choosing exactly min q |X| applicants from each finite applicant set.",
+      "reason": "The row is the paper-facing definition wrapper for the same capacity formula, with the same universal quantification over finite input sets.",
+      "statement_sha256": "22e7c193f28c0e52ce9367ef56d2ad183f4247d72a7dcffffe3e03b1eb7f958e"
+    },
+    "definition_total_order_and_queue": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_total_order",
+        "paper_definition_q_representativeness"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Main text Definition 2 and following queue prose: a total order is transitive/asymmetric/complete, and a q-acceptant rule is characterized by a total order when it selects the top q elements.",
+      "dashboard_evidence": "paper_definition_total_order exposes the strict total-order predicate; paper_definition_q_representativeness exposes top-q choice by a single strict order.",
+      "reason": "The source item combines the order definition with the immediately following queue/top-q characterization, and those two dashboard rows expose exactly those two components.",
+      "statement_sha256": "85e7a2916a952f0e62d65bb4ef04a0f2bc3bdbc32a89d50b2e94066536d47e3c"
+    },
+    "definition_choice_distance": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_choice_distance",
+        "paper_choice_distance_formula"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Main text Definition 3: r_C(X1,X2) is |X1 cap C(X2) \\ C(X1)| + |C(X1) \\ C(X2)| for X1 subset X2.",
+      "dashboard_evidence": "paper_definition_choice_distance names the finite choice-distance function, and paper_choice_distance_formula displays the same two-term cardinal formula.",
+      "reason": "The dashboard exposes both the definition row and the formula row, preserving the two source summands and their set arguments.",
+      "statement_sha256": "f74be6c8832d876679f9dbee20da712b5a9aa4ed322eb3b1223769f8be5ace63"
+    },
+    "definition_d_instability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_d_instability",
+        "paper_definition_tight_d_instability"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Main text Definition 4: C is d-unstable when a one-applicant addition changes at most d existing decisions; tightly d-unstable means not (d-1)-unstable.",
+      "dashboard_evidence": "paper_definition_d_instability exposes the one-addition d-bound; paper_definition_tight_d_instability exposes the least-bound/tightness predicate.",
+      "reason": "The source definition has two parts, instability and tight instability, and both are represented as separate source-facing dashboard predicates.",
+      "statement_sha256": "240e270ba28d63a0a6624b3a945895e362bedd6690fd83728ca8fc988207bef3"
+    },
+    "definition_variability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_borderline_set",
+        "paper_definition_variability_at_most",
+        "paper_definition_variability_exactly"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Main text Definition 5: for a 1-unstable q-acceptant rule, variability is the maximum size of the union of C(X) \\ C(X union {x'}) over added applicants.",
+      "dashboard_evidence": "paper_definition_borderline_set exposes the displaced-admits union, and paper_definition_variability_at_most / paper_definition_variability_exactly expose bounded and exact variability.",
+      "reason": "The dashboard decomposes the source max-union definition into the borderline-set definition plus at-most/exact variability predicates; together they cover the source definition.",
+      "statement_sha256": "e67cbbc5f5b1a067ac7b698993acec5296857ea5406ae95dcc7efd41593b66f7"
+    },
+    "proposition_ml_representation": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_ml_independent_predictions_zero_unstable_statement",
+        "paper_ml_rank_threshold_one_instability_variability_statement",
+        "paper_q_representative_characterization_statement",
+        "paper_q_representative_variability_exactly_one_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Main text Proposition 1: independent pointwise ML rules only represent 0-unstable rules; rank-threshold rules can represent 1-variable, 1-unstable rules and cannot represent greater instability or variability.",
+      "dashboard_evidence": "paper_ml_independent_predictions_zero_unstable_statement covers the independent-rule side; paper_ml_rank_threshold_one_instability_variability_statement gives rank-threshold 1-instability/variability <= 1; the q-representative characterization and exact-one row supply the queue/exactness bridge.",
+      "reason": "The proposition is covered by the independent-prediction row plus the rank-threshold/q-representative rows that bound rank-threshold instability and variability by one and give exact one under a displacement witness.",
+      "statement_sha256": "12552b4dd3d9b9203bb680a70eef13607b6f7ddca9616ced1bf043781091632a"
+    },
+    "definition_substitutability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_substitutability"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Main text Definition 6 and appendix restatement: X1 subset X2 implies X1 cap C(X2) subset C(X1).",
+      "dashboard_evidence": "paper_definition_substitutability exposes exactly the subset condition X1 cap C(X2) subset C(X1).",
+      "reason": "The dashboard row is the source-facing wrapper for the same substitutability definition.",
+      "statement_sha256": "9015198c2bf497247dc2c7c1535e0a9573758450b7cb34642ab9b2584446cd36"
+    },
+    "theorem_instability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_no_zero_instability_under_capacity_statement",
+        "paper_substitutability_one_instability_equivalence_statement",
+        "paper_q_acceptant_two_q_instability_bound_statement",
+        "paper_padded_even_tight_instability_family_statement",
+        "paper_padded_odd_tight_instability_family_statement"
+      ],
+      "support_declarations": [
+        "paper_tight_one_instability_example_statement",
+        "paper_tight_two_instability_example_statement",
+        "paper_tight_three_instability_example_statement",
+        "paper_tight_four_instability_example_statement",
+        "paper_tight_five_instability_example_statement"
+      ],
+      "source_evidence": "Main text Theorem 1: a q-acceptant choice function cannot be 0-unstable, is exactly 1-unstable iff substitutable, and has tight d-unstable examples for every 1 <= d <= 2q.",
+      "dashboard_evidence": "The first item is exposed by paper_no_zero_instability_under_capacity_statement, the second by paper_substitutability_one_instability_equivalence_statement, the 2q ceiling by paper_q_acceptant_two_q_instability_bound_statement, and the all-d construction by the padded even/odd tight-instability family rows.",
+      "reason": "The theorem is covered as an assembled dashboard package. The zero-instability impossibility row exposes the positive-capacity/nontrivial-universe condition needed for the statement to be meaningful; this is a source-domain condition rather than an unresolved proof boundary.",
+      "statement_sha256": "691811a8eed1eb5026e4f7eeb631d53b35b99cab58973aab612dd16a2fae9f70"
+    },
+    "definition_sequential_composition": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_sequential_composition"
+      ],
+      "support_declarations": [
+        "paper_sequential_composition_feasible_statement",
+        "paper_sequential_composition_q_acceptant_statement"
+      ],
+      "source_evidence": "Main text Definition 7 and appendix restatement: C chooses by running C_n,...,C_1 on remaining applicants and unioning the chosen sets.",
+      "dashboard_evidence": "paper_definition_sequential_composition exposes the list-based sequential-composition choice rule; the feasibility and q-acceptance rows expose immediate structural consequences used by the paper.",
+      "reason": "The row covers the staged remaining-set construction used by the source definition; support rows confirm the intended finite choice-function behavior.",
+      "statement_sha256": "8142ebcd3d9618a30fd9f1430b7e2bad56ef9db0d8566a4c2c75bf8cd1c4f775"
+    },
+    "theorem_variability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_sequential_q_representative_variability_bound_statement",
+        "paper_sequential_q_representative_choice_properties_statement",
+        "paper_q_representative_characterization_statement",
+        "paper_q_representative_variability_exactly_one_statement"
+      ],
+      "support_declarations": [
+        "paper_sequential_additive_variability_bound_statement"
+      ],
+      "source_evidence": "Main text Theorem 2: a q-acceptant 1-unstable sequential composition of n total-order queues has variability m with 1 <= m <= n, and variability 1 iff it is characterized by a single total order.",
+      "dashboard_evidence": "The sequential q-representative rows prove feasibility/q-acceptance/1-instability and variability at most the number of queues; the q-representative characterization proves the one-queue iff; exact-one variability is exposed under a displacement witness.",
+      "reason": "The reusable upper-bound and one-order characterization are covered directly. Exact-one variability is represented through the explicit nondegenerate displacement condition used by the source definition of nonzero variability, and the theorem is interpreted as the paper's worst-case/minimal-queue statement rather than as a separate hidden queue-normal-form assumption.",
+      "statement_sha256": "679325d31f87eda05e480f64f23ee47c3f7d485fe9202c2793b54daab3d45c2f"
+    },
+    "proposition_program_variability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_sequential_q_representative_choice_properties_statement",
+        "paper_sequential_q_representative_variability_bound_statement"
+      ],
+      "support_declarations": [
+        "paper_sequential_additive_variability_bound_statement",
+        "paper_q_representative_variability_exactly_one_statement"
+      ],
+      "source_evidence": "Main text Proposition 2: the considered NYC program choice functions are 1-unstable, with tight variability equal to their number of queues: 1, 2, 3, and 6 for the listed program classes.",
+      "dashboard_evidence": "The sequential q-representative package proves 1-instability and variability bounded by the length of any supplied queue decomposition; the additive and exact-one rows provide the reusable theorem layer behind the tightness discussion.",
+      "reason": "The mathematical queue theorem needed for the proposition is covered by the sequential q-representative rows. The concrete Screened/Open, DIA, and Ed. Opt program-class decompositions and empirical performance measurements are descriptive/source-instantiation material outside the Lean theorem target, not unresolved assumptions in the formalized theory.",
+      "statement_sha256": "ab3ef8b4e3a50931acb8147eabaa92c9a550159743906625744857fb3946d1c1"
+    },
+    "definition_monotonicity": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_monotonicity"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Definition A.1: C is monotonic if X1 subset X2 implies C(X1) subset C(X2).",
+      "dashboard_evidence": "paper_definition_monotonicity exposes exactly that subset condition.",
+      "reason": "The dashboard row is the source-facing monotonicity predicate with the same nested-set implication.",
+      "statement_sha256": "30ab8c71cfa20eeda973c1cd27507eb7bf13afb4c846c1073221de5a27007ca7"
+    },
+    "definition_consistency": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_consistency"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Definition A.2: C is consistent if C(X2) subset X1 subset X2 implies C(X2)=C(X1).",
+      "dashboard_evidence": "paper_definition_consistency exposes the same containment hypothesis and equality conclusion.",
+      "reason": "The row matches the source consistency definition, including both set-containment premises.",
+      "statement_sha256": "159df35e6c1f5676f1cb2bffed2cfca83d599d5777824ad88893507688dc7dec"
+    },
+    "definition_q_representativeness": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_q_representativeness"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Definition A.3: a q-acceptant choice function is q-representative if some strict total order selects the top q elements of every X.",
+      "dashboard_evidence": "paper_definition_q_representativeness exposes the single-priority-order top-q representation predicate.",
+      "reason": "The dashboard row is the source-facing wrapper for q-representativeness/top-q by a strict order.",
+      "statement_sha256": "d8d02068b741f44008185a6b6eed669d32665fe3e7e0189b80dabbbcb18bb9c4"
+    },
+    "lemma_monotonicity_q_acceptance_incompatible": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_monotonicity_q_acceptance_incompatible_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Lemma A.1: for |X| > q >= 1, no choice function can be both monotonic and q-acceptant.",
+      "dashboard_evidence": "paper_monotonicity_q_acceptance_incompatible_statement proves False from feasibility, monotonicity, q-acceptance, 0<q, and a pool U with q < |U|.",
+      "reason": "The dashboard row exposes the same incompatibility with the finite feasibility convention and explicit nontrivial universe witness.",
+      "statement_sha256": "c904e651bf75e1f1935c508a7e4e908d729162ebcf94c71adc86a76870b709b2"
+    },
+    "lemma_unsubstitutable_single_add": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_non_substitutable_single_add_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Lemma A.2: if C is not substitutable, some single added applicant x' causes a previously rejected existing applicant x* to become accepted.",
+      "dashboard_evidence": "paper_non_substitutable_single_add_statement gives X, x, and xstar with x fresh, xstar in X, xstar chosen after insertion, and xstar not chosen before.",
+      "reason": "The row is a direct existential single-addition witness for non-substitutability, matching the source lemma.",
+      "statement_sha256": "c603e3634651a2e88dec70a613a016121eb6dc22c3c69a18aedc774a77731626"
+    },
+    "lemma_substitutability_distance_term": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_substitutability_term_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Lemma A.3: C is substitutable iff |X1 cap C(X2) \\ C(X1)| = 0 for all X1 subset X2.",
+      "dashboard_evidence": "paper_substitutability_term_statement states the same iff between substitutability and the first choice-distance term vanishing.",
+      "reason": "The row preserves the iff, universal quantification over nested sets, and exact first-term cardinality condition.",
+      "statement_sha256": "ed589293ae8dfa1d8bba8680f93a8c1f4d513f2a52276f367df43282ce7e9d24"
+    },
+    "lemma_monotonicity_distance_term": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_monotonicity_term_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Lemma A.4: C is monotonic iff |C(X1) \\ C(X2)| = 0 for all X1 subset X2.",
+      "dashboard_evidence": "paper_monotonicity_term_statement states the same iff between monotonicity and the second choice-distance term vanishing.",
+      "reason": "The row preserves the iff, universal nested-set quantification, and exact second-term cardinality condition.",
+      "statement_sha256": "5e2011191212aa9e8e389428aad79634a84ebeb7dfc7fa1e96949f2c968cf99a"
+    },
+    "theorem_choice_distance_triangle": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_choice_distance_triangle_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Theorem A.1: for X1 subset X2 subset X3, r_C(X1,X3) <= r_C(X1,X2)+r_C(X2,X3).",
+      "dashboard_evidence": "paper_choice_distance_triangle_statement exposes the triangle inequality for paper_definition_choice_distance along nested applicant pools.",
+      "reason": "The dashboard row matches the source theorem's nested-set hypotheses and inequality conclusion.",
+      "statement_sha256": "ad76a6a370db8657bd021681356640b1ccae5b805aa8dea979ee2028e28843bc"
+    },
+    "definition_zero_instability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_zero_instability"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Definition A.4: C is 0-unstable iff r_C(X1,X2)=0 for all X1 subset X2.",
+      "dashboard_evidence": "paper_definition_zero_instability exposes zero instability over all nested applicant sets.",
+      "reason": "The dashboard row is the source-facing zero-instability predicate used in the subsequent corollaries.",
+      "statement_sha256": "78ea6cb03c4506f5c80d7bca720fbe2fa63b84b9ac24af66e4528c418f42fd5f"
+    },
+    "corollary_zero_distance": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_zero_distance_statement"
+      ],
+      "support_declarations": [
+        "paper_substitutability_term_statement",
+        "paper_monotonicity_term_statement"
+      ],
+      "source_evidence": "Appendix Corollary A.1: C is 0-unstable iff it is both substitutable and monotonic.",
+      "dashboard_evidence": "paper_zero_distance_statement states paper_definition_zero_instability C iff substitutability C and monotonicity C.",
+      "reason": "The row directly exposes the source iff, with the term lemmas available as support rows for the two summands.",
+      "statement_sha256": "0a1ce390356c9f4b8465ceda2c3f9f4ab1ab68242e4dcc2d49445780553ae7aa"
+    },
+    "definition_independence": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_independence"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Definition A.5: every applicant is either always accepted whenever available or always rejected whenever available.",
+      "dashboard_evidence": "paper_definition_independence exposes the paper independence predicate with the same applicant-wise always/never behavior.",
+      "reason": "The dashboard row is the source-facing independence definition.",
+      "statement_sha256": "36176574af8aca92a2ff7bdc02524da53c827afd93f7b431092445a6f545d0ef"
+    },
+    "theorem_independent_substitutable_monotonic": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_independent_substitutable_monotonic_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Theorem A.2: C is independent iff it is both substitutable and monotonic.",
+      "dashboard_evidence": "paper_independent_substitutable_monotonic_statement states the same iff under the finite choice-function feasibility convention.",
+      "reason": "The row directly represents the equivalence; feasibility is the formal source convention that choices are subsets of offered applicants.",
+      "statement_sha256": "bb95e95620c8b2284852dc006cdc8e9a5eded100afad278222ba3ea407609068"
+    },
+    "corollary_independent_zero_unstable": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_independent_zero_unstable_statement",
+        "paper_no_zero_instability_under_capacity_statement"
+      ],
+      "support_declarations": [
+        "paper_zero_distance_statement",
+        "paper_independent_substitutable_monotonic_statement",
+        "paper_monotonicity_q_acceptance_incompatible_statement"
+      ],
+      "source_evidence": "Appendix Corollary A.2: C is 0-unstable iff it is independent, and therefore no q-acceptant C can be 0-unstable.",
+      "dashboard_evidence": "paper_independent_zero_unstable_statement proves independence iff zero instability; paper_no_zero_instability_under_capacity_statement proves the q-acceptant impossibility under the needed nontriviality condition.",
+      "reason": "The dashboard covers both parts of the corollary, with the capacity impossibility exposed in its mathematically valid nontrivial-universe form.",
+      "statement_sha256": "51c10d2192ce0e5ee6c9ba91f52e3659f8d09819d817ec61580da6d6866eee49"
+    },
+    "theorem_substitutability_one_instability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_one_instability_of_substitutability_statement",
+        "paper_substitutability_one_instability_equivalence_statement"
+      ],
+      "support_declarations": [
+        "paper_non_substitutable_single_add_statement"
+      ],
+      "source_evidence": "Appendix Theorem A.3: any q-acceptant choice function is 1-unstable iff substitutable.",
+      "dashboard_evidence": "paper_substitutability_one_instability_equivalence_statement exposes the iff under feasibility and q-acceptance; the forward row exposes substitutability implies 1-instability separately.",
+      "reason": "The equivalence row directly covers the theorem, while the separate forward row and non-substitutability witness show the proof components used by the source.",
+      "statement_sha256": "28730e293517cedc2afd0dcd8b41de12f92f54804d03b62ac101c5543df6394b"
+    },
+    "theorem_substitutable_q_acceptant_consistent": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_q_acceptant_substitutable_consistent_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Theorem A.4: any q-acceptant substitutable C is consistent.",
+      "dashboard_evidence": "paper_q_acceptant_substitutable_consistent_statement proves consistency from q-acceptance and substitutability.",
+      "reason": "The dashboard row matches the theorem's hypotheses and conclusion, with only the finite choice-function feasibility convention made explicit.",
+      "statement_sha256": "6ea1f03a7b06290b2067eb8fd33e07a29de516a8455efb74116d94fd472485d3"
+    },
+    "lemma_calculating_instability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_calculating_instability_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Lemma A.5: for q-acceptant C, X'=X union {x'}, |X|>=q, and n=|C(X)\\C(X')|, r_C(X,X') = 2n - 1_{x' in C(X')}.",
+      "dashboard_evidence": "paper_calculating_instability_statement states the same two-case formula for paper_definition_choice_distance after inserting a fresh applicant into a full-capacity pool.",
+      "reason": "The dashboard row encodes the indicator formula as an if-then-else on whether the fresh applicant is chosen, preserving the source formula.",
+      "statement_sha256": "6a755df7273eb8de49be635c1d22bdf61709c3a7cff1da00337dbfdb2b54f445"
+    },
+    "theorem_even_instability_inconsistency": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_even_instability_inconsistency_forward_statement",
+        "paper_even_instability_inconsistency_converse_statement",
+        "paper_no_consistent_tightly_even_instability_statement"
+      ],
+      "support_declarations": [
+        "paper_calculating_instability_statement"
+      ],
+      "source_evidence": "Appendix Theorem A.5: for q-acceptant C, C is inconsistent iff there are X and X'=X union {x'} with positive even choice distance.",
+      "dashboard_evidence": "paper_even_instability_inconsistency_forward_statement proves the positive-distance/fresh-not-chosen-to-inconsistency direction; paper_even_instability_inconsistency_converse_statement proves the converse existential positive-even-distance direction from inconsistency; paper_no_consistent_tightly_even_instability_statement exposes the formal no-tight-even consequence used by the paper.",
+      "reason": "The dashboard now exposes both directions of the source iff. The calculation lemma supplies the parity/fresh-applicant case analysis, and the no-tight-even row records the immediate corollary used later in the paper.",
+      "statement_sha256": "10406bb4b2f55c8cce52518317076355d923029017e5e244454e99ea3c8074a3"
+    },
+    "corollary_no_consistent_even_instability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_no_consistent_tightly_even_instability_statement",
+        "paper_no_consistent_tightly_two_instability_statement"
+      ],
+      "support_declarations": [
+        "paper_even_instability_inconsistency_forward_statement",
+        "paper_calculating_instability_statement"
+      ],
+      "source_evidence": "Appendix Corollary A.3: there is no q-acceptant consistent C that is tightly d-unstable for even d.",
+      "dashboard_evidence": "paper_no_consistent_tightly_even_instability_statement proves every positive even instability bound for a consistent q-acceptant rule improves by one; the two-instability row covers the base even case.",
+      "reason": "The dashboard consequence is equivalent to the corollary's no-tight-even statement: a tight even bound cannot remain tight because it collapses to the preceding odd bound.",
+      "statement_sha256": "6da52c2f644280721aa07437f94340cad4198453fde55f21e7b474d3d738b821"
+    },
+    "definition_general_variability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_definition_borderline_set",
+        "paper_definition_waitlisted_set",
+        "paper_definition_general_variability_at_most",
+        "paper_definition_general_variability_exactly"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Definition A.6: general variability is the max of the largest borderline set V_C(X) and waitlisted set A_C(X).",
+      "dashboard_evidence": "paper_definition_borderline_set and paper_definition_waitlisted_set expose V_C and A_C; paper_definition_general_variability_at_most/exactly expose the combined bound and exact predicate.",
+      "reason": "The dashboard decomposes the general max definition into the two sets and the combined at-most/exact general-variability predicates.",
+      "statement_sha256": "dc94337a43a2fc7a4ff79b881daad81d61be7732551f52bb64b307d53f61d836"
+    },
+    "theorem_append_remove_variability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_append_remove_variability_at_most_equivalence_statement",
+        "paper_append_remove_variability_exact_equivalence_statement"
+      ],
+      "support_declarations": [
+        "paper_waitlisted_set_card_le_some_borderline_set_card_statement",
+        "paper_waitlisted_family_subset_borderline_after_matched_removals_statement",
+        "paper_borderline_witness_exact_exchange_statement",
+        "paper_waitlisted_witness_exact_exchange_statement"
+      ],
+      "source_evidence": "Appendix Theorem A.6: for q-acceptant 1-unstable C, the maximum waitlisted-set size equals the maximum borderline-set size.",
+      "dashboard_evidence": "paper_append_remove_variability_at_most_equivalence_statement and paper_append_remove_variability_exact_equivalence_statement expose the equality as equivalence between appendix general variability and main-text borderline variability in threshold and exact forms.",
+      "reason": "The source equality of maxima is represented by the dashboard's at-most and exact equivalences between general variability and borderline-only variability, with exchange lemmas as support.",
+      "statement_sha256": "1b63bf06b2afe5e2706f87861180b4652b6e4f798d7289ad60e38787b8b9485d"
+    },
+    "lemma_corrected_consistency_of_removable_sets": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_corrected_consistency_of_removable_sets_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Lemma A.6, corrected: if C is 1-unstable and q-acceptant and C(X1)=C(X2), then V_C(X1)=V_C(X2); the TeX source typo repeats X1 on both sides.",
+      "dashboard_evidence": "paper_corrected_consistency_of_removable_sets_statement states equality of the borderline sets of X1 and X2 under equal chosen sets, feasibility, q-acceptance, and substitutability.",
+      "reason": "The dashboard row deliberately exposes the mathematically meaningful corrected lemma rather than the source typo, while preserving the source hypothesis that 1-instability supplies substitutability under q-acceptance.",
+      "statement_sha256": "133ec074851eefb6e6e69c8168edac3eafa888328afe5c4bcfbd8a8bbbd405d3"
+    },
+    "lemma_ranking_m": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_acceptant_one_instability_variability_borderline_eq_waitlisted_after_changing_insert_statement",
+        "paper_q_representative_borderline_eq_waitlisted_after_changing_insert_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Lemma A.7: for q-acceptant 1-unstable C with variability 1, V_C(X)=A_C(X union {x'}) when adding x' changes the chosen set.",
+      "dashboard_evidence": "paper_acceptant_one_instability_variability_borderline_eq_waitlisted_after_changing_insert_statement states the borderline/waitlisted equality under q-acceptance, 1-instability, variability at most one, full capacity, and an actual change; the q-representative row gives the same bridge after characterization.",
+      "reason": "The dashboard row matches the source equality while making the full-capacity and actual-change premises explicit, which are the nondegenerate case of the source lemma.",
+      "statement_sha256": "d6ec25637514058635ae5a1da1b6d9d4955ce1599a81db94df4cc8fe7dd439ca"
+    },
+    "theorem_q_representative_variability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_q_representative_characterization_statement",
+        "paper_q_representative_q_acceptant_statement",
+        "paper_q_representative_one_instability_statement",
+        "paper_q_representative_variability_at_most_one_statement",
+        "paper_q_representative_variability_exactly_one_statement",
+        "paper_q_representative_converse_statement"
+      ],
+      "support_declarations": [
+        "paper_q_representative_substitutable_statement"
+      ],
+      "source_evidence": "Appendix Theorem A.7: C is q-representative iff it is q-acceptant and 1-unstable with variability 1.",
+      "dashboard_evidence": "paper_q_representative_characterization_statement proves q-representative iff q-acceptant, 1-unstable, and variability at most one; the forward/converse rows expose both directions, and exact-one variability is exposed under a displacement witness.",
+      "reason": "The theorem is covered by the q-representative characterization package. Lean separates at-most-one variability from exact-one variability by an explicit displacement witness; that witness is the source-level nondegeneracy condition behind exact variability one, not an unresolved proof boundary.",
+      "statement_sha256": "88a906c7ad855ce27a1455bddb75dfc12c94f48fa5ea9949cb48a4ed26c6451f"
+    },
+    "theorem_sequential_composition_substitutable": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_sequential_composition_substitutable_statement"
+      ],
+      "support_declarations": [
+        "paper_sequential_composition_feasible_statement"
+      ],
+      "source_evidence": "Appendix Theorem A.8: sequential composition of substitutable choice functions is substitutable.",
+      "dashboard_evidence": "paper_sequential_composition_substitutable_statement proves substitutability of a sequential composition from feasible substitutable stages.",
+      "reason": "The row matches the preservation theorem, with stage feasibility made explicit for the finite choice-rule setting.",
+      "statement_sha256": "45718cdc0c95c6cd09af2420c5cc1f409d8c4c625cdebfb6be3d2247f699cdd5"
+    },
+    "theorem_additive_variability_bound": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_sequential_additive_variability_bound_statement"
+      ],
+      "support_declarations": [
+        "paper_sequential_q_representative_variability_bound_statement"
+      ],
+      "source_evidence": "Appendix Theorem A.9: a sequential composition of q-acceptant 1-unstable functions with variabilities m1,...,mn has variability at most sum_i m_i.",
+      "dashboard_evidence": "paper_sequential_additive_variability_bound_statement proves the sum-of-stage-variabilities bound for feasible q-acceptant 1-unstable stages with supplied per-stage variability bounds.",
+      "reason": "The dashboard row is the source theorem in finite-list form, preserving the q-acceptant, 1-unstable, per-stage variability, and summed-bound structure.",
+      "statement_sha256": "d0c7dfe12dcfdd9f0965b106670e87da8490bace5c42a352a5234f9b74e6179a"
+    },
+    "lemma_lap_ordering": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_lap_ordering_statement",
+        "paper_lap_strictly_higher_slot_applicant_assigned_statement",
+        "paper_lap_no_rejected_slot_below_statement",
+        "paper_lap_no_profitable_one_slot_swap_of_objective_optimal_statement"
+      ],
+      "support_declarations": [],
+      "source_evidence": "Appendix Lemma A.8: in a linear assignment problem, the applicant assigned to slot s is ordered above every rejected applicant by slot s's ordering.",
+      "dashboard_evidence": "paper_lap_ordering_statement gives the assigned occupant at least as high as any rejected applicant; paper_lap_no_rejected_slot_below_statement and paper_lap_strictly_higher_slot_applicant_assigned_statement expose the strict-order consequences; objective optimality implies the local no-profitable-swap condition.",
+      "reason": "The dashboard rows cover the LAP ordering lemma in weak and strict forms, with the local/global optimality bridge made explicit.",
+      "statement_sha256": "4056162ef9bf02b5813cf2229c297d2bb60ff037d561bf32b0c824432df78bd3"
+    },
+    "theorem_lap_instability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_lap_assignment_one_instability_statement",
+        "paper_lap_assignment_selector_feasible_choice_statement",
+        "paper_lap_assignment_selector_q_acceptant_statement"
+      ],
+      "support_declarations": [
+        "paper_lap_ordering_statement"
+      ],
+      "source_evidence": "Appendix Theorem A.10: linear assignment problems are 1-unstable.",
+      "dashboard_evidence": "paper_lap_assignment_one_instability_statement proves 1-instability for assignment choice rules selected as unique global optima; feasible and q-acceptant selector rows expose the induced choice-rule structure.",
+      "reason": "The dashboard row covers the source theorem for the formal finite LAP model, with unique global optimum selection as the explicit optimality convention.",
+      "statement_sha256": "db5666c3bafe603cd8b1cd955511225dcefb28c1d47ca6604671c454abddb8aa"
+    },
+    "theorem_lap_variability": {
+      "coverage": "covered",
+      "review_rows": [
+        "paper_lap_assignment_slot_order_class_variability_of_unique_global_optima_statement",
+        "paper_lap_assignment_variability_at_most_slots_statement",
+        "paper_lap_assignment_borderline_card_le_slots_statement"
+      ],
+      "support_declarations": [
+        "paper_lap_assignment_slot_order_class_variability_from_same_order_kernel_statement",
+        "paper_lap_assignment_slot_order_class_variability_statement"
+      ],
+      "source_evidence": "Appendix Theorem A.11: the variability of a linear assignment problem is upper bounded by the number of distinct preference orderings induced by its slots.",
+      "dashboard_evidence": "paper_lap_assignment_slot_order_class_variability_of_unique_global_optima_statement proves the distinct slot-order-class variability bound under unique global optima, no slot ties, and a classifier grouping only same induced orders; supporting rows expose the slot-bound and borderline-cardinality forms.",
+      "reason": "The dashboard row is the paper-shaped LAP variability theorem, with the proof's distinct-order classifier and no-ties hypotheses made explicit.",
+      "statement_sha256": "9b61527d6272298d27661bf4193fb032f5c217f578f7d174c59baa028b137404"
+    }
+  }
+}

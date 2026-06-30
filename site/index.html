@@ -30,7 +30,7 @@
         </p>
         <div class="actions">
           <a class="button primary" href="https://github.com/nikhgarg/EconCSLib">Repository</a>
-          <a class="button" href="https://arxiv.org/abs/2606.13306">Paper</a>
+          <a class="button" href="#paper">Paper</a>
         </div>
         <p class="project-summary" id="paper">
           The project combines reusable EC Lean infrastructure with
@@ -91,7 +91,7 @@
               <tr>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Foundations/Math">Foundations: finite math and graph tools</a></td>
                 <td>Finite-sum rewrites, order/rank lemmas, threshold and interval characterizations, asymptotic/exponential estimates, and cycle extraction in finite directed graphs.</td>
-                <td>11,819</td>
+                <td>15,402</td>
               </tr>
               <tr>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Foundations/Probability">Foundations: probability and stochastic processes</a></td>
@@ -150,10 +150,10 @@
           <p>
             The public repository currently contains formalized papers and
             selected public partial formalizations whose remaining assumptions
-            are explicit. Human review counts the full review surface.
-            LLM-as-judge statement translation validates individual Lean
-            statements against corresponding mathematical statements in the
-            paper, including explicit source-condition rows.
+            are explicit. Human review counts the full review surface. The
+            LLM-as-judge column reports statement translation rows
+            and explicit source-condition rows, so its components reconcile to
+            the same surface.
           </p>
         </div>
 
@@ -162,19 +162,19 @@
             <colgroup>
               <col class="paper-col">
               <col class="status-col">
-              <col class="loc-col">
-              <col class="note-col">
               <col class="human-col">
               <col class="judge-col">
+              <col class="loc-col">
+              <col class="note-col">
             </colgroup>
             <thead>
               <tr>
                 <th>Paper</th>
-                <th>Status/Artifacts</th>
-                <th>Full proof LOC</th>
-                <th>Note</th>
+                <th>Status</th>
                 <th>Human review</th>
                 <th>LLM-as-judge statement translation</th>
+                <th>Full proof LOC</th>
+                <th>Public note</th>
               </tr>
             </thead>
             <tbody>
@@ -335,6 +335,17 @@
               </tr>
               <tr>
                 <td>
+                  <a class="paper-source" href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/DGD26AdmissionsPredictability"><cite>Capacity Constraints Make Admissions Processes Less Predictable</cite></a> by
+                  Evan Dong; Nikhil Garg; Sarah Dean; AAAI-26 published version, DOI 10.1609/aaai.v40i45.41179; TeX/formula source arXiv:2601.11513v1.
+                </td>
+                <td><div class="artifact-links"><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md">Formalized</a> <a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/DGD26AdmissionsPredictability/DependencyDAG.pdf">DAG</a></div></td>
+                <td>11,536</td>
+                <td>Finite choice-function instability, q-representative and sequential variability, tight-instability constructions, append/remove variability, and linear-assignment variability results are formalized; empirical NYC performance plots are out of theorem scope.</td>
+                <td>0/101 reviewed</td>
+                <td>101/101 match</td>
+              </tr>
+              <tr>
+                <td>
                   <a class="paper-source" href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GGRS26CombattingGerrymanderingRCV"><cite>Combatting Gerrymandering with Ranked Choice Voting: an Experimental Analysis of Multi-member Districts in the United States</cite></a> by
                   Nikhil Garg; Wes Gurnee; David Rothschild; David Shmoys; arXiv:2107.07083; Operations Research 2026, DOI 10.1287/opre.2024.1167.
                 </td>
@@ -397,16 +408,6 @@
 
     <footer class="footer">
       <p>EconCSLib is maintained by <a href="https://gargnikhil.com">Nikhil Garg</a>.</p>
-      <p>
-        See also <a href="https://arxiv.org/abs/2606.16144">this paper</a>
-        and <a href="https://github.com/gametheoryinlean/EconCSLib">Lean Project</a>,
-        also called EconCSLib. The two projects are separate and independently
-        (and concurrently) developed, with different focuses: our project
-        focuses on automated formalization of research papers (with
-        human-in-the-loop translation validation), while their project focuses
-        on human curation (with LLM support) of a library of concepts for
-        Economics and Computation.
-      </p>
     </footer>
   </body>
 </html>

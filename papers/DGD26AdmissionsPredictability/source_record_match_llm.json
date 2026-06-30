@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "paper": "DGD26AdmissionsPredictability",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "validator": "codex-gpt-5.5-source-record-review",
+  "validator_type": "agent",
+  "validated_at": "2026-06-30T00:00:00Z",
+  "source_record_audit_sha256": "b863a442b497bb2af28ab3aa6f5b451a1802c7fc07f6b2f15e04eef2e4e12610",
+  "comment": "Targeted source-record review for visible exactness/nondegeneracy premises. These are theorem-level conditions, not hidden replay/certificate/process fields.",
+  "items": {
+    "paper_acceptant_one_instability_variability_general_variability_exactly_one_statement.hwitness : paper_definition_has_displacement C": {
+      "classification": "validated_source_assumption",
+      "source_location": "Main text Definition Variability; Appendix Definition Variability, General; Appendix Theorem q-Representativeness and 1-Variability are Equivalent",
+      "reason": "The visible premise states the nondegenerate exactness condition that some insertion actually displaces a currently chosen applicant. It routes the source phrase 'variability 1' through Lean's exact-one definition, separating exactness from the already proved at-most-one bound.",
+      "source_record_audit_sha256": "b863a442b497bb2af28ab3aa6f5b451a1802c7fc07f6b2f15e04eef2e4e12610",
+      "validated_at": "2026-06-30T00:00:00Z",
+      "validator": "codex-gpt-5.5-source-record-review",
+      "validator_type": "agent"
+    },
+    "paper_q_representative_general_variability_exactly_one_statement.hwitness : paper_definition_has_displacement C": {
+      "classification": "validated_source_assumption",
+      "source_location": "Main text Definition Variability; Appendix Definition Variability, General; Appendix Theorem q-Representativeness and 1-Variability are Equivalent",
+      "reason": "The visible premise is the concrete nonzero-witness part of exact variability one. The unconditional q-representative result is exposed separately as an at-most-one theorem; this row proves the exact-one refinement when the source exactness witness exists.",
+      "source_record_audit_sha256": "b863a442b497bb2af28ab3aa6f5b451a1802c7fc07f6b2f15e04eef2e4e12610",
+      "validated_at": "2026-06-30T00:00:00Z",
+      "validator": "codex-gpt-5.5-source-record-review",
+      "validator_type": "agent"
+    },
+    "paper_q_representative_tightly_one_instability_statement.hwitness : paper_definition_has_displacement C": {
+      "classification": "validated_source_assumption",
+      "source_location": "Main text Definition d-Instability; Main text Definition Variability; Appendix Theorem q-Representativeness and 1-Variability are Equivalent",
+      "reason": "The visible premise supplies the concrete one-step change needed to upgrade the proved 1-instability upper bound to a tight/exact 1-instability statement. It is an explicit nondegeneracy condition, not a certificate hiding the LAP or queue proof.",
+      "source_record_audit_sha256": "b863a442b497bb2af28ab3aa6f5b451a1802c7fc07f6b2f15e04eef2e4e12610",
+      "validated_at": "2026-06-30T00:00:00Z",
+      "validator": "codex-gpt-5.5-source-record-review",
+      "validator_type": "agent"
+    },
+    "paper_q_representative_variability_exactly_one_statement.hwitness : paper_definition_has_displacement C": {
+      "classification": "validated_source_assumption",
+      "source_location": "Main text Definition Variability; Appendix Theorem q-Representativeness and 1-Variability are Equivalent; Appendix proof of Proposition ML Representation",
+      "reason": "The visible premise is the source-level nondegeneracy witness for exact variability one. Lean separately proves q-representative variability at most one without this premise; exact one requires this witness to exclude degenerate no-displacement cases.",
+      "source_record_audit_sha256": "b863a442b497bb2af28ab3aa6f5b451a1802c7fc07f6b2f15e04eef2e4e12610",
+      "validated_at": "2026-06-30T00:00:00Z",
+      "validator": "codex-gpt-5.5-source-record-review",
+      "validator_type": "agent"
+    }
+  }
+}

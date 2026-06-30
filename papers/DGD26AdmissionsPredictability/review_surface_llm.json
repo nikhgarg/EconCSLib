@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "paper": "DGD26AdmissionsPredictability",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "validator": "codex-gpt-5.5-review-surface-pass",
+  "validator_type": "agent",
+  "validated_at": "2026-06-30T00:00:00Z",
+  "judgment": "passes",
+  "reason": "The current 101-row dashboard surface consists of paper-facing source definitions, displayed-formula wrappers, named appendix/main-text statements, explicit source nondegeneracy conditions, the now-exposed even-instability inconsistency converse, and LAP source statements. Old conditional LAP exchange/certificate bridge rows are classified as auxiliary proof-support declarations and excluded from the review surface. The row-local Source status notes are intentionally uniform pending the broader statement-match validation lane.",
+  "review_rows": 101,
+  "review_surface_sha256": "e39d75b913d8d831d3a075a82ebb61e329865fd31e2becb8bcebcb756bb9a66f",
+  "items": {}
+}
