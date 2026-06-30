@@ -369,6 +369,53 @@ theorem hasInitialEliminationFocusPrefix_of_getElem
       hkind ⟨n, hn_loss⟩
 
 /--
+Focused initial-elimination prefixes expose their indexed focus equations.
+
+This is the reverse direction of
+`hasInitialEliminationFocusPrefix_of_getElem` for callers that prefer to keep a
+single source-facing prefix predicate in theorem statements.
+-/
+theorem get_focus_eq_of_initialEliminationFocusPrefix
+    {Candidate : Type*} {trace : STVTrace Candidate}
+    {lossPrefix : List Candidate}
+    (hprefix : trace.HasInitialEliminationFocusPrefix lossPrefix)
+    (i : Fin lossPrefix.length) :
+    (trace.steps.get ⟨i.1, Nat.lt_of_lt_of_le i.2 hprefix.1⟩).focus =
+      some (lossPrefix.get i) := by
+  rcases hprefix with ⟨hlen, hfocus, _hkind⟩
+  have hget? :
+      ((trace.steps.take lossPrefix.length).map STVStep.focus)[i.1]? =
+        (lossPrefix.map some)[i.1]? := by
+    rw [hfocus]
+  have hsome :
+      some ((trace.steps.get
+          ⟨i.1, Nat.lt_of_lt_of_le i.2 hlen⟩).focus) =
+        some (some (lossPrefix.get i)) := by
+    simpa [List.getElem?_map, List.getElem?_eq_getElem, List.getElem_take,
+      Nat.min_eq_left hlen] using hget?
+  exact Option.some.inj hsome
+
+/--
+Focused initial-elimination prefixes expose their indexed elimination-kind
+equations.
+-/
+theorem get_kind_eq_of_initialEliminationFocusPrefix
+    {Candidate : Type*} {trace : STVTrace Candidate}
+    {lossPrefix : List Candidate}
+    (hprefix : trace.HasInitialEliminationFocusPrefix lossPrefix)
+    (i : Fin lossPrefix.length) :
+    (trace.steps.get ⟨i.1, Nat.lt_of_lt_of_le i.2 hprefix.1⟩).kind =
+      StepKind.eliminate := by
+  rcases hprefix with ⟨hlen, _hfocus, hkind⟩
+  have htake_mem :
+      (trace.steps.take lossPrefix.length).get
+          ⟨i.1, by simpa [Nat.min_eq_left hlen] using i.2⟩ ∈
+        trace.steps.take lossPrefix.length :=
+    List.getElem_mem _
+  simpa [List.getElem_take, Nat.min_eq_left hlen] using
+    hkind _ htake_mem
+
+/--
 If the first `length` trace steps are eliminations, then the trace-derived
 round-outcome sequence has `length` initial losing labels.
 -/

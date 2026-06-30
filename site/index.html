@@ -136,7 +136,7 @@
               <tr>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/SocialChoice">Social choice, rankings, and fair division</a></td>
                 <td>Ranking profiles, Kendall distance and Mallows-style sequential ranking models, score/payoff interfaces, envy graphs, bounded-envy allocations, and indivisible-goods fairness statements.</td>
-                <td>19,361</td>
+                <td>22,162</td>
               </tr>
               <!-- END GENERATED LIBRARY COMPONENT ROWS -->
             </tbody>
@@ -332,6 +332,17 @@
                 <td>Additional assumption recorded in the validation report: strict variance decrease is stated with 0 &lt; q_v &lt; 1; human review treats this as formalized rather than a caveat.</td>
                 <td>10/27 reviewed; 2 uncertain</td>
                 <td>16/17 statement rows match; 1 formalization-boundary statement row; 10 source-condition rows</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="paper-source" href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GGRS26CombattingGerrymanderingRCV"><cite>Combatting Gerrymandering with Ranked Choice Voting: an Experimental Analysis of Multi-member Districts in the United States</cite></a> by
+                  Nikhil Garg; Wes Gurnee; David Rothschild; David Shmoys; arXiv:2107.07083; Operations Research 2026, DOI 10.1287/opre.2024.1167.
+                </td>
+                <td><div class="artifact-links"><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md">Formalized</a> <a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.pdf">DAG</a></div></td>
+                <td>9,398</td>
+                <td>The in-scope theorem ledger is formalized: Lemma C.1, the PAV rounding path, solid-coalition STV isolation, Droop-quota arithmetic, and Proposition 1 are closed in Lean. The Proposition 1 endpoint uses a total, quota-respecting fractional STV choice rule and derives final seat accounting from the generated filled-seat source semantics via partyFilledSeatCount; redistricting optimization and simulations remain data/code scope rather than theorem-ledger targets.</td>
+                <td>0/19 reviewed</td>
+                <td>19/19 match</td>
               </tr>
               <tr>
                 <td>

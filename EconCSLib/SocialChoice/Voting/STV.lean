@@ -501,6 +501,131 @@ theorem replaysFrom_take_get_beforeActive {Candidate : Type*}
       (trace.steps.get i).beforeActive :=
   replayStepsFrom_take_get_beforeActive hreplay i
 
+/-- Removing a focused candidate is an active-set monotone transition. -/
+theorem activeMonotone_of_removesFocusedCandidate {Candidate : Type*}
+    [DecidableEq Candidate] {step : STVStep Candidate}
+    (hremove : step.removesFocusedCandidate) :
+    step.activeMonotone := by
+  rcases hremove with ⟨focused, _hfocus, hafter⟩
+  intro candidate hcandidate
+  rw [hafter] at hcandidate
+  exact (Finset.mem_erase.mp hcandidate).2
+
+/--
+Along a replay whose steps are active-set monotone, the terminal active set is
+contained in the initial active set.
+-/
+theorem terminalActive_subset_startActive_of_replayStepsFrom_activeMonotone
+    {Candidate : Type*} {steps : List (STVStep Candidate)}
+    {startActive terminalActive : Finset Candidate}
+    (hreplay : replayStepsFrom steps startActive terminalActive)
+    (hmono : ∀ step, step ∈ steps → step.activeMonotone) :
+    terminalActive ⊆ startActive := by
+  induction steps generalizing startActive with
+  | nil =>
+      simp [replayStepsFrom] at hreplay
+      intro candidate hcandidate
+      simpa [hreplay] using hcandidate
+  | cons step rest ih =>
+      simp only [replayStepsFrom] at hreplay
+      rcases hreplay with ⟨hbefore, hrest⟩
+      have htail :
+          terminalActive ⊆ step.afterActive :=
+        ih hrest (fun step' hstep' => hmono step' (by simp [hstep']))
+      intro candidate hcandidate
+      have hbefore_mem : candidate ∈ step.beforeActive :=
+        hmono step (by simp) (htail hcandidate)
+      simpa [hbefore] using hbefore_mem
+
+/--
+Along a replay whose steps are active-set monotone, the terminal active set is
+contained in every indexed step's pre-active set.
+-/
+theorem terminalActive_subset_beforeActive_of_replayStepsFrom_activeMonotone
+    {Candidate : Type*} {steps : List (STVStep Candidate)}
+    {startActive terminalActive : Finset Candidate}
+    (hreplay : replayStepsFrom steps startActive terminalActive)
+    (hmono : ∀ step, step ∈ steps → step.activeMonotone)
+    (i : Fin steps.length) :
+    terminalActive ⊆ (steps.get i).beforeActive := by
+  induction steps generalizing startActive with
+  | nil =>
+      exact Fin.elim0 i
+  | cons step rest ih =>
+      simp only [replayStepsFrom] at hreplay
+      rcases hreplay with ⟨hbefore, hrest⟩
+      cases i with
+      | mk n hn =>
+          cases n with
+          | zero =>
+              have htail :
+                  terminalActive ⊆ step.afterActive :=
+                terminalActive_subset_startActive_of_replayStepsFrom_activeMonotone
+                  hrest
+                  (fun step' hstep' => hmono step' (by simp [hstep']))
+              intro candidate hcandidate
+              have hbefore_mem : candidate ∈ step.beforeActive :=
+                hmono step (by simp) (htail hcandidate)
+              simpa using hbefore_mem
+          | succ n =>
+              have hn_rest : n < rest.length := by
+                simpa using Nat.succ_lt_succ_iff.mp hn
+              simpa using
+                ih hrest
+                  (fun step' hstep' => hmono step' (by simp [hstep']))
+                  ⟨n, hn_rest⟩
+
+/--
+At every indexed step of a replay whose steps are active-set monotone, the
+step's pre-active set is contained in the initial active set.
+-/
+theorem beforeActive_subset_startActive_of_replaysFrom_activeMonotone
+    {Candidate : Type*} {trace : STVTrace Candidate}
+    {startActive terminalActive : Finset Candidate}
+    (hreplay : trace.replaysFrom startActive terminalActive)
+    (hmono : ∀ step, step ∈ trace.steps → step.activeMonotone)
+    (i : Fin trace.steps.length) :
+    (trace.steps.get i).beforeActive ⊆ startActive := by
+  exact terminalActive_subset_startActive_of_replayStepsFrom_activeMonotone
+    (replaysFrom_take_get_beforeActive hreplay i)
+    (fun step hstep => hmono step (List.mem_of_mem_take hstep))
+
+/--
+At every indexed step of a replay whose steps remove their focused candidates,
+the step's pre-active set is contained in the initial active set.
+-/
+theorem beforeActive_subset_startActive_of_replaysFrom_removesFocusedCandidate
+    {Candidate : Type*} [DecidableEq Candidate]
+    {trace : STVTrace Candidate}
+    {startActive terminalActive : Finset Candidate}
+    (hreplay : trace.replaysFrom startActive terminalActive)
+    (hremove : ∀ step, step ∈ trace.steps → step.removesFocusedCandidate)
+    (i : Fin trace.steps.length) :
+    (trace.steps.get i).beforeActive ⊆ startActive := by
+  exact beforeActive_subset_startActive_of_replaysFrom_activeMonotone
+    hreplay
+    (fun step hstep =>
+      activeMonotone_of_removesFocusedCandidate (hremove step hstep))
+    i
+
+/--
+At every indexed step of a replay whose steps remove focused candidates, the
+terminal active set is contained in the step's pre-active set.
+-/
+theorem terminalActive_subset_beforeActive_of_replaysFrom_removesFocusedCandidate
+    {Candidate : Type*} [DecidableEq Candidate]
+    {trace : STVTrace Candidate}
+    {startActive terminalActive : Finset Candidate}
+    (hreplay : trace.replaysFrom startActive terminalActive)
+    (hremove : ∀ step, step ∈ trace.steps → step.removesFocusedCandidate)
+    (i : Fin trace.steps.length) :
+    terminalActive ⊆ (trace.steps.get i).beforeActive := by
+  exact terminalActive_subset_beforeActive_of_replayStepsFrom_activeMonotone
+    hreplay
+    (fun step hstep =>
+      activeMonotone_of_removesFocusedCandidate (hremove step hstep))
+    i
+
 /--
 A trace whose elimination steps remove focused group candidates has strictly
 decreasing active-group cardinality at those elimination steps.

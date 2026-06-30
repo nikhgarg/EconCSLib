@@ -90,7 +90,7 @@ def parse_args() -> argparse.Namespace:
             "git add command for that paper plus named shared paths."
         )
     )
-    parser.add_argument("paper", help="paper folder name, e.g. GGRS26CombattingGerrymanderingRCV")
+    parser.add_argument("paper", help="paper folder name, e.g. ExamplePaper")
     parser.add_argument(
         "--include-path",
         "--include-library",

@@ -147,7 +147,8 @@ library API is fully formalized only if it constructs the certificate from the
 paper source primitives inside Lean, or if the certificate is a validated
 paper-source assumption. Otherwise the paper endpoint remains partial or
 conditional. During closeout, run the combined axiom/premise/source-hygiene
-audit and write its paper-by-paper report:
+audit when you need a repository-wide provenance snapshot, and write its
+paper-by-paper report:
 
 ```bash
 python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md
@@ -160,6 +161,10 @@ premises, source-row formula boundaries, and source-shaped reusable APIs. A
 completed paper must have no theorem-status findings for its folder unless the
 exact boundary is marked partial/conditional in `status.json`, the dependency
 DAG, and the final validation report.
+This audit checks tracked LLM sidecar freshness; it should not rerun LLM judges
+for every paper. Refresh judge sidecars only for the target paper rows/records
+that are stale, missing, or explicitly requested. An all-paper judge refresh is
+a separate user request, not part of ordinary post-formalization closeout.
 
 Also run
 `python3 scripts/audit_repository.py --library-only --library-premise-audit --info-limit 0`
@@ -284,6 +289,10 @@ python3 scripts/sync_paper_status.py --check
 python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0
 git diff --check
 ```
+
+The broad audit checks whether existing LLM-as-judge sidecars are current. It
+does not require regenerating or rerunning judge sidecars for every paper unless
+the user explicitly asks for an all-paper refresh.
 
 For paper closeout or post-formalization work, run the targeted paper audit
 after the final report and DAG updates:

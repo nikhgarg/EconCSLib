@@ -1,0 +1,225 @@
+{
+  "schema": 1,
+  "paper": "GGRS26CombattingGerrymanderingRCV",
+  "prompt_version": "statement-match-v3-semantic-full-statement",
+  "validator": "gpt-5-codex",
+  "validator_type": "agent",
+  "validated_at": "2026-06-30T11:34:50Z",
+  "comment": "Conservative refresh against the compact 19-row PaperInterface surface after closing the filled-seat Proposition 1 route.",
+  "prompt_summary": [
+    "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, conclusions, and visible inputs.",
+    "Do not approve by theorem label, phrase overlap, or source-looking Lean names.",
+    "Rows that visibly expose conditional STV process/replay/trace boundaries may match their row text while still remaining partial in the source-record audit."
+  ],
+  "items": {
+    "paper_pav_score": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "505a0e3af37a80d0f7a75d4de599d1e064260a18624af140d2802cc0ef0eeba6",
+      "paper_statement_sha256": "55c2921824fd10960e6d660529611354db2e191ff3f7d0e3fd78fd2e43095ff8",
+      "tex_statement_sha256": "a8479ed5834b41708e835f25741de456e76398789b8448df032c42969dcd7de1",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the PAV/Lemma C.1 definition, interval, marginal condition, or rounded-seat consequence stated in the dashboard row."
+    },
+    "paper_pav_seat_score": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "2105c4b9faf58d91c37ca89bb235aef938f6b117c7089eedafd5b0fbd2837277",
+      "paper_statement_sha256": "46ea7e64ed17a40769ea46add8c65939e220eb4ff48eab69c8c87b72d5dfa205",
+      "tex_statement_sha256": "bbece2961eddb907160c37450598f902a8d6bfd3f63375aa4aeafb550fac4933",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the PAV/Lemma C.1 definition, interval, marginal condition, or rounded-seat consequence stated in the dashboard row."
+    },
+    "paper_pav_min_argmax": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "06f26a007ba0e93c61a2c431761a20fe3b7dd788699f80c3b2cffa582d0bcd04",
+      "paper_statement_sha256": "8a3f0f9b9a040685b46951fb0ab4c25bd97532ba9498919643d97b34dc274cf6",
+      "tex_statement_sha256": "bf539dfbc8ed1003a3fd7f85c736b46395880c2a331c8849b24be5b80ab15838",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the PAV/Lemma C.1 definition, interval, marginal condition, or rounded-seat consequence stated in the dashboard row."
+    },
+    "paper_pav_marginal_conditions": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "b87d14051b188feffb5a5a08b25e7fe174fdba662abb1760c19df695a652c8e7",
+      "paper_statement_sha256": "cfeeb432b802bb4b1814b1cf49e2d295de6f5876ef90b0ffafc175a0db1f4a52",
+      "tex_statement_sha256": "5dbbeabeb7fa9f2266b3d5913b99ef5e76b1aa0dc34aec012a63cd8ff7d84ff9",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the PAV/Lemma C.1 definition, interval, marginal condition, or rounded-seat consequence stated in the dashboard row."
+    },
+    "paper_pav_seat_interval": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "17d2902f2b17fbb0589fcf9b9ef73a148c84b28a2afe7a0b367ae5b612574330",
+      "paper_statement_sha256": "af8df2ebeae854652410cb0391f5adae9ba35ddb0a6c36a5ee03a6478e2df46a",
+      "tex_statement_sha256": "ae2f64e7dd850f7e1db4fee3e123b5b5664671dc2b7d10fad1203387d374f506",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the PAV/Lemma C.1 definition, interval, marginal condition, or rounded-seat consequence stated in the dashboard row."
+    },
+    "paper_seat_share_rounded": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "58049fcb66c9bf56e80113cf29dd662ad9be8e4fef5f982ebf67b169af322d91",
+      "paper_statement_sha256": "d4a075e5f49d39ee344a2f8fb4be6acd897526e68a820888d83a0197d79f904c",
+      "tex_statement_sha256": "ba953a658085b1436961b24cb811dc3a89617648397bf040e88209ad56a857df",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the STV quota/lower-bound/seat-share bridge stated in the dashboard row."
+    },
+    "paper_stv_solid_coalition_party_trace_isolation": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "5129c3dd5d07260b7f0aec1381f6260e102c7ad9ccb4e251328fc7ff4a29752c",
+      "paper_statement_sha256": "7edd5f793e9b6875093960dddd92051d3fcdc6de01230cd29af7f8cc5367356c",
+      "tex_statement_sha256": "363b1d342f8dd3f4bda6939cd2cf11a464a01e832ed16f6d1ca86a2d93c9b4e8",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the current PaperInterface row without changing hypotheses, inputs, or conclusion."
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "0ea62e4babe75cd7cf4d27b96ef213dd133c915cbb6f910c4e1c06de9784a683",
+      "paper_statement_sha256": "ac5f0754243c6284e20bd618e1e00ac763ef7db091a524b5fbbe64fc1fc96a41",
+      "tex_statement_sha256": "b4b3aecf1f0271350282e6d4ab2e0aed358e374d12b31a1fe63eb38f54bf01d2",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the STV quota/lower-bound/seat-share bridge stated in the dashboard row."
+    },
+    "paper_stv_solid_coalition_lower_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "57fa970a5bd4e6d32562fcb8151e64d17c50f4facc3a1c7fd49f2a0888bbf322",
+      "paper_statement_sha256": "3936127a27d3853c2526dfc524c9542588d17997387cc33a2fec82de48b638a6",
+      "tex_statement_sha256": "308e093ebf596d1e4b0cd9188895a8c1adf10243eb82d11b3b630391e1dff3bb",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the STV quota/lower-bound/seat-share bridge stated in the dashboard row."
+    },
+    "paper_stv_seat_share_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "ea864f53c03e221c58c40c5a0889e6041d60e452be797e1aec25514eaf4c0a3f",
+      "paper_statement_sha256": "ccd1001a59630bbca235fdc67c584e599f47ac1973dc8ab713bc9b8f2a359204",
+      "tex_statement_sha256": "1f124638e651187c45ad0f9d72e7c90538289a453c52482f1d51bac7277ffd15",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the STV quota/lower-bound/seat-share bridge stated in the dashboard row."
+    },
+    "paper_pav_interval_seat_share_rounded": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "96c6b469602a00098b8be1740077013156b0172b7803b1dba84a19b3b6ef7577",
+      "paper_statement_sha256": "c02a8959026339ebfcfdc045a9896075ae5fdf5f1ffd4e666ea83542620a32fc",
+      "tex_statement_sha256": "e0bc98fad1ea411243da69ee39ceab0918834e5daf3a81b2a1bef9f5ea1be8b4",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the PAV/Lemma C.1 definition, interval, marginal condition, or rounded-seat consequence stated in the dashboard row."
+    },
+    "paper_pav_marginal_conditions_seat_share_rounded": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "c0656f3860af1fd7e98324ad863117771b3bd8a73201f6a71383eec6072758a0",
+      "paper_statement_sha256": "544e8357c9d8c02d13f579b092b2a4ff939fe5fef6bb7e12880105a43d09e134",
+      "tex_statement_sha256": "9256850e9d28efa495f74bd7df940d17caa539b4ad054bc576b4e4124408ccc9",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the PAV/Lemma C.1 definition, interval, marginal condition, or rounded-seat consequence stated in the dashboard row."
+    },
+    "paper_pav_min_argmax_seat_interval": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "120c6f2d51b9821a20f3c12196dbf2346dbf4909523d4d1afbb97d55b06eb37c",
+      "paper_statement_sha256": "97f8e77b99dd665f052272f7fa2a30f9a51e01d2cfe51f095eba2fc95f273d6f",
+      "tex_statement_sha256": "049d3472efb1940bb8ccb6d102e8aec7d0d86c6c9407f718d1d253e286d22a23",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the PAV/Lemma C.1 definition, interval, marginal condition, or rounded-seat consequence stated in the dashboard row."
+    },
+    "paper_pav_min_argmax_seat_share_rounded": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "a570c4b4406b31951344a89881e1f694a0b53ead5d367de34be08093ba15c24c",
+      "paper_statement_sha256": "db7a65438d019d907cfed4be2e469d4c566a8f64be4d1637bfa10ec4a2e84558",
+      "tex_statement_sha256": "7d0c18f437e91f71aade002692a697aa988ab9e4a227ca27c4c0f8d9049f7f74",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the PAV/Lemma C.1 definition, interval, marginal condition, or rounded-seat consequence stated in the dashboard row."
+    },
+    "paper_stv_solid_coalition_ballots_party_trace_isolation": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "87e145230928eb3818c1da91d9c52eea86324ccbaf96aad87f979340741f15f1",
+      "paper_statement_sha256": "bc69deed2c5db4efd492dacafbf14f3e948949d8749ec18ec86ffa5ef7438c5b",
+      "tex_statement_sha256": "82e9f9ec876bad3e9fb15c76add32478bff1cf5a4c79b74a3484cf8b63a27734",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the current PaperInterface row without changing hypotheses, inputs, or conclusion."
+    },
+    "paper_stv_quota_floors_fit": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "3f12f985bf87a38e64a51c32aa464bdd9a1533d50918e26b4b4f990560d7e20a",
+      "paper_statement_sha256": "4406fea3652866500abd08aea96235ca9075ce6ffa507b6a40c232cb5d655e77",
+      "tex_statement_sha256": "37ba7a7a75daa81ffe9ec0e44f51ac86e22413aefdc0a0b9aa504ab267297aa4",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the STV quota/lower-bound/seat-share bridge stated in the dashboard row."
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "5bafede4d0a6ae4549a2617832fcf283f25ac0181a6107b3bdc4dad0052fb23b",
+      "paper_statement_sha256": "73c1264461e709265a8c0263a29181f58a39ef4310e6283cd342eb2c4e4e1352",
+      "tex_statement_sha256": "b80fe8fe36e1fd0598468dfd97f4b625a32d9d3081ffa73731708f6a29da05a5",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the STV quota/lower-bound/seat-share bridge stated in the dashboard row."
+    },
+    "paper_stv_solid_coalition_lower_bounds_seat_share_bounds": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "a382e909c63ba18e0dc43c4c8210a99061fa82ff430ff0e58af93f14c85ccc63",
+      "paper_statement_sha256": "57289a55591f8da56022701591c176ec73d9743b46463bea2c41292f6268e8f9",
+      "tex_statement_sha256": "62bab61cc27790035ce636bf201429afff1f073f249eaff69ea8d7d7138e9058",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The Lean statement preserves the STV quota/lower-bound/seat-share bridge stated in the dashboard row."
+    },
+    "paper_proposition1_from_generated_filled_seat_run_fractional_stv_trace_global_weight_terminal_and_pav_min_argmax": {
+      "judgment": "matches",
+      "matches": true,
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "lean_statement_sha256": "8f4cd12906a0e8ff88e3f562cad24f4bbc1735f4b2bb28a966f5e732cc7ef8dc",
+      "paper_statement_sha256": "64e46d17c1ca7d90651108e7e2598168f67abb97599d8d89d94b804482b803f3",
+      "tex_statement_sha256": "914278b75cf88a1012db3f4533113f9d54821a7c2c5cda6876cb1a03c0816e8e",
+      "validated_at": "2026-06-30T11:34:50Z",
+      "reason": "The row states the theoretical Proposition 1 STV/PAV rounded-seat endpoint using the source filled-seat fractional STV model. The visible Total and QuotaRespecting premises encode the choice-rule conventions needed by the generated STV source run, and the STV party result is read from partyFilledSeatCount rather than an assumed final elected-count premise."
+    }
+  }
+}

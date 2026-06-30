@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "paper": "GGRS26CombattingGerrymanderingRCV",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "validator": "gpt-5-codex",
+  "validator_type": "agent",
+  "validated_at": "2026-06-30T11:37:12Z",
+  "judgment": "passes",
+  "review_rows": 19,
+  "review_surface_sha256": "b71de3cbf9d575d6c30c79dacdb4da950e63a6a40cc0a39b07d3d9ed733b4798",
+  "reason": "The 19-row review surface is compact and paper-facing: rows correspond to source definitions, Lemma C.1/PAV consequences, STV appendix proof bridges, and the final Proposition 1 generated filled-seat endpoint.",
+  "items": {
+    "paper_pav_score": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_pav_seat_score": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_pav_min_argmax": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_pav_marginal_conditions": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_pav_seat_interval": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_seat_share_rounded": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_stv_solid_coalition_party_trace_isolation": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing STV definition or Appendix Proposition 1 proof bridge."
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing STV definition or Appendix Proposition 1 proof bridge."
+    },
+    "paper_stv_solid_coalition_lower_bounds": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing STV definition or Appendix Proposition 1 proof bridge."
+    },
+    "paper_stv_seat_share_bounds": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing STV definition or Appendix Proposition 1 proof bridge."
+    },
+    "paper_pav_interval_seat_share_rounded": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_pav_marginal_conditions_seat_share_rounded": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_pav_min_argmax_seat_interval": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_pav_min_argmax_seat_share_rounded": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing PAV definition, Lemma C.1 statement, or PAV rounding proof step."
+    },
+    "paper_stv_solid_coalition_ballots_party_trace_isolation": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing STV definition or Appendix Proposition 1 proof bridge."
+    },
+    "paper_stv_quota_floors_fit": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing STV definition or Appendix Proposition 1 proof bridge."
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing STV definition or Appendix Proposition 1 proof bridge."
+    },
+    "paper_stv_solid_coalition_lower_bounds_seat_share_bounds": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing STV definition or Appendix Proposition 1 proof bridge."
+    },
+    "paper_proposition1_from_generated_filled_seat_run_fractional_stv_trace_global_weight_terminal_and_pav_min_argmax": {
+      "judgment": "paper_facing",
+      "reason": "Paper-facing Proposition 1 endpoint over the generated filled-seat STV source model and PAV min-argmax input."
+    }
+  }
+}

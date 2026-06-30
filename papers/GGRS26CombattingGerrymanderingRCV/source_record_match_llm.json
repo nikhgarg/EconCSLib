@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "paper": "GGRS26CombattingGerrymanderingRCV",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "validator": "gpt-5-codex",
+  "validator_type": "agent",
+  "validated_at": "2026-06-30T11:33:50Z",
+  "source_record_audit_sha256": "d3cfe4594e7807a024510221bb58784fc85093578099148b3e2495b4d867b05f",
+  "comment": "Source-record pass for the compact GGRS PaperInterface after the filled-seat Proposition 1 closeout.",
+  "prompt_summary": [
+    "Classify every boundary-shaped theorem input against the paper source and Lean derivation path.",
+    "Do not approve by theorem label or source-looking names alone."
+  ],
+  "items": {
+    "paper_stv_solid_coalition_party_trace_isolation.trace : STVTrace Candidate": {
+      "classification": "validated_source_assumption",
+      "source_key": "STV trace/source model parameter",
+      "source_location": "Proposition 1 Appendix proof source.txt:3748-3868; general STV trace model used to state the isolation lemma",
+      "source_evidence": "The isolation rows are universally quantified over an STV trace; the trace is source-model data for stating the solid-coalition no-cross-party-support property, not a replay certificate or terminal-output assumption.",
+      "reason": "Validated as source-model data for a general trace lemma. The theorem does not assume transfer validity, replay validity, terminal semantics, or a final outcome through this parameter.",
+      "source_record_audit_sha256": "d3cfe4594e7807a024510221bb58784fc85093578099148b3e2495b4d867b05f",
+      "validated_at": "2026-06-30T11:33:50Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "row": "paper_stv_solid_coalition_party_trace_isolation"
+    },
+    "paper_stv_solid_coalition_ballots_party_trace_isolation.trace : STVTrace Candidate": {
+      "classification": "validated_source_assumption",
+      "source_key": "STV trace/source model parameter",
+      "source_location": "Proposition 1 Appendix proof source.txt:3748-3868; general STV trace model used to state the isolation lemma",
+      "source_evidence": "The isolation rows are universally quantified over an STV trace; the trace is source-model data for stating the solid-coalition no-cross-party-support property, not a replay certificate or terminal-output assumption.",
+      "reason": "Validated as source-model data for a general trace lemma. The theorem does not assume transfer validity, replay validity, terminal semantics, or a final outcome through this parameter.",
+      "source_record_audit_sha256": "d3cfe4594e7807a024510221bb58784fc85093578099148b3e2495b4d867b05f",
+      "validated_at": "2026-06-30T11:33:50Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "row": "paper_stv_solid_coalition_ballots_party_trace_isolation"
+    },
+    "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds.hstv : paper_stv_solid_coalition_quota_witness_bounds seatCount partyShare seats voters": {
+      "classification": "proved_from_primitives",
+      "source_key": "quota-witness-to-lower-bound bridge antecedent",
+      "source_location": "Appendix Proposition 1 Droop-quota witness argument",
+      "source_evidence": "The source proof derives proportional lower bounds from the same-party quota witness and Droop quota arithmetic.",
+      "lean_derivation": "The theorem unfolds paper_stv_solid_coalition_quota_witness_bounds and calls stvSolidCoalitionQuotaLowerBounds_of_quotaWitnessBounds followed by stvSolidCoalitionLowerBounds_of_quotaLowerBounds.",
+      "reason": "The premise is the explicit antecedent of this bridge theorem and is consumed by Lean through the checked quota-witness lower-bound lemmas.",
+      "source_record_audit_sha256": "d3cfe4594e7807a024510221bb58784fc85093578099148b3e2495b4d867b05f",
+      "validated_at": "2026-06-30T11:32:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "row": "paper_stv_solid_coalition_quota_witness_bounds_lower_bounds"
+    },
+    "paper_stv_solid_coalition_lower_bounds_seat_share_bounds.hstv : paper_stv_solid_coalition_lower_bounds seatCount partyShare seats": {
+      "classification": "proved_from_primitives",
+      "source_key": "lower-bound-to-rounding bridge antecedent",
+      "source_location": "Appendix Proposition 1 final STV floor/ceiling step",
+      "source_evidence": "The source proof turns the STV proportional lower bounds and seat conservation into the floor/ceiling party-seat conclusion.",
+      "lean_derivation": "The theorem unfolds paper_stv_solid_coalition_lower_bounds and calls stvSeatShareBounds_of_solidCoalitionLowerBounds.",
+      "reason": "The premise is the explicit antecedent of this bridge theorem and Lean checks the arithmetic bridge to the STV seat-share bound.",
+      "source_record_audit_sha256": "d3cfe4594e7807a024510221bb58784fc85093578099148b3e2495b4d867b05f",
+      "validated_at": "2026-06-30T11:32:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "agent",
+      "row": "paper_stv_solid_coalition_lower_bounds_seat_share_bounds"
+    }
+  }
+}

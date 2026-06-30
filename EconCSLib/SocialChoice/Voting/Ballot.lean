@@ -589,6 +589,201 @@ theorem strictSupportAccumulatorBudgetQuotaAtPrefixes_of_mem_budgetReadyCandidat
   exact hready.2
 
 /--
+Source-order loop relation for budgeted ready-candidate selection. The
+`processed` list records candidates already selected before this source-order
+suffix is scanned.
+-/
+inductive StrictSupportBudgetReadySelectionLoop {Voter Candidate : Type*}
+    [DecidableEq Candidate]
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (sources blockers : Finset Candidate) (assignedBudget : Candidate → ℕ)
+    (quota : ℕ) :
+    List Candidate → List Candidate → List Candidate → Prop
+  | nil (processed : List Candidate) :
+      StrictSupportBudgetReadySelectionLoop voters ballots sources blockers
+        assignedBudget quota processed [] []
+  | skip {processed : List Candidate} {candidate : Candidate}
+      {remaining selected : List Candidate}
+      (hnotReady :
+        candidate ∉ strictSupportBudgetReadyCandidatesAtPrefix voters ballots
+          sources blockers assignedBudget quota processed)
+      (hrest :
+        StrictSupportBudgetReadySelectionLoop voters ballots sources blockers
+          assignedBudget quota processed remaining selected) :
+      StrictSupportBudgetReadySelectionLoop voters ballots sources blockers
+        assignedBudget quota processed (candidate :: remaining) selected
+  | take {processed : List Candidate} {candidate : Candidate}
+      {remaining selected : List Candidate}
+      (hready :
+        candidate ∈ strictSupportBudgetReadyCandidatesAtPrefix voters ballots
+          sources blockers assignedBudget quota processed)
+      (hrest :
+        StrictSupportBudgetReadySelectionLoop voters ballots sources blockers
+          assignedBudget quota (processed ++ [candidate]) remaining selected) :
+      StrictSupportBudgetReadySelectionLoop voters ballots sources blockers
+        assignedBudget quota processed (candidate :: remaining)
+        (candidate :: selected)
+
+/--
+Executable source-order loop that selects exactly budget-ready candidates,
+using the already-selected prefix as accumulated blockers.
+-/
+def strictSupportBudgetReadySelectionLoopOutput {Voter Candidate : Type*}
+    [DecidableEq Candidate]
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (sources blockers : Finset Candidate) (assignedBudget : Candidate → ℕ)
+    (quota : ℕ) (processed sourceOrder : List Candidate) :
+    List Candidate :=
+  match sourceOrder with
+  | [] => []
+  | candidate :: remaining =>
+      if candidate ∈
+          strictSupportBudgetReadyCandidatesAtPrefix voters ballots sources
+            blockers assignedBudget quota processed then
+        candidate ::
+          strictSupportBudgetReadySelectionLoopOutput voters ballots sources
+            blockers assignedBudget quota (processed ++ [candidate])
+            remaining
+      else
+        strictSupportBudgetReadySelectionLoopOutput voters ballots sources
+          blockers assignedBudget quota processed remaining
+
+/--
+The executable budget-ready source-order loop satisfies the source-order loop
+relation by construction.
+-/
+theorem strictSupportBudgetReadySelectionLoopOutput_spec
+    {Voter Candidate : Type*} [DecidableEq Candidate]
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (sources blockers : Finset Candidate) (assignedBudget : Candidate → ℕ)
+    (quota : ℕ) :
+    ∀ processed sourceOrder,
+      StrictSupportBudgetReadySelectionLoop voters ballots sources blockers
+        assignedBudget quota processed sourceOrder
+        (strictSupportBudgetReadySelectionLoopOutput voters ballots sources
+          blockers assignedBudget quota processed sourceOrder) := by
+  intro processed sourceOrder
+  induction sourceOrder generalizing processed with
+  | nil =>
+      simp [strictSupportBudgetReadySelectionLoopOutput,
+        StrictSupportBudgetReadySelectionLoop.nil]
+  | cons candidate remaining ih =>
+      by_cases hready :
+        candidate ∈
+          strictSupportBudgetReadyCandidatesAtPrefix voters ballots sources
+            blockers assignedBudget quota processed
+      · simp [strictSupportBudgetReadySelectionLoopOutput, hready]
+        exact StrictSupportBudgetReadySelectionLoop.take hready
+          (ih (processed ++ [candidate]))
+      · simp [strictSupportBudgetReadySelectionLoopOutput, hready]
+        exact StrictSupportBudgetReadySelectionLoop.skip hready
+          (ih processed)
+
+/--
+If every candidate in the source order is ready at the prefix where the
+source-order loop considers it, the executable loop returns the source order
+unchanged.
+-/
+theorem strictSupportBudgetReadySelectionLoopOutput_eq_self_of_forall_ready
+    {Voter Candidate : Type*} [DecidableEq Candidate]
+    {voters : Finset Voter} {ballots : Voter → Ballot Candidate}
+    {sources blockers : Finset Candidate} {assignedBudget : Candidate → ℕ}
+    {quota : ℕ} :
+    ∀ {processed sourceOrder : List Candidate},
+      (∀ pref candidate suffix,
+        sourceOrder = pref ++ candidate :: suffix →
+          candidate ∈
+            strictSupportBudgetReadyCandidatesAtPrefix voters ballots sources
+              blockers assignedBudget quota (processed ++ pref)) →
+      strictSupportBudgetReadySelectionLoopOutput voters ballots sources
+        blockers assignedBudget quota processed sourceOrder = sourceOrder := by
+  intro processed sourceOrder hready
+  induction sourceOrder generalizing processed with
+  | nil =>
+      simp [strictSupportBudgetReadySelectionLoopOutput]
+  | cons candidate rest ih =>
+      have hcandidate :
+          candidate ∈
+            strictSupportBudgetReadyCandidatesAtPrefix voters ballots sources
+              blockers assignedBudget quota processed := by
+        simpa using hready [] candidate rest rfl
+      have hrest :
+          ∀ pref selected suffix,
+            rest = pref ++ selected :: suffix →
+              selected ∈
+                strictSupportBudgetReadyCandidatesAtPrefix voters ballots
+                  sources blockers assignedBudget quota
+                  ((processed ++ [candidate]) ++ pref) := by
+        intro pref selected suffix hdecomp
+        have hsource :
+            candidate :: rest =
+              (candidate :: pref) ++ selected :: suffix := by
+          simp [hdecomp]
+        have hready' := hready (candidate :: pref) selected suffix hsource
+        simpa [List.cons_append, List.append_assoc] using hready'
+      simp [strictSupportBudgetReadySelectionLoopOutput, hcandidate,
+        ih hrest]
+
+/--
+Every selected item of a budgeted ready-candidate loop was ready at its
+selected-prefix state.
+-/
+theorem strictSupportBudgetReadySelectionLoop_selected_mem_ready
+    {Voter Candidate : Type*} [DecidableEq Candidate]
+    {voters : Finset Voter} {ballots : Voter → Ballot Candidate}
+    {sources blockers : Finset Candidate} {assignedBudget : Candidate → ℕ}
+    {quota : ℕ} {processed sourceOrder selected : List Candidate}
+    (hloop :
+      StrictSupportBudgetReadySelectionLoop voters ballots sources blockers
+        assignedBudget quota processed sourceOrder selected) :
+    ∀ pref candidate suffix,
+      selected = pref ++ candidate :: suffix →
+        candidate ∈
+          strictSupportBudgetReadyCandidatesAtPrefix voters ballots sources
+            blockers assignedBudget quota (processed ++ pref) := by
+  induction hloop with
+  | nil processed =>
+      intro pref candidate suffix hdecomp
+      cases pref <;> simp at hdecomp
+  | skip hnotReady hrest ih =>
+      exact ih
+  | take hready hrest ih =>
+      intro pref selectedCandidate suffix hdecomp
+      cases pref with
+      | nil =>
+          simp only [List.nil_append] at hdecomp
+          injection hdecomp with hcandidate _hsuffix
+          subst selectedCandidate
+          simpa using hready
+      | cons first rest =>
+          simp only [List.cons_append] at hdecomp
+          injection hdecomp with hfirst htail
+          subst first
+          have hrec := ih rest selectedCandidate suffix htail
+          simpa [List.append_assoc] using hrec
+
+/--
+A budgeted ready-candidate source-order loop supplies the prefix-form budgeted
+accumulator quota condition.
+-/
+theorem strictSupportAccumulatorBudgetQuotaAtPrefixes_of_budgetReadySelectionLoop
+    {Voter Candidate : Type*} [DecidableEq Candidate]
+    {voters : Finset Voter} {ballots : Voter → Ballot Candidate}
+    {sources blockers : Finset Candidate} {assignedBudget : Candidate → ℕ}
+    {quota : ℕ} {sourceOrder candidates : List Candidate}
+    (hloop :
+      StrictSupportBudgetReadySelectionLoop voters ballots sources blockers
+        assignedBudget quota [] sourceOrder candidates) :
+    StrictSupportAccumulatorBudgetQuotaAtPrefixes voters ballots sources
+      blockers assignedBudget quota candidates := by
+  apply strictSupportAccumulatorBudgetQuotaAtPrefixes_of_mem_budgetReadyCandidatesAtPrefix
+  intro pref candidate suffix hdecomp
+  have hready :=
+    strictSupportBudgetReadySelectionLoop_selected_mem_ready hloop
+      pref candidate suffix hdecomp
+  simpa using hready
+
+/--
 Build the recursive accumulator invariant from the source-loop statement that
 each candidate reaches quota at its processed prefix.
 -/

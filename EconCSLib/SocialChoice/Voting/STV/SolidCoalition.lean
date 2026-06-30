@@ -107,6 +107,29 @@ theorem of_electStep {quota : ℝ} {before after : PartyQuotaState}
   rw [hmass]
   rw [PartyQuotaCapacityBound] at hbound
   norm_num [Nat.cast_add] at hbound ⊢
+  rw [hremaining_cast] at hbound
+  nlinarith
+
+/--
+Subtracting one quota while removing one remaining candidate preserves the
+capacity bound.  Unlike `of_electStep`, this lower-bound form does not require
+the current party residual itself to be at quota.
+-/
+theorem of_electUpdate {quota : ℝ} {before after : PartyQuotaState}
+    (hbound : PartyQuotaCapacityBound quota before)
+    (hremaining : after.remainingCandidates + 1 = before.remainingCandidates)
+    (hmass : after.voteMass = before.voteMass - quota) :
+    PartyQuotaCapacityBound quota after := by
+  have hremaining_cast :
+      (before.remainingCandidates : ℝ) =
+        (after.remainingCandidates : ℝ) + 1 := by
+    exact_mod_cast hremaining.symm
+  change after.voteMass <
+    ((after.remainingCandidates + 1 : ℕ) : ℝ) * quota
+  rw [hmass]
+  rw [PartyQuotaCapacityBound] at hbound
+  norm_num [Nat.cast_add] at hbound ⊢
+  rw [hremaining_cast] at hbound
   nlinarith
 
 /--
@@ -737,6 +760,26 @@ theorem activePartyCandidates_card_eq_of_subset {Candidate : Type*}
   rw [activePartyCandidates_eq_self_of_subset hsubset]
 
 /--
+If a replayed executable trace ends with an active same-party candidate, that
+candidate was active before every earlier trace step.
+-/
+theorem step_activePartyWitness_of_terminal_activePartyCandidate
+    {Candidate : Type*} [DecidableEq Candidate]
+    {trace : STVTrace Candidate}
+    {startActive terminalActive partyCandidates : Finset Candidate}
+    (hreplay : trace.replaysFrom startActive terminalActive)
+    (hremove : ∀ step, step ∈ trace.steps → step.removesFocusedCandidate)
+    (hterminal : ∃ same, same ∈ partyCandidates ∧ same ∈ terminalActive) :
+    ∀ i : Fin trace.steps.length,
+      ∃ same, same ∈ partyCandidates ∧
+        same ∈ (trace.steps.get i).beforeActive := by
+  intro i
+  rcases hterminal with ⟨same, hsame_party, hsame_terminal⟩
+  exact ⟨same, hsame_party,
+    STVTrace.terminalActive_subset_beforeActive_of_replaysFrom_removesFocusedCandidate
+      hreplay hremove i hsame_terminal⟩
+
+/--
 Current same-party fractional vote mass: the sum of fractional tallies of the
 active candidates belonging to that party.
 -/
@@ -1119,6 +1162,41 @@ theorem activeSupport_subset_voters {Voter Candidate : Type*}
   intro voter hvoter
   exact (Finset.mem_filter.mp hvoter).1
 
+/-- Active support is monotone in the voter set. -/
+theorem activeSupport_subset_of_subset {Voter Candidate : Type*}
+    [DecidableEq Candidate] {voters₁ voters₂ : Finset Voter}
+    {ballots : Voter → Ballot Candidate} {active : Finset Candidate}
+    {candidate : Candidate}
+    (hsubset : voters₁ ⊆ voters₂) :
+    Ballot.activeSupport voters₁ ballots active candidate ⊆
+      Ballot.activeSupport voters₂ ballots active candidate := by
+  intro voter hvoter
+  rw [Ballot.activeSupport] at hvoter ⊢
+  exact Finset.mem_filter.mpr
+    ⟨hsubset (Finset.mem_filter.mp hvoter).1,
+      (Finset.mem_filter.mp hvoter).2⟩
+
+/--
+Fractional active tallies are monotone in the voter set when all added voters
+have nonnegative weight.
+-/
+theorem fractionalActiveTally_le_of_voters_subset {Voter Candidate : Type*}
+    [DecidableEq Candidate] {voters₁ voters₂ : Finset Voter}
+    {ballots : Voter → Ballot Candidate} {weight : Voter → ℝ}
+    {active : Finset Candidate} {candidate : Candidate}
+    (hsubset : voters₁ ⊆ voters₂)
+    (hweight_nonneg : ∀ voter, voter ∈ voters₂ → 0 ≤ weight voter) :
+    fractionalActiveTally voters₁ ballots weight active candidate ≤
+      fractionalActiveTally voters₂ ballots weight active candidate := by
+  dsimp [fractionalActiveTally]
+  exact
+    Finset.sum_le_sum_of_subset_of_nonneg
+      (activeSupport_subset_of_subset (ballots := ballots)
+        (active := active) (candidate := candidate) hsubset)
+      (by
+        intro voter hvoter _hvoter_not_left
+        exact hweight_nonneg voter ((Finset.mem_filter.mp hvoter).1))
+
 /--
 The fractional STV weight update preserves nonnegativity when an elected
 focused candidate meets a positive quota.
@@ -1358,6 +1436,149 @@ theorem sum_fractionalSTVNextWeight_elect_eq_sum_of_activeSupport_eq_empty
     rw [hempty]
     simp
   simp [fractionalSTVNextWeight, hfocus, hkind, scaleOnSupport, hsupport]
+
+/--
+For any subgroup of voters, a global fractional STV election round can remove
+at most one quota of that subgroup's total weight.
+-/
+theorem sum_fractionalSTVNextWeight_elect_ge_sum_sub_quota_of_subset
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {allVoters voters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {quota : ℝ} {step : STVStep Candidate} {weight : Voter → ℝ}
+    {focused : Candidate}
+    (hvoters_subset : voters ⊆ allVoters)
+    (hweight_nonneg : ∀ voter, voter ∈ allVoters → 0 ≤ weight voter)
+    (hquota_pos : 0 < quota)
+    (hfocus : step.focus = some focused)
+    (hkind : step.kind = StepKind.elect)
+    (hquota_le :
+      quota ≤
+        fractionalActiveTally allVoters ballots weight step.beforeActive
+          focused) :
+    (∑ voter ∈ voters, weight voter) - quota ≤
+      ∑ voter ∈ voters,
+        fractionalSTVNextWeight allVoters ballots quota step weight voter := by
+  let globalTally :=
+    fractionalActiveTally allVoters ballots weight step.beforeActive focused
+  let partyTally :=
+    fractionalActiveTally voters ballots weight step.beforeActive focused
+  have hglobal_pos : 0 < globalTally := by
+    exact lt_of_lt_of_le hquota_pos hquota_le
+  have hglobal_ne : globalTally ≠ 0 := hglobal_pos.ne'
+  have hparty_nonneg : 0 ≤ partyTally := by
+    exact fractionalActiveTally_nonneg
+      (voters := voters) (ballots := ballots) (weight := weight)
+      (active := step.beforeActive)
+      (fun voter hvoter => hweight_nonneg voter (hvoters_subset hvoter))
+      focused
+  have hparty_le_global : partyTally ≤ globalTally := by
+    exact fractionalActiveTally_le_of_voters_subset
+      (voters₁ := voters) (voters₂ := allVoters) (ballots := ballots)
+      (weight := weight) (active := step.beforeActive) (candidate := focused)
+      hvoters_subset hweight_nonneg
+  have hsum_eq :
+      (∑ voter ∈ voters,
+          fractionalSTVNextWeight allVoters ballots quota step weight voter) =
+        ∑ voter ∈ voters,
+          scaleOnSupport
+            (Ballot.activeSupport voters ballots step.beforeActive focused)
+            (fractionalSurplusFactor globalTally quota) weight voter := by
+    refine Finset.sum_congr rfl ?_
+    intro voter hvoter
+    by_cases hsupport :
+        voter ∈ Ballot.activeSupport voters ballots step.beforeActive focused
+    · have hsupport_all :
+          voter ∈
+            Ballot.activeSupport allVoters ballots step.beforeActive focused :=
+        activeSupport_subset_of_subset (ballots := ballots)
+          (active := step.beforeActive) (candidate := focused)
+          hvoters_subset hsupport
+      simp [fractionalSTVNextWeight, hfocus, hkind, scaleOnSupport,
+        globalTally, hsupport, hsupport_all]
+    · have hsupport_all :
+          voter ∉
+            Ballot.activeSupport allVoters ballots step.beforeActive focused := by
+        intro hsupport_all
+        exact hsupport
+          (Finset.mem_filter.mpr
+            ⟨hvoter, (Finset.mem_filter.mp hsupport_all).2⟩)
+      simp [fractionalSTVNextWeight, hfocus, hkind, scaleOnSupport,
+        hsupport, hsupport_all]
+  have hscaled :
+      (∑ voter ∈ voters,
+          scaleOnSupport
+            (Ballot.activeSupport voters ballots step.beforeActive focused)
+            (fractionalSurplusFactor globalTally quota) weight voter) =
+        (∑ voter ∈ voters, weight voter) +
+          (fractionalSurplusFactor globalTally quota - 1) * partyTally := by
+    simpa [partyTally, fractionalActiveTally] using
+      sum_scaleOnSupport_eq_sum_add_factor_sub_one_mul_sum
+        (support :=
+          Ballot.activeSupport voters ballots step.beforeActive focused)
+        (voters := voters)
+        (factor := fractionalSurplusFactor globalTally quota)
+        (weight := weight)
+        activeSupport_subset_voters
+  have hfactor_bound :
+      -quota ≤ (fractionalSurplusFactor globalTally quota - 1) * partyTally := by
+    have hfactor_eq :
+        (fractionalSurplusFactor globalTally quota - 1) * partyTally =
+          -(quota / globalTally) * partyTally := by
+      dsimp [fractionalSurplusFactor]
+      field_simp [hglobal_ne]
+      ring
+    have hcoef_nonneg : 0 ≤ quota / globalTally :=
+      div_nonneg hquota_pos.le hglobal_pos.le
+    have hloss_le : (quota / globalTally) * partyTally ≤ quota := by
+      have hmul :=
+        mul_le_mul_of_nonneg_left hparty_le_global hcoef_nonneg
+      have hcoef_mul : (quota / globalTally) * globalTally = quota := by
+        field_simp [hglobal_ne]
+      nlinarith
+    rw [hfactor_eq]
+    nlinarith
+  rw [hsum_eq, hscaled]
+  linarith
+
+/--
+If a solid coalition still has an active same-party candidate, an election of
+an outside-party candidate does not change that coalition's total weight in
+the global fractional STV update.
+-/
+theorem sum_fractionalSTVNextWeight_elect_eq_sum_of_solidCoalition_outside
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {allVoters voters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate}
+    {quota : ℝ} {step : STVStep Candidate} {weight : Voter → ℝ}
+    {focused : Candidate}
+    (hsolid : SolidCoalitionBallots voters ballots partyCandidates)
+    (hpartyActive :
+      ∃ same, same ∈ partyCandidates ∧ same ∈ step.beforeActive)
+    (hfocus : step.focus = some focused)
+    (hkind : step.kind = StepKind.elect)
+    (hfocused_not_party : focused ∉ partyCandidates) :
+    (∑ voter ∈ voters,
+        fractionalSTVNextWeight allVoters ballots quota step weight voter) =
+      ∑ voter ∈ voters, weight voter := by
+  have hempty :
+      Ballot.activeSupport voters ballots step.beforeActive focused = ∅ :=
+    activeSupport_eq_empty_of_solidCoalitionBallots_outside
+      hsolid hpartyActive hfocused_not_party
+  refine Finset.sum_congr rfl ?_
+  intro voter hvoter
+  have hsupport_party :
+      voter ∉ Ballot.activeSupport voters ballots step.beforeActive focused := by
+    rw [hempty]
+    simp
+  have hsupport_all :
+      voter ∉ Ballot.activeSupport allVoters ballots step.beforeActive focused := by
+    intro hsupport_all
+    exact hsupport_party
+      (Finset.mem_filter.mpr
+        ⟨hvoter, (Finset.mem_filter.mp hsupport_all).2⟩)
+  simp [fractionalSTVNextWeight, hfocus, hkind, scaleOnSupport, hsupport_all]
 
 /--
 Source-level one-step law for the same-party voter weights used by a
@@ -1767,6 +1988,45 @@ noncomputable def fractionalSTVSeatRunFocuses {Voter Candidate : Type*}
                 if step.kind = StepKind.elect then elected + 1 else elected
               focused ::
                 fractionalSTVSeatRunFocuses choice voters ballots quota
+                  seatLimit rounds nextElected step.afterActive
+                  (fractionalSTVNextWeight voters ballots quota step weight)
+            else
+              []
+
+/--
+Compute the focused-candidate sequence for a filled-seat fractional STV run.
+
+This source-level runner follows the same concrete quota-election/elimination
+steps as `fractionalSTVSeatRunFocuses`, but it stops the transfer trace as soon
+as the currently active candidates fit into the remaining unfilled seats. Those
+terminal active candidates are then read as the source rule's final filled
+seats; they are not treated as additional quota-transfer rounds.
+-/
+noncomputable def fractionalSTVFilledSeatRunFocuses
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    (choice : FractionalSTVChoiceRule Candidate)
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (quota : ℝ) (seatLimit : ℕ) :
+    ℕ → ℕ → Finset Candidate → (Voter → ℝ) → List Candidate
+  | 0, _elected, _active, _weight => []
+  | rounds + 1, elected, active, weight =>
+      if seatLimit ≤ elected then
+        []
+      else if active.card ≤ seatLimit - elected then
+        []
+      else
+        match choice.choose active
+            (fractionalActiveTally voters ballots weight active) with
+        | none => []
+        | some focused =>
+            if focused ∈ active then
+              let step :=
+                fractionalSTVStepFromFocus voters ballots quota active weight
+                  focused
+              let nextElected :=
+                if step.kind = StepKind.elect then elected + 1 else elected
+              focused ::
+                fractionalSTVFilledSeatRunFocuses choice voters ballots quota
                   seatLimit rounds nextElected step.afterActive
                   (fractionalSTVNextWeight voters ballots quota step weight)
             else
@@ -2398,6 +2658,25 @@ noncomputable def fractionalSTVSeatRunTrace {Voter Candidate : Type*}
     initialActive initialWeight
 
 /--
+Candidate-level trace produced by the filled-seat fractional STV simulator.
+
+The trace contains only concrete quota-election/elimination transfer rounds.
+Terminal active candidates are interpreted separately as the source rule's
+remaining filled seats.
+-/
+noncomputable def fractionalSTVFilledSeatRunTrace
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    (choice : FractionalSTVChoiceRule Candidate)
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (quota : ℝ) (seatLimit rounds initialElected : ℕ)
+    (initialActive : Finset Candidate)
+    (initialWeight : Voter → ℝ) : STVTrace Candidate :=
+  fractionalSTVGeneratedTrace voters ballots quota
+    (fractionalSTVFilledSeatRunFocuses choice voters ballots quota seatLimit
+      rounds initialElected initialActive initialWeight)
+    initialActive initialWeight
+
+/--
 Candidate-level trace produced by running the party-seat-limited fractional STV
 simulator.
 -/
@@ -2444,6 +2723,23 @@ noncomputable def fractionalSTVSeatRunTerminalActive
   fractionalSTVGeneratedTerminalActive voters ballots quota
     (fractionalSTVSeatRunFocuses choice voters ballots quota seatLimit rounds
       initialElected initialActive initialWeight)
+    initialActive initialWeight
+
+/--
+Terminal active set produced by the filled-seat fractional STV simulator.
+These are precisely the candidates available for the final source-level fill
+when the trace stops before the seat limit is reached.
+-/
+noncomputable def fractionalSTVFilledSeatRunTerminalActive
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    (choice : FractionalSTVChoiceRule Candidate)
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (quota : ℝ) (seatLimit rounds initialElected : ℕ)
+    (initialActive : Finset Candidate)
+    (initialWeight : Voter → ℝ) : Finset Candidate :=
+  fractionalSTVGeneratedTerminalActive voters ballots quota
+    (fractionalSTVFilledSeatRunFocuses choice voters ballots quota seatLimit
+      rounds initialElected initialActive initialWeight)
     initialActive initialWeight
 
 /--
@@ -2880,6 +3176,151 @@ theorem fractionalSTVSeatRun_get_noquota_if_eliminate
               exact Fin.elim0 i
 
 /--
+For a quota-respecting filled-seat simulator, any generated elimination round
+certifies that no active candidate has reached quota at that round.
+-/
+theorem fractionalSTVFilledSeatRun_get_noquota_if_eliminate
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    (choice : FractionalSTVChoiceRule Candidate)
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (quota : ℝ) (seatLimit : ℕ)
+    (hrespect : choice.QuotaRespecting quota) :
+    ∀ (rounds elected : ℕ) (active : Finset Candidate) (weight : Voter → ℝ)
+      (i : Fin
+        (fractionalSTVGeneratedSteps voters ballots quota
+          (fractionalSTVFilledSeatRunFocuses choice voters ballots quota
+            seatLimit rounds elected active weight) active weight).length)
+      (candidate : Candidate),
+        candidate ∈
+            ((fractionalSTVGeneratedSteps voters ballots quota
+              (fractionalSTVFilledSeatRunFocuses choice voters ballots quota
+                seatLimit rounds elected active weight) active weight).get i).beforeActive →
+          ((fractionalSTVGeneratedSteps voters ballots quota
+            (fractionalSTVFilledSeatRunFocuses choice voters ballots quota
+              seatLimit rounds elected active weight) active weight).get i).kind =
+              StepKind.eliminate →
+            fractionalSTVGeneratedRoundTally voters ballots quota
+              (fractionalSTVFilledSeatRunFocuses choice voters ballots quota
+                seatLimit rounds elected active weight) active weight i candidate <
+              quota := by
+  intro rounds
+  induction rounds with
+  | zero =>
+      intro elected active weight i
+      simp [fractionalSTVFilledSeatRunFocuses, fractionalSTVGeneratedSteps] at i
+      exact Fin.elim0 i
+  | succ rounds ih =>
+      intro elected active weight i candidate hcandidate heliminate
+      by_cases hstop : seatLimit ≤ elected
+      · simp [fractionalSTVFilledSeatRunFocuses, fractionalSTVGeneratedSteps,
+          hstop] at i
+        exact Fin.elim0 i
+      · by_cases hfill : active.card ≤ seatLimit - elected
+        · simp [fractionalSTVFilledSeatRunFocuses,
+            fractionalSTVGeneratedSteps, hstop, hfill] at i
+          exact Fin.elim0 i
+        · cases hchoose :
+              choice.choose active
+                (fractionalActiveTally voters ballots weight active) with
+          | none =>
+              simp [fractionalSTVFilledSeatRunFocuses,
+                fractionalSTVGeneratedSteps, hstop, hfill, hchoose] at i
+              exact Fin.elim0 i
+          | some focused =>
+              by_cases hfocused : focused ∈ active
+              · let step :=
+                  fractionalSTVStepFromFocus voters ballots quota active weight
+                    focused
+                let nextElected :=
+                  if step.kind = StepKind.elect then elected + 1 else elected
+                cases i with
+                | mk n hn =>
+                    cases n with
+                    | zero =>
+                        have hcandidate_active : candidate ∈ active := by
+                          simpa [fractionalSTVFilledSeatRunFocuses,
+                            fractionalSTVGeneratedSteps, hstop, hfill, hchoose,
+                            hfocused, step, nextElected] using hcandidate
+                        by_contra hnot_lt
+                        have hnot_lt_active :
+                            ¬ fractionalActiveTally voters ballots weight active
+                                candidate < quota := by
+                          intro hlt
+                          exact hnot_lt (by
+                            simpa [fractionalSTVGeneratedRoundTally,
+                              fractionalSTVFilledSeatRunFocuses,
+                              fractionalSTVGeneratedSteps, hstop, hfill,
+                              hchoose, hfocused, step, nextElected] using hlt)
+                        have hquota :
+                            quota ≤
+                              fractionalActiveTally voters ballots weight active
+                                candidate :=
+                          not_lt.mp hnot_lt_active
+                        have helect :
+                            step.kind = StepKind.elect :=
+                          fractionalSTVStepFromFocus_kind_elect_of_quotaRespectingChoice
+                            (choice := choice) hrespect hchoose
+                            ⟨candidate, hcandidate_active, hquota⟩
+                        have helim_first : step.kind = StepKind.eliminate := by
+                          simpa [fractionalSTVFilledSeatRunFocuses,
+                            fractionalSTVGeneratedSteps, hstop, hfill, hchoose,
+                            hfocused, step, nextElected] using heliminate
+                        rw [helect] at helim_first
+                        contradiction
+                    | succ n =>
+                        have hn_tail :
+                            n <
+                              (fractionalSTVGeneratedSteps voters ballots quota
+                                (fractionalSTVFilledSeatRunFocuses choice voters
+                                  ballots quota seatLimit rounds nextElected
+                                  step.afterActive
+                                  (fractionalSTVNextWeight voters ballots quota
+                                    step weight))
+                                step.afterActive
+                                (fractionalSTVNextWeight voters ballots quota
+                                  step weight)).length := by
+                          have hn_succ :
+                              n.succ <
+                                (fractionalSTVGeneratedSteps voters ballots quota
+                                  (fractionalSTVFilledSeatRunFocuses choice voters
+                                    ballots quota seatLimit rounds nextElected
+                                    step.afterActive
+                                    (fractionalSTVNextWeight voters ballots quota
+                                      step weight))
+                                  step.afterActive
+                                  (fractionalSTVNextWeight voters ballots quota
+                                    step weight)).length.succ := by
+                            simpa [fractionalSTVFilledSeatRunFocuses,
+                              fractionalSTVGeneratedSteps, hstop, hfill,
+                              hchoose, hfocused, step, nextElected] using hn
+                          exact Nat.succ_lt_succ_iff.mp hn_succ
+                        have htail :=
+                          ih nextElected step.afterActive
+                            (fractionalSTVNextWeight voters ballots quota
+                              step weight)
+                            ⟨n, hn_tail⟩ candidate
+                        have htail_result :=
+                          htail
+                            (by
+                              simpa [fractionalSTVFilledSeatRunFocuses,
+                                fractionalSTVGeneratedSteps, hstop, hfill,
+                                hchoose, hfocused, step, nextElected] using
+                                hcandidate)
+                            (by
+                              simpa [fractionalSTVFilledSeatRunFocuses,
+                                fractionalSTVGeneratedSteps, hstop, hfill,
+                                hchoose, hfocused, step, nextElected] using
+                                heliminate)
+                        simpa [fractionalSTVGeneratedRoundTally,
+                          fractionalSTVFilledSeatRunFocuses,
+                          fractionalSTVGeneratedSteps, hstop, hfill, hchoose,
+                          hfocused, step, nextElected] using htail_result
+              · simp [fractionalSTVFilledSeatRunFocuses,
+                  fractionalSTVGeneratedSteps, hstop, hfill, hchoose,
+                  hfocused] at i
+                exact Fin.elim0 i
+
+/--
 For a quota-respecting party-seat-limited simulator, any generated elimination
 round certifies that no active candidate has reached quota at that round.
 -/
@@ -3126,6 +3567,32 @@ noncomputable def fractionalSTVIndexedExecutableTrace_of_seatRun
     initialActive initialWeight hquota_pos hinitialWeight_nonneg
 
 /--
+The filled-seat fractional STV simulator constructs an indexed executable
+fractional STV trace for its transfer prefix.
+-/
+noncomputable def fractionalSTVIndexedExecutableTrace_of_filledSeatRun
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    (choice : FractionalSTVChoiceRule Candidate)
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (quota : ℝ) (seatLimit rounds initialElected : ℕ)
+    (initialActive : Finset Candidate)
+    (initialWeight : Voter → ℝ)
+    (hquota_pos : 0 < quota)
+    (hinitialWeight_nonneg :
+      ∀ voter, voter ∈ voters → 0 ≤ initialWeight voter) :
+    FractionalSTVIndexedExecutableTrace
+      (fractionalSTVFilledSeatRunTrace choice voters ballots quota seatLimit
+        rounds initialElected initialActive initialWeight)
+      voters ballots quota initialActive
+      (fractionalSTVFilledSeatRunTerminalActive choice voters ballots quota
+        seatLimit rounds initialElected initialActive initialWeight)
+      initialWeight :=
+  fractionalSTVIndexedExecutableTrace_of_generated voters ballots quota
+    (fractionalSTVFilledSeatRunFocuses choice voters ballots quota seatLimit
+      rounds initialElected initialActive initialWeight)
+    initialActive initialWeight hquota_pos hinitialWeight_nonneg
+
+/--
 The party-seat-limited fractional STV simulator constructs an indexed
 executable fractional STV trace.
 -/
@@ -3190,6 +3657,45 @@ theorem fractionalSTVIndexedExecutableTrace_of_seatRun_get_noquota_if_eliminate
     fractionalSTVSeatRun_get_noquota_if_eliminate choice voters ballots quota
       seatLimit hrespect rounds initialElected initialActive initialWeight i
       candidate hcandidate hkind
+
+/--
+Quota-respecting filled-seat simulator certificate: every generated
+elimination round has all active candidates below quota in the certificate's
+round tally.
+-/
+theorem fractionalSTVIndexedExecutableTrace_of_filledSeatRun_get_noquota_if_eliminate
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    (choice : FractionalSTVChoiceRule Candidate)
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (quota : ℝ) (seatLimit rounds initialElected : ℕ)
+    (initialActive : Finset Candidate) (initialWeight : Voter → ℝ)
+    (hquota_pos : 0 < quota)
+    (hinitialWeight_nonneg :
+      ∀ voter, voter ∈ voters → 0 ≤ initialWeight voter)
+    (hrespect : choice.QuotaRespecting quota) :
+    ∀ i : Fin
+        (fractionalSTVFilledSeatRunTrace choice voters ballots quota seatLimit
+          rounds initialElected initialActive initialWeight).steps.length,
+      ∀ candidate,
+        candidate ∈
+            ((fractionalSTVFilledSeatRunTrace choice voters ballots quota
+              seatLimit rounds initialElected initialActive
+              initialWeight).steps.get i).beforeActive →
+          ((fractionalSTVFilledSeatRunTrace choice voters ballots quota
+            seatLimit rounds initialElected initialActive
+            initialWeight).steps.get i).kind =
+              StepKind.eliminate →
+            (fractionalSTVIndexedExecutableTrace_of_filledSeatRun choice voters
+              ballots quota seatLimit rounds initialElected initialActive
+              initialWeight hquota_pos hinitialWeight_nonneg).roundTally i
+                candidate < quota := by
+  intro i candidate hcandidate hkind
+  simpa [fractionalSTVFilledSeatRunTrace,
+    fractionalSTVIndexedExecutableTrace_of_filledSeatRun,
+    fractionalSTVIndexedExecutableTrace_of_generated] using
+    fractionalSTVFilledSeatRun_get_noquota_if_eliminate choice voters ballots
+      quota seatLimit hrespect rounds initialElected initialActive
+      initialWeight i candidate hcandidate hkind
 
 /--
 Quota-respecting party-seat-limited simulator certificate: every generated
@@ -3473,6 +3979,19 @@ def partyElectStepCount {Candidate : Type*} [DecidableEq Candidate]
             0) + partyElectStepCount partyCandidates steps :=
   rfl
 
+/-- A prefix has no more same-party election steps than the full trace. -/
+theorem partyElectStepCount_take_le {Candidate : Type*}
+    [DecidableEq Candidate] (partyCandidates : Finset Candidate) :
+    ∀ (steps : List (STVStep Candidate)) (n : ℕ),
+      partyElectStepCount partyCandidates (steps.take n) ≤
+        partyElectStepCount partyCandidates steps
+  | [], _ => by simp
+  | step :: steps, 0 => by simp
+  | step :: steps, n + 1 => by
+      dsimp [List.take, partyElectStepCount]
+      exact Nat.add_le_add_left
+        (partyElectStepCount_take_le partyCandidates steps n) _
+
 /-- Number of concrete trace steps labeled as election steps. -/
 def electStepCount {Candidate : Type*} : List (STVStep Candidate) → ℕ
   | [] => 0
@@ -3488,6 +4007,374 @@ def electStepCount {Candidate : Type*} : List (STVStep Candidate) → ℕ
     electStepCount (step :: steps) =
       (if step.kind = StepKind.elect then 1 else 0) + electStepCount steps :=
   rfl
+
+/--
+Terminal candidates that the source filled-seat STV rule reads as final seats.
+
+If the transfer prefix has already filled the seat limit with quota election
+rounds, no terminal active candidates are filled. Otherwise the terminal active
+candidates are the remaining filled seats.
+-/
+def terminalFillActive {Candidate : Type*} (seatLimit : ℕ)
+    (steps : List (STVStep Candidate)) (terminalActive : Finset Candidate) :
+    Finset Candidate :=
+  if electStepCount steps < seatLimit then terminalActive else ∅
+
+/--
+Final same-party seat count for the source filled-seat STV interpretation:
+same-party quota election rounds plus terminal active same-party candidates
+that fill the remaining seats.
+-/
+def partyFilledSeatCount {Candidate : Type*} [DecidableEq Candidate]
+    (partyCandidates : Finset Candidate) (seatLimit : ℕ)
+    (steps : List (STVStep Candidate)) (terminalActive : Finset Candidate) :
+    ℕ :=
+  partyElectStepCount partyCandidates steps +
+    (activePartyCandidates (terminalFillActive seatLimit steps terminalActive)
+      partyCandidates).card
+
+/--
+The two active-party filters partition an active set covered by two disjoint
+candidate parties.
+-/
+theorem activePartyCandidates_card_add_eq_card_of_subset_union_of_disjoint
+    {Candidate : Type*} [DecidableEq Candidate]
+    {active partyCandidates otherPartyCandidates : Finset Candidate}
+    (hcandidateDisjoint : Disjoint partyCandidates otherPartyCandidates)
+    (hactive_subset : active ⊆ partyCandidates ∪ otherPartyCandidates) :
+    (activePartyCandidates active partyCandidates).card +
+        (activePartyCandidates active otherPartyCandidates).card =
+      active.card := by
+  have hdisjoint :
+      Disjoint (activePartyCandidates active partyCandidates)
+        (activePartyCandidates active otherPartyCandidates) := by
+    refine Finset.disjoint_left.mpr ?_
+    intro candidate hparty hother
+    exact (Finset.disjoint_left.mp hcandidateDisjoint)
+      (Finset.mem_filter.mp hparty).2 (Finset.mem_filter.mp hother).2
+  have hunion :
+      activePartyCandidates active partyCandidates ∪
+          activePartyCandidates active otherPartyCandidates =
+        active := by
+    ext candidate
+    constructor
+    · intro hmem
+      rcases Finset.mem_union.mp hmem with hmem | hmem
+      · exact (Finset.mem_filter.mp hmem).1
+      · exact (Finset.mem_filter.mp hmem).1
+    · intro hmem
+      rcases Finset.mem_union.mp (hactive_subset hmem) with hparty | hother
+      · exact Finset.mem_union_left _
+          (Finset.mem_filter.mpr ⟨hmem, hparty⟩)
+      · exact Finset.mem_union_right _
+          (Finset.mem_filter.mpr ⟨hmem, hother⟩)
+  calc
+    (activePartyCandidates active partyCandidates).card +
+        (activePartyCandidates active otherPartyCandidates).card
+        =
+          (activePartyCandidates active partyCandidates ∪
+            activePartyCandidates active otherPartyCandidates).card := by
+            rw [Finset.card_union_of_disjoint hdisjoint]
+    _ = active.card := by rw [hunion]
+
+/--
+Filled-seat STV accounting for a recursive source run.
+
+If the source choice rule is total, the round budget is at least the current
+number of active candidates, and the active set has enough candidates to fill
+the remaining seats, then quota-election steps plus terminal active fills
+complete exactly the seat limit. The `elected` parameter records seats filled
+before this recursive suffix.
+-/
+theorem add_electStepCount_add_terminalActive_card_fractionalSTVFilledSeatRun_eq_seatLimit_of_total
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    (choice : FractionalSTVChoiceRule Candidate)
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (quota : ℝ) (seatLimit : ℕ)
+    (htotal : choice.Total) :
+    ∀ (rounds elected : ℕ) (active : Finset Candidate)
+      (weight : Voter → ℝ),
+      elected ≤ seatLimit →
+        seatLimit - elected ≤ active.card →
+          active.card ≤ rounds →
+            let focuses :=
+              fractionalSTVFilledSeatRunFocuses choice voters ballots quota
+                seatLimit rounds elected active weight
+            let steps :=
+              fractionalSTVGeneratedSteps voters ballots quota focuses active
+                weight
+            let terminalActive :=
+              fractionalSTVGeneratedTerminalActive voters ballots quota focuses
+                active weight
+            elected + electStepCount steps +
+                (if elected + electStepCount steps < seatLimit then
+                  terminalActive.card
+                else
+                  0) =
+              seatLimit := by
+  intro rounds
+  induction rounds with
+  | zero =>
+      intro elected active weight helected hremaining hrounds
+      have hactive_card : active.card = 0 := Nat.eq_zero_of_le_zero hrounds
+      have hremaining_zero : seatLimit - elected = 0 :=
+        Nat.eq_zero_of_le_zero (by simpa [hactive_card] using hremaining)
+      have heq : elected = seatLimit := by omega
+      subst heq
+      simp [fractionalSTVFilledSeatRunFocuses, fractionalSTVGeneratedSteps]
+  | succ rounds ih =>
+      intro elected active weight helected hremaining hrounds
+      by_cases hstop : seatLimit ≤ elected
+      · have heq : elected = seatLimit := le_antisymm helected hstop
+        subst heq
+        simp [fractionalSTVFilledSeatRunFocuses, fractionalSTVGeneratedSteps]
+      · have helected_lt : elected < seatLimit := Nat.lt_of_not_ge hstop
+        by_cases hfill : active.card ≤ seatLimit - elected
+        · have hfill_eq : active.card = seatLimit - elected :=
+            le_antisymm hfill hremaining
+          have hif : elected < seatLimit := helected_lt
+          simp [fractionalSTVFilledSeatRunFocuses, fractionalSTVGeneratedSteps,
+            fractionalSTVGeneratedTerminalActive, hstop, hfill, hif]
+          omega
+        · have hactive_nonempty : active.Nonempty := by
+            have hpos : 0 < seatLimit - elected := Nat.sub_pos_of_lt helected_lt
+            exact Finset.card_pos.mp (lt_of_lt_of_le hpos hremaining)
+          rcases htotal
+              (active := active)
+              (tally := fractionalActiveTally voters ballots weight active)
+              hactive_nonempty with
+            ⟨focused, hchoose⟩
+          have hfocused : focused ∈ active := choice.choose_mem hchoose
+          let step :=
+            fractionalSTVStepFromFocus voters ballots quota active weight focused
+          let nextElected :=
+            if step.kind = StepKind.elect then elected + 1 else elected
+          have hnextElected_le : nextElected ≤ seatLimit := by
+            by_cases helect : step.kind = StepKind.elect
+            · simp [nextElected, helect]
+              omega
+            · simpa [nextElected, helect] using helected
+          have hafter_card :
+              step.afterActive.card + 1 = active.card := by
+            simpa [step] using Finset.card_erase_add_one hfocused
+          have hafter_rounds : step.afterActive.card ≤ rounds := by
+            omega
+          have hnextRemaining :
+              seatLimit - nextElected ≤ step.afterActive.card := by
+            by_cases helect : step.kind = StepKind.elect
+            · have hsub :
+                  seatLimit - (elected + 1) + 1 = seatLimit - elected := by
+                omega
+              simp [nextElected, helect]
+              omega
+            · have hstrict : seatLimit - elected < active.card := by
+                omega
+              simp [nextElected, helect]
+              omega
+          have htail :=
+            ih nextElected step.afterActive
+              (fractionalSTVNextWeight voters ballots quota step weight)
+              hnextElected_le hnextRemaining hafter_rounds
+          by_cases helect : step.kind = StepKind.elect
+          · rw [fractionalSTVFilledSeatRunFocuses]
+            simp only [hstop, if_false, hfill, hchoose, hfocused, if_true]
+            simpa [fractionalSTVGeneratedSteps,
+              fractionalSTVGeneratedTerminalActive, step, nextElected,
+              hfocused, helect, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+              using htail
+          · rw [fractionalSTVFilledSeatRunFocuses]
+            simp only [hstop, if_false, hfill, hchoose, hfocused, if_true]
+            simpa [fractionalSTVGeneratedSteps,
+              fractionalSTVGeneratedTerminalActive, step, nextElected,
+              hfocused, helect, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+              using htail
+
+/--
+A zero-initial generated filled-seat run with enough active candidates and a
+round budget equal to the initial active set fills exactly the requested number
+of seats, counting terminal active candidates as the source rule's final fills.
+-/
+theorem electStepCount_add_terminalFillActive_card_fractionalSTVFilledSeatRunTrace_eq_seatLimit_of_total
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    (choice : FractionalSTVChoiceRule Candidate)
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (quota : ℝ) (seatLimit : ℕ) (initialActive : Finset Candidate)
+    (initialWeight : Voter → ℝ)
+    (htotal : choice.Total) (hseats : seatLimit ≤ initialActive.card) :
+    electStepCount
+          (fractionalSTVFilledSeatRunTrace choice voters ballots quota
+            seatLimit initialActive.card 0 initialActive initialWeight).steps +
+        (terminalFillActive seatLimit
+          (fractionalSTVFilledSeatRunTrace choice voters ballots quota
+            seatLimit initialActive.card 0 initialActive initialWeight).steps
+          (fractionalSTVFilledSeatRunTerminalActive choice voters ballots quota
+            seatLimit initialActive.card 0 initialActive initialWeight)).card =
+      seatLimit := by
+  have h :=
+    add_electStepCount_add_terminalActive_card_fractionalSTVFilledSeatRun_eq_seatLimit_of_total
+      choice voters ballots quota seatLimit htotal initialActive.card 0
+      initialActive initialWeight (Nat.zero_le seatLimit) (by simpa using hseats)
+      le_rfl
+  let steps :=
+    (fractionalSTVFilledSeatRunTrace choice voters ballots quota seatLimit
+      initialActive.card 0 initialActive initialWeight).steps
+  let terminalActive :=
+    fractionalSTVFilledSeatRunTerminalActive choice voters ballots quota
+      seatLimit initialActive.card 0 initialActive initialWeight
+  change
+    electStepCount steps +
+        (terminalFillActive seatLimit steps terminalActive).card =
+      seatLimit
+  have h' :
+      electStepCount steps +
+          (if electStepCount steps < seatLimit then terminalActive.card else 0) =
+        seatLimit := by
+    simpa [fractionalSTVFilledSeatRunTrace,
+      fractionalSTVFilledSeatRunTerminalActive, fractionalSTVGeneratedTrace,
+      steps, terminalActive] using h
+  by_cases hlt : electStepCount steps < seatLimit
+  · simpa [terminalFillActive, hlt] using h'
+  · simpa [terminalFillActive, hlt] using h'
+
+/--
+Total-weight accounting for a concrete fractional STV trace: every election
+round removes exactly one quota of total weight, while every non-election round
+preserves total weight.
+-/
+theorem sum_fractionalSTVWeightAfterSteps_eq_sum_sub_electStepCount
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {voters : Finset Voter} {ballots : Voter → Ballot Candidate}
+    {quota : ℝ} {steps : List (STVStep Candidate)}
+    {initialWeight : Voter → ℝ}
+    (hquota_pos : 0 < quota)
+    (hfocus :
+      ∀ i : Fin steps.length,
+        ∃ focused, (steps.get i).focus = some focused ∧
+          focused ∈ (steps.get i).beforeActive)
+    (hquota_if_elect :
+      ∀ i : Fin steps.length, ∀ focused,
+        (steps.get i).focus = some focused →
+          (steps.get i).kind = StepKind.elect →
+            quota ≤
+              fractionalActiveTally voters ballots
+                (fractionalSTVWeightAfterSteps voters ballots quota
+                  (steps.take i.1) initialWeight)
+                (steps.get i).beforeActive focused) :
+    (∑ voter ∈ voters,
+        fractionalSTVWeightAfterSteps voters ballots quota steps
+          initialWeight voter) =
+      (∑ voter ∈ voters, initialWeight voter) -
+        (electStepCount steps : ℝ) * quota := by
+  induction steps generalizing initialWeight with
+  | nil =>
+      simp [fractionalSTVWeightAfterSteps, electStepCount]
+  | cons step steps ih =>
+      let nextWeight := fractionalSTVNextWeight voters ballots quota step
+        initialWeight
+      have htail :
+          (∑ voter ∈ voters,
+              fractionalSTVWeightAfterSteps voters ballots quota steps
+                nextWeight voter) =
+            (∑ voter ∈ voters, nextWeight voter) -
+              (electStepCount steps : ℝ) * quota := by
+        apply ih
+        · intro i
+          rcases hfocus ⟨i.1 + 1, by simpa using Nat.succ_lt_succ i.2⟩ with
+            ⟨focused, hfocused, hactive⟩
+          exact ⟨focused, hfocused, hactive⟩
+        · intro i focused hfocused hkind
+          have hsucc :=
+            hquota_if_elect
+              ⟨i.1 + 1, by simpa using Nat.succ_lt_succ i.2⟩
+              focused hfocused hkind
+          simpa [fractionalSTVWeightAfterSteps, nextWeight,
+            Nat.succ_eq_add_one] using hsucc
+      have hstep_sum :
+          (∑ voter ∈ voters, nextWeight voter) =
+            (∑ voter ∈ voters, initialWeight voter) -
+              (if step.kind = StepKind.elect then quota else 0) := by
+        by_cases helect : step.kind = StepKind.elect
+        · rcases hfocus ⟨0, by simp⟩ with
+            ⟨focused, hfocused, _hactive⟩
+          have hquota_le :=
+            hquota_if_elect ⟨0, by simp⟩ focused hfocused helect
+          have htally_pos :
+              0 <
+                fractionalActiveTally voters ballots initialWeight
+                  step.beforeActive focused := by
+            simpa [fractionalSTVWeightAfterSteps] using
+              lt_of_lt_of_le hquota_pos hquota_le
+          have hsum :=
+            sum_fractionalSTVNextWeight_elect_eq_sum_sub_quota
+              (voters := voters) (ballots := ballots) (quota := quota)
+              (step := step) (weight := initialWeight)
+              hfocused helect htally_pos.ne'
+          simpa [nextWeight, helect] using hsum
+        · have hsum :=
+            sum_fractionalSTVNextWeight_of_kind_ne_elect
+              (voters := voters) (ballots := ballots) (quota := quota)
+              (step := step) (weight := initialWeight) helect
+          simpa [nextWeight, helect] using hsum
+      dsimp [fractionalSTVWeightAfterSteps, electStepCount]
+      rw [htail, hstep_sum]
+      by_cases helect : step.kind = StepKind.elect
+      · simp [helect, Nat.cast_add, Nat.cast_one]
+        ring
+      · simp [helect]
+
+/--
+Droop-quota residual bound for a filled fractional STV run: if exactly `seats`
+election rounds have occurred, then the total terminal weight is below one
+Droop quota.
+-/
+theorem sum_fractionalSTVWeightAfterSteps_lt_STVQuota_of_electStepCount_eq
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {votersFin : Finset Voter} {ballots : Voter → Ballot Candidate}
+    {steps : List (STVStep Candidate)}
+    {initialWeight : Voter → ℝ} {seats voters : ℕ}
+    (hinitialMass :
+      (voters : ℝ) = ∑ voter ∈ votersFin, initialWeight voter)
+    (helectCount : electStepCount steps = seats)
+    (hfocus :
+      ∀ i : Fin steps.length,
+        ∃ focused, (steps.get i).focus = some focused ∧
+          focused ∈ (steps.get i).beforeActive)
+    (hquota_if_elect :
+      ∀ i : Fin steps.length, ∀ focused,
+        (steps.get i).focus = some focused →
+          (steps.get i).kind = StepKind.elect →
+            (STVQuota seats voters : ℝ) ≤
+              fractionalActiveTally votersFin ballots
+                (fractionalSTVWeightAfterSteps votersFin ballots
+                  (STVQuota seats voters : ℝ)
+                  (steps.take i.1) initialWeight)
+                (steps.get i).beforeActive focused) :
+    (∑ voter ∈ votersFin,
+        fractionalSTVWeightAfterSteps votersFin ballots
+          (STVQuota seats voters : ℝ) steps initialWeight voter) <
+      (STVQuota seats voters : ℝ) := by
+  have hquota_pos_nat : 0 < STVQuota seats voters := by
+    unfold STVQuota
+    exact Nat.succ_pos _
+  have hquota_pos : 0 < (STVQuota seats voters : ℝ) := by
+    exact_mod_cast hquota_pos_nat
+  have hsum :=
+    sum_fractionalSTVWeightAfterSteps_eq_sum_sub_electStepCount
+      (voters := votersFin) (ballots := ballots)
+      (quota := (STVQuota seats voters : ℝ)) (steps := steps)
+      (initialWeight := initialWeight) hquota_pos hfocus hquota_if_elect
+  have hquota_capacity :
+      (voters : ℝ) < ((seats : ℝ) + 1) * (STVQuota seats voters : ℝ) := by
+    have hdiv := voters_div_STVQuota_lt_seats_succ seats voters
+    exact (_root_.div_lt_iff₀ hquota_pos).mp hdiv
+  calc
+    (∑ voter ∈ votersFin,
+        fractionalSTVWeightAfterSteps votersFin ballots
+          (STVQuota seats voters : ℝ) steps initialWeight voter)
+        = (voters : ℝ) - (seats : ℝ) * (STVQuota seats voters : ℝ) := by
+          rw [hsum, ← hinitialMass, helectCount]
+    _ < (STVQuota seats voters : ℝ) := by
+          nlinarith
 
 /-- A party-specific election count is bounded by the total election count. -/
 theorem partyElectStepCount_le_electStepCount {Candidate : Type*}
@@ -3508,9 +4395,153 @@ theorem partyElectStepCount_le_electStepCount {Candidate : Type*}
           by_cases helect : step.kind = StepKind.elect
           · by_cases hparty : focused ∈ partyCandidates
             · simp [helect, hparty, htail]
-            · simpa [hfocus, helect, hparty] using
+            · simpa [helect, hparty] using
                 Nat.le_trans htail (Nat.le_add_left _ _)
           · simp [helect, htail]
+
+/--
+Election steps counted by two disjoint parties are bounded by the total number
+of election steps in the trace.
+-/
+theorem partyElectStepCount_add_le_electStepCount_of_disjoint {Candidate : Type*}
+    [DecidableEq Candidate] {partyCandidates otherPartyCandidates : Finset Candidate}
+    (hcandidateDisjoint : Disjoint partyCandidates otherPartyCandidates) :
+    ∀ steps : List (STVStep Candidate),
+      partyElectStepCount partyCandidates steps +
+          partyElectStepCount otherPartyCandidates steps ≤
+        electStepCount steps
+  | [] => by simp
+  | step :: steps => by
+      have htail :=
+        partyElectStepCount_add_le_electStepCount_of_disjoint
+          (partyCandidates := partyCandidates)
+          (otherPartyCandidates := otherPartyCandidates)
+          hcandidateDisjoint steps
+      dsimp [partyElectStepCount, electStepCount]
+      cases hfocus : step.focus with
+      | none =>
+          by_cases helect : step.kind = StepKind.elect
+          · simp [helect]
+            omega
+          · simpa [helect] using htail
+      | some focused =>
+          by_cases helect : step.kind = StepKind.elect
+          · by_cases hparty : focused ∈ partyCandidates
+            · have hnot_other : focused ∉ otherPartyCandidates := by
+                exact (Finset.disjoint_left.mp hcandidateDisjoint) hparty
+              simp [helect, hparty, hnot_other]
+              omega
+            · by_cases hother : focused ∈ otherPartyCandidates
+              · simp [helect, hparty, hother]
+                omega
+              · simp [helect, hparty, hother]
+                omega
+          · simp [helect]
+            omega
+
+/--
+If every election step focuses on a candidate in one of two disjoint parties,
+then the two party election counters add up to the total election counter.
+-/
+theorem partyElectStepCount_add_eq_electStepCount_of_disjoint_of_elect_focus_mem
+    {Candidate : Type*} [DecidableEq Candidate]
+    {partyCandidates otherPartyCandidates : Finset Candidate}
+    (hcandidateDisjoint : Disjoint partyCandidates otherPartyCandidates) :
+    ∀ steps : List (STVStep Candidate),
+      (∀ step, step ∈ steps → step.kind = StepKind.elect →
+        ∃ focused, step.focus = some focused ∧
+          (focused ∈ partyCandidates ∨
+            focused ∈ otherPartyCandidates)) →
+        partyElectStepCount partyCandidates steps +
+            partyElectStepCount otherPartyCandidates steps =
+          electStepCount steps
+  | [], _hcover => by simp
+  | step :: steps, hcover => by
+      have htailCover :
+          ∀ step', step' ∈ steps → step'.kind = StepKind.elect →
+            ∃ focused, step'.focus = some focused ∧
+              (focused ∈ partyCandidates ∨
+                focused ∈ otherPartyCandidates) := by
+        intro step' hstep' hkind
+        exact hcover step' (by simp [hstep']) hkind
+      have htail :=
+        partyElectStepCount_add_eq_electStepCount_of_disjoint_of_elect_focus_mem
+          (partyCandidates := partyCandidates)
+          (otherPartyCandidates := otherPartyCandidates)
+          hcandidateDisjoint steps htailCover
+      dsimp [partyElectStepCount, electStepCount]
+      cases hfocus : step.focus with
+      | none =>
+          by_cases helect : step.kind = StepKind.elect
+          · rcases hcover step (by simp) helect with
+              ⟨focused, hfocused, _hmem⟩
+            simp [hfocus] at hfocused
+          · simpa [hfocus, helect] using htail
+      | some focused =>
+          by_cases helect : step.kind = StepKind.elect
+          · rcases hcover step (by simp) helect with
+              ⟨focused', hfocused', hmem⟩
+            have hfocused_eq : focused' = focused :=
+              Option.some.inj (hfocused'.symm.trans hfocus)
+            subst focused'
+            rcases hmem with hparty | hother
+            · have hnot_other : focused ∉ otherPartyCandidates :=
+                (Finset.disjoint_left.mp hcandidateDisjoint) hparty
+              simp [helect, hparty, hnot_other]
+              omega
+            · have hnot_party : focused ∉ partyCandidates := by
+                have hsymm : Disjoint otherPartyCandidates partyCandidates :=
+                  hcandidateDisjoint.symm
+                exact (Finset.disjoint_left.mp hsymm) hother
+              simp [helect, hnot_party, hother]
+              omega
+          · simpa [hfocus, helect] using htail
+
+/--
+The two party filled-seat counts decompose the total filled-seat count whenever
+elected focuses and terminal fill candidates are covered by the two disjoint
+candidate parties.
+-/
+theorem partyFilledSeatCount_add_eq_electStepCount_add_terminalFillActive_card
+    {Candidate : Type*} [DecidableEq Candidate]
+    {partyCandidates otherPartyCandidates : Finset Candidate}
+    {seatLimit : ℕ} {steps : List (STVStep Candidate)}
+    {terminalActive : Finset Candidate}
+    (hcandidateDisjoint : Disjoint partyCandidates otherPartyCandidates)
+    (helectFocusMem :
+      ∀ step, step ∈ steps → step.kind = StepKind.elect →
+        ∃ focused, step.focus = some focused ∧
+          (focused ∈ partyCandidates ∨
+            focused ∈ otherPartyCandidates))
+    (hterminal_subset :
+      terminalFillActive seatLimit steps terminalActive ⊆
+        partyCandidates ∪ otherPartyCandidates) :
+    partyFilledSeatCount partyCandidates seatLimit steps terminalActive +
+        partyFilledSeatCount otherPartyCandidates seatLimit steps terminalActive =
+      electStepCount steps +
+        (terminalFillActive seatLimit steps terminalActive).card := by
+  have helect :
+      partyElectStepCount partyCandidates steps +
+          partyElectStepCount otherPartyCandidates steps =
+        electStepCount steps :=
+    partyElectStepCount_add_eq_electStepCount_of_disjoint_of_elect_focus_mem
+      (partyCandidates := partyCandidates)
+      (otherPartyCandidates := otherPartyCandidates)
+      hcandidateDisjoint steps helectFocusMem
+  have hterminal :
+      (activePartyCandidates
+          (terminalFillActive seatLimit steps terminalActive)
+          partyCandidates).card +
+          (activePartyCandidates
+            (terminalFillActive seatLimit steps terminalActive)
+            otherPartyCandidates).card =
+        (terminalFillActive seatLimit steps terminalActive).card :=
+    activePartyCandidates_card_add_eq_card_of_subset_union_of_disjoint
+      (partyCandidates := partyCandidates)
+      (otherPartyCandidates := otherPartyCandidates)
+      hcandidateDisjoint hterminal_subset
+  simp [partyFilledSeatCount]
+  omega
 
 /--
 The seat-limited generated simulator cannot produce more election steps than
@@ -3572,6 +4603,22 @@ theorem add_electStepCount_fractionalSTVSeatRun_le_seatLimit
                   Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using htail
             · simpa [fractionalSTVSeatRunFocuses, fractionalSTVGeneratedSteps,
                 hstop, hchoose, hfocused] using helected
+
+/-- Election steps of a zero-initial seat-limited generated run are bounded by the limit. -/
+theorem electStepCount_fractionalSTVSeatRunTrace_le_seatLimit
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    (choice : FractionalSTVChoiceRule Candidate)
+    (voters : Finset Voter) (ballots : Voter → Ballot Candidate)
+    (quota : ℝ) (seatLimit rounds : ℕ) (initialActive : Finset Candidate)
+    (initialWeight : Voter → ℝ) :
+    electStepCount
+        (fractionalSTVSeatRunTrace choice voters ballots quota seatLimit rounds
+          0 initialActive initialWeight).steps ≤ seatLimit := by
+  have h :=
+    add_electStepCount_fractionalSTVSeatRun_le_seatLimit choice voters ballots
+      quota seatLimit rounds 0 initialActive initialWeight
+      (Nat.zero_le seatLimit)
+  simpa [fractionalSTVSeatRunTrace, fractionalSTVGeneratedTrace] using h
 
 /--
 The party election steps of a seat-limited generated run are bounded by the
@@ -4030,6 +5077,71 @@ theorem concreteStepLaw {Voter Candidate : Type*}
     (run.tally_eq i) (run.kind_allowed i)
     (run.quota_if_elect i focused hfocus)
 
+/--
+If the initial active set is covered by two candidate parties, then every
+indexed focus in an executable fractional STV trace belongs to one of them.
+-/
+theorem focus_mem_of_initialActive_subset_union {Voter Candidate : Type*}
+    [DecidableEq Voter] [DecidableEq Candidate]
+    {trace : STVTrace Candidate} {voters : Finset Voter}
+    {ballots : Voter → Ballot Candidate} {quota : ℝ}
+    {initialActive terminalActive : Finset Candidate}
+    {initialWeight : Voter → ℝ}
+    {partyCandidates otherPartyCandidates : Finset Candidate}
+    (run :
+      FractionalSTVIndexedExecutableTrace trace voters ballots quota
+        initialActive terminalActive initialWeight)
+    (hinitial_subset :
+      initialActive ⊆ partyCandidates ∪ otherPartyCandidates)
+    (i : Fin trace.steps.length) :
+    ∃ focused, (trace.steps.get i).focus = some focused ∧
+      (focused ∈ partyCandidates ∨ focused ∈ otherPartyCandidates) := by
+  rcases run.step_focus_active i with ⟨focused, hfocus, hfocused_active⟩
+  have hremove_mem :
+      ∀ step, step ∈ trace.steps → step.removesFocusedCandidate := by
+    intro step hstep
+    rcases List.getElem_of_mem hstep with ⟨n, hn, hget⟩
+    subst hget
+    exact run.step_removes ⟨n, hn⟩
+  have hbefore_subset :
+      (trace.steps.get i).beforeActive ⊆ initialActive :=
+    STVTrace.beforeActive_subset_startActive_of_replaysFrom_removesFocusedCandidate
+      run.activeReplay hremove_mem i
+  have hfocused_initial : focused ∈ initialActive :=
+    hbefore_subset hfocused_active
+  have hfocused_union :
+      focused ∈ partyCandidates ∪ otherPartyCandidates :=
+    hinitial_subset hfocused_initial
+  exact ⟨focused, hfocus, by simpa using hfocused_union⟩
+
+/--
+List-level form: under an initial two-party candidate cover, every election
+step in an executable fractional STV trace focuses on one of the two parties.
+-/
+theorem elect_focus_mem_of_initialActive_subset_union {Voter Candidate : Type*}
+    [DecidableEq Voter] [DecidableEq Candidate]
+    {trace : STVTrace Candidate} {voters : Finset Voter}
+    {ballots : Voter → Ballot Candidate} {quota : ℝ}
+    {initialActive terminalActive : Finset Candidate}
+    {initialWeight : Voter → ℝ}
+    {partyCandidates otherPartyCandidates : Finset Candidate}
+    (run :
+      FractionalSTVIndexedExecutableTrace trace voters ballots quota
+        initialActive terminalActive initialWeight)
+    (hinitial_subset :
+      initialActive ⊆ partyCandidates ∪ otherPartyCandidates) :
+    ∀ step, step ∈ trace.steps → step.kind = StepKind.elect →
+      ∃ focused, step.focus = some focused ∧
+        (focused ∈ partyCandidates ∨
+          focused ∈ otherPartyCandidates) := by
+  intro step hstep _helect
+  rcases List.getElem_of_mem hstep with ⟨n, hn, hget⟩
+  subst hget
+  exact focus_mem_of_initialActive_subset_union
+    (partyCandidates := partyCandidates)
+    (otherPartyCandidates := otherPartyCandidates)
+    run hinitial_subset ⟨n, hn⟩
+
 end FractionalSTVIndexedExecutableTrace
 
 /--
@@ -4243,7 +5355,130 @@ theorem prefixReplay {Voter Candidate : Type*}
   intro i
   exact STVTrace.replaysFrom_take_get_beforeActive run.activeReplay i
 
+/--
+Restrict an executable fractional STV trace certificate to a finite prefix.
+
+The caller supplies the active-set replay endpoint for the prefix; all
+candidate-level executable facts are inherited from the original trace.
+-/
+theorem of_take {Voter Candidate : Type*}
+    [DecidableEq Voter] [DecidableEq Candidate]
+    {rule : FractionalSTVTransferRule Candidate}
+    {trace : STVTrace Candidate} {voters : Finset Voter}
+    {ballots : Voter → Ballot Candidate} {quota : ℝ}
+    {initialActive terminalActive prefixTerminalActive : Finset Candidate}
+    {initialWeight : Voter → ℝ}
+    (run :
+      FractionalSTVExecutableTrace rule trace voters ballots quota
+        initialActive terminalActive initialWeight)
+    (n : ℕ)
+    (hreplay :
+      STVTrace.replayStepsFrom (trace.steps.take n) initialActive
+        prefixTerminalActive) :
+    FractionalSTVExecutableTrace rule
+      ({ steps := trace.steps.take n } : STVTrace Candidate)
+      voters ballots quota initialActive prefixTerminalActive initialWeight where
+  quota_pos := run.quota_pos
+  step_removes := by
+    intro i
+    have hlen : (trace.steps.take n).length ≤ trace.steps.length := by
+      simp [List.length_take]
+    have hi : i.1 < trace.steps.length := lt_of_lt_of_le i.2 hlen
+    simpa [List.get_eq_getElem, List.getElem_take] using
+      run.step_removes ⟨i.1, hi⟩
+  step_focus_active := by
+    intro i
+    have hlen : (trace.steps.take n).length ≤ trace.steps.length := by
+      simp [List.length_take]
+    have hi : i.1 < trace.steps.length := lt_of_lt_of_le i.2 hlen
+    simpa [List.get_eq_getElem, List.getElem_take] using
+      run.step_focus_active ⟨i.1, hi⟩
+  initialWeight_nonneg := run.initialWeight_nonneg
+  tally_eq := by
+    intro i candidate hcandidate
+    have hlen : (trace.steps.take n).length ≤ trace.steps.length := by
+      simp [List.length_take]
+    have hi : i.1 < trace.steps.length := lt_of_lt_of_le i.2 hlen
+    have hcandidate' :
+        candidate ∈ (trace.steps.get ⟨i.1, hi⟩).beforeActive := by
+      simpa [List.get_eq_getElem, List.getElem_take] using hcandidate
+    have htally := run.tally_eq ⟨i.1, hi⟩ candidate hcandidate'
+    have hi_le_n : i.1 ≤ n := by
+      have hi_min : i.1 < min n trace.steps.length := by
+        simpa [List.length_take] using i.2
+      exact Nat.le_of_lt (lt_of_lt_of_le hi_min (Nat.min_le_left _ _))
+    simpa [List.get_eq_getElem, List.getElem_take, List.take_take,
+      Nat.min_eq_left hi_le_n] using htally
+  kind_allowed := by
+    intro i
+    have hlen : (trace.steps.take n).length ≤ trace.steps.length := by
+      simp [List.length_take]
+    have hi : i.1 < trace.steps.length := lt_of_lt_of_le i.2 hlen
+    simpa [List.get_eq_getElem, List.getElem_take] using
+      run.kind_allowed ⟨i.1, hi⟩
+  quota_if_elect := by
+    intro i focused hfocus hkind
+    have hlen : (trace.steps.take n).length ≤ trace.steps.length := by
+      simp [List.length_take]
+    have hi : i.1 < trace.steps.length := lt_of_lt_of_le i.2 hlen
+    have hfocus' :
+        (trace.steps.get ⟨i.1, hi⟩).focus = some focused := by
+      simpa [List.get_eq_getElem, List.getElem_take] using hfocus
+    have hkind' :
+        (trace.steps.get ⟨i.1, hi⟩).kind = StepKind.elect := by
+      simpa [List.get_eq_getElem, List.getElem_take] using hkind
+    have hquota := run.quota_if_elect ⟨i.1, hi⟩ focused hfocus' hkind'
+    have hi_le_n : i.1 ≤ n := by
+      have hi_min : i.1 < min n trace.steps.length := by
+        simpa [List.length_take] using i.2
+      exact Nat.le_of_lt (lt_of_lt_of_le hi_min (Nat.min_le_left _ _))
+    simpa [List.get_eq_getElem, List.getElem_take, List.take_take,
+      Nat.min_eq_left hi_le_n] using hquota
+  activeReplay := hreplay
+
 end FractionalSTVExecutableTrace
+
+/--
+No-quota elimination facts restrict from a trace to any finite prefix.
+
+This is the routine index transport used by source-step prefix arguments: if
+the full candidate-level trace has every active same-party candidate below
+quota on elimination rounds, the same fact holds for `steps.take n`.
+-/
+theorem noquotaOnEliminate_take_of_noquotaOnEliminate
+    {Candidate : Type*} [DecidableEq Candidate]
+    {rule : FractionalSTVTransferRule Candidate}
+    {steps : List (STVStep Candidate)} {partyCandidates : Finset Candidate}
+    {quota : ℝ} {n : ℕ}
+    (hnoquota :
+      ∀ i : Fin steps.length,
+        (steps.get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates (steps.get i).beforeActive
+                  partyCandidates →
+              rule.fractionalTally (steps.get i) candidate < quota) :
+    ∀ i : Fin (steps.take n).length,
+      ((steps.take n).get i).kind = StepKind.eliminate →
+        ∀ candidate,
+          candidate ∈
+              activePartyCandidates ((steps.take n).get i).beforeActive
+                partyCandidates →
+            rule.fractionalTally ((steps.take n).get i) candidate < quota := by
+  intro i hkind candidate hcandidate
+  have hlen : (steps.take n).length ≤ steps.length := by
+    simp [List.length_take]
+  have hi : i.1 < steps.length := lt_of_lt_of_le i.2 hlen
+  have hkind_full :
+      (steps.get ⟨i.1, hi⟩).kind = StepKind.eliminate := by
+    simpa [List.get_eq_getElem, List.getElem_take] using hkind
+  have hcandidate_full :
+      candidate ∈
+          activePartyCandidates (steps.get ⟨i.1, hi⟩).beforeActive
+            partyCandidates := by
+    simpa [List.get_eq_getElem, List.getElem_take] using hcandidate
+  simpa [List.get_eq_getElem, List.getElem_take] using
+    hnoquota ⟨i.1, hi⟩ hkind_full candidate hcandidate_full
 
 /--
 Turn an indexed simulator certificate into a rule-keyed executable trace when
@@ -4974,6 +6209,1187 @@ theorem terminalBelowQuota_of_partyElectStepCount_residual_lt
       (PartyQuotaStartState partyCandidates.card initialVotes)).voteMass < quota
   rw [voteMass_partyTransferPreservationTerminalState_startState]
   exact hresidual
+
+/--
+A deterministic party-state fold whose synthetic residual is below quota
+implies the direct quota-floor lower bound for the number of same-party
+elections in the trace.
+-/
+theorem floor_votes_div_quota_le_partyElectStepCount_of_terminalBelowQuota
+    {Candidate : Type*} [DecidableEq Candidate]
+    {partyCandidates : Finset Candidate} {quota initialVotes : ℝ}
+    {fractionalTally : STVStep Candidate → Candidate → ℝ}
+    {steps : List (STVStep Candidate)}
+    (hquota_pos : 0 < quota) (hvotes_nonneg : 0 ≤ initialVotes)
+    (hterminal :
+      PartyQuotaTerminalBelowQuota quota
+        (partyTransferPreservationTerminalState partyCandidates quota
+          fractionalTally steps
+          (PartyQuotaStartState partyCandidates.card initialVotes))) :
+    ⌊initialVotes / quota⌋₊ ≤ partyElectStepCount partyCandidates steps := by
+  let terminalState :=
+    partyTransferPreservationTerminalState partyCandidates quota
+      fractionalTally steps
+      (PartyQuotaStartState partyCandidates.card initialVotes)
+  have hres_lt : terminalState.voteMass < quota := hterminal
+  have hmass :
+      terminalState.voteMass =
+        initialVotes - (partyElectStepCount partyCandidates steps : ℝ) *
+          quota := by
+    simpa [terminalState] using
+      voteMass_partyTransferPreservationTerminalState_startState
+        partyCandidates quota initialVotes fractionalTally steps
+  have hinit :
+      initialVotes =
+        (partyElectStepCount partyCandidates steps : ℝ) * quota +
+          terminalState.voteMass := by
+    rw [hmass]
+    ring
+  have hx_nonneg : 0 ≤ initialVotes / quota :=
+    div_nonneg hvotes_nonneg hquota_pos.le
+  have hx_lt :
+      initialVotes / quota <
+        (partyElectStepCount partyCandidates steps : ℝ) + 1 := by
+    rw [hinit]
+    have hquot_lt : terminalState.voteMass / quota < 1 := by
+      rw [div_lt_one hquota_pos]
+      exact hres_lt
+    field_simp [hquota_pos.ne']
+    nlinarith
+  have hfloor_lt :
+      ⌊initialVotes / quota⌋₊ <
+        partyElectStepCount partyCandidates steps + 1 := by
+    rw [Nat.floor_lt hx_nonneg]
+    simpa [Nat.cast_add, Nat.cast_one] using hx_lt
+  exact Nat.lt_succ_iff.mp hfloor_lt
+
+/--
+If a same-party quota process preserves the capacity invariant, then the
+canonical quota floor is bounded by quota winners plus the same-party
+candidates still active at the terminal fill point.
+
+This is the arithmetic form used for source STV rules that fill the remaining
+seats with terminal active candidates rather than treating those final seats as
+additional quota-transfer rounds.
+-/
+theorem floor_votes_div_quota_le_quotaWinners_add_remaining_of_capacityBound
+    {initialVotes quota : ℝ} {state : PartyQuotaState}
+    (hquota_pos : 0 < quota) (hvotes_nonneg : 0 ≤ initialVotes)
+    (hinit :
+      initialVotes = (state.quotaWinners : ℝ) * quota + state.voteMass)
+    (hcapacity : PartyQuotaCapacityBound quota state) :
+    ⌊initialVotes / quota⌋₊ ≤
+      state.quotaWinners + state.remainingCandidates := by
+  have hx_nonneg : 0 ≤ initialVotes / quota :=
+    div_nonneg hvotes_nonneg hquota_pos.le
+  have hcapacity' :
+      state.voteMass < ((state.remainingCandidates : ℝ) + 1) * quota := by
+    simpa [PartyQuotaCapacityBound, Nat.cast_add, Nat.cast_one]
+      using hcapacity
+  have hx_lt :
+      initialVotes / quota <
+        ((state.quotaWinners + state.remainingCandidates : ℕ) : ℝ) + 1 := by
+    rw [hinit]
+    rw [div_lt_iff₀ hquota_pos]
+    norm_num [Nat.cast_add, Nat.cast_one]
+    nlinarith
+  have hfloor_lt :
+      ⌊initialVotes / quota⌋₊ <
+        state.quotaWinners + state.remainingCandidates + 1 := by
+    rw [Nat.floor_lt hx_nonneg]
+    simpa [Nat.cast_add, Nat.cast_one] using hx_lt
+  exact Nat.lt_succ_iff.mp hfloor_lt
+
+/--
+Capacity preservation for a solid coalition using source-faithful lower-bound
+accounting: each same-party election can remove at most one quota of the
+coalition's current weight, while same-party eliminations are allowed only when
+no active same-party candidate is at quota in the global tally.
+
+Unlike the exact party-weight replay theorem, this result does not assume that
+other voters give no support to same-party winners.
+-/
+theorem partyTransferPreservationTerminalState_capacityAndMassLower_of_replaySteps_lowerBound
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate} {quota : ℝ}
+    {fractionalTally : STVStep Candidate → Candidate → ℝ}
+    {steps : List (STVStep Candidate)}
+    {startActive terminalActive : Finset Candidate}
+    {initialWeight : Voter → ℝ} {startState : PartyQuotaState}
+    (hsolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hweight_nonneg : ∀ voter, voter ∈ allVoters → 0 ≤ initialWeight voter)
+    (hquota_pos : 0 < quota)
+    (htraceSteps :
+      ∀ i : Fin steps.length,
+        FractionalSTVConcreteStepLaw
+          (fractionalTally (steps.get i)) quota (steps.get i))
+    (htally_eq :
+      ∀ i : Fin steps.length, ∀ candidate,
+        candidate ∈ (steps.get i).beforeActive →
+          fractionalTally (steps.get i) candidate =
+            fractionalActiveTally allVoters ballots
+              (fractionalSTVWeightAfterSteps allVoters ballots quota
+                (steps.take i.1) initialWeight)
+              (steps.get i).beforeActive candidate)
+    (hreplay : STVTrace.replayStepsFrom steps startActive terminalActive)
+    (hstart : PartyQuotaCapacityBound quota startState)
+    (hstartRemaining :
+      startState.remainingCandidates =
+        (activePartyCandidates startActive partyCandidates).card)
+    (hmassLower :
+      0 < startState.remainingCandidates →
+        startState.voteMass ≤ ∑ voter ∈ partyVoters, initialWeight voter)
+    (hnoquota_on_eliminate :
+      ∀ i : Fin steps.length,
+        (steps.get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates (steps.get i).beforeActive
+                  partyCandidates →
+              fractionalTally (steps.get i) candidate < quota) :
+    PartyQuotaCapacityBound quota
+        (partyTransferPreservationTerminalState partyCandidates quota
+          fractionalTally steps startState) ∧
+      (0 <
+          (partyTransferPreservationTerminalState partyCandidates quota
+            fractionalTally steps startState).remainingCandidates →
+        (partyTransferPreservationTerminalState partyCandidates quota
+          fractionalTally steps startState).voteMass ≤
+          ∑ voter ∈ partyVoters,
+            fractionalSTVWeightAfterSteps allVoters ballots quota steps
+              initialWeight voter) := by
+  induction steps generalizing startActive initialWeight startState with
+  | nil =>
+      constructor
+      · simpa [partyTransferPreservationTerminalState] using hstart
+      · simpa [partyTransferPreservationTerminalState] using hmassLower
+  | cons step steps ih =>
+      simp only [STVTrace.replayStepsFrom] at hreplay
+      rcases hreplay with ⟨hbefore, htailReplay⟩
+      let nextState :=
+        partyTransferPreservationNextState partyCandidates
+          (fractionalTally step) quota step startState
+      let nextWeight :=
+        fractionalSTVNextWeight allVoters ballots quota step initialWeight
+      have hstepConcrete :
+          FractionalSTVConcreteStepLaw (fractionalTally step) quota step := by
+        have h0 := htraceSteps ⟨0, by simp⟩
+        simpa using h0
+      rcases hstepConcrete with
+        ⟨hremove, focused, hfocus, hfocused_active, _htally_nonneg,
+          hkind_allowed, hquota_if_elect⟩
+      have hremaining_step :
+          startState.remainingCandidates =
+            (activePartyCandidates step.beforeActive partyCandidates).card := by
+        simpa [hbefore] using hstartRemaining
+      have hnextRemaining :
+          nextState.remainingCandidates =
+            (activePartyCandidates step.afterActive partyCandidates).card := by
+        simpa [nextState] using
+          remainingCandidates_partyTransferPreservationNextState_eq_activePartyCandidates
+            (partyCandidates := partyCandidates)
+            (fractionalTally := fractionalTally step) (quota := quota)
+            (step := step) (before := startState) hremove hfocus
+            hfocused_active hkind_allowed hremaining_step
+      have hsum_non_elect :
+          step.kind ≠ StepKind.elect →
+            (∑ voter ∈ partyVoters, nextWeight voter) =
+              ∑ voter ∈ partyVoters, initialWeight voter := by
+        intro hne
+        refine Finset.sum_congr rfl ?_
+        intro voter hvoter
+        cases hfocus' : step.focus with
+        | none =>
+            simp [nextWeight, fractionalSTVNextWeight, hfocus']
+        | some focused' =>
+            cases hkind' : step.kind <;>
+              simp [nextWeight, fractionalSTVNextWeight, hfocus', hkind'] at hne ⊢
+      have hnextCapacity : PartyQuotaCapacityBound quota nextState := by
+        by_cases hparty : focused ∈ partyCandidates
+        · have hpartyActiveStep :
+              ∃ same, same ∈ partyCandidates ∧ same ∈ step.beforeActive :=
+            ⟨focused, hparty, hfocused_active⟩
+          have hremaining_pos : 0 < startState.remainingCandidates := by
+            rw [hremaining_step]
+            exact Finset.card_pos.mpr
+              ⟨focused, by
+                simp [activePartyCandidates, hfocused_active, hparty]⟩
+          cases hkind : step.kind with
+          | elect =>
+              have hremaining_update :
+                  nextState.remainingCandidates + 1 =
+                    startState.remainingCandidates := by
+                simp [nextState, partyTransferPreservationNextState, hfocus,
+                  hparty, hkind]
+                omega
+              have hmass_update :
+                  nextState.voteMass = startState.voteMass - quota := by
+                simp [nextState, partyTransferPreservationNextState, hfocus,
+                  hparty, hkind]
+              exact PartyQuotaCapacityBound.of_electUpdate hstart
+                hremaining_update hmass_update
+          | eliminate =>
+              have hstate_le_sum :
+                  startState.voteMass ≤
+                    ∑ voter ∈ partyVoters, initialWeight voter :=
+                hmassLower hremaining_pos
+              have hweighted_eq :
+                  partyFractionalTallyMass partyCandidates
+                      (fractionalActiveTally partyVoters ballots
+                        initialWeight step.beforeActive)
+                      step.beforeActive =
+                    ∑ voter ∈ partyVoters, initialWeight voter :=
+                partyFractionalTallyMass_fractionalActiveTally_eq_sum_weights_of_solidCoalition
+                  (voters := partyVoters) (ballots := ballots)
+                  (weight := initialWeight) (active := step.beforeActive)
+                  (partyCandidates := partyCandidates) hsolid
+                  hpartyActiveStep
+              have hweighted_le_trace :
+                  partyFractionalTallyMass partyCandidates
+                      (fractionalActiveTally partyVoters ballots
+                        initialWeight step.beforeActive)
+                      step.beforeActive ≤
+                    partyFractionalTallyMass partyCandidates
+                      (fractionalTally step) step.beforeActive := by
+                dsimp [partyFractionalTallyMass]
+                refine Finset.sum_le_sum ?_
+                intro candidate hcandidate
+                have hcandidate_active :
+                    candidate ∈ step.beforeActive :=
+                  (Finset.mem_filter.mp hcandidate).1
+                have hle_global :
+                    fractionalActiveTally partyVoters ballots initialWeight
+                        step.beforeActive candidate ≤
+                      fractionalActiveTally allVoters ballots initialWeight
+                        step.beforeActive candidate :=
+                  fractionalActiveTally_le_of_voters_subset
+                    (voters₁ := partyVoters) (voters₂ := allVoters)
+                    (ballots := ballots) (weight := initialWeight)
+                    (active := step.beforeActive) (candidate := candidate)
+                    hpartyVoters_subset hweight_nonneg
+                have heq_trace :
+                    fractionalTally step candidate =
+                      fractionalActiveTally allVoters ballots initialWeight
+                        step.beforeActive candidate := by
+                  have h0 := htally_eq ⟨0, by simp⟩ candidate hcandidate_active
+                  simpa [fractionalSTVWeightAfterSteps] using h0
+                simpa [heq_trace] using hle_global
+              have htrace_mass_lt :
+                  partyFractionalTallyMass partyCandidates
+                      (fractionalTally step) step.beforeActive <
+                    ((activePartyCandidates step.beforeActive
+                        partyCandidates).card : ℝ) * quota :=
+                partyFractionalTallyMass_lt_card_mul_quota_of_forall_lt
+                  (partyCandidates := partyCandidates)
+                  (fractionalTally := fractionalTally step)
+                  (active := step.beforeActive) (quota := quota)
+                  (by
+                    rcases hpartyActiveStep with
+                      ⟨same, hsame_party, hsame_active⟩
+                    exact ⟨same, by
+                      simp [activePartyCandidates, hsame_active,
+                        hsame_party]⟩)
+                  (hnoquota_on_eliminate ⟨0, by simp⟩ hkind)
+              have hmass_lt :
+                  startState.voteMass <
+                    (startState.remainingCandidates : ℝ) * quota := by
+                rw [hremaining_step]
+                rw [← hweighted_eq] at hstate_le_sum
+                exact lt_of_le_of_lt
+                  (le_trans hstate_le_sum hweighted_le_trace)
+                  htrace_mass_lt
+              have hremaining_update :
+                  nextState.remainingCandidates + 1 =
+                    startState.remainingCandidates := by
+                simp [nextState, partyTransferPreservationNextState, hfocus,
+                  hparty, hkind]
+                omega
+              have hmass_update :
+                  nextState.voteMass = startState.voteMass := by
+                simp [nextState, partyTransferPreservationNextState, hfocus,
+                  hparty, hkind]
+              exact
+                PartyQuotaCapacityBound.of_eliminateStep_of_voteMass_lt_remaining_mul_quota
+                  hmass_lt ⟨hremaining_update, by
+                    simp [nextState, partyTransferPreservationNextState,
+                      hfocus, hparty, hkind],
+                    hmass_update⟩
+          | transfer =>
+              rcases hkind_allowed with helect | heliminate <;> simp [hkind] at *
+          | finish =>
+              rcases hkind_allowed with helect | heliminate <;> simp [hkind] at *
+        · have hsame :
+              nextState = startState := by
+            simp [nextState, partyTransferPreservationNextState, hfocus, hparty]
+          simpa [hsame] using hstart
+      have hnextMassLower :
+          0 < nextState.remainingCandidates →
+            nextState.voteMass ≤ ∑ voter ∈ partyVoters, nextWeight voter := by
+        intro hnext_pos
+        by_cases hparty : focused ∈ partyCandidates
+        · have hremaining_pos : 0 < startState.remainingCandidates := by
+            rw [hremaining_step]
+            exact Finset.card_pos.mpr
+              ⟨focused, by
+                simp [activePartyCandidates, hfocused_active, hparty]⟩
+          have hstate_le_sum :
+              startState.voteMass ≤
+                ∑ voter ∈ partyVoters, initialWeight voter :=
+            hmassLower hremaining_pos
+          cases hkind : step.kind with
+          | elect =>
+              have hquota_le_global :
+                  quota ≤
+                    fractionalActiveTally allVoters ballots initialWeight
+                      step.beforeActive focused := by
+                have hquota_le_trace : quota ≤ fractionalTally step focused :=
+                  hquota_if_elect hkind
+                have heq_trace :
+                    fractionalTally step focused =
+                      fractionalActiveTally allVoters ballots initialWeight
+                        step.beforeActive focused := by
+                  have h0 := htally_eq ⟨0, by simp⟩ focused hfocused_active
+                  simpa [fractionalSTVWeightAfterSteps] using h0
+                simpa [heq_trace] using hquota_le_trace
+              have hsum_lower :
+                  (∑ voter ∈ partyVoters, initialWeight voter) - quota ≤
+                    ∑ voter ∈ partyVoters, nextWeight voter := by
+                simpa [nextWeight] using
+                  sum_fractionalSTVNextWeight_elect_ge_sum_sub_quota_of_subset
+                    (allVoters := allVoters) (voters := partyVoters)
+                    (ballots := ballots) (quota := quota) (step := step)
+                    (weight := initialWeight) (focused := focused)
+                    hpartyVoters_subset hweight_nonneg hquota_pos hfocus
+                    hkind hquota_le_global
+              have hmass_update :
+                  nextState.voteMass = startState.voteMass - quota := by
+                simp [nextState, partyTransferPreservationNextState, hfocus,
+                  hparty, hkind]
+              rw [hmass_update]
+              linarith
+          | eliminate =>
+              have hsum_eq := hsum_non_elect (by simp [hkind])
+              have hmass_update :
+                  nextState.voteMass = startState.voteMass := by
+                simp [nextState, partyTransferPreservationNextState, hfocus,
+                  hparty, hkind]
+              rw [hmass_update, hsum_eq]
+              exact hstate_le_sum
+          | transfer =>
+              rcases hkind_allowed with helect | heliminate <;> simp [hkind] at *
+          | finish =>
+              rcases hkind_allowed with helect | heliminate <;> simp [hkind] at *
+        · have hsame :
+              nextState = startState := by
+            simp [nextState, partyTransferPreservationNextState, hfocus, hparty]
+          have hremaining_pos : 0 < startState.remainingCandidates := by
+            simpa [hsame] using hnext_pos
+          have hstate_le_sum :
+              startState.voteMass ≤
+                ∑ voter ∈ partyVoters, initialWeight voter :=
+            hmassLower hremaining_pos
+          cases hkind : step.kind with
+          | elect =>
+              have hpartyActiveStep :
+                  ∃ same, same ∈ partyCandidates ∧ same ∈ step.beforeActive := by
+                rw [hremaining_step] at hremaining_pos
+                rcases Finset.card_pos.mp hremaining_pos with
+                  ⟨same, hsame_mem⟩
+                exact ⟨same, (Finset.mem_filter.mp hsame_mem).2,
+                  (Finset.mem_filter.mp hsame_mem).1⟩
+              have hsum_eq :
+                  (∑ voter ∈ partyVoters, nextWeight voter) =
+                    ∑ voter ∈ partyVoters, initialWeight voter := by
+                simpa [nextWeight] using
+                  sum_fractionalSTVNextWeight_elect_eq_sum_of_solidCoalition_outside
+                    (allVoters := allVoters) (voters := partyVoters)
+                    (ballots := ballots) (partyCandidates := partyCandidates)
+                    (quota := quota) (step := step) (weight := initialWeight)
+                    (focused := focused) hsolid hpartyActiveStep hfocus
+                    hkind hparty
+              simpa [hsame, hsum_eq] using hstate_le_sum
+          | eliminate =>
+              have hsum_eq := hsum_non_elect (by simp [hkind])
+              simpa [hsame, hsum_eq] using hstate_le_sum
+          | transfer =>
+              rcases hkind_allowed with helect | heliminate <;> simp [hkind] at *
+          | finish =>
+              rcases hkind_allowed with helect | heliminate <;> simp [hkind] at *
+      have htailTraceSteps :
+          ∀ i : Fin steps.length,
+            FractionalSTVConcreteStepLaw
+              (fractionalTally (steps.get i)) quota (steps.get i) := by
+        intro i
+        have hsucc :=
+          htraceSteps ⟨i.1 + 1, by simpa using Nat.succ_lt_succ i.2⟩
+        simpa using hsucc
+      have htailTallyEq :
+          ∀ i : Fin steps.length, ∀ candidate,
+            candidate ∈ (steps.get i).beforeActive →
+              fractionalTally (steps.get i) candidate =
+                fractionalActiveTally allVoters ballots
+                  (fractionalSTVWeightAfterSteps allVoters ballots quota
+                    (steps.take i.1) nextWeight)
+                  (steps.get i).beforeActive candidate := by
+        intro i candidate hcandidate
+        have hsucc :=
+          htally_eq ⟨i.1 + 1, by simpa using Nat.succ_lt_succ i.2⟩
+            candidate hcandidate
+        simpa [fractionalSTVWeightAfterSteps, Nat.succ_eq_add_one,
+          nextWeight] using hsucc
+      have htailNoquota :
+          ∀ i : Fin steps.length,
+            (steps.get i).kind = StepKind.eliminate →
+              ∀ candidate,
+                candidate ∈
+                    activePartyCandidates (steps.get i).beforeActive
+                      partyCandidates →
+                  fractionalTally (steps.get i) candidate < quota := by
+        intro i hkind candidate hcandidate
+        exact
+          hnoquota_on_eliminate
+            ⟨i.1 + 1, by simpa using Nat.succ_lt_succ i.2⟩
+            (by simpa using hkind) candidate (by simpa using hcandidate)
+      have hnextWeight_nonneg :
+          ∀ voter, voter ∈ allVoters → 0 ≤ nextWeight voter := by
+        exact
+          fractionalSTVNextWeight_nonneg
+            (voters := allVoters) (ballots := ballots) (quota := quota)
+            (step := step) (weight := initialWeight)
+            hweight_nonneg hquota_pos (by
+              intro elected helect_focus helect_kind
+              have hquota_le_trace :
+                  quota ≤ fractionalTally step elected := by
+                have heq : elected = focused :=
+                  Option.some.inj (helect_focus.symm.trans hfocus)
+                subst elected
+                exact hquota_if_elect helect_kind
+              have heq_trace :
+                  fractionalTally step elected =
+                    fractionalActiveTally allVoters ballots initialWeight
+                      step.beforeActive elected := by
+                have hactive : elected ∈ step.beforeActive := by
+                  have heq : elected = focused :=
+                    Option.some.inj (helect_focus.symm.trans hfocus)
+                  simpa [heq] using hfocused_active
+                have h0 := htally_eq ⟨0, by simp⟩ elected hactive
+                simpa [fractionalSTVWeightAfterSteps] using h0
+              simpa [heq_trace] using hquota_le_trace)
+      simpa [partyTransferPreservationTerminalState, nextState, nextWeight] using
+        ih hnextWeight_nonneg htailTraceSteps htailTallyEq htailReplay
+          hnextCapacity hnextRemaining hnextMassLower htailNoquota
+
+/--
+Capacity preservation for a solid coalition using source-faithful lower-bound
+accounting.
+-/
+theorem partyTransferPreservationTerminalState_capacityBound_of_replaySteps_lowerBound
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate} {quota : ℝ}
+    {fractionalTally : STVStep Candidate → Candidate → ℝ}
+    {steps : List (STVStep Candidate)}
+    {startActive terminalActive : Finset Candidate}
+    {initialWeight : Voter → ℝ} {startState : PartyQuotaState}
+    (hsolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hweight_nonneg : ∀ voter, voter ∈ allVoters → 0 ≤ initialWeight voter)
+    (hquota_pos : 0 < quota)
+    (htraceSteps :
+      ∀ i : Fin steps.length,
+        FractionalSTVConcreteStepLaw
+          (fractionalTally (steps.get i)) quota (steps.get i))
+    (htally_eq :
+      ∀ i : Fin steps.length, ∀ candidate,
+        candidate ∈ (steps.get i).beforeActive →
+          fractionalTally (steps.get i) candidate =
+            fractionalActiveTally allVoters ballots
+              (fractionalSTVWeightAfterSteps allVoters ballots quota
+                (steps.take i.1) initialWeight)
+              (steps.get i).beforeActive candidate)
+    (hreplay : STVTrace.replayStepsFrom steps startActive terminalActive)
+    (hstart : PartyQuotaCapacityBound quota startState)
+    (hstartRemaining :
+      startState.remainingCandidates =
+        (activePartyCandidates startActive partyCandidates).card)
+    (hmassLower :
+      0 < startState.remainingCandidates →
+        startState.voteMass ≤ ∑ voter ∈ partyVoters, initialWeight voter)
+    (hnoquota_on_eliminate :
+      ∀ i : Fin steps.length,
+        (steps.get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates (steps.get i).beforeActive
+                  partyCandidates →
+              fractionalTally (steps.get i) candidate < quota) :
+    PartyQuotaCapacityBound quota
+      (partyTransferPreservationTerminalState partyCandidates quota
+        fractionalTally steps startState) :=
+  (partyTransferPreservationTerminalState_capacityAndMassLower_of_replaySteps_lowerBound
+    hsolid hpartyVoters_subset hweight_nonneg hquota_pos htraceSteps
+    htally_eq hreplay hstart hstartRemaining hmassLower
+    hnoquota_on_eliminate).1
+
+/--
+If the source-faithful lower-bound replay keeps the current global weight of a
+solid coalition below quota, then the deterministic party-state fold is
+terminal below quota. If the party has no remaining candidates, this follows
+from capacity; otherwise the strengthened replay invariant bounds party-state
+vote mass by the coalition's current global weight.
+-/
+theorem terminalBelowQuota_of_replaySteps_lowerBound_globalWeight_lt
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate} {quota : ℝ}
+    {fractionalTally : STVStep Candidate → Candidate → ℝ}
+    {steps : List (STVStep Candidate)}
+    {startActive terminalActive : Finset Candidate}
+    {initialWeight : Voter → ℝ} {startState : PartyQuotaState}
+    (hsolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hweight_nonneg : ∀ voter, voter ∈ allVoters → 0 ≤ initialWeight voter)
+    (hquota_pos : 0 < quota)
+    (htraceSteps :
+      ∀ i : Fin steps.length,
+        FractionalSTVConcreteStepLaw
+          (fractionalTally (steps.get i)) quota (steps.get i))
+    (htally_eq :
+      ∀ i : Fin steps.length, ∀ candidate,
+        candidate ∈ (steps.get i).beforeActive →
+          fractionalTally (steps.get i) candidate =
+            fractionalActiveTally allVoters ballots
+              (fractionalSTVWeightAfterSteps allVoters ballots quota
+                (steps.take i.1) initialWeight)
+              (steps.get i).beforeActive candidate)
+    (hreplay : STVTrace.replayStepsFrom steps startActive terminalActive)
+    (hstart : PartyQuotaCapacityBound quota startState)
+    (hstartRemaining :
+      startState.remainingCandidates =
+        (activePartyCandidates startActive partyCandidates).card)
+    (hmassLower :
+      0 < startState.remainingCandidates →
+        startState.voteMass ≤ ∑ voter ∈ partyVoters, initialWeight voter)
+    (hnoquota_on_eliminate :
+      ∀ i : Fin steps.length,
+        (steps.get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates (steps.get i).beforeActive
+                  partyCandidates →
+              fractionalTally (steps.get i) candidate < quota)
+    (hterminalWeightBelow :
+      (∑ voter ∈ partyVoters,
+        fractionalSTVWeightAfterSteps allVoters ballots quota steps
+          initialWeight voter) < quota) :
+    PartyQuotaTerminalBelowQuota quota
+      (partyTransferPreservationTerminalState partyCandidates quota
+        fractionalTally steps startState) := by
+  let terminalState :=
+    partyTransferPreservationTerminalState partyCandidates quota
+      fractionalTally steps startState
+  have hpair :
+      PartyQuotaCapacityBound quota terminalState ∧
+        (0 < terminalState.remainingCandidates →
+          terminalState.voteMass ≤
+            ∑ voter ∈ partyVoters,
+              fractionalSTVWeightAfterSteps allVoters ballots quota steps
+                initialWeight voter) := by
+    simpa [terminalState] using
+      partyTransferPreservationTerminalState_capacityAndMassLower_of_replaySteps_lowerBound
+        hsolid hpartyVoters_subset hweight_nonneg hquota_pos htraceSteps
+        htally_eq hreplay hstart hstartRemaining hmassLower
+        hnoquota_on_eliminate
+  by_cases hremaining_pos : 0 < terminalState.remainingCandidates
+  · change terminalState.voteMass < quota
+    exact lt_of_le_of_lt (hpair.2 hremaining_pos) hterminalWeightBelow
+  · have hremaining_zero : terminalState.remainingCandidates = 0 :=
+      Nat.eq_zero_of_not_pos hremaining_pos
+    exact
+      PartyQuotaCapacityBound.terminalBelowQuota_of_remaining_zero
+        hpair.1 hremaining_zero
+
+/--
+If the source-faithful lower-bound replay preserves capacity and the active-set
+replay ends with no same-party candidates, then the deterministic party-state
+fold is terminal below quota.
+-/
+theorem terminalBelowQuota_of_replaySteps_lowerBound_capacity_no_activeParty_terminal
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate} {quota : ℝ}
+    {fractionalTally : STVStep Candidate → Candidate → ℝ}
+    {steps : List (STVStep Candidate)}
+    {startActive terminalActive : Finset Candidate}
+    {initialWeight : Voter → ℝ} {startState : PartyQuotaState}
+    (hsolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hweight_nonneg : ∀ voter, voter ∈ allVoters → 0 ≤ initialWeight voter)
+    (hquota_pos : 0 < quota)
+    (htraceSteps :
+      ∀ i : Fin steps.length,
+        FractionalSTVConcreteStepLaw
+          (fractionalTally (steps.get i)) quota (steps.get i))
+    (htally_eq :
+      ∀ i : Fin steps.length, ∀ candidate,
+        candidate ∈ (steps.get i).beforeActive →
+          fractionalTally (steps.get i) candidate =
+            fractionalActiveTally allVoters ballots
+              (fractionalSTVWeightAfterSteps allVoters ballots quota
+                (steps.take i.1) initialWeight)
+              (steps.get i).beforeActive candidate)
+    (hreplay : STVTrace.replayStepsFrom steps startActive terminalActive)
+    (hstart : PartyQuotaCapacityBound quota startState)
+    (hstartRemaining :
+      startState.remainingCandidates =
+        (activePartyCandidates startActive partyCandidates).card)
+    (hmassLower :
+      0 < startState.remainingCandidates →
+        startState.voteMass ≤ ∑ voter ∈ partyVoters, initialWeight voter)
+    (hnoquota_on_eliminate :
+      ∀ i : Fin steps.length,
+        (steps.get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates (steps.get i).beforeActive
+                  partyCandidates →
+              fractionalTally (steps.get i) candidate < quota)
+    (hsteps :
+      ∀ step, step ∈ steps →
+        ∃ focused, step.focus = some focused ∧
+          focused ∈ step.beforeActive ∧ step.removesFocusedCandidate ∧
+          (step.kind = StepKind.elect ∨ step.kind = StepKind.eliminate))
+    (hterminalNoParty :
+      activePartyCandidates terminalActive partyCandidates = ∅) :
+    PartyQuotaTerminalBelowQuota quota
+      (partyTransferPreservationTerminalState partyCandidates quota
+        fractionalTally steps startState) := by
+  have hcapacity :
+      PartyQuotaCapacityBound quota
+        (partyTransferPreservationTerminalState partyCandidates quota
+          fractionalTally steps startState) :=
+    partyTransferPreservationTerminalState_capacityBound_of_replaySteps_lowerBound
+      hsolid hpartyVoters_subset hweight_nonneg hquota_pos htraceSteps
+      htally_eq hreplay hstart hstartRemaining hmassLower
+      hnoquota_on_eliminate
+  have hremaining :
+      (partyTransferPreservationTerminalState partyCandidates quota
+        fractionalTally steps startState).remainingCandidates =
+        (activePartyCandidates terminalActive partyCandidates).card :=
+    remainingCandidates_partyTransferPreservationTerminalState_eq_activePartyCandidates_of_replayStepsFrom
+      (partyCandidates := partyCandidates) (quota := quota)
+      (fractionalTally := fractionalTally) (steps := steps)
+      (startActive := startActive) (terminalActive := terminalActive)
+      (state := startState) hreplay hstartRemaining hsteps
+  have hremaining_zero :
+      (partyTransferPreservationTerminalState partyCandidates quota
+        fractionalTally steps startState).remainingCandidates = 0 := by
+    rw [hremaining, hterminalNoParty]
+    simp
+  exact
+    PartyQuotaCapacityBound.terminalBelowQuota_of_remaining_zero hcapacity
+      hremaining_zero
+
+/--
+Source-faithful lower-bound replay gives the direct quota-floor lower bound for
+the final same-party seat count, using only concrete trace laws, solid
+coalitions, quota-respecting eliminations, and terminal exhaustion.
+-/
+theorem floor_votes_div_quota_le_finalSeats_of_replaySteps_lowerBound_capacityTerminal
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate} {quota initialVotes : ℝ}
+    {fractionalTally : STVStep Candidate → Candidate → ℝ}
+    {steps : List (STVStep Candidate)}
+    {startActive terminalActive : Finset Candidate}
+    {initialWeight : Voter → ℝ} {finalSeats : ℕ}
+    (hsolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hweight_nonneg : ∀ voter, voter ∈ allVoters → 0 ≤ initialWeight voter)
+    (hquota_pos : 0 < quota) (hvotes_nonneg : 0 ≤ initialVotes)
+    (htraceSteps :
+      ∀ i : Fin steps.length,
+        FractionalSTVConcreteStepLaw
+          (fractionalTally (steps.get i)) quota (steps.get i))
+    (htally_eq :
+      ∀ i : Fin steps.length, ∀ candidate,
+        candidate ∈ (steps.get i).beforeActive →
+          fractionalTally (steps.get i) candidate =
+            fractionalActiveTally allVoters ballots
+              (fractionalSTVWeightAfterSteps allVoters ballots quota
+                (steps.take i.1) initialWeight)
+              (steps.get i).beforeActive candidate)
+    (hreplay : STVTrace.replayStepsFrom steps startActive terminalActive)
+    (hstart :
+      PartyQuotaCapacityBound quota
+        (PartyQuotaStartState partyCandidates.card initialVotes))
+    (hstartRemaining :
+      (PartyQuotaStartState partyCandidates.card initialVotes).remainingCandidates =
+        (activePartyCandidates startActive partyCandidates).card)
+    (hmassLower :
+      0 <
+          (PartyQuotaStartState partyCandidates.card
+            initialVotes).remainingCandidates →
+        (PartyQuotaStartState partyCandidates.card initialVotes).voteMass ≤
+          ∑ voter ∈ partyVoters, initialWeight voter)
+    (hnoquota_on_eliminate :
+      ∀ i : Fin steps.length,
+        (steps.get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates (steps.get i).beforeActive
+                  partyCandidates →
+              fractionalTally (steps.get i) candidate < quota)
+    (hsteps :
+      ∀ step, step ∈ steps →
+        ∃ focused, step.focus = some focused ∧
+          focused ∈ step.beforeActive ∧ step.removesFocusedCandidate ∧
+          (step.kind = StepKind.elect ∨ step.kind = StepKind.eliminate))
+    (hterminalNoParty :
+      activePartyCandidates terminalActive partyCandidates = ∅)
+    (hfinal :
+      partyElectStepCount partyCandidates steps ≤ finalSeats) :
+    ⌊initialVotes / quota⌋₊ ≤ finalSeats := by
+  have hterminal :
+      PartyQuotaTerminalBelowQuota quota
+        (partyTransferPreservationTerminalState partyCandidates quota
+          fractionalTally steps
+          (PartyQuotaStartState partyCandidates.card initialVotes)) :=
+    terminalBelowQuota_of_replaySteps_lowerBound_capacity_no_activeParty_terminal
+      (partyCandidates := partyCandidates) (quota := quota)
+      (fractionalTally := fractionalTally) (steps := steps)
+      (startActive := startActive) (terminalActive := terminalActive)
+      (initialWeight := initialWeight)
+      (startState := PartyQuotaStartState partyCandidates.card initialVotes)
+      hsolid hpartyVoters_subset hweight_nonneg hquota_pos htraceSteps
+      htally_eq hreplay hstart hstartRemaining hmassLower
+      hnoquota_on_eliminate hsteps hterminalNoParty
+  exact le_trans
+    (floor_votes_div_quota_le_partyElectStepCount_of_terminalBelowQuota
+      (partyCandidates := partyCandidates) (quota := quota)
+      (initialVotes := initialVotes) (fractionalTally := fractionalTally)
+      (steps := steps) hquota_pos hvotes_nonneg hterminal)
+    hfinal
+
+/--
+Source-faithful lower-bound replay for filled-seat STV rules.
+
+The final party seat count may include both same-party quota election steps and
+the terminal active same-party candidates that are filled when the source STV
+rule reaches the "remaining candidates fill remaining seats" condition.
+-/
+theorem floor_votes_div_quota_le_finalSeats_of_replaySteps_lowerBound_capacityFill
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate} {quota initialVotes : ℝ}
+    {fractionalTally : STVStep Candidate → Candidate → ℝ}
+    {steps : List (STVStep Candidate)}
+    {startActive terminalActive : Finset Candidate}
+    {initialWeight : Voter → ℝ} {finalSeats : ℕ}
+    (hsolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hweight_nonneg : ∀ voter, voter ∈ allVoters → 0 ≤ initialWeight voter)
+    (hquota_pos : 0 < quota) (hvotes_nonneg : 0 ≤ initialVotes)
+    (htraceSteps :
+      ∀ i : Fin steps.length,
+        FractionalSTVConcreteStepLaw
+          (fractionalTally (steps.get i)) quota (steps.get i))
+    (htally_eq :
+      ∀ i : Fin steps.length, ∀ candidate,
+        candidate ∈ (steps.get i).beforeActive →
+          fractionalTally (steps.get i) candidate =
+            fractionalActiveTally allVoters ballots
+              (fractionalSTVWeightAfterSteps allVoters ballots quota
+                (steps.take i.1) initialWeight)
+              (steps.get i).beforeActive candidate)
+    (hreplay : STVTrace.replayStepsFrom steps startActive terminalActive)
+    (hstart :
+      PartyQuotaCapacityBound quota
+        (PartyQuotaStartState partyCandidates.card initialVotes))
+    (hstartRemaining :
+      (PartyQuotaStartState partyCandidates.card initialVotes).remainingCandidates =
+        (activePartyCandidates startActive partyCandidates).card)
+    (hmassLower :
+      0 <
+          (PartyQuotaStartState partyCandidates.card
+            initialVotes).remainingCandidates →
+        (PartyQuotaStartState partyCandidates.card initialVotes).voteMass ≤
+          ∑ voter ∈ partyVoters, initialWeight voter)
+    (hnoquota_on_eliminate :
+      ∀ i : Fin steps.length,
+        (steps.get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates (steps.get i).beforeActive
+                  partyCandidates →
+              fractionalTally (steps.get i) candidate < quota)
+    (hsteps :
+      ∀ step, step ∈ steps →
+        ∃ focused, step.focus = some focused ∧
+          focused ∈ step.beforeActive ∧ step.removesFocusedCandidate ∧
+          (step.kind = StepKind.elect ∨ step.kind = StepKind.eliminate))
+    (hfinal :
+      partyElectStepCount partyCandidates steps +
+          (activePartyCandidates terminalActive partyCandidates).card ≤
+        finalSeats) :
+    ⌊initialVotes / quota⌋₊ ≤ finalSeats := by
+  let terminalState :=
+    partyTransferPreservationTerminalState partyCandidates quota
+      fractionalTally steps
+      (PartyQuotaStartState partyCandidates.card initialVotes)
+  have hcapacity :
+      PartyQuotaCapacityBound quota terminalState := by
+    simpa [terminalState] using
+      partyTransferPreservationTerminalState_capacityBound_of_replaySteps_lowerBound
+        (partyCandidates := partyCandidates) (quota := quota)
+        (fractionalTally := fractionalTally) (steps := steps)
+        (startActive := startActive) (terminalActive := terminalActive)
+        (initialWeight := initialWeight)
+        (startState := PartyQuotaStartState partyCandidates.card initialVotes)
+        hsolid hpartyVoters_subset hweight_nonneg hquota_pos htraceSteps
+        htally_eq hreplay hstart hstartRemaining hmassLower
+        hnoquota_on_eliminate
+  have hremaining :
+      terminalState.remainingCandidates =
+        (activePartyCandidates terminalActive partyCandidates).card := by
+    simpa [terminalState] using
+      remainingCandidates_partyTransferPreservationTerminalState_eq_activePartyCandidates_of_replayStepsFrom
+        (partyCandidates := partyCandidates) (quota := quota)
+        (fractionalTally := fractionalTally) (steps := steps)
+        (startActive := startActive) (terminalActive := terminalActive)
+        (state := PartyQuotaStartState partyCandidates.card initialVotes)
+        hreplay hstartRemaining hsteps
+  have hwinners :
+      terminalState.quotaWinners =
+        partyElectStepCount partyCandidates steps := by
+    simpa [terminalState] using
+      quotaWinners_partyTransferPreservationTerminalState_startState
+        partyCandidates quota initialVotes fractionalTally steps
+  have hmass :
+      terminalState.voteMass =
+        initialVotes - (partyElectStepCount partyCandidates steps : ℝ) *
+          quota := by
+    simpa [terminalState] using
+      voteMass_partyTransferPreservationTerminalState_startState
+        partyCandidates quota initialVotes fractionalTally steps
+  have hinit :
+      initialVotes =
+        (terminalState.quotaWinners : ℝ) * quota + terminalState.voteMass := by
+    rw [hwinners, hmass]
+    ring
+  have hfloor :
+      ⌊initialVotes / quota⌋₊ ≤
+        terminalState.quotaWinners + terminalState.remainingCandidates :=
+    floor_votes_div_quota_le_quotaWinners_add_remaining_of_capacityBound
+      hquota_pos hvotes_nonneg hinit hcapacity
+  have hterminal_le_final :
+      terminalState.quotaWinners + terminalState.remainingCandidates ≤
+        finalSeats := by
+    rw [hwinners, hremaining]
+    exact hfinal
+  exact le_trans hfloor hterminal_le_final
+
+/--
+One-party executable-trace lower-bound theorem.  It derives the concrete
+source-step facts, tally agreement, active replay, nonnegative weights, and
+initial party-mass lower bound from the executable candidate-level trace.
+-/
+theorem floor_votes_div_quota_le_finalSeats_of_executableTrace_solidCoalition_left_lowerBound_capacityTerminal
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {rule : FractionalSTVTransferRule Candidate} {trace : STVTrace Candidate}
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate}
+    {quota initialVotes : ℝ} {finalSeats : ℕ}
+    {initialActive terminalActive : Finset Candidate}
+    {initialWeight partyInitialWeight : Voter → ℝ}
+    (hrun :
+      FractionalSTVExecutableTrace rule trace allVoters ballots quota
+        initialActive terminalActive initialWeight)
+    (hpartySolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hpartyInitialWeightEq :
+      ∀ voter, voter ∈ partyVoters →
+        initialWeight voter = partyInitialWeight voter)
+    (hpartyInitialMass :
+      initialVotes = ∑ voter ∈ partyVoters, partyInitialWeight voter)
+    (hstartCapacity :
+      PartyQuotaCapacityBound quota
+        (PartyQuotaStartState partyCandidates.card initialVotes))
+    (hstartRemaining :
+      (PartyQuotaStartState partyCandidates.card initialVotes).remainingCandidates =
+        (activePartyCandidates initialActive partyCandidates).card)
+    (hnoquota_on_eliminate :
+      ∀ i : Fin trace.steps.length,
+        (trace.steps.get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates (trace.steps.get i).beforeActive
+                  partyCandidates →
+              rule.fractionalTally (trace.steps.get i) candidate < quota)
+    (hterminalNoParty :
+      activePartyCandidates terminalActive partyCandidates = ∅)
+    (hfinal :
+      partyElectStepCount partyCandidates trace.steps ≤ finalSeats) :
+    ⌊initialVotes / quota⌋₊ ≤ finalSeats := by
+  have hinitialMass_global :
+      initialVotes = ∑ voter ∈ partyVoters, initialWeight voter := by
+    calc
+      initialVotes = ∑ voter ∈ partyVoters, partyInitialWeight voter :=
+        hpartyInitialMass
+      _ = ∑ voter ∈ partyVoters, initialWeight voter := by
+        refine Finset.sum_congr rfl ?_
+        intro voter hvoter
+        exact (hpartyInitialWeightEq voter hvoter).symm
+  have hvotes_nonneg : 0 ≤ initialVotes := by
+    rw [hinitialMass_global]
+    exact Finset.sum_nonneg (by
+      intro voter hvoter
+      exact hrun.initialWeight_nonneg voter (hpartyVoters_subset hvoter))
+  have hsteps :
+      ∀ step, step ∈ trace.steps →
+        ∃ focused, step.focus = some focused ∧
+          focused ∈ step.beforeActive ∧ step.removesFocusedCandidate ∧
+          (step.kind = StepKind.elect ∨ step.kind = StepKind.eliminate) := by
+    intro step hstep
+    rcases List.getElem_of_mem hstep with ⟨n, hn, hget⟩
+    subst hget
+    rcases (FractionalSTVExecutableTrace.concreteStepLaw hrun) ⟨n, hn⟩ with
+      ⟨hremove, focused, hfocus, hfocused_active, _hnonneg,
+        hkind_allowed, _hquota_if_elect⟩
+    exact ⟨focused, hfocus, hfocused_active, hremove, hkind_allowed⟩
+  exact
+    floor_votes_div_quota_le_finalSeats_of_replaySteps_lowerBound_capacityTerminal
+      (partyCandidates := partyCandidates) (quota := quota)
+      (initialVotes := initialVotes)
+      (fractionalTally := rule.fractionalTally) (steps := trace.steps)
+      (startActive := initialActive) (terminalActive := terminalActive)
+      (initialWeight := initialWeight) (finalSeats := finalSeats)
+      hpartySolid hpartyVoters_subset hrun.initialWeight_nonneg hrun.quota_pos
+      hvotes_nonneg (FractionalSTVExecutableTrace.concreteStepLaw hrun)
+      hrun.tally_eq hrun.activeReplay hstartCapacity hstartRemaining
+      (by
+        intro _hremaining_pos
+        simpa [PartyQuotaStartState, hinitialMass_global])
+      hnoquota_on_eliminate hsteps hterminalNoParty hfinal
+
+/--
+One-party executable-trace lower-bound theorem for source STV rules that fill
+the remaining seats with terminal active candidates.
+-/
+theorem floor_votes_div_quota_le_finalSeats_of_executableTrace_solidCoalition_left_lowerBound_capacityFill
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {rule : FractionalSTVTransferRule Candidate} {trace : STVTrace Candidate}
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate}
+    {quota initialVotes : ℝ} {finalSeats : ℕ}
+    {initialActive terminalActive : Finset Candidate}
+    {initialWeight partyInitialWeight : Voter → ℝ}
+    (hrun :
+      FractionalSTVExecutableTrace rule trace allVoters ballots quota
+        initialActive terminalActive initialWeight)
+    (hpartySolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hpartyInitialWeightEq :
+      ∀ voter, voter ∈ partyVoters →
+        initialWeight voter = partyInitialWeight voter)
+    (hpartyInitialMass :
+      initialVotes = ∑ voter ∈ partyVoters, partyInitialWeight voter)
+    (hstartCapacity :
+      PartyQuotaCapacityBound quota
+        (PartyQuotaStartState partyCandidates.card initialVotes))
+    (hstartRemaining :
+      (PartyQuotaStartState partyCandidates.card initialVotes).remainingCandidates =
+        (activePartyCandidates initialActive partyCandidates).card)
+    (hnoquota_on_eliminate :
+      ∀ i : Fin trace.steps.length,
+        (trace.steps.get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates (trace.steps.get i).beforeActive
+                  partyCandidates →
+              rule.fractionalTally (trace.steps.get i) candidate < quota)
+    (hfinal :
+      partyElectStepCount partyCandidates trace.steps +
+          (activePartyCandidates terminalActive partyCandidates).card ≤
+        finalSeats) :
+    ⌊initialVotes / quota⌋₊ ≤ finalSeats := by
+  have hinitialMass_global :
+      initialVotes = ∑ voter ∈ partyVoters, initialWeight voter := by
+    calc
+      initialVotes = ∑ voter ∈ partyVoters, partyInitialWeight voter :=
+        hpartyInitialMass
+      _ = ∑ voter ∈ partyVoters, initialWeight voter := by
+        refine Finset.sum_congr rfl ?_
+        intro voter hvoter
+        exact (hpartyInitialWeightEq voter hvoter).symm
+  have hvotes_nonneg : 0 ≤ initialVotes := by
+    rw [hinitialMass_global]
+    exact Finset.sum_nonneg (by
+      intro voter hvoter
+      exact hrun.initialWeight_nonneg voter (hpartyVoters_subset hvoter))
+  have hsteps :
+      ∀ step, step ∈ trace.steps →
+        ∃ focused, step.focus = some focused ∧
+          focused ∈ step.beforeActive ∧ step.removesFocusedCandidate ∧
+          (step.kind = StepKind.elect ∨ step.kind = StepKind.eliminate) := by
+    intro step hstep
+    rcases List.getElem_of_mem hstep with ⟨n, hn, hget⟩
+    subst hget
+    rcases (FractionalSTVExecutableTrace.concreteStepLaw hrun) ⟨n, hn⟩ with
+      ⟨hremove, focused, hfocus, hfocused_active, _hnonneg,
+        hkind_allowed, _hquota_if_elect⟩
+    exact ⟨focused, hfocus, hfocused_active, hremove, hkind_allowed⟩
+  exact
+    floor_votes_div_quota_le_finalSeats_of_replaySteps_lowerBound_capacityFill
+      (partyCandidates := partyCandidates) (quota := quota)
+      (initialVotes := initialVotes)
+      (fractionalTally := rule.fractionalTally) (steps := trace.steps)
+      (startActive := initialActive) (terminalActive := terminalActive)
+      (initialWeight := initialWeight) (finalSeats := finalSeats)
+      hpartySolid hpartyVoters_subset hrun.initialWeight_nonneg hrun.quota_pos
+      hvotes_nonneg (FractionalSTVExecutableTrace.concreteStepLaw hrun)
+      hrun.tally_eq hrun.activeReplay hstartCapacity hstartRemaining
+      (by
+        intro _hremaining_pos
+        simpa [PartyQuotaStartState, hinitialMass_global])
+      hnoquota_on_eliminate hsteps hfinal
+
+/--
+Prefix form of
+`floor_votes_div_quota_le_finalSeats_of_executableTrace_solidCoalition_left_lowerBound_capacityTerminal`.
+
+The executable source trace is restricted to `trace.steps.take n`; if that
+prefix exhausts the party and its same-party election count is included in the
+final seat count, it yields the same quota-floor lower bound.
+-/
+theorem floor_votes_div_quota_le_finalSeats_of_executableTrace_take_solidCoalition_left_lowerBound_capacityTerminal
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {rule : FractionalSTVTransferRule Candidate} {trace : STVTrace Candidate}
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate}
+    {quota initialVotes : ℝ} {finalSeats n : ℕ}
+    {initialActive terminalActive prefixTerminalActive : Finset Candidate}
+    {initialWeight partyInitialWeight : Voter → ℝ}
+    (hrun :
+      FractionalSTVExecutableTrace rule trace allVoters ballots quota
+        initialActive terminalActive initialWeight)
+    (hreplay :
+      STVTrace.replayStepsFrom (trace.steps.take n) initialActive
+        prefixTerminalActive)
+    (hpartySolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hpartyInitialWeightEq :
+      ∀ voter, voter ∈ partyVoters →
+        initialWeight voter = partyInitialWeight voter)
+    (hpartyInitialMass :
+      initialVotes = ∑ voter ∈ partyVoters, partyInitialWeight voter)
+    (hstartCapacity :
+      PartyQuotaCapacityBound quota
+        (PartyQuotaStartState partyCandidates.card initialVotes))
+    (hstartRemaining :
+      (PartyQuotaStartState partyCandidates.card initialVotes).remainingCandidates =
+        (activePartyCandidates initialActive partyCandidates).card)
+    (hnoquota_on_eliminate :
+      ∀ i : Fin (trace.steps.take n).length,
+        ((trace.steps.take n).get i).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates ((trace.steps.take n).get i).beforeActive
+                  partyCandidates →
+              rule.fractionalTally ((trace.steps.take n).get i) candidate <
+                quota)
+    (hterminalNoParty :
+      activePartyCandidates prefixTerminalActive partyCandidates = ∅)
+    (hfinal :
+      partyElectStepCount partyCandidates (trace.steps.take n) ≤ finalSeats) :
+    ⌊initialVotes / quota⌋₊ ≤ finalSeats :=
+  floor_votes_div_quota_le_finalSeats_of_executableTrace_solidCoalition_left_lowerBound_capacityTerminal
+    (rule := rule)
+    (trace := ({ steps := trace.steps.take n } : STVTrace Candidate))
+    (allVoters := allVoters) (partyVoters := partyVoters)
+    (ballots := ballots) (partyCandidates := partyCandidates)
+    (quota := quota) (initialVotes := initialVotes)
+    (finalSeats := finalSeats) (initialActive := initialActive)
+    (terminalActive := prefixTerminalActive) (initialWeight := initialWeight)
+    (partyInitialWeight := partyInitialWeight)
+    (FractionalSTVExecutableTrace.of_take hrun n hreplay)
+    hpartySolid hpartyVoters_subset hpartyInitialWeightEq hpartyInitialMass
+    hstartCapacity hstartRemaining hnoquota_on_eliminate hterminalNoParty
+    hfinal
+
+/--
+One-party executable-prefix lower-bound theorem for a prefix selected by the
+`beforeActive` set of an indexed source step.
+
+The replay endpoint is derived from the executable trace's active-set replay,
+so callers only need to identify the concrete source step before which the
+party has no active candidates.
+-/
+theorem floor_votes_div_quota_le_finalSeats_of_executableTrace_index_solidCoalition_left_lowerBound_capacityTerminal
+    {Voter Candidate : Type*} [DecidableEq Voter] [DecidableEq Candidate]
+    {rule : FractionalSTVTransferRule Candidate} {trace : STVTrace Candidate}
+    {allVoters partyVoters : Finset Voter}
+    {ballots : Voter → Ballot Candidate}
+    {partyCandidates : Finset Candidate}
+    {quota initialVotes : ℝ} {finalSeats : ℕ}
+    {initialActive terminalActive : Finset Candidate}
+    {initialWeight partyInitialWeight : Voter → ℝ}
+    (hrun :
+      FractionalSTVExecutableTrace rule trace allVoters ballots quota
+        initialActive terminalActive initialWeight)
+    (i : Fin trace.steps.length)
+    (hpartySolid : SolidCoalitionBallots partyVoters ballots partyCandidates)
+    (hpartyVoters_subset : partyVoters ⊆ allVoters)
+    (hpartyInitialWeightEq :
+      ∀ voter, voter ∈ partyVoters →
+        initialWeight voter = partyInitialWeight voter)
+    (hpartyInitialMass :
+      initialVotes = ∑ voter ∈ partyVoters, partyInitialWeight voter)
+    (hstartCapacity :
+      PartyQuotaCapacityBound quota
+        (PartyQuotaStartState partyCandidates.card initialVotes))
+    (hstartRemaining :
+      (PartyQuotaStartState partyCandidates.card initialVotes).remainingCandidates =
+        (activePartyCandidates initialActive partyCandidates).card)
+    (hnoquota_on_eliminate :
+      ∀ j : Fin (trace.steps.take i.1).length,
+        ((trace.steps.take i.1).get j).kind = StepKind.eliminate →
+          ∀ candidate,
+            candidate ∈
+                activePartyCandidates ((trace.steps.take i.1).get j).beforeActive
+                  partyCandidates →
+              rule.fractionalTally ((trace.steps.take i.1).get j) candidate <
+                quota)
+    (hterminalNoParty :
+      activePartyCandidates (trace.steps.get i).beforeActive partyCandidates = ∅)
+    (hfinal :
+      partyElectStepCount partyCandidates (trace.steps.take i.1) ≤ finalSeats) :
+    ⌊initialVotes / quota⌋₊ ≤ finalSeats :=
+  floor_votes_div_quota_le_finalSeats_of_executableTrace_take_solidCoalition_left_lowerBound_capacityTerminal
+    (rule := rule) (trace := trace) (allVoters := allVoters)
+    (partyVoters := partyVoters) (ballots := ballots)
+    (partyCandidates := partyCandidates) (quota := quota)
+    (initialVotes := initialVotes) (finalSeats := finalSeats)
+    (n := i.1) (initialActive := initialActive)
+    (terminalActive := terminalActive)
+    (prefixTerminalActive := (trace.steps.get i).beforeActive)
+    (initialWeight := initialWeight)
+    (partyInitialWeight := partyInitialWeight) hrun
+    (FractionalSTVExecutableTrace.prefixReplay hrun i)
+    hpartySolid hpartyVoters_subset hpartyInitialWeightEq hpartyInitialMass
+    hstartCapacity hstartRemaining hnoquota_on_eliminate hterminalNoParty
+    hfinal
 
 /--
 Primitive source law for a concrete STV trace, threaded through the party-state

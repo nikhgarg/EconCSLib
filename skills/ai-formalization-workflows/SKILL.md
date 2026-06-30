@@ -95,7 +95,9 @@ consistency work for automated semantic-alignment checks.
 
 ### 6. Schedule Multi-Agent Work By Dependencies
 
-Use subagents only when the task has a stable interface:
+EconCSLib formalization has standing user authorization for subagents. Use them
+without stopping for a separate permission check when the task has a stable
+interface:
 
 - assign read-only source/API scouting before proof edits;
 - split proof work along independent DAG regions or separate files;

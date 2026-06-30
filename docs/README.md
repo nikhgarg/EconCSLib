@@ -21,6 +21,9 @@ or what a completed formalization proves without reading proof internals.
 - [NEW_CONTRIBUTOR_WORKFLOW.md](NEW_CONTRIBUTOR_WORKFLOW.md): first-time
   contributor workflow using public `main` as a base, private development, and
   a public-safe pull request when ready.
+- [paper-formalization-quickstart/README.md](paper-formalization-quickstart/README.md):
+  concise prompt and steering guide for starting or managing a paper
+  formalization.
 - [PUBLIC_REPOSITORY_WORKFLOW.md](PUBLIC_REPOSITORY_WORKFLOW.md): public/private
   repository split, completed-paper imports, and private partial-paper policy.
 - [PRIVATE_DEVELOPMENT_WORKFLOW.md](PRIVATE_DEVELOPMENT_WORKFLOW.md):
@@ -59,7 +62,7 @@ They may assume Lean familiarity and may be more detailed.
   stochastic processes, continuous analysis, and design optimization.
 - [LARGE_DEVIATIONS_LIBRARY_PLAN.md](LARGE_DEVIATIONS_LIBRARY_PLAN.md):
   shared LDP, Chernoff, Laplace-principle, and binary-rate extraction plan for
-  ranking and rating-system paper formalizations.
+  the GGSG19, GJ18, and GJ19 paper scaffolds.
 
 Detailed proof-strategy rules for agents live in
 [`skills/econcs-formalizer/`](../skills/econcs-formalizer/).

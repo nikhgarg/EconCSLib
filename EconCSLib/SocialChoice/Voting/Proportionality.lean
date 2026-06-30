@@ -66,6 +66,24 @@ theorem roundedSeatShare_of_twoParty_lowerBounds {partySeats otherSeats seats : 
     omega
   exact le_trans hparty_le_sub hsubceil
 
+/--
+Two-party lower bounds plus an upper bound on the visible two-party total
+imply the rounded seat share for the focal party.
+-/
+theorem roundedSeatShare_of_twoParty_lowerBounds_le_total
+    {partySeats otherSeats seats : ℕ} {partyShare : ℝ}
+    (htotal_le : partySeats + otherSeats ≤ seats)
+    (hlower : ⌊partyShare * (seats : ℝ)⌋₊ ≤ partySeats)
+    (hotherLower : ⌊(1 - partyShare) * (seats : ℝ)⌋₊ ≤ otherSeats) :
+    roundedSeatShare partySeats partyShare seats := by
+  apply roundedSeatShare_of_floor_le_of_le_ceil hlower
+  have hsubceil := seats_sub_floor_complement_le_ceil
+    (seats := seats) (partyShare := partyShare)
+  have hparty_le_sub :
+      partySeats ≤ seats - ⌊(1 - partyShare) * (seats : ℝ)⌋₊ := by
+    omega
+  exact le_trans hparty_le_sub hsubceil
+
 end Voting
 end SocialChoice
 end EconCSLib

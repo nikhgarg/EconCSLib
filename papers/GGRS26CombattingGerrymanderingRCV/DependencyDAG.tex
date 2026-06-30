@@ -1,0 +1,98 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=4pt}
+]
+
+\dagPaperMetadata
+  {Combatting Gerrymandering with Ranked Choice Voting}
+  {N. Garg, W. Gurnee, D. Rothschild, D. Shmoys}
+  {Operations Research; arXiv:2107.07083}
+  {2026}
+  {https://pubsonline.informs.org/doi/abs/10.1287/opre.2024.1167}
+
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legDone) at (0,0) {formalized result};
+\node[dag_lemma, dag_template_legend] (legLemma) at (3.4,0) {formalized support};
+\node[dag_model, dag_template_legend] (legDef) at (6.8,0) {definition/model};
+\node[dag_unformalized, dag_template_legend] (legOpen) at (10.2,0) {data/code scope};
+}
+\daglegend{(legDone)(legLemma)(legDef)(legOpen)}{Legend}
+
+\begin{dagPaperBody}
+
+\node[dag_model] (PAVScore) at (0,-1.0) {
+  \textbf{PAV score (Section 2)} \\
+  Thiele committee score with harmonic marginal weights
+};
+
+\node[dag_model] (PAVSelector) at (6.4,-1.0) {
+  \textbf{PAV seat selector} \\
+  Leftmost maximizer of the two-party PAV seat score
+};
+
+\node[dag_model] (STVSource) at (12.8,-1.0) {
+  \textbf{Fractional STV source model} \\
+  Total quota-respecting choice rule and generated filled-seat run
+};
+
+\node[dag_lemma] (LemmaC1) at (2.0,-4.2) {
+  \textbf{Lemma C.1 PAV interval} \\
+  PAV min-argmax implies
+  $y_R(M+1)-1 \le n_R < y_R(M+1)$
+};
+
+\node[dag_lemma] (PAVRounded) at (2.0,-7.3) {
+  \textbf{PAV rounding} \\
+  Lemma C.1 gives a floor/ceiling PAV seat count
+};
+
+\node[dag_lemma] (Isolation) at (9.3,-3.6) {
+  \textbf{Solid-coalition isolation} \\
+  Same-party-first ballots prevent outside active support before exhaustion
+};
+
+\node[dag_lemma] (FilledSeats) at (15.8,-3.6) {
+  \textbf{Filled-seat accounting} \\
+  Terminal fill candidates and elected candidates fill exactly $M$ seats
+};
+
+\node[dag_lemma] (Quota) at (9.3,-6.7) {
+  \textbf{Droop-quota capacity} \\
+  Two parties' quota floors fit within the district seat count
+};
+
+\node[dag_result] (STVRounded) at (15.8,-6.7) {
+  \textbf{STV rounding} \\
+  Party filled-seat count satisfies the floor/ceiling share bound
+};
+
+\node[dag_result] (Prop1) at (8.9,-10.0) {
+  \textbf{Proposition 1 (Section 2.2)} \\
+  STV and PAV produce rounded two-party seat shares
+};
+
+\node[dag_unformalized] (Empirical) at (15.8,-10.0) {
+  \textbf{Redistricting and simulation studies} \\
+  Data and code boundary after the seat-share theorem
+};
+
+\draw[dag_arrow] (PAVScore.south) -- (LemmaC1.north);
+\draw[dag_arrow] (PAVSelector.south) -- (LemmaC1.north);
+\draw[dag_arrow] (LemmaC1.south) -- (PAVRounded.north);
+\draw[dag_arrow] (STVSource.south west) -- (Isolation.north east);
+\draw[dag_arrow] (STVSource.south) -- (FilledSeats.north);
+\draw[dag_arrow] (Isolation.south) -- (Quota.north);
+\draw[dag_arrow] (FilledSeats.south) -- (STVRounded.north);
+\draw[dag_arrow] (Quota.east) -- (STVRounded.west);
+\draw[dag_arrow] (PAVRounded.south east) -- (Prop1.north west);
+\draw[dag_arrow] (STVRounded.south west) -- (Prop1.north east);
+\draw[dag_dashed_arrow] (Prop1.east) -- (Empirical.west);
+
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

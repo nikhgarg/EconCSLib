@@ -903,16 +903,20 @@ bridge theorem in the library or the paper's route file. Then keep
 paper-facing proof surface, and keep `PostPaperAudit.lean` as an endpoint
 ledger that cites the strongest bridge instead of rebuilding the same proof.
 
-Use subagents only when they shorten the current proof loop. Medium-effort
-subagents are appropriate for bounded read-only scouting: find declaration
-names, trace imports, locate source statements, or identify likely reusable
-lemmas. Hard Lean implementation should stay local or go to a high-effort
-worker with a narrow, disjoint write scope and explicit instructions not to
-touch other agents' files. Do not delegate the next blocking proof obligation if
-the main agent will just wait idle; do the blocker locally and send sidecar
-questions in parallel. Ask subagents for exact file paths, line anchors,
-declaration names, and recommended next lemmas, not broad summaries or repeated
-context. Close agents once their result has been integrated.
+Subagents are always allowed for EconCSLib formalization work; treat this as
+standing user authorization for paper-intake, proof, audit, CI, and release
+tasks, and do not pause to ask for permission before using them. Use judgment
+about whether they shorten the current proof loop or improve confidence.
+Medium-effort subagents are appropriate for bounded read-only scouting: find
+declaration names, trace imports, locate source statements, or identify likely
+reusable lemmas. Hard Lean implementation should stay local or go to a
+high-effort worker with a narrow, disjoint write scope and explicit
+instructions not to touch other agents' files. Do not delegate the next
+blocking proof obligation if the main agent will just wait idle; do the blocker
+locally and send sidecar questions in parallel. Ask subagents for exact file
+paths, line anchors, declaration names, and recommended next lemmas, not broad
+summaries or repeated context. Close agents once their result has been
+integrated.
 When parallel edits are safe, do not artificially keep subagents read-only.
 Use worker subagents for bounded implementation in disjoint files or declaration
 clusters, tell them they are not alone in the codebase, and give each worker an
@@ -2147,14 +2151,20 @@ the Lean statements against the paper.
      final validation report. A conditional-boundary mismatch may be accepted
      only if the same boundary is named in `status.json`, the DAG/report caveat,
      and the assumption/proof-boundary metadata.
-- At a post-paper closeout boundary, run the LLM-as-judge workflow
-  automatically before committing or pushing. A user request such as "post paper
+- At a post-paper closeout boundary, run LLM-as-judge freshness and provenance
+  checks before committing or pushing. A user request such as "post paper
   workflow", "audits", "finish the paper", or "commit and push after closeout"
-  is sufficient trigger; do not wait for a separate request to generate or
-  refresh the LLM sidecars. This is not an in-progress proof check: if the paper
-  is still known to be unfinished or waiting on library work, skip the closeout
-  pass unless the user explicitly asks for it, and report targeted build/status
-  results instead. The automatic closeout pass must:
+  is sufficient trigger for the target paper's machine prechecks, but it is not
+  a request to rerun LLM judges for every paper in the repository. The Python
+  precheck/audit code should verify that tracked sidecars are present, current,
+  non-stale, and non-flagged. Regenerate LLM sidecars only for the target paper
+  rows/records that are missing, stale, structurally changed, or explicitly
+  requested. Do not launch all-paper LLM-as-judge refreshes unless the user
+  specifically asks for an all-paper judge refresh. This is not an in-progress
+  proof check: if the paper is still known to be unfinished or waiting on
+  library work, skip the closeout pass unless the user explicitly asks for it,
+  and report targeted build/status results instead. The target-paper closeout
+  pass must:
   - refresh the uncached dashboard row surface for the paper;
   - ensure every `PaperInterface.lean` declaration is classified: reviewed rows
     in `review_surface.include_names`, paper assumptions in
@@ -2162,15 +2172,19 @@ the Lean statements against the paper.
     `auxiliary_names`; auxiliary slice buckets may be added solely to satisfy
     audit/readiness row-count checks, but they do not make those helpers part of
     the visible human dashboard;
-  - run the no-paper-context review-surface judge when the row count exceeds
-    the surface threshold and save `review_surface_llm.json`;
+  - run the no-paper-context review-surface judge for the target paper only
+    when the row count exceeds the surface threshold and
+    `review_surface_llm.json` is missing/stale/flagged, or when explicitly
+    requested;
   - refresh the explicit source statement inventory in `paper_statement_map.json`
-    and generate `paper_coverage_llm.json`, checking source-paper items against
-    current dashboard row names. For a public-facing status, a missing explicit
-    inventory is a closeout blocker even if the dashboard has few rows or all
-    existing rows have clean statement judgments;
-  - generate `lean_to_tex_llm.json` for every current non-assumption review row
-    from the Lean statement alone, using source-stable declaration digests;
+    when the target paper source inventory changed, then use the precheck to
+    verify `paper_coverage_llm.json` against current dashboard row names. For a
+    public-facing status, a missing explicit inventory is a closeout blocker
+    even if the dashboard has few rows or all existing rows have clean statement
+    judgments;
+  - verify `lean_to_tex_llm.json` for every current non-assumption review row
+    using source-stable declaration digests, and regenerate only missing/stale
+    target-paper translations;
   - generate the code-backed recursive source-record audit for every row whose
     statement or visible premises mention a record/certificate/process/source model,
     and save it as `source_record_audit.json` or a dated equivalent;
@@ -2182,18 +2196,20 @@ the Lean statements against the paper.
     packages merely because their names end in `Bound` or `Bounds` (for example
     `MarginalBound`); those belong to row-local statement matching unless they
     are inside a certificate/source-record/process/replay/bridge structure;
-  - generate `statement_match_llm.json` with the strict full-statement,
-    exact-formula, recursive-definition prompt described above, including the
-    source-record audit entries for rows that depend on such structures;
+  - verify `statement_match_llm.json` with the strict full-statement,
+    exact-formula, recursive-definition prompt metadata described above,
+    including the source-record audit entries for rows that depend on such
+    structures; rerun only missing/stale/flagged target-paper rows unless the
+    user asks for a broader refresh;
   - inspect source-record classifications before setting the status: any
     remaining `approved_external_boundary`, `unresolved_assumed_math`, stale
     source-record digest, or missing source-record judgment makes the affected
     row partial/conditional unless a Lean constructor has discharged it or the
     status claim explicitly excludes that source item;
-  - generate `assumption_match_llm.json` for every name in
+  - verify `assumption_match_llm.json` for every name in
     `review_surface.assumption_names`, including both source assumptions and
-    any user-approved proof-boundary axiom names from
-    `proof_boundary_names`;
+    any user-approved proof-boundary axiom names from `proof_boundary_names`;
+    regenerate only missing/stale/flagged target-paper assumption judgments;
   - classify proof-boundary axioms as `partial_boundary`, not as source
     assumptions, and give item-level `premise_judgments` for each exact
     `-- audit-premise` line in `Assumptions.lean`;
@@ -2211,15 +2227,16 @@ the Lean statements against the paper.
     DAG/final-report closeout gate; do not claim post-formalization completion
     while it reports a paper-specific missing/stale DAG or validation-report
     finding;
-  - rerun the paper precheck and record all remaining unresolved `mismatch`,
+  - rerun the target-paper precheck and record all remaining unresolved `mismatch`,
     `mismatch` with `resolution: "conditional_boundary"`, `uncertain`, stale,
     missing, or broad-surface findings in the final report.
   After editing `status.json`, review-surface row lists, sidecar hashes, or the
-  final report, rerun `source_record_audit.py` and resync
-  `source_record_match_llm.json`; the audit payload digest can change even when
-  the recursive field set is unchanged. Then rerun `review_dashboard.py
-  --precheck` and update `review_status_export.json`/status summary fields from
-  that final pass.
+  final report, rerun `source_record_audit.py` for the target paper and use the
+  source-record precheck to decide whether `source_record_match_llm.json` is
+  stale. Resync or rerun only stale/missing/flagged target-paper source-record
+  judgments. Then rerun `review_dashboard.py --paper <paper-folder> --precheck`
+  and update `review_status_export.json`/status summary fields from that final
+  target-paper pass.
   Do not mark these sidecars as `matches` merely to clear a dashboard. If the
   Lean row is conditional while the paper row is unconditional, if a formula is
   hidden behind a source-model/certificate/library definition, or if the paper
@@ -3153,11 +3170,14 @@ pass:
   and note any source imprecision or proof deviation. Keep this plan current as
   proof work progresses; do not wait until the end to reconstruct the theorem
   inventory from helper lemmas.
-- Before final handoff or publish, require fresh tracked LLM sidecars for the
-  curated paper surface. `lean_to_tex_llm.json`, `statement_match_llm.json`,
-  `paper_coverage_llm.json`, `review_surface_llm.json` when threshold-triggered, and
+- Before final handoff or publish, require current tracked LLM sidecars for the
+  curated target-paper surface. `lean_to_tex_llm.json`,
+  `statement_match_llm.json`, `paper_coverage_llm.json`,
+  `review_surface_llm.json` when threshold-triggered, and
   `assumption_match_llm.json` for all `assumption_names` and
-  `proof_boundary_names` must be current. If any sidecar is missing, stale, or
+  `proof_boundary_names` must be present and non-stale according to the Python
+  prechecks. This does not require rerunning judges for unchanged rows or for
+  unrelated papers. If any target-paper sidecar is missing, stale, or
   reports `uncertain`/`mismatch`/`partial_boundary`, the final report must list
   the exact rows and the paper status must remain conditional/partial as
   appropriate. For a strict statement `mismatch` that is intentionally accepted
@@ -3286,6 +3306,10 @@ pass:
   closed. If the unfiltered audit reports findings from other papers, record
   them separately; do not downgrade or delay a paper whose `--paper-closeout`
   audit and paper-local validation gates pass.
+  Do not use this global audit as an excuse to rerun LLM-as-judge workflows for
+  every paper. It may check tracked sidecar freshness and report stale/missing
+  evidence, but judge reruns should stay scoped to the paper being closed unless
+  the user explicitly asks for an all-paper refresh.
   Also run `python3 scripts/audit_repository.py --library-only --library-premise-audit` when a
   completed paper uses recently added or extracted library APIs. Informational
   library certificate findings are not errors by themselves, but any completed

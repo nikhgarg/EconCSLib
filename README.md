@@ -65,6 +65,9 @@ agent the paper link, and ask it to formalize the paper using the skill and
 workflow in the repository. (And please let me know what your experience is
 like!).
 
+For a concise prompt template, see
+[`docs/paper-formalization-quickstart/README.md`](docs/paper-formalization-quickstart/README.md).
+
 ## Development
 
 This project is aligned to Lean/mathlib/CSLib `v4.30.0-rc2`.
