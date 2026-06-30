@@ -740,6 +740,10 @@ reader-relevant source-version, proof-route, or caveat note. Human-review counts
 mean saved dashboard rows by a human reviewer: `reviewed_rows / total_rows`.
 Agent source audits, validation reports, and compile checks do not increment
 human review.
+Website status tables should expose human review and row-local
+LLM-as-judge statement translation, not paper-level source coverage. Keep
+paper-level source-inventory coverage in validation reports, audit JSON, and
+`docs/PAPER_STATUS.md`; do not surface it as a public website table column.
 For a partial or conditional public entry, make `human_summary` one concise
 sentence: name the paper-facing results already closed and the exact remaining
 external/library/model certificate. Avoid Lean declaration names, helper-layer

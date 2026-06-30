@@ -3,6 +3,31 @@
 Use for `EconCSLib/Markets/*`, `EconCSLib/SocialChoice/*`, matching, fair
 division, rankings, Mallows models, and social-choice/ranking papers.
 
+## STV/RCV and Voting Rules
+
+- For ranked-choice voting papers, build reusable semantics under
+  `EconCSLib.SocialChoice.Voting` before paper-local theorem work. Keep ballot
+  primitives, active-set updates, tallies, winners, eliminations, transfers,
+  tie-breakers, and replay/process predicates in the shared layer when they are
+  paper-neutral.
+- Distinguish three objects that are easy to conflate: bare trace or transfer
+  data, the proposition-valued replay/process validity predicate over that
+  data, and the source theorem conclusion. Bare traces can be source-model
+  witness data, but replay validity, surplus-transfer preservation, terminal
+  process claims, and ballot-to-candidate isolation should be proved from the
+  primitive ballots, tie-breaking, and transfer rule, or marked as explicit
+  partial boundaries.
+- Keep empirical election audits, simulations, redistricting experiments, and
+  real-data claims as data/code boundaries unless their data pipeline is also
+  formalized. The Lean target should be the deterministic election semantics,
+  structure-validity theorem, or source theorem reduction that is independent
+  of those empirical artifacts.
+- For strategy or manipulation papers, separate ballot-change vectors and
+  strategy spaces from fixed-trace replay validity and payoff/order
+  consequences. Close fixed-structure replay and validity lemmas first; expose
+  optimization/search or empirical computation as a separate boundary when it
+  is not part of the Lean proof.
+
 ## Matching and Fair Division
 
 - For matching, keep preference, blocking-pair, stability, and algorithmic

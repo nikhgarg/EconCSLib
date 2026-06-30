@@ -10,6 +10,13 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   become reusable EC infrastructure. Build the reusable layer during the paper
   proof when it directly helps the active theorem and is likely useful for
   another auction/mechanism paper.
+- For strategic papers with continuous types, endogenous ranks, cutoffs, or
+  null-set tie behavior, include a shared-library reuse checkpoint in the paper
+  plan before adding local equilibrium or distribution interfaces. Inspect the
+  generic optimization, probability, admissions/testing, and mechanism-design
+  modules for the proof shape, then route the paper proof through the matching
+  shared API. If no API fits, document the exact missing abstraction and keep
+  the paper-local replacement narrow enough to extract later.
 - For auction papers, attack the named theorem through the shortest faithful
   model level. Finite bidder models are often right for digital goods, but do
   not build a finite analogue as ritual if the paper statement or proof closes
