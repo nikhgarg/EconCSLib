@@ -42,6 +42,25 @@ missing assumption, formula ambiguity, or issue that could change the theorem
 target, tell the user early before encoding the printed formula as a proof
 premise.
 
+That initial pass is a hard start gate. Before deep Lean proof work, the plan
+must record the sections from
+`skills/econcs-formalizer/templates/FORMALIZATION_PLAN.md`, including:
+
+- the source/version inventory, including official source, open source, local
+  cache paths, and version mismatches;
+- the source theorem ledger, including every named definition, proposition,
+  lemma, theorem, corollary, algorithm, and theorem-like displayed formula;
+- the formula/dependency sanity pass, including density-vs-mass representation
+  issues and which prior paper objects each result depends on;
+- the shared-library reuse checkpoint for mathlib, cslib, optlib, and existing
+  `EconCSLib` APIs;
+- the formal target map, including rows to fully prove, empirical/out-of-scope
+  rows, and any explicit boundary that would remain if the paper cannot be
+  closed immediately;
+- an execution checklist that tracks source intake, reusable-library work,
+  scaffold replacement, proof closure or downgrades, artifact updates, audits,
+  and unresolved source/library debt.
+
 ## Required Paper Artifacts
 
 Each paper folder should contain:
@@ -243,12 +262,26 @@ they are not a substitute for removing helper endpoints from `PaperInterface.lea
 
 ## Validation Commands
 
-For reusable library work, prefer targeted builds first:
+For reusable library work during active paper development, stay targeted:
 
 ```bash
-lake build EconCSLib.Foundations
+lake build <touched-library-module>
+lake build <active-paper-root>
+git diff --check
+```
+
+Do not run a broad/full repository build merely because a shared library file
+changed while the paper is still in progress. Save broad builds for natural
+stopping points: the paper is complete or being handed off, you are about to
+commit/push a significant integration batch, preparing a public PR/release, or
+the user explicitly asks for a broad integration check.
+
+At those stopping points, broaden validation as appropriate:
+
+```bash
+lake build EconCSLib
 python3 scripts/sync_paper_status.py --check
-python3 scripts/audit_repository.py --library-only --library-premise-audit --info-limit 0
+python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0
 git diff --check
 ```
 
@@ -307,8 +340,9 @@ At the beginning of a paper, run a lightweight statement target-setting pass
 before spending much time on proofs:
 
 1. First complete the `FORMALIZATION_PLAN.md` initial outside-Lean paper audit:
-   source version inspected, formula/result sanity check, suspected bugs or
-   source ambiguities, and proof-strategy consequences.
+   source/version inventory, complete named-result ledger, formula/dependency
+   sanity check, shared-library reuse checkpoint, formal target/boundary map,
+   suspected bugs or source ambiguities, and proof-strategy consequences.
 2. Build the initial source inventory and a compact `PaperInterface.lean`
    skeleton containing the paper-facing definitions and named statements you
    intend to formalize.
@@ -343,6 +377,17 @@ statement-translation sidecars, review-surface sidecars, or assumption
 provenance are stale, missing, uncertain, mismatched, or otherwise flagged.
 Use dashboard commands for quick paper-local diagnosis, but do not rely on a
 JSON export alone when the hidden-premise lane needs Lean expansion.
+Audit evidence is fail-closed. Blank template sidecars, parse failures, missing
+files, missing prompt versions, stale prompt versions, missing current digests,
+missing validator/model identity, missing timestamps, stale source inventories,
+stale dashboard surfaces, unrecognized judgments, failed judge runs, and items
+without explicit success verdicts are all alarms. The audit should move from
+pending/failing to passing only after a current run records the exact version,
+inputs, validator metadata, and recognized success judgment for the current
+Lean and paper source.
+For public-facing closeout, this includes an explicit current
+`review_surface_llm.json` pass even when the dashboard has 30 or fewer rows; the
+30-row threshold is an early workflow prompt, not a closeout exemption.
 
 At a statement-review boundary, run the independent LLM statement workflow:
 
@@ -357,24 +402,26 @@ At a statement-review boundary, run the independent LLM statement workflow:
    `lean_to_tex_llm.json`. New tracked entries should use
    `{ "tex_statement": "...", "lean_statement_sha256": "..." }` so stale
    translation drafts can be detected, and the sidecar should record
-   `prompt_version: "lean-to-tex-v2-strict-context-free"`. The translation
+   `prompt_version: "lean-to-tex-v3-strict-context-free-semantic-inputs"`. The translation
    prompt must require every visible binder, hypothesis, domain condition,
-   equivalence or implication direction, and conclusion to survive unchanged in
-   the prose/LaTeX rendering.
-3. Ask a third LLM, with no Lean/proof context, to compare the original paper
-   statement against the translated LaTeX/prose. Save verdicts and reasons in
+   named predicate/wrapper application, equivalence or implication direction,
+   and conclusion to survive unchanged in the prose/LaTeX rendering. It must
+   not turn a named premise into a theorem label, source-like phrase, or
+   proof-route summary.
+3. Ask an independent semantic LLM judge, with no Lean/proof context, to compare
+   the original paper statement against the translated LaTeX/prose. Save verdicts and reasons in
    `statement_match_llm.json`, including current Lean, paper, and TeX statement
    digests plus validator/model metadata, and record
-   `prompt_version: "statement-match-v2-strict-full-statement"`. The judge must
-   compare the full source statement, not just the theorem label or qualitative
-   claim. It should reject or mark uncertain any omitted subpart, added
-   non-source hypothesis, changed quantifier/domain, changed constant or
-   normalizer, sign error, inequality-direction change, broad aggregate row,
-   source-row package, certificate package, or weakened/strengthened theorem.
-   When the source paper text cache is private or omitted from a public repo,
-   preserve the audited source snippets in `paper_statement_map.json`; include
-   `source_status` and `source_note` fields, even when intentionally blank, so
-   review-surface and statement-judge digests remain reproducible.
+   `prompt_version: "statement-match-v3-semantic-full-statement"`. The judge
+   must compare the full source statement semantically, not just the theorem
+   label, qualitative claim, phrase overlap, or source-looking Lean name. It
+   should expand or otherwise inspect named predicates/wrappers enough to decide
+   whether every Lean premise is source-backed or derived. It should reject or
+   mark uncertain any omitted subpart, added non-source hypothesis, hidden
+   strengthening inside a named predicate, changed quantifier/domain, changed
+   constant or normalizer, sign error, inequality-direction change, broad
+   aggregate row, source-row package, certificate/replay/process/bridge
+   package, or weakened/strengthened theorem.
 4. For every displayed or source-defining formula used by a paper-facing result,
    expose an exact formula/subclaim row in `PaperInterface.lean`. A broad row
    that summarizes a numbered result, theorem family, metric package, or source
@@ -388,7 +435,7 @@ At a statement-review boundary, run the independent LLM statement workflow:
    `review_surface.assumption_names`, and ask a separate source-assumption
    judge to confirm that it is an explicit paper/source model assumption. Save
    this in `assumption_match_llm.json`, with
-   `prompt_version: "assumption-provenance-v2-exact-premise-source"`.
+   `prompt_version: "assumption-provenance-v3-semantic-exact-premise-source"`.
    Do not try to hide such a premise by making the `PaperInterface.lean` row an
    `abbrev` alias to a proof-facing theorem. The audit expands review-surface
    declarations and direct paper-local alias targets, then uses Lean-native
@@ -417,10 +464,18 @@ At a statement-review boundary, run the independent LLM statement workflow:
    after reusable-library edits to inventory direct certificate/source-boundary
    APIs and source-shaped reusable names; combine that inventory with the
    paper-facing `#print axioms` audit and expanded-statement review.
+6. If any reviewed theorem mentions a record, certificate, replay, process,
+   bridge, source-row package, or broad model predicate, generate
+   `source_record_audit.json` with the skill helper and save
+   `source_record_match_llm.json` with `prompt_version:
+   "source-record-v2-semantic-boundary-inputs"`. Each boundary-shaped visible
+   input needs source evidence, a Lean derivation from paper primitives, an
+   approved external boundary, or an unresolved finding. A source-looking Lean
+   name or theorem label is not evidence.
    A certificate that is constructed internally from already proved primitives
    is discharged; a certificate that is merely consumed by a helper remains a
    premise of every paper-facing theorem that depends on that helper.
-6. Treat formula wrappers as review visibility, not proof provenance. A
+7. Treat formula wrappers as review visibility, not proof provenance. A
    paper-facing `_formula`, `_iff`, `_rule`, or analogous row is closed only
    when the equality/iff/rule is proved from the source model primitives or from
    separately validated paper assumptions. A wrapper whose body assumes a
@@ -428,7 +483,7 @@ At a statement-review boundary, run the independent LLM statement workflow:
    formula is a partial endpoint until that assumption is eliminated or
    validated as a paper assumption.
 
-If the third LLM reports mismatch or uncertainty, edit the Lean statement and
+If the semantic judge reports mismatch or uncertainty, edit the Lean statement and
 repeat the translation/judgment pass unless the translation itself is plainly
 wrong. The dashboard displays the paper statement, current Lean statement,
 Lean-to-TeX draft, and independent LLM judgment; these LLM checks do not count

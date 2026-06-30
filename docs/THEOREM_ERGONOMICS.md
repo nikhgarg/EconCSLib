@@ -83,12 +83,16 @@ Before claiming progress:
 5. At review boundaries, run the independent statement check: translate each
    current Lean statement to LaTeX/prose using an LLM with no paper context,
    preserving every visible binder, hypothesis, domain condition,
-   equivalence/implication direction, and conclusion. Then have a third LLM
-   compare that translation against the complete original paper statement with
-   no Lean context. A match requires the same hypotheses, subparts, quantifiers,
-   domains, constants, normalizations, signs, inequality directions, and
-   conclusions; conditional wrappers, omitted subclaims, source-row packages, or
-   broad aggregates must be judged mismatch or uncertain. If it does not match,
+   named predicate/wrapper application, equivalence/implication direction, and
+   conclusion. Then have an independent semantic LLM judge compare that translation against the
+   complete original paper statement with no Lean context. A match requires
+   semantic equivalence of the hypotheses, subparts, quantifiers, domains,
+   constants, normalizations, signs, inequality directions, conclusions, and
+   visible inputs. The judge must inspect named Lean predicates/wrappers and
+   must not approve by theorem label, phrase overlap, or source-looking name;
+   conditional wrappers, hidden strengthening inside named predicates, omitted
+   subclaims, source-row/certificate/replay/process/bridge packages, or broad
+   aggregates must be judged mismatch or uncertain. If it does not match,
    iterate on the Lean statement before treating the declaration as the target
    theorem.
 6. Update `README.md` theorem table with matching declaration names.
