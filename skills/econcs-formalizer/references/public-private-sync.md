@@ -15,7 +15,12 @@ generated surfaces regenerated from the public checkout.
 
 ## Preventing Divergence
 
-Treat sync as a standing maintenance workflow, not a one-time cleanup.
+Treat sync as a standing maintenance workflow, not a prompt to publish more
+private work. The default direction is that private worktrees incorporate the
+public repository after public PRs land, so private development stays based on
+the current public library and workflow. Moving work from private to public is a
+separate release/contribution decision that should happen only when the user or
+maintainer explicitly asks for a public-safe PR.
 
 - Use clean worktrees from remote refs when either checkout is dirty. Do not
   base sync decisions on a stale local working tree; compare `origin/main` and
@@ -25,9 +30,14 @@ Treat sync as a standing maintenance workflow, not a one-time cleanup.
   unless there is an explicitly recorded private experiment; generated
   aggregate surfaces are checkout-local; private paper folders, source caches,
   and paper-specific proof notes stay private.
-- When a public-safe change lands in one repo, immediately decide whether it
-  should be mirrored to the other repo. Do the mirror as an explicit commit or
-  PR in the destination rather than leaving it as an implied future task.
+- When a public PR lands, update the private superset promptly unless private
+  intentionally has a newer experiment for the same path. This keeps private
+  work aligned with the public base without implying that private papers should
+  be promoted.
+- When a useful private change appears, first ask whether it is intended for a
+  public-safe contribution. If not, keep it private. If yes, prepare a narrow
+  PR branch against public `main`; contributors should assume they do not have
+  push access to public and should use ordinary fork/branch PR mechanics.
 - Prefer ref-to-ref checks over visual inspection. After a sync, run direct
   diffs for shared paths such as `EconCSLib/`, `scripts/`, synced docs, synced
   skill references, and public paper folders. Investigate every remaining
@@ -39,9 +49,10 @@ Treat sync as a standing maintenance workflow, not a one-time cleanup.
   copy the private reference file wholesale unless a leakage scan confirms it
   contains no private paper IDs, private URLs, source-cache paths, or
   non-public planning details.
-- Record the outcome in commits/PR bodies: what moved private-to-public, what
-  moved public-to-private, which generated files were regenerated rather than
-  copied, and which remaining diffs are intentional.
+- Record the outcome in commits/PR bodies: what public changes were reflected
+  into private, whether any explicitly requested public-safe contribution was
+  prepared, which generated files were regenerated rather than copied, and which
+  remaining diffs are intentional.
 
 ## Sync Direction
 
@@ -50,9 +61,11 @@ Treat sync as a standing maintenance workflow, not a one-time cleanup.
   into the private checkout unless private has an intentionally newer semantic
   version. Regenerate private aggregate status/site files in the private
   checkout after copying.
-- Private to public: start from current public `main` on a public branch, then
-  copy only allowlisted paths. Use exact paths, not broad `papers/` or `skills/`
-  copies. Regenerate public aggregate status/site files in the public checkout.
+- Private to public: do this only for an explicitly requested public-safe
+  release or contribution. Start from current public `main` on a branch or fork,
+  then copy only allowlisted paths. Use exact paths, not broad `papers/` or
+  `skills/` copies. Regenerate public aggregate status/site files in the public
+  checkout.
 - If both repos changed the same generated artifact, prefer the artifact whose
   inputs are newest and whose validation was run in the checkout that will
   publish it. Do not decide by filename alone.
@@ -126,8 +139,8 @@ fails. Before treating sidecars as current:
 7. Run leakage checks before public commits:
    `git diff --name-only` plus searches for private paper IDs, raw source
    caches, `.review_traces`, `.txt` source extracts, and private planning paths.
-8. Commit with explicit pathspecs. In public, open a PR unless the user
-   explicitly asks for direct push/merge.
+8. Commit with explicit pathspecs. For public changes, prepare a PR; do not
+   assume direct push access.
 
 ## What Not To Do
 
