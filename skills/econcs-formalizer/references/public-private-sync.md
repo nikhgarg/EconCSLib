@@ -13,6 +13,36 @@ private papers, and newer experimental audit code. The public repo must contain
 only public-safe code, public paper artifacts, public workflow docs, and
 generated surfaces regenerated from the public checkout.
 
+## Preventing Divergence
+
+Treat sync as a standing maintenance workflow, not a one-time cleanup.
+
+- Use clean worktrees from remote refs when either checkout is dirty. Do not
+  base sync decisions on a stale local working tree; compare `origin/main` and
+  `public/main` or freshly pulled `main` refs.
+- Keep a source-of-truth map before copying: shared Lean library code, scripts,
+  CI, templates, and public-safe skill references should match across repos
+  unless there is an explicitly recorded private experiment; generated
+  aggregate surfaces are checkout-local; private paper folders, source caches,
+  and paper-specific proof notes stay private.
+- When a public-safe change lands in one repo, immediately decide whether it
+  should be mirrored to the other repo. Do the mirror as an explicit commit or
+  PR in the destination rather than leaving it as an implied future task.
+- Prefer ref-to-ref checks over visual inspection. After a sync, run direct
+  diffs for shared paths such as `EconCSLib/`, `scripts/`, synced docs, synced
+  skill references, and public paper folders. Investigate every remaining
+  modified (`M`) diff under public paper folders; only private-only deletes,
+  checkout-local generated aggregates, and intentionally sanitized skill/docs
+  differences should remain.
+- If a private skill reference contains useful general guidance plus private
+  paper names, copy the idea into the public skill in sanitized form. Do not
+  copy the private reference file wholesale unless a leakage scan confirms it
+  contains no private paper IDs, private URLs, source-cache paths, or
+  non-public planning details.
+- Record the outcome in commits/PR bodies: what moved private-to-public, what
+  moved public-to-private, which generated files were regenerated rather than
+  copied, and which remaining diffs are intentional.
+
 ## Sync Direction
 
 - Public to private: copy public `main` changes that affect shared library code,
