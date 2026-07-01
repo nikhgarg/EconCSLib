@@ -882,9 +882,9 @@ theorem expectedRerankingGain_eq_expect_missProb_mul_gap {n : ℕ}
 If every positive-mass second-mover ranking has positive expected gain against
 an independent first-mover draw, then independent reranking is strictly better.
 
-This is the finite-probability bridge behind Definition 2: the analytic or
-model-specific work can focus on the inner conditional gain for a fixed realized
-ranking, while this lemma performs the outer averaging over the ranking law.
+This finite-probability bridge lets analytic or model-specific work focus on
+the inner conditional gain for a fixed realized ranking, while this lemma
+performs the outer averaging over the ranking law.
 -/
 theorem expectedRerankingGain_pos_of_inner_support_pos {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
@@ -899,9 +899,8 @@ theorem expectedRerankingGain_pos_of_inner_support_pos {n : ℕ}
 /--
 Candidate-fiber conditional gains imply positive independent-reranking gain.
 
-This is the source-shaped Definition 2 bridge: condition on the first mover's
-first-choice candidate and average the independent second draw's gain within
-that fiber.
+This bridge conditions on the first mover's first-choice candidate and averages
+the independent second draw's gain within that fiber.
 -/
 theorem expectedRerankingGain_pos_of_firstChoice_conditional_gain_pos {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
@@ -1294,8 +1293,8 @@ theorem prefersIndependentReranking_iff_expectedRerankingGain_pos {n : ℕ}
   constructor <;> intro hmain <;> linarith
 
 /--
-Supportwise positive inner reranking gains imply the paper's independent
-reranking preference.
+Supportwise positive inner reranking gains imply independent-reranking
+preference.
 -/
 theorem prefersIndependentReranking_of_inner_support_pos {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
@@ -1306,8 +1305,7 @@ theorem prefersIndependentReranking_of_inner_support_pos {n : ℕ}
   exact expectedRerankingGain_pos_of_inner_support_pos μ value hinner
 
 /--
-Candidate-fiber conditional gains imply the paper's independent-reranking
-preference.
+Candidate-fiber conditional gains imply independent-reranking preference.
 -/
 theorem prefersIndependentReranking_of_firstChoiceProb_conditional_gain_pos {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ)

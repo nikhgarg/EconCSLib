@@ -636,8 +636,8 @@ theorem rankingPMFOfMeasure_atom_epsilonContinuousAt_of_source_event
 If a parameterized source ranking is almost surely locally constant at `x`,
 then every atom of the induced finite ranking law is continuous at `x`.
 
-This is the reusable finite-valued part of continuous RUM arguments.  The
-analytic work left to a paper-specific source model is proving the local
+This is the reusable finite-valued part of continuous RUM arguments. The
+remaining analytic work for a concrete source model is proving the local
 stability statement, typically by showing that score ties have source measure
 zero and that all score gaps vary continuously in the accuracy parameter.
 -/
