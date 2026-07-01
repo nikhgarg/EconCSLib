@@ -37,6 +37,7 @@ Visible hypotheses such as positive accuracy, strict value ordering, nonempty re
 
 ## 7. Proof-Strategy Deviations
 - Laplacian well-ordering is used in its mathematically valid weak form, with strict downstream conclusions obtained from the later support and monotonicity arguments rather than from the false global strict pointwise claim.
+- The Mallows sequential-optimality proof was closed by isolating a reduced same-size prefix-cut weighted-extremes cancellation theorem, proving the first-choice prefix-cut probability comparisons, deleting absent extremes and trivial cuts, and routing Theorem 4 through remaining-utility dominance rather than assuming a broad weak-Bruhat/Mallows monotonicity theorem.
 - Several source-facing endpoints expose finite and continuous score-space conditions explicitly instead of hiding them behind proof certificates. Certificate and boundary helper rows are classified as auxiliary in `status.json`.
 
 ## 8. Proof Tricks Worth Reusing
