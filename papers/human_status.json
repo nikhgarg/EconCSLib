@@ -533,7 +533,7 @@
       "llm_as_judge_translation": "49/49 match",
       "llm_as_judge_paper_coverage": "49/49 covered",
       "lean_loc": 65646,
-      "main_note": "The main Mallows and three-candidate Gaussian/Laplace RUM routes are formalized.",
+      "main_note": "",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/KR21Monoculture",

@@ -3125,7 +3125,7 @@
       "build_target": "lake build KR21Monoculture",
       "status": "formalized",
       "main_caveat": "None.",
-      "human_summary": "The main Mallows and three-candidate Gaussian/Laplace RUM routes are formalized.",
+      "human_summary": "",
       "review_entrypoint": "papers/KR21Monoculture/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
