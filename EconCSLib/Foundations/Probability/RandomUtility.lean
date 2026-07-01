@@ -1,4 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Data.Finset.Max
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -22,6 +23,7 @@ another paper needs the same abstraction.
 - `laplacianNoiseKernel_strictlyWellOrdered_of_overlap`
 - `rumContractScore`
 - `rumContractScore_preserves_weak_order`
+- `rumContractScore_value_le_of_raw_max_and_contract_max`
 - `weaklyWellOrderedNoise_swap_middle_density_le`
 - `weaklyWellOrderedNoise_swap12_density3_le`
 -/
@@ -56,6 +58,33 @@ theorem StrictlyWellOrderedNoise.weak {f : ℝ → ℝ}
     WeaklyWellOrderedNoise f := by
   intro a b c d hab hcd
   exact le_of_lt (hf hab hcd)
+
+/--
+Multiplication by a positive normalizing constant preserves strict
+well-ordering. This lets paper proofs move between unnormalized kernels and
+actual density functions.
+-/
+theorem StrictlyWellOrderedNoise.const_mul_pos {f : ℝ → ℝ} {c : ℝ}
+    (hf : StrictlyWellOrderedNoise f) (hc : 0 < c) :
+    StrictlyWellOrderedNoise (fun z => c * f z) := by
+  intro a b x y hab hxy
+  have h := hf hab hxy
+  have hc2 : 0 < c * c := mul_pos hc hc
+  have hscaled := mul_lt_mul_of_pos_left h hc2
+  nlinarith
+
+/--
+Multiplication by a nonnegative normalizing constant preserves weak
+well-ordering.
+-/
+theorem WeaklyWellOrderedNoise.const_mul_nonneg {f : ℝ → ℝ} {c : ℝ}
+    (hf : WeaklyWellOrderedNoise f) (hc : 0 ≤ c) :
+    WeaklyWellOrderedNoise (fun z => c * f z) := by
+  intro a b x y hab hxy
+  have h := hf hab hxy
+  have hc2 : 0 ≤ c * c := mul_nonneg hc hc
+  have hscaled := mul_le_mul_of_nonneg_left h hc2
+  nlinarith
 
 /-- Gaussian density kernel, omitting the positive normalizing constant. -/
 def gaussianNoiseKernel (κ : ℝ) (x : ℝ) : ℝ :=
@@ -186,8 +215,9 @@ theorem laplacianNoiseKernel_not_strictlyWellOrdered (lam : ℝ) :
 
 /--
 Laplacian kernels satisfy the strict well-ordering inequality on the overlap
-region.  This is the pointwise strict case left after removing separated
-interval equality cases.
+region.  With `b < a` and `d < c`, the extra hypotheses `b < c` and `d < a`
+say exactly that the open intervals `(b,a)` and `(d,c)` overlap.  This is the
+pointwise strict case left after removing separated interval equality cases.
 -/
 theorem laplacianNoiseKernel_strictlyWellOrdered_of_overlap
     {lam a b c d : ℝ} (hlam : 0 < lam)
@@ -227,6 +257,164 @@ theorem rumContractScore_sub
       (1 - t) * (xi - xj) + t * (ri - rj) := by
   rw [rumContractScore_eq_affine, rumContractScore_eq_affine]
   ring
+
+/--
+Explicit finite score box forcing a top switch under contraction.
+
+The box has the lower-valued raw top `low`, the higher-valued contracted top
+`high`, and all other alternatives far below.  The caller supplies the two
+margin inequalities at the box endpoints; a later paper proof can discharge
+those margins from concrete choices of `eps` and `K`.
+-/
+theorem rumContractScore_topSwitch_openBox_of_parameters
+    {ι : Type*} [DecidableEq ι]
+    {t eps K : ℝ} {value : ι → ℝ} {low high : ι}
+    (ht0 : 0 ≤ t) (hlowhigh : low ≠ high)
+    (heps : 0 < eps) (hKpos : 0 < K)
+    (hhigh_low :
+      rumContractScore t (value low) eps <
+        rumContractScore t (value high) (-(eps / 8)))
+    (hhigh_other :
+      ∀ d : ι, d ≠ low → d ≠ high →
+        rumContractScore t (value d) (-K) <
+          rumContractScore t (value high) (-(eps / 8))) :
+    ∃ a b : ι → ℝ,
+      (∀ i, a i < b i) ∧
+      (∀ score ∈ Set.pi Set.univ (fun i => Set.Ioo (a i) (b i)),
+        ∀ d : ι, d ≠ low → score d < score low) ∧
+      (∀ score ∈ Set.pi Set.univ (fun i => Set.Ioo (a i) (b i)),
+        ∀ d : ι, d ≠ high →
+          rumContractScore t (value d) (score d) <
+            rumContractScore t (value high) (score high)) := by
+  classical
+  let a : ι → ℝ := fun i =>
+    if i = low then eps / 2 else if i = high then -(eps / 8) else -K - 1
+  let b : ι → ℝ := fun i =>
+    if i = low then eps else if i = high then eps / 8 else -K
+  refine ⟨a, b, ?_, ?_, ?_⟩
+  · intro i
+    by_cases hilow : i = low
+    · simp [a, b, hilow]
+      linarith
+    · by_cases hihigh : i = high
+      · have hhighlow : high ≠ low := fun h => hlowhigh h.symm
+        simp [a, b, hihigh, hhighlow]
+        linarith
+      · simp [a, b, hilow, hihigh]
+  · intro score hscore d hdlow
+    have hlow_mem : score low ∈ Set.Ioo (a low) (b low) :=
+      hscore low (Set.mem_univ low)
+    have hd_mem : score d ∈ Set.Ioo (a d) (b d) :=
+      hscore d (Set.mem_univ d)
+    by_cases hdhigh : d = high
+    · subst d
+      have hhighlow : high ≠ low := fun h => hlowhigh h.symm
+      simp [a, b] at hlow_mem
+      simp [a, b, hhighlow] at hd_mem
+      linarith
+    · simp [a, b, hdlow, hdhigh] at hd_mem
+      simp [a, b] at hlow_mem
+      have hneg : -K < eps / 2 := by
+        nlinarith
+      linarith
+  · intro score hscore d hdhigh
+    have hhigh_mem : score high ∈ Set.Ioo (a high) (b high) :=
+      hscore high (Set.mem_univ high)
+    have hd_mem : score d ∈ Set.Ioo (a d) (b d) :=
+      hscore d (Set.mem_univ d)
+    have hhigh_lower : -(eps / 8) < score high := by
+      have hhighlow : high ≠ low := fun h => hlowhigh h.symm
+      simp [a, b, hhighlow] at hhigh_mem
+      exact hhigh_mem.1
+    by_cases hdlow : d = low
+    · subst d
+      have hlow_upper : score low < eps := by
+        simp [a, b] at hd_mem
+        exact hd_mem.2
+      have hleft_le :
+          rumContractScore t (value low) (score low) ≤
+            rumContractScore t (value low) eps := by
+        rw [rumContractScore_eq_affine, rumContractScore_eq_affine]
+        nlinarith
+      have hright_le :
+          rumContractScore t (value high) (-(eps / 8)) ≤
+            rumContractScore t (value high) (score high) := by
+        rw [rumContractScore_eq_affine, rumContractScore_eq_affine]
+        nlinarith
+      linarith
+    · have hd_upper : score d < -K := by
+        simp [a, b, hdlow, hdhigh] at hd_mem
+        exact hd_mem.2
+      have hleft_le :
+          rumContractScore t (value d) (score d) ≤
+            rumContractScore t (value d) (-K) := by
+        rw [rumContractScore_eq_affine, rumContractScore_eq_affine]
+        nlinarith
+      have hright_le :
+          rumContractScore t (value high) (-(eps / 8)) ≤
+            rumContractScore t (value high) (score high) := by
+        rw [rumContractScore_eq_affine, rumContractScore_eq_affine]
+        nlinarith
+      have hmargin := hhigh_other d hdlow hdhigh
+      linarith
+
+/--
+The explicit top-switch margins used by
+`rumContractScore_topSwitch_openBox_of_parameters` can always be chosen when
+`0 < t < 1` and `high` has strictly larger true value than `low` over a finite
+alternative set.
+-/
+theorem exists_rumContractScore_topSwitch_parameters
+    {ι : Type*} [Fintype ι]
+    {t : ℝ} {value : ι → ℝ} {low high : ι}
+    (htpos : 0 < t) (htlt1 : t < 1)
+    (hvalue : value low < value high) :
+    ∃ eps K : ℝ,
+      0 < eps ∧ 0 < K ∧
+      rumContractScore t (value low) eps <
+        rumContractScore t (value high) (-(eps / 8)) ∧
+      ∀ d : ι, d ≠ low → d ≠ high →
+        rumContractScore t (value d) (-K) <
+          rumContractScore t (value high) (-(eps / 8)) := by
+  classical
+  let vals : Finset ℝ := Finset.univ.image value
+  have hvals_nonempty : vals.Nonempty := by
+    exact ⟨value high, by simp [vals]⟩
+  let M : ℝ := vals.max' hvals_nonempty
+  have hleM : ∀ d : ι, value d ≤ M := by
+    intro d
+    exact Finset.le_max' vals (value d) (by simp [vals])
+  let gap : ℝ := value high - value low
+  have hgap : 0 < gap := by
+    dsimp [gap]
+    exact sub_pos.mpr hvalue
+  have h1t : 0 < 1 - t := sub_pos.mpr htlt1
+  let eps : ℝ := ((1 - t) * gap) / (16 * t)
+  have heps : 0 < eps := by
+    dsimp [eps]
+    positivity
+  let K : ℝ := (((1 - t) * (M - value high) + t * (eps / 8) + 1) / t)
+  have hM_high : value high ≤ M := hleM high
+  have hKpos : 0 < K := by
+    dsimp [K]
+    have hnonneg_M : 0 ≤ M - value high := sub_nonneg.mpr hM_high
+    have hnonneg_term : 0 ≤ (1 - t) * (M - value high) :=
+      mul_nonneg (le_of_lt h1t) hnonneg_M
+    have hnonneg_eps : 0 ≤ t * (eps / 8) := by positivity
+    positivity
+  refine ⟨eps, K, heps, hKpos, ?_, ?_⟩
+  · rw [rumContractScore_eq_affine, rumContractScore_eq_affine]
+    have htne : t ≠ 0 := ne_of_gt htpos
+    dsimp [eps, gap]
+    field_simp [htne]
+    nlinarith [hgap, h1t]
+  · intro d _hdlow _hdhigh
+    rw [rumContractScore_eq_affine, rumContractScore_eq_affine]
+    have hle : value d ≤ M := hleM d
+    have htne : t ≠ 0 := ne_of_gt htpos
+    dsimp [K]
+    field_simp [htne]
+    nlinarith [hle, h1t]
 
 /-- Candidate `x₁` is weakly first among three realized scores. -/
 def rum3TopFirstByScores (s1 s2 s3 : ℝ) : Prop :=
@@ -282,6 +470,78 @@ theorem rumContractScore_preserves_strict_order
     · have ht_eq : t = 0 := le_antisymm (le_of_not_gt htpos) ht0
       nlinarith
   linarith
+
+/--
+If a raw-score winner is beaten after a genuine contraction, the contracted
+winner must have weakly higher true value.
+
+This is the two-alternative core of finite RUM monotonicity: with `t < 1`, a
+lower true-value alternative cannot overtake a raw-score maximizer merely by
+contracting scores toward true values.
+-/
+theorem rumContractScore_value_le_of_raw_le_and_contract_ge
+    {t xi xj ri rj : ℝ}
+    (ht0 : 0 ≤ t) (htlt1 : t < 1)
+    (hr : ri ≤ rj)
+    (hc : rumContractScore t xj rj ≤ rumContractScore t xi ri) :
+    xj ≤ xi := by
+  by_contra hnot
+  have hx : xi < xj := lt_of_not_ge hnot
+  have h1t : 0 < 1 - t := by linarith
+  have hx_pos : 0 < xj - xi := sub_pos.mpr hx
+  have hr_nonneg : 0 ≤ rj - ri := sub_nonneg.mpr hr
+  have hdiff :
+      0 < rumContractScore t xj rj - rumContractScore t xi ri := by
+    rw [rumContractScore_sub]
+    nlinarith [mul_pos h1t hx_pos, mul_nonneg ht0 hr_nonneg]
+  linarith
+
+/--
+Argmax form of `rumContractScore_value_le_of_raw_le_and_contract_ge`.
+
+If `rawBest` maximizes raw realized scores and `contractBest` maximizes the
+contracted scores, then the latter has weakly higher true value.  The statement
+is deliberately independent of any particular finite argmax construction; users
+can instantiate the two maximality hypotheses with rankings, finite search, or
+explicit witnesses.
+-/
+theorem rumContractScore_value_le_of_raw_max_and_contract_max
+    {ι : Type*} {t : ℝ} {value raw : ι → ℝ}
+    {rawBest contractBest : ι}
+    (ht0 : 0 ≤ t) (htlt1 : t < 1)
+    (hrawMax : ∀ i : ι, raw i ≤ raw rawBest)
+    (hcontractMax : ∀ i : ι,
+      rumContractScore t (value i) (raw i) ≤
+        rumContractScore t (value contractBest) (raw contractBest)) :
+    value rawBest ≤ value contractBest :=
+  rumContractScore_value_le_of_raw_le_and_contract_ge
+    (xi := value contractBest) (xj := value rawBest)
+    (ri := raw contractBest) (rj := raw rawBest)
+    ht0 htlt1 (hrawMax contractBest) (hcontractMax rawBest)
+
+/--
+Feasible-set form of `rumContractScore_value_le_of_raw_max_and_contract_max`.
+
+The predicate `feasible` can be a remaining candidate set, a constrained choice
+set, or any local comparison domain.  If `rawBest` maximizes raw scores on that
+domain and `contractBest` maximizes contracted scores on the same domain, then
+`contractBest` has weakly higher true value.
+-/
+theorem rumContractScore_value_le_of_raw_max_on_and_contract_max_on
+    {ι : Type*} {t : ℝ} {value raw : ι → ℝ} {feasible : ι → Prop}
+    {rawBest contractBest : ι}
+    (ht0 : 0 ≤ t) (htlt1 : t < 1)
+    (hrawMem : feasible rawBest) (hcontractMem : feasible contractBest)
+    (hrawMax : ∀ i : ι, feasible i → raw i ≤ raw rawBest)
+    (hcontractMax : ∀ i : ι, feasible i →
+      rumContractScore t (value i) (raw i) ≤
+        rumContractScore t (value contractBest) (raw contractBest)) :
+    value rawBest ≤ value contractBest :=
+  rumContractScore_value_le_of_raw_le_and_contract_ge
+    (xi := value contractBest) (xj := value rawBest)
+    (ri := raw contractBest) (rj := raw rawBest)
+    ht0 htlt1 (hrawMax contractBest hcontractMem)
+    (hcontractMax rawBest hrawMem)
 
 /--
 Three-alternative top-first preservation: if `x₁` is first before contraction,

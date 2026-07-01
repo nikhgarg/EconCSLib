@@ -1,0 +1,799 @@
+{
+  "audit_kind": "source_to_dashboard_llm",
+  "comment": "Source-grounded source-to-dashboard coverage pass for the KR21 paper-facing closeout surface.",
+  "items": {
+    "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 asymptotic optimality: it is enough to make the total source probability of adjacent inversions in the true ranking order arbitrarily small. The finite adjacent-union-bound argument then gives atomwise convergence to the true ranking.` is exposed by the current dashboard row `appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 asymptotic optimality: it is enough to make the total source probability of adjacent inversions in the true ranking order arbitrarily small. The finite adjacent-union-bound argument then gives atomwise convergence to the true ranking.",
+      "source_grounded": true,
+      "statement_sha256": "6e618b4192358b778b614c1954c8094038d10dc932840f0b64fbab8bc8bff3f0",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs_tendsto": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs_tendsto",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 asymptotic optimality from an adjacent source-tail limit: if the total source probability of adjacent inversions in the true ranking order tends to zero, then the induced ranking law converges atomwise to the true ranking.` is exposed by the current dashboard row `appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs_tendsto`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs_tendsto"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 asymptotic optimality from an adjacent source-tail limit: if the total source probability of adjacent inversions in the true ranking order tends to zero, then the induced ranking law converges atomwise to the true ranking.",
+      "source_grounded": true,
+      "statement_sha256": "d31fb19e6c6cbba3c08652182d86e2bd3efdc551112caac10ddd27e8f9cb9c4b",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 asymptotic optimality for score-induced RUM rankings: it is enough to make the total source probability of adjacent true-neighbor score misorders arbitrarily small. This is the coordinate-level tail statement used in the paper's source argument.` is exposed by the current dashboard row `appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 asymptotic optimality for score-induced RUM rankings: it is enough to make the total source probability of adjacent true-neighbor score misorders arbitrarily small. This is the coordinate-level tail statement used in the paper's source argument.",
+      "source_grounded": true,
+      "statement_sha256": "0250c77348a3e743e73f5bdc2dec6b1c37864a76669831619ed79e73939596a6",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs_tendsto": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs_tendsto",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 asymptotic optimality from a score-tail limit: for score-induced RUM rankings, it is enough that adjacent true-neighbor score misorder probabilities have total mass tending to zero.` is exposed by the current dashboard row `appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs_tendsto`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs_tendsto"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 asymptotic optimality from a score-tail limit: for score-induced RUM rankings, it is enough that adjacent true-neighbor score misorder probabilities have total mass tending to zero.",
+      "source_grounded": true,
+      "statement_sha256": "7ef053aa6d9939b0ad6b6df13a26d8902bc04ddcbbd29307d4a8ffa0e669c8a3",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_inversion_probs": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_atomwise_concentration_of_sum_inversion_probs",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 asymptotic optimality: if high accuracy makes the total source probability of pairwise inversions arbitrarily small, then the induced ranking law converges atomwise to the true ranking.` is exposed by the current dashboard row `appendixA_atomwise_concentration_of_sum_inversion_probs`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_atomwise_concentration_of_sum_inversion_probs"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 asymptotic optimality: if high accuracy makes the total source probability of pairwise inversions arbitrarily small, then the induced ranking law converges atomwise to the true ranking.",
+      "source_grounded": true,
+      "statement_sha256": "f6e3dbd018ee046e24b2e624f35d4aa97b1727faebf79e4d0b484c9a01d0dc36",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_inversion_probs_tendsto": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_atomwise_concentration_of_sum_inversion_probs_tendsto",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 asymptotic optimality from a source-tail limit: if the total source probability of pairwise inversions tends to zero, then the induced ranking law converges atomwise to the true ranking.` is exposed by the current dashboard row `appendixA_atomwise_concentration_of_sum_inversion_probs_tendsto`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_atomwise_concentration_of_sum_inversion_probs_tendsto"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 asymptotic optimality from a source-tail limit: if the total source probability of pairwise inversions tends to zero, then the induced ranking law converges atomwise to the true ranking.",
+      "source_grounded": true,
+      "statement_sha256": "4533ed9fbbff9ee26fef8f640e7cfab6a053d636025e9ffc605a958b2a1b8e13",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_expectedBestInSet_monotonicity_of_finite_rankByScore_contraction": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_expectedBestInSet_monotonicity_of_finite_rankByScore_contraction",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 deterministic finite-source monotonicity: if a finite source law over RUM score vectors is ranked once by raw scores and once after a strict contraction toward true values, then every nonempty remaining candidate set has weakly higher expected top value after contraction.` is exposed by the current dashboard row `appendixA_expectedBestInSet_monotonicity_of_finite_rankByScore_contraction`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_expectedBestInSet_monotonicity_of_finite_rankByScore_contraction"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 deterministic finite-source monotonicity: if a finite source law over RUM score vectors is ranked once by raw scores and once after a strict contraction toward true values, then every nonempty remaining candidate set has weakly higher expected top value after contraction.",
+      "source_grounded": true,
+      "statement_sha256": "e6bbe81d3895783827478383a2e76c5db47b64fe66b25405cad125a7459ae9a9",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_expectedBestInSet_monotonicity_of_measure_rankByScore_contraction": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_expectedBestInSet_monotonicity_of_measure_rankByScore_contraction",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 continuous-source monotonicity: if a probability source over RUM score vectors is ranked once by raw scores and once after a strict contraction toward true values, then every nonempty remaining candidate set has weakly higher expected top value after contraction.` is exposed by the current dashboard row `appendixA_expectedBestInSet_monotonicity_of_measure_rankByScore_contraction`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_expectedBestInSet_monotonicity_of_measure_rankByScore_contraction"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 continuous-source monotonicity: if a probability source over RUM score vectors is ranked once by raw scores and once after a strict contraction toward true values, then every nonempty remaining candidate set has weakly higher expected top value after contraction.",
+      "source_grounded": true,
+      "statement_sha256": "fd54120ff1d8c296b72700538e11ea2ed1dd7ba884aa2f65ee68cd56f36ed2e9",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_expectedBestInSet_strict_of_measure_rankByScore_contraction": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_expectedBestInSet_strict_of_measure_rankByScore_contraction",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 strict continuous-source monotonicity: the same source-coupled contraction gives strict expected improvement when the strict pointwise-improvement region has positive source measure.` is exposed by the current dashboard row `appendixA_expectedBestInSet_strict_of_measure_rankByScore_contraction`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_expectedBestInSet_strict_of_measure_rankByScore_contraction"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 strict continuous-source monotonicity: the same source-coupled contraction gives strict expected improvement when the strict pointwise-improvement region has positive source measure.",
+      "source_grounded": true,
+      "statement_sha256": "cfece93f6872437a69a1cabb0b72c4c7dd7bd9d07e68f45d68593471e10258ba",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoiseRankingPMF_atom_epsilonContinuousAt_of_ae_noTies": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_scaledNoiseRankingPMF_atom_epsilonContinuousAt_of_ae_noTies",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 scaled-noise atom continuity: if scaled scores have no pairwise ties almost surely at a positive accuracy, then every atom of the finite induced ranking law is continuous at that accuracy.` is exposed by the current dashboard row `appendixA_scaledNoiseRankingPMF_atom_epsilonContinuousAt_of_ae_noTies`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_scaledNoiseRankingPMF_atom_epsilonContinuousAt_of_ae_noTies"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 scaled-noise atom continuity: if scaled scores have no pairwise ties almost surely at a positive accuracy, then every atom of the finite induced ranking law is continuous at that accuracy.",
+      "source_grounded": true,
+      "statement_sha256": "2136e3ba2e6314be79f5dee7554b5b782f12d73030107843f98ddb5a435cf163",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_adjacent_score_misorder_sum_tendsto": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_scaledNoise_adjacent_score_misorder_sum_tendsto",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 scaled-noise source tail: for fixed finite-dimensional noise, scores `value_i + noise_i / theta` have vanishing total adjacent true-neighbor score-misorder probability as accuracy tends to infinity.` is exposed by the current dashboard row `appendixA_scaledNoise_adjacent_score_misorder_sum_tendsto`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_scaledNoise_adjacent_score_misorder_sum_tendsto"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 scaled-noise source tail: for fixed finite-dimensional noise, scores `value_i + noise_i / theta` have vanishing total adjacent true-neighbor score-misorder probability as accuracy tends to infinity.",
+      "source_grounded": true,
+      "statement_sha256": "cf03df3702ea1d1bc52b7463aaa34eca20214816787cde8a6f9487bfb2237c0e",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_atomwise_concentration": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_scaledNoise_atomwise_concentration",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 scaled-noise asymptotic optimality: fixed noise, a coordinate-measurable induced ranking, and strict adjacent true-value gaps imply atomwise convergence of the induced ranking law to the true ranking.` is exposed by the current dashboard row `appendixA_scaledNoise_atomwise_concentration`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_scaledNoise_atomwise_concentration"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 scaled-noise asymptotic optimality: fixed noise, a coordinate-measurable induced ranking, and strict adjacent true-value gaps imply atomwise convergence of the induced ranking law to the true ranking.",
+      "source_grounded": true,
+      "statement_sha256": "e828151da8210bd5bc0faac71410b13c0598ce64b90fefa2554e62bd73d6e6c6",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_noTie_ae_of_fullSupport_density": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_scaledNoise_noTie_ae_of_fullSupport_density",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 scaled-noise no-ties: an absolutely continuous finite noise-vector law gives probability zero to every pairwise scaled-score tie.` is exposed by the current dashboard row `appendixA_scaledNoise_noTie_ae_of_fullSupport_density`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_scaledNoise_noTie_ae_of_fullSupport_density"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 scaled-noise no-ties: an absolutely continuous finite noise-vector law gives probability zero to every pairwise scaled-score tie.",
+      "source_grounded": true,
+      "statement_sha256": "0f0b85012362e9c0f62d4de905c3fdca12972d4bde1cbc752fdfad95b9274d06",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_rankByScore_measurable": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_scaledNoise_rankByScore_measurable",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 scaled-noise measurability: if each finite noise coordinate is measurable, then sorting the scaled-noise scores gives a measurable ranking-valued random variable.` is exposed by the current dashboard row `appendixA_scaledNoise_rankByScore_measurable`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_scaledNoise_rankByScore_measurable"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 scaled-noise measurability: if each finite noise coordinate is measurable, then sorting the scaled-noise scores gives a measurable ranking-valued random variable.",
+      "source_grounded": true,
+      "statement_sha256": "b4bbfab83ecc3ef1a88bee05db5ecde0e9fb3ba9aa2e2bab710420694b994785",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_strict_fullset_improvement_pos_of_noise_fullSupport": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_scaledNoise_strict_fullset_improvement_pos_of_noise_fullSupport",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 scaled-noise strictness from full support: a positive-everywhere finite noise density gives positive source mass to the strict full-set improvement event whenever two candidates have a strict value gap and `thetaA > thetaH > 0`.` is exposed by the current dashboard row `appendixA_scaledNoise_strict_fullset_improvement_pos_of_noise_fullSupport`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_scaledNoise_strict_fullset_improvement_pos_of_noise_fullSupport"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 scaled-noise strictness from full support: a positive-everywhere finite noise density gives positive source mass to the strict full-set improvement event whenever two candidates have a strict value gap and `thetaA > thetaH > 0`.",
+      "source_grounded": true,
+      "statement_sha256": "3f0298ac0c776b2e65c36e6a02251fa296912360639be9502d6b6044b7a98fcd",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_strict_fullset_improvement_pos_of_scoreSpace_fullSupport": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_strict_fullset_improvement_pos_of_scoreSpace_fullSupport",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 strictness from full-support score density: for a genuine contraction and two candidates with a strict value gap, any positive-everywhere continuous score-space density gives positive mass to the strict full-set improvement event.` is exposed by the current dashboard row `appendixA_strict_fullset_improvement_pos_of_scoreSpace_fullSupport`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_strict_fullset_improvement_pos_of_scoreSpace_fullSupport"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 strictness from full-support score density: for a genuine contraction and two candidates with a strict value gap, any positive-everywhere continuous score-space density gives positive mass to the strict full-set improvement event.",
+      "source_grounded": true,
+      "statement_sha256": "61550fea07a60862f8bd85852a0f55b4d3b1b9c8ab924183140482dc5ab27a1f",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_strict_fullset_improvement_pos_of_scoreSpace_topSwitch_parameters": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_strict_fullset_improvement_pos_of_scoreSpace_topSwitch_parameters",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 strictness from explicit numerical margins: with a positive-everywhere score-space density, endpoint inequalities defining a raw-low / contracted-high top switch give positive strict-improvement mass.` is exposed by the current dashboard row `appendixA_strict_fullset_improvement_pos_of_scoreSpace_topSwitch_parameters`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_strict_fullset_improvement_pos_of_scoreSpace_topSwitch_parameters"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 strictness from explicit numerical margins: with a positive-everywhere score-space density, endpoint inequalities defining a raw-low / contracted-high top switch give positive strict-improvement mass.",
+      "source_grounded": true,
+      "statement_sha256": "429530bb6f2fe6b006af2e4f1dd6f55c2c7280b9d1f46136498e04d620c9d593",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_strict_fullset_improvement_pos_of_scoreSpace_top_switch_openBox": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_strict_fullset_improvement_pos_of_scoreSpace_top_switch_openBox",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 strictness from a continuous score-space box: for a positive density on finite score vectors, an explicit open box forcing a raw low-valued top choice and contracted high-valued top choice has positive source mass, hence supplies the strict-improvement event used by removal monotonicity.` is exposed by the current dashboard row `appendixA_strict_fullset_improvement_pos_of_scoreSpace_top_switch_openBox`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_strict_fullset_improvement_pos_of_scoreSpace_top_switch_openBox"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 strictness from a continuous score-space box: for a positive density on finite score vectors, an explicit open box forcing a raw low-valued top choice and contracted high-valued top choice has positive source mass, hence supplies the strict-improvement event used by removal monotonicity.",
+      "source_grounded": true,
+      "statement_sha256": "7899620aa477b18cc3bdcd5b1b5edbd71fc14ce74e3a46fb6d64c8f5bea5ab33",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_fullSupport_density": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_fullSupport_density",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 finite-removal monotonicity from a full-support scaled-noise density: the positive strict-improvement event is derived from full support, while the ranking-law equalities identify the paper's family with the induced scaled-noise laws.` is exposed by the current dashboard row `appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_fullSupport_density`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_fullSupport_density"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 finite-removal monotonicity from a full-support scaled-noise density: the positive strict-improvement event is derived from full support, while the ranking-law equalities identify the paper's family with the induced scaled-noise laws.",
+      "source_grounded": true,
+      "statement_sha256": "15f9df3b030de5360f563b79fb06c7c89523f87a9c4ca44dfae4204d3421f3d8",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_rankByScore_source": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_rankByScore_source",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 scaled-noise RUM monotonicity: for `thetaH < thetaA`, ranking scores `x_i + noise_i / thetaA` is a contraction of `x_i + noise_i / thetaH`; hence the source model satisfies the finite-removal monotonicity certificate used by Theorem 1, provided the full-set strict improvement region has positive source measure.` is exposed by the current dashboard row `appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_rankByScore_source`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_rankByScore_source"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 scaled-noise RUM monotonicity: for `thetaH < thetaA`, ranking scores `x_i + noise_i / thetaA` is a contraction of `x_i + noise_i / thetaH`; hence the source model satisfies the finite-removal monotonicity certificate used by Theorem 1, provided the full-set strict improvement region has positive source measure.",
+      "source_grounded": true,
+      "statement_sha256": "127a475a2f6aa0e6310d260993e2dd8bb4264eed5eca2379808dd0c35a15eeaa",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_top_switch_set": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_top_switch_set",
+      "reason": "The source item summarized as `- Appendix A / Theorem 5 scaled-noise RUM monotonicity from a concrete top-switch source region: it is enough to exhibit positive source mass where the low-accuracy scores uniquely put a lower-valued candidate on top, while the high-accuracy scores uniquely put a higher-valued candidate on top.` is exposed by the current dashboard row `appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_top_switch_set`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_top_switch_set"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix A / Theorem 5 scaled-noise RUM monotonicity from a concrete top-switch source region: it is enough to exhibit positive source mass where the low-accuracy scores uniquely put a lower-valued candidate on top, while the high-accuracy scores uniquely put a higher-valued candidate on top.",
+      "source_grounded": true,
+      "statement_sha256": "67d65ad2bfe443c2379ce7f6c41ba7132948ac7f49a562742a6d7016a9a41890",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition1_concreteMallowsSpec_asymptotic_first_dominance": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "definition1_concreteMallowsSpec_asymptotic_first_dominance",
+      "reason": "The source item summarized as `- Definition 1 / Mallows asymptotic first dominance: as algorithmic Mallows accuracy tends to infinity, the all-algorithm payoff eventually exceeds the human-against-algorithm payoff used in Theorem 1.` is exposed by the current dashboard row `definition1_concreteMallowsSpec_asymptotic_first_dominance`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "definition1_concreteMallowsSpec_asymptotic_first_dominance"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Definition 1 / Mallows asymptotic first dominance: as algorithmic Mallows accuracy tends to infinity, the all-algorithm payoff eventually exceeds the human-against-algorithm payoff used in Theorem 1.",
+      "source_grounded": true,
+      "statement_sha256": "44f7964a8a96e341cdfa4ac50bbac42cfeb1215939d246c5249e7b8ad86b4e9b",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition1_concreteMallowsSpec_atom_continuity": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "definition1_concreteMallowsSpec_atom_continuity",
+      "reason": "The source item summarized as `- Definition 1 / Mallows atomwise continuity: for the Mallows family with parameter `theta`, the probability of any fixed permutation varies continuously with positive `theta`.` is exposed by the current dashboard row `definition1_concreteMallowsSpec_atom_continuity`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "definition1_concreteMallowsSpec_atom_continuity"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Definition 1 / Mallows atomwise continuity: for the Mallows family with parameter `theta`, the probability of any fixed permutation varies continuously with positive `theta`.",
+      "source_grounded": true,
+      "statement_sha256": "77483dbf19c7f294c7378bf8ffd1a0925c30753416ed4cee6be791bee6e29517",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition1_threeCandidate_gaussian_removalMonotonicity_of_scoreSpace_t_lt_one": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "definition1_threeCandidate_gaussian_removalMonotonicity_of_scoreSpace_t_lt_one",
+      "reason": "The source item summarized as `- Definition 1 / Gaussian three-candidate RUM: for the concrete normalized Gaussian score law, a strict contraction toward ordered values satisfies the finite-removal monotonicity condition used by Theorem 1.` is exposed by the current dashboard row `definition1_threeCandidate_gaussian_removalMonotonicity_of_scoreSpace_t_lt_one`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "definition1_threeCandidate_gaussian_removalMonotonicity_of_scoreSpace_t_lt_one"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Definition 1 / Gaussian three-candidate RUM: for the concrete normalized Gaussian score law, a strict contraction toward ordered values satisfies the finite-removal monotonicity condition used by Theorem 1.",
+      "source_grounded": true,
+      "statement_sha256": "d7dbc94fe8e6d0f880c1e44d9ad43013278120433d03871f54fad9c23c1f9c8a",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition1_threeCandidate_laplacian_removalMonotonicity_of_scoreSpace_t_lt_one": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "definition1_threeCandidate_laplacian_removalMonotonicity_of_scoreSpace_t_lt_one",
+      "reason": "The source item summarized as `- Definition 1 / Laplace three-candidate RUM: for the concrete normalized Laplace score law, a strict contraction toward ordered values satisfies the finite-removal monotonicity condition used by Theorem 1.` is exposed by the current dashboard row `definition1_threeCandidate_laplacian_removalMonotonicity_of_scoreSpace_t_lt_one`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "definition1_threeCandidate_laplacian_removalMonotonicity_of_scoreSpace_t_lt_one"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Definition 1 / Laplace three-candidate RUM: for the concrete normalized Laplace score law, a strict contraction toward ordered values satisfies the finite-removal monotonicity condition used by Theorem 1.",
+      "source_grounded": true,
+      "statement_sha256": "62cd80bb09f86cd3bcdd7b2741c9442d023b500c3ae7b77e7c4a1abec3bb3e62",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition2_threeCandidate_gaussianStd_prefersIndependentReranking": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "definition2_threeCandidate_gaussianStd_prefersIndependentReranking",
+      "reason": "The source item summarized as `- Definition 2 / Gaussian three-candidate RUM with arbitrary positive standard deviation: independent Gaussian score signals with ordered means prefer independent reranking.` is exposed by the current dashboard row `definition2_threeCandidate_gaussianStd_prefersIndependentReranking`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "definition2_threeCandidate_gaussianStd_prefersIndependentReranking"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Definition 2 / Gaussian three-candidate RUM with arbitrary positive standard deviation: independent Gaussian score signals with ordered means prefer independent reranking.",
+      "source_grounded": true,
+      "statement_sha256": "a281b4819d9d41f9f457433fb6a6e5a7383d6bc9fc397487e2f503539d0f3075",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition2_threeCandidate_gaussian_prefersIndependentReranking": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "definition2_threeCandidate_gaussian_prefersIndependentReranking",
+      "reason": "The source item summarized as `- Definition 2 / Gaussian three-candidate RUM: independent Gaussian score signals with ordered means prefer independent reranking.` is exposed by the current dashboard row `definition2_threeCandidate_gaussian_prefersIndependentReranking`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "definition2_threeCandidate_gaussian_prefersIndependentReranking"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Definition 2 / Gaussian three-candidate RUM: independent Gaussian score signals with ordered means prefer independent reranking.",
+      "source_grounded": true,
+      "statement_sha256": "1822606cc88722470b8e1cabf65bbed3f43b019f17b1070581bc130b25c8a294",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition2_threeCandidate_laplacian_contracted_prefersIndependentReranking": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "definition2_threeCandidate_laplacian_contracted_prefersIndependentReranking",
+      "reason": "The source item summarized as `- Definition 2 / Laplace three-candidate RUM under contraction: contracted rate-`lam` scores induce the same ranking law as raw rate-`lam / t` scores, so the contracted source also prefers independent reranking.` is exposed by the current dashboard row `definition2_threeCandidate_laplacian_contracted_prefersIndependentReranking`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "definition2_threeCandidate_laplacian_contracted_prefersIndependentReranking"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Definition 2 / Laplace three-candidate RUM under contraction: contracted rate-`lam` scores induce the same ranking law as raw rate-`lam / t` scores, so the contracted source also prefers independent reranking.",
+      "source_grounded": true,
+      "statement_sha256": "b4c3b87cccffd27114833738047d9c54dcd662caf1ba92d9d11d8cd8fa10fe6e",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition2_threeCandidate_laplacian_prefersIndependentReranking": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "definition2_threeCandidate_laplacian_prefersIndependentReranking",
+      "reason": "The source item summarized as `- Definition 2 / Laplace three-candidate RUM: independent Laplace score signals with common positive rate and ordered locations prefer independent reranking.` is exposed by the current dashboard row `definition2_threeCandidate_laplacian_prefersIndependentReranking`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "definition2_threeCandidate_laplacian_prefersIndependentReranking"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Definition 2 / Laplace three-candidate RUM: independent Laplace score signals with common positive rate and ordered locations prefer independent reranking.",
+      "source_grounded": true,
+      "statement_sha256": "08df56186e0e12b7c2f5d24e339149071fbf7dba65fb7548fb726f8ae5e57b5c",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "lemma1_gaussian_strictlyWellOrdered": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "lemma1_gaussian_strictlyWellOrdered",
+      "reason": "The source item summarized as `- Appendix C Lemma 1, Gaussian noise is strictly well-ordered.` is exposed by the current dashboard row `lemma1_gaussian_strictlyWellOrdered`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "lemma1_gaussian_strictlyWellOrdered"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix C Lemma 1, Gaussian noise is strictly well-ordered.",
+      "source_grounded": true,
+      "statement_sha256": "7b1a8bbf5f298bf7a438130e4d992fea0b589ec74e2beb2e51d839089a21c4f3",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "lemma1_laplacian_strictlyWellOrdered_of_overlap": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "lemma1_laplacian_strictlyWellOrdered_of_overlap",
+      "reason": "The source item summarized as `- Appendix C Lemma 1, Laplacian strict local form: for ordered locations `a > b` and `c > d`, strict Laplacian well-ordering holds under the explicit overlap condition `b < c` and `d < a`, equivalently overlap of the open intervals `(b,a)` and `(d,c)`. the paper's false global strict Laplacian statement; the global theorem above is weak, and no named theorem or main-text result is affected.` is exposed by the current dashboard row `lemma1_laplacian_strictlyWellOrdered_of_overlap`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "lemma1_laplacian_strictlyWellOrdered_of_overlap"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix C Lemma 1, Laplacian strict local form: for ordered locations `a > b` and `c > d`, strict Laplacian well-ordering holds under the explicit overlap condition `b < c` and `d < a`, equivalently overlap of the open intervals `(b,a)` and `(d,c)`. the paper's false global strict Laplacian statement; the global theorem above is weak, and no named theorem or main-text result is affected.",
+      "source_grounded": true,
+      "statement_sha256": "42c6823fafa048cd84fe671c649d23c5676899393a1023ee49b16b4c86a64260",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "lemma1_laplacian_weaklyWellOrdered": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "lemma1_laplacian_weaklyWellOrdered",
+      "reason": "The source item summarized as `- Appendix C Lemma 1, Laplacian weak form: the Laplacian density kernel satisfies the globally valid weak well-ordering inequality.` is exposed by the current dashboard row `lemma1_laplacian_weaklyWellOrdered`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "lemma1_laplacian_weaklyWellOrdered"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix C Lemma 1, Laplacian weak form: the Laplacian density kernel satisfies the globally valid weak well-ordering inequality.",
+      "source_grounded": true,
+      "statement_sha256": "4e3834fb4883c439407ca729fbb1c54aa8171cef78b85afa08fe6d8d5d545de9",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "mallowsSpec": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "mallowsSpec",
+      "reason": "The source item summarized as `- Paper Mallows family parameterization used by the compact review surface.` is exposed by the current dashboard row `mallowsSpec`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "mallowsSpec"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Paper Mallows family parameterization used by the compact review surface.",
+      "source_grounded": true,
+      "statement_sha256": "2fb5309fe6b64c4ba460231cbd64a9d88941ff33fd035ce30308312a8836fa3d",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "strictlyWellOrderedNoise": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "strictlyWellOrderedNoise",
+      "reason": "The source item summarized as `- Paper Appendix C strict well-ordered noise predicate.` is exposed by the current dashboard row `strictlyWellOrderedNoise`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "strictlyWellOrderedNoise"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Paper Appendix C strict well-ordered noise predicate.",
+      "source_grounded": true,
+      "statement_sha256": "476e163fcc637305113e43cea419a9a434d94e4257a05239de10d6b1278a076b",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem1_concrete_mallows_family": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem1_concrete_mallows_family",
+      "reason": "The source item summarized as `- Paper Theorem 1, concrete Mallows family form: for a strict center-ordered value profile and positive human accuracy, the concrete Mallows accuracy family has a more accurate algorithmic parameter witnessing the monoculture paradox.` is exposed by the current dashboard row `theorem1_concrete_mallows_family`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem1_concrete_mallows_family"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Paper Theorem 1, concrete Mallows family form: for a strict center-ordered value profile and positive human accuracy, the concrete Mallows accuracy family has a more accurate algorithmic parameter witnessing the monoculture paradox.",
+      "source_grounded": true,
+      "statement_sha256": "69d2cf4e260dd4866609625a6024696ce9d24bda8ca27caf17dcf90566c9e021",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem1_from_paper_assumptions": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem1_from_paper_assumptions",
+      "reason": "The source item summarized as `- Paper Theorem 1, conditional family form: if a finite accuracy family satisfies the paper's Definition 1 analytic conditions, Definition 2 independent reranking condition, and Definition 3 weaker-competition condition, then every positive human accuracy admits a more accurate algorithmic accuracy witnessing the monoculture paradox. The `assumptions` input is the Lean package of those paper hypotheses. Concrete Mallows, Gaussian, and Laplace source routes below construct that package rather than assuming it as an external boundary.` is exposed by the current dashboard row `theorem1_from_paper_assumptions`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem1_from_paper_assumptions"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Paper Theorem 1, conditional family form: if a finite accuracy family satisfies the paper's Definition 1 analytic conditions, Definition 2 independent reranking condition, and Definition 3 weaker-competition condition, then every positive human accuracy admits a more accurate algorithmic accuracy witnessing the monoculture paradox. The `assumptions` input is the Lean package of those paper hypotheses. Concrete Mallows, Gaussian, and Laplace source routes below construct that package rather than assuming it as an external boundary.",
+      "source_grounded": true,
+      "statement_sha256": "6ba64fbabb175bff772cf450ced4bf61d2bf068297d9e0c7e4a95c4101f5bdd0",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_gaussianStd_target_from_rum_source": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem2_gaussianStd_target_from_rum_source",
+      "reason": "The source item summarized as `- Theorem 2 / Gaussian RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Gaussian RUM law with standard deviation `1 / \u03b8`, then the monoculture-paradox target follows from the concrete source proof. The source-model proof supplies the Definition 2, Definition 3, finite-removal monotonicity, positive swapped-ranking mass, and high-accuracy concentration ingredients. Atomwise continuity of the finite ranking law is derived from the continuous Gaussian score source.` is exposed by the current dashboard row `theorem2_gaussianStd_target_from_rum_source`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem2_gaussianStd_target_from_rum_source"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Theorem 2 / Gaussian RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Gaussian RUM law with standard deviation `1 / \u03b8`, then the monoculture-paradox target follows from the concrete source proof. The source-model proof supplies the Definition 2, Definition 3, finite-removal monotonicity, positive swapped-ranking mass, and high-accuracy concentration ingredients. Atomwise continuity of the finite ranking law is derived from the continuous Gaussian score source.",
+      "source_grounded": true,
+      "statement_sha256": "f57315886f42d79c5173c87600cfdebee885cc40421b28b2742796e3c855f9a5",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_gaussianStd_target_from_rum_source_and_atom_continuity": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem2_gaussianStd_target_from_rum_source_and_atom_continuity",
+      "reason": "The source item summarized as `- Compatibility alias for the older Gaussian source interface that exposed atomwise continuity as an explicit argument.` is exposed by the current dashboard row `theorem2_gaussianStd_target_from_rum_source_and_atom_continuity`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem2_gaussianStd_target_from_rum_source_and_atom_continuity"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Compatibility alias for the older Gaussian source interface that exposed atomwise continuity as an explicit argument.",
+      "source_grounded": true,
+      "statement_sha256": "5596654492e0a0d99c412712f724b66614812f75cb30d8c1e19a4fd834c48293",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_laplacianCanonical_target_from_rum_source": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem2_laplacianCanonical_target_from_rum_source",
+      "reason": "The source item summarized as `- Theorem 2 / canonical Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with rate `\u03b8`, then the monoculture-paradox target follows from the concrete source proof.` is exposed by the current dashboard row `theorem2_laplacianCanonical_target_from_rum_source`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem2_laplacianCanonical_target_from_rum_source"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Theorem 2 / canonical Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with rate `\u03b8`, then the monoculture-paradox target follows from the concrete source proof.",
+      "source_grounded": true,
+      "statement_sha256": "0371af086beff62e0b4073c728b6b605db83631ee251918ebaa917d04ab9ed4f",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_laplacianRate_target_from_continuous_rum_source": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem2_laplacianRate_target_from_continuous_rum_source",
+      "reason": "The source item summarized as `- Theorem 2 / continuous-rate Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with a positive strictly increasing continuous rate that tends to infinity, then the monoculture-paradox target follows from the concrete source proof.` is exposed by the current dashboard row `theorem2_laplacianRate_target_from_continuous_rum_source`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem2_laplacianRate_target_from_continuous_rum_source"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Theorem 2 / continuous-rate Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with a positive strictly increasing continuous rate that tends to infinity, then the monoculture-paradox target follows from the concrete source proof.",
+      "source_grounded": true,
+      "statement_sha256": "b236f85d60350e4fbada35df630e313f3a45fb90ebeeb82f156b3f999662913d",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_laplacianRate_target_from_rum_source_and_atom_continuity": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem2_laplacianRate_target_from_rum_source_and_atom_continuity",
+      "reason": "The source item summarized as `- Theorem 2 / Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with a positive strictly increasing rate that tends to infinity, then the monoculture-paradox target follows from atomwise continuity of the induced finite ranking law. The source-model proof supplies the Definition 2, Definition 3, finite-removal monotonicity, positive swapped-ranking mass, and high-accuracy concentration ingredients.` is exposed by the current dashboard row `theorem2_laplacianRate_target_from_rum_source_and_atom_continuity`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem2_laplacianRate_target_from_rum_source_and_atom_continuity"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Theorem 2 / Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with a positive strictly increasing rate that tends to infinity, then the monoculture-paradox target follows from atomwise continuity of the induced finite ranking law. The source-model proof supplies the Definition 2, Definition 3, finite-removal monotonicity, positive swapped-ranking mass, and high-accuracy concentration ingredients.",
+      "source_grounded": true,
+      "statement_sha256": "4802c35c598219ee4fcbed51238e234b3bf75a01954a0f10f9f85abef267becf",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem3_mallows_satisfies_paper_hypotheses": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem3_mallows_satisfies_paper_hypotheses",
+      "reason": "The source item summarized as `- Paper Theorem 3, Mallows form: for Mallows laws with a common center, if the algorithmic law is more accurate than the human law, then every strictly center-ordered value profile satisfies the paper's Definition 2 and Definition 3 hypotheses for the induced two-distribution model. Lean uses the inverse Mallows parameter `q`, so greater accuracy is `C.algorithm.q < C.human.q`. The rank-factorization formulas used by the source proof are proved for `MallowsSpec` and are not exposed as assumptions here.` is exposed by the current dashboard row `theorem3_mallows_satisfies_paper_hypotheses`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem3_mallows_satisfies_paper_hypotheses"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Paper Theorem 3, Mallows form: for Mallows laws with a common center, if the algorithmic law is more accurate than the human law, then every strictly center-ordered value profile satisfies the paper's Definition 2 and Definition 3 hypotheses for the induced two-distribution model. Lean uses the inverse Mallows parameter `q`, so greater accuracy is `C.algorithm.q < C.human.q`. The rank-factorization formulas used by the source proof are proved for `MallowsSpec` and are not exposed as assumptions here.",
+      "source_grounded": true,
+      "statement_sha256": "e19bd9bf3d515005a5a93c6d1d1e15e872aa51626c2a7e68dec68d523b93693e",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem4_mallows_all_human_sequence_optimal_of_q_le": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem4_mallows_all_human_sequence_optimal_of_q_le",
+      "reason": "The source item summarized as `- Theorem 4 / Mallows weak optimality: when human and algorithmic Mallows laws share the same center ranking and the human law is weakly more accurate, the all-human sequence is a best-response sequence in the multi-firm game. This route uses the reduced same-size prefix-cut weighted-extremes Mallows theorem, proved in Lean as `reflMallowsBestInSetPrefixCutFirstChoiceWeightedExtremes_of_q_lt`.` is exposed by the current dashboard row `theorem4_mallows_all_human_sequence_optimal_of_q_le`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem4_mallows_all_human_sequence_optimal_of_q_le"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Theorem 4 / Mallows weak optimality: when human and algorithmic Mallows laws share the same center ranking and the human law is weakly more accurate, the all-human sequence is a best-response sequence in the multi-firm game. This route uses the reduced same-size prefix-cut weighted-extremes Mallows theorem, proved in Lean as `reflMallowsBestInSetPrefixCutFirstChoiceWeightedExtremes_of_q_lt`.",
+      "source_grounded": true,
+      "statement_sha256": "8c0ff952eeb194e8c118371f90267ad92b60a4dde46441abadc22ea8935a2b16",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem4_mallows_human_unique_at_each_history_of_q_lt": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem4_mallows_human_unique_at_each_history_of_q_lt",
+      "reason": "The source item summarized as `- Theorem 4 / Mallows strict uniqueness: if the human Mallows law has strictly lower inverse-noise parameter than the algorithmic law, then at every nonterminal history the human ranking distribution is the unique best response.` is exposed by the current dashboard row `theorem4_mallows_human_unique_at_each_history_of_q_lt`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem4_mallows_human_unique_at_each_history_of_q_lt"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Theorem 4 / Mallows strict uniqueness: if the human Mallows law has strictly lower inverse-noise parameter than the algorithmic law, then at every nonterminal history the human ranking distribution is the unique best response.",
+      "source_grounded": true,
+      "statement_sha256": "8c6812d8bc74256c30d85c3c40fbe0216ff15d571e2fda897c32b1c448e4c2b5",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem6_threeCandidate_gaussian_prefersWeakerCompetition_of_scoreSpace_t_lt_one": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem6_threeCandidate_gaussian_prefersWeakerCompetition_of_scoreSpace_t_lt_one",
+      "reason": "The source item summarized as `- Appendix C Theorem 6 / Gaussian three-candidate RUM: if algorithmic scores are a strict contraction of the same independent Gaussian score realization, then the second mover prefers weaker competition.` is exposed by the current dashboard row `theorem6_threeCandidate_gaussian_prefersWeakerCompetition_of_scoreSpace_t_lt_one`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem6_threeCandidate_gaussian_prefersWeakerCompetition_of_scoreSpace_t_lt_one"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix C Theorem 6 / Gaussian three-candidate RUM: if algorithmic scores are a strict contraction of the same independent Gaussian score realization, then the second mover prefers weaker competition.",
+      "source_grounded": true,
+      "statement_sha256": "7b9bc281e31a474705437be8f5ff50bedb3a43ec552d60a49368aecc0541c9bf",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_concreteNormalization_t_lt_one": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_concreteNormalization_t_lt_one",
+      "reason": "The source item summarized as `- Appendix C Theorem 6 / Laplacian three-candidate RUM: the concrete zero-mean Laplace score density is normalized in Lean, so the theorem has no remaining lambda-certificate premise.` is exposed by the current dashboard row `theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_concreteNormalization_t_lt_one`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_concreteNormalization_t_lt_one"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix C Theorem 6 / Laplacian three-candidate RUM: the concrete zero-mean Laplace score density is normalized in Lean, so the theorem has no remaining lambda-certificate premise.",
+      "source_grounded": true,
+      "statement_sha256": "813747ce3c499730e08143be92db24f9d0ebe8470cdb84c281bb41191aae1cc3",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_t_lt_one": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_t_lt_one",
+      "reason": "The source item summarized as `- Appendix C Theorem 6 / Laplacian three-candidate RUM: with normalized concrete Laplace scores, the second firm prefers weaker competition for `0 \u2264 t \u2264 1`, `t < 1`, and `x\u2083 < x\u2082 < x\u2081`.` is exposed by the current dashboard row `theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_t_lt_one`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_t_lt_one"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix C Theorem 6 / Laplacian three-candidate RUM: with normalized concrete Laplace scores, the second firm prefers weaker competition for `0 \u2264 t \u2264 1`, `t < 1`, and `x\u2083 < x\u2082 < x\u2081`.",
+      "source_grounded": true,
+      "statement_sha256": "3781536c3b5f3f65eb512422505bb553b34c9ecd40963e78155c2afcf521b6e8",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem7_laplacian_pairwise_conditional_derivative_cases": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem7_laplacian_pairwise_conditional_derivative_cases",
+      "reason": "The source item summarized as `- Appendix C Theorem 7, Laplacian pairwise conditional derivative: for independent Laplace scores with `x_j < x_i`, the strict source probability ratio `Pr[X_i > X_j | X_i < a, X_j < a]` is flat to the left of `x_j`, strictly increasing between `x_j` and `x_i`, and strictly increasing to the right of `x_i`.` is exposed by the current dashboard row `theorem7_laplacian_pairwise_conditional_derivative_cases`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem7_laplacian_pairwise_conditional_derivative_cases"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix C Theorem 7, Laplacian pairwise conditional derivative: for independent Laplace scores with `x_j < x_i`, the strict source probability ratio `Pr[X_i > X_j | X_i < a, X_j < a]` is flat to the left of `x_j`, strictly increasing between `x_j` and `x_i`, and strictly increasing to the right of `x_i`.",
+      "source_grounded": true,
+      "statement_sha256": "c96b74f32bc6f5f0864deab58267f163ca5cb30027b0c7af574d1955b3832302",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem9_concrete_mallows_family_assumptions": {
+      "audit_kind": "source_to_dashboard_llm",
+      "coverage": "covered",
+      "dashboard_evidence": "theorem9_concrete_mallows_family_assumptions",
+      "reason": "The source item summarized as `- Appendix E / Theorem 9: concrete Mallows families satisfy the paper-level assumption package consumed by Theorem 1.` is exposed by the current dashboard row `theorem9_concrete_mallows_family_assumptions`. The row-local statement judgment links the current Lean statement to that paper-facing source summary.",
+      "review_rows": [
+        "theorem9_concrete_mallows_family_assumptions"
+      ],
+      "source_evidence": "Source basis: arXiv:2101.05853 / PNAS 2021 local source cache, DependencyDAG.tex, and FINAL_VALIDATION_REPORT.md. Source item: - Appendix E / Theorem 9: concrete Mallows families satisfy the paper-level assumption package consumed by Theorem 1.",
+      "source_grounded": true,
+      "statement_sha256": "a8ce0f844a9211872d33f119d41dedd46e69c6a25e4b527d794c8f4c9339af9a",
+      "support_declarations": [],
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    }
+  },
+  "paper": "KR21Monoculture",
+  "paper_statement_inventory_sha256": "37dd05dc08be639d1fa0ee0e93fd8142d5eba4b7174654948b8cfb4372503a41",
+  "prompt_version": "paper-coverage-v2-source-grounded-source-to-dashboard",
+  "review_surface_sha256": "6a8c7d46e26f784fdfab5bfac6816fe339147aeff007ab0ee51af86dfe5f2b94",
+  "schema": 1,
+  "source_grounded": true,
+  "validated_at": "2026-07-01T19:57:11Z",
+  "validator": "codex-gpt-5",
+  "validator_type": "model"
+}

@@ -73,6 +73,20 @@ theorem pmfIndicatorExp_eq_zero_of_pmfProb_eq_zero {α : Type*} [Fintype α] [De
     pmfIndicatorExp μ p (fun _ => 1) = pmfProb μ p := by
   rfl
 
+@[simp] theorem pmfIndicatorExp_const {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (c : ℝ) :
+    pmfIndicatorExp μ p (fun _ => c) = pmfProb μ p * c := by
+  classical
+  unfold pmfIndicatorExp pmfProb pmfExp
+  calc
+    ∑ a : α, (μ a).toReal * (if p a then c else 0)
+        = ∑ a : α, ((μ a).toReal * (if p a then (1 : ℝ) else 0)) * c := by
+            refine Finset.sum_congr rfl ?_
+            intro a _
+            by_cases hp : p a <;> simp [hp]
+    _ = (∑ a : α, (μ a).toReal * (if p a then (1 : ℝ) else 0)) * c := by
+            rw [Finset.sum_mul]
+
 /-- Conditional expectation of `f` on event `p`, with value `0` when `p` has zero probability. -/
 noncomputable def pmfConditionalExp {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (p : α → Prop) [DecidablePred p] (f : α → ℝ) : ℝ :=
@@ -203,6 +217,130 @@ theorem pmfConditionalExp_pos_iff {α : Type*} [Fintype α] [DecidableEq α]
     0 < pmfConditionalExp μ p f ↔ 0 < pmfIndicatorExp μ p f := by
   rw [pmfConditionalExp_eq_div_of_pos (μ := μ) (p := p) (f := f) h]
   exact zero_lt_div_iff_pos_right h
+
+/--
+Finite law of total expectation over the fibers of a state map.
+
+The conditional expectation is defined as `0` on zero-probability fibers, so the
+formula does not need a separate support restriction.
+-/
+theorem pmfExp_eq_sum_state_prob_mul_conditionalExp
+    {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (μ : PMF α) (state : α → β) (f : α → ℝ) :
+    pmfExp μ f =
+      ∑ b : β,
+        pmfProb μ (fun a => state a = b) *
+          pmfConditionalExp μ (fun a => state a = b) f := by
+  classical
+  symm
+  have hterm :
+      ∀ b : β,
+        pmfProb μ (fun a => state a = b) *
+            pmfConditionalExp μ (fun a => state a = b) f =
+          pmfIndicatorExp μ (fun a => state a = b) f := by
+    intro b
+    by_cases hpos : 0 < pmfProb μ (fun a => state a = b)
+    · have hclear :=
+        pmfConditionalExp_mul_prob_eq_indicatorExp_of_pos
+          (μ := μ) (p := fun a => state a = b) (f := f) hpos
+      calc
+        pmfProb μ (fun a => state a = b) *
+            pmfConditionalExp μ (fun a => state a = b) f
+            =
+          pmfConditionalExp μ (fun a => state a = b) f *
+            pmfProb μ (fun a => state a = b) := by ring
+        _ = pmfIndicatorExp μ (fun a => state a = b) f := hclear
+    · have hzero : pmfProb μ (fun a => state a = b) = 0 := by
+        exact le_antisymm (le_of_not_gt hpos)
+          (pmfProb_nonneg μ (fun a => state a = b))
+      simp [hzero, pmfIndicatorExp_eq_zero_of_pmfProb_eq_zero]
+  calc
+    ∑ b : β,
+        pmfProb μ (fun a => state a = b) *
+          pmfConditionalExp μ (fun a => state a = b) f
+        =
+      ∑ b : β, pmfIndicatorExp μ (fun a => state a = b) f := by
+        refine Finset.sum_congr rfl ?_
+        intro b _
+        exact hterm b
+    _ = pmfExp μ f := by
+        unfold pmfIndicatorExp pmfExp
+        calc
+          ∑ b : β, ∑ a : α,
+              (μ a).toReal * (if state a = b then f a else 0)
+              =
+            ∑ a : α, ∑ b : β,
+              (μ a).toReal * (if state a = b then f a else 0) := by
+              exact Finset.sum_comm
+          _ = ∑ a : α, (μ a).toReal * f a := by
+              refine Finset.sum_congr rfl ?_
+              intro a _
+              calc
+                ∑ b : β,
+                    (μ a).toReal * (if state a = b then f a else 0)
+                    =
+                  ∑ b : β,
+                    if b = state a then (μ a).toReal * f a else 0 := by
+                    refine Finset.sum_congr rfl ?_
+                    intro b _
+                    by_cases hb : state a = b
+                    · rw [if_pos hb, if_pos hb.symm]
+                    · have hb' : b ≠ state a := fun h => hb h.symm
+                      rw [if_neg hb, if_neg hb']
+                      ring
+                _ = (μ a).toReal * f a := by
+                    simpa using
+                      (Finset.sum_ite_eq' Finset.univ (state a)
+                        (fun _ : β => (μ a).toReal * f a))
+
+/--
+If every positive-probability fiber of a finite state map has positive
+conditional expectation, then the unconditional expectation is positive.
+-/
+theorem pmfExp_pos_of_state_conditionalExp_pos
+    {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (μ : PMF α) (state : α → β) (f : α → ℝ)
+    (hcond : ∀ b : β, 0 < pmfProb μ (fun a => state a = b) →
+      0 < pmfConditionalExp μ (fun a => state a = b) f) :
+    0 < pmfExp μ f := by
+  classical
+  rw [pmfExp_eq_sum_state_prob_mul_conditionalExp μ state f]
+  have htotal : pmfProb μ (fun _ : α => True) = 1 := by
+    simp [pmfProb]
+  have htotal_pos : 0 < pmfProb μ (fun _ : α => True) := by
+    rw [htotal]
+    norm_num
+  rcases (pmfProb_pos_iff_exists_pos_mass μ (fun _ : α => True)).mp htotal_pos with
+    ⟨a₀, _htrue, hmass⟩
+  let b₀ : β := state a₀
+  have hb₀_prob : 0 < pmfProb μ (fun a => state a = b₀) :=
+    pmfProb_pos_of_mass μ (fun a => state a = b₀) a₀ rfl hmass
+  have hb₀_cond : 0 < pmfConditionalExp μ (fun a => state a = b₀) f :=
+    hcond b₀ hb₀_prob
+  have hterm_pos :
+      0 < pmfProb μ (fun a => state a = b₀) *
+        pmfConditionalExp μ (fun a => state a = b₀) f :=
+    mul_pos hb₀_prob hb₀_cond
+  have hnonneg :
+      ∀ b : β,
+        0 ≤ pmfProb μ (fun a => state a = b) *
+          pmfConditionalExp μ (fun a => state a = b) f := by
+    intro b
+    by_cases hpos : 0 < pmfProb μ (fun a => state a = b)
+    · exact mul_nonneg (pmfProb_nonneg μ (fun a => state a = b))
+        (le_of_lt (hcond b hpos))
+    · have hzero : pmfProb μ (fun a => state a = b) = 0 := by
+        exact le_antisymm (le_of_not_gt hpos)
+          (pmfProb_nonneg μ (fun a => state a = b))
+      simp [hzero]
+  have hle :
+      pmfProb μ (fun a => state a = b₀) *
+          pmfConditionalExp μ (fun a => state a = b₀) f ≤
+        ∑ b : β,
+          pmfProb μ (fun a => state a = b) *
+            pmfConditionalExp μ (fun a => state a = b) f := by
+    exact Finset.single_le_sum (fun b _ => hnonneg b) (Finset.mem_univ b₀)
+  exact lt_of_lt_of_le hterm_pos hle
 
 /-- Conditional probability of event `q` given event `p` under a finite PMF. -/
 noncomputable def pmfConditionalProb {α : Type*} [Fintype α] [DecidableEq α]
@@ -525,6 +663,58 @@ theorem pmfConditionalProb_compl_eq_one_sub_of_pos
   field_simp [hp_pos.ne']
 
 /--
+Conditional expectation of a two-valued random variable on a positive
+conditioning event.
+-/
+theorem pmfConditionalExp_eq_conditionalProb_mul_add_one_sub_mul_of_forall_eq_if
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (f : α → ℝ) (x y : ℝ)
+    (hp_pos : 0 < pmfProb μ p)
+    (hpoint : ∀ a, p a → f a = if q a then x else y) :
+    pmfConditionalExp μ p f =
+      pmfConditionalProb μ p q * x +
+        (1 - pmfConditionalProb μ p q) * y := by
+  classical
+  have hindicator :
+      pmfIndicatorExp μ p f =
+        pmfProb μ (fun a => p a ∧ q a) * x +
+          pmfProb μ (fun a => p a ∧ ¬ q a) * y := by
+    unfold pmfIndicatorExp pmfProb pmfExp
+    calc
+      ∑ a : α, (μ a).toReal * (if p a then f a else 0)
+          =
+        ∑ a : α, (
+          ((μ a).toReal * (if p a ∧ q a then (1 : ℝ) else 0)) * x +
+            ((μ a).toReal * (if p a ∧ ¬ q a then (1 : ℝ) else 0)) * y) := by
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          by_cases hp : p a
+          · rw [hpoint a hp]
+            by_cases hq : q a <;> simp [hp, hq]
+          · simp [hp]
+      _ =
+        (∑ a : α,
+          ((μ a).toReal * (if p a ∧ q a then (1 : ℝ) else 0)) * x) +
+          ∑ a : α,
+            ((μ a).toReal * (if p a ∧ ¬ q a then (1 : ℝ) else 0)) * y := by
+          rw [Finset.sum_add_distrib]
+      _ =
+        (∑ a : α, (μ a).toReal * (if p a ∧ q a then (1 : ℝ) else 0)) * x +
+          (∑ a : α, (μ a).toReal * (if p a ∧ ¬ q a then (1 : ℝ) else 0)) * y := by
+          rw [Finset.sum_mul, Finset.sum_mul]
+  rw [pmfConditionalExp_eq_div_of_pos μ p f hp_pos]
+  rw [hindicator]
+  rw [pmfConditionalProb_eq_inter_div_of_pos μ p q hp_pos]
+  have hsplit := pmfProb_eq_inter_add_inter_not μ p q
+  have hdiff :
+      pmfProb μ (fun a => p a ∧ ¬ q a) =
+        pmfProb μ p - pmfProb μ (fun a => p a ∧ q a) := by
+    linarith
+  rw [hdiff]
+  field_simp [hp_pos.ne']
+
+/--
 If the conditional probability of `q` given `p` is at most `eps`, then the
 conditional probability of its complement is at least `1 - eps`.
 -/
@@ -787,6 +977,21 @@ theorem pmfConditionalProb_le_of_inter_le_mul
     pmfConditionalProb μ q p ≤ pmfProb μ p := by
   rw [pmfConditionalProb_eq_inter_div_of_pos μ q p hq_pos]
   rw [div_le_iff₀ hq_pos]
+  simpa [and_comm, mul_comm] using hinter
+
+/--
+Strict pairwise negative correlation implies the corresponding strict
+conditional comparison when the conditioning event has positive probability.
+-/
+theorem pmfConditionalProb_lt_of_inter_lt_mul
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (hq_pos : 0 < pmfProb μ q)
+    (hinter : pmfProb μ (fun a => p a ∧ q a) <
+      pmfProb μ p * pmfProb μ q) :
+    pmfConditionalProb μ q p < pmfProb μ p := by
+  rw [pmfConditionalProb_eq_inter_div_of_pos μ q p hq_pos]
+  rw [div_lt_iff₀ hq_pos]
   simpa [and_comm, mul_comm] using hinter
 
 /-- Probability of an event on a pair of independent PMF draws. -/

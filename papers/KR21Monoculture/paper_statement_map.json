@@ -1,0 +1,404 @@
+{
+  "generated_at": "2026-07-01T19:57:11Z",
+  "items": {
+    "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 asymptotic optimality: it is enough to make the total source probability of adjacent inversions in the true ranking order arbitrarily small. The finite adjacent-union-bound argument then gives atomwise convergence to the true ranking."
+    },
+    "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs_tendsto": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 asymptotic optimality from an adjacent source-tail limit: if the total source probability of adjacent inversions in the true ranking order tends to zero, then the induced ranking law converges atomwise to the true ranking."
+    },
+    "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 asymptotic optimality for score-induced RUM rankings: it is enough to make the total source probability of adjacent true-neighbor score misorders arbitrarily small. This is the coordinate-level tail statement used in the paper's source argument."
+    },
+    "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs_tendsto": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 asymptotic optimality from a score-tail limit: for score-induced RUM rankings, it is enough that adjacent true-neighbor score misorder probabilities have total mass tending to zero."
+    },
+    "appendixA_atomwise_concentration_of_sum_inversion_probs": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 asymptotic optimality: if high accuracy makes the total source probability of pairwise inversions arbitrarily small, then the induced ranking law converges atomwise to the true ranking."
+    },
+    "appendixA_atomwise_concentration_of_sum_inversion_probs_tendsto": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 asymptotic optimality from a source-tail limit: if the total source probability of pairwise inversions tends to zero, then the induced ranking law converges atomwise to the true ranking."
+    },
+    "appendixA_expectedBestInSet_monotonicity_of_finite_rankByScore_contraction": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 deterministic finite-source monotonicity: if a finite source law over RUM score vectors is ranked once by raw scores and once after a strict contraction toward true values, then every nonempty remaining candidate set has weakly higher expected top value after contraction."
+    },
+    "appendixA_expectedBestInSet_monotonicity_of_measure_rankByScore_contraction": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 continuous-source monotonicity: if a probability source over RUM score vectors is ranked once by raw scores and once after a strict contraction toward true values, then every nonempty remaining candidate set has weakly higher expected top value after contraction."
+    },
+    "appendixA_expectedBestInSet_strict_of_measure_rankByScore_contraction": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 strict continuous-source monotonicity: the same source-coupled contraction gives strict expected improvement when the strict pointwise-improvement region has positive source measure."
+    },
+    "appendixA_scaledNoiseRankingPMF_atom_epsilonContinuousAt_of_ae_noTies": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 scaled-noise atom continuity: if scaled scores have no pairwise ties almost surely at a positive accuracy, then every atom of the finite induced ranking law is continuous at that accuracy."
+    },
+    "appendixA_scaledNoise_adjacent_score_misorder_sum_tendsto": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 scaled-noise source tail: for fixed finite-dimensional noise, scores `value_i + noise_i / theta` have vanishing total adjacent true-neighbor score-misorder probability as accuracy tends to infinity."
+    },
+    "appendixA_scaledNoise_atomwise_concentration": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 scaled-noise asymptotic optimality: fixed noise, a coordinate-measurable induced ranking, and strict adjacent true-value gaps imply atomwise convergence of the induced ranking law to the true ranking."
+    },
+    "appendixA_scaledNoise_noTie_ae_of_fullSupport_density": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 scaled-noise no-ties: an absolutely continuous finite noise-vector law gives probability zero to every pairwise scaled-score tie."
+    },
+    "appendixA_scaledNoise_rankByScore_measurable": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 scaled-noise measurability: if each finite noise coordinate is measurable, then sorting the scaled-noise scores gives a measurable ranking-valued random variable."
+    },
+    "appendixA_scaledNoise_strict_fullset_improvement_pos_of_noise_fullSupport": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 scaled-noise strictness from full support: a positive-everywhere finite noise density gives positive source mass to the strict full-set improvement event whenever two candidates have a strict value gap and `thetaA > thetaH > 0`."
+    },
+    "appendixA_strict_fullset_improvement_pos_of_scoreSpace_fullSupport": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 strictness from full-support score density: for a genuine contraction and two candidates with a strict value gap, any positive-everywhere continuous score-space density gives positive mass to the strict full-set improvement event."
+    },
+    "appendixA_strict_fullset_improvement_pos_of_scoreSpace_topSwitch_parameters": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 strictness from explicit numerical margins: with a positive-everywhere score-space density, endpoint inequalities defining a raw-low / contracted-high top switch give positive strict-improvement mass."
+    },
+    "appendixA_strict_fullset_improvement_pos_of_scoreSpace_top_switch_openBox": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 strictness from a continuous score-space box: for a positive density on finite score vectors, an explicit open box forcing a raw low-valued top choice and contracted high-valued top choice has positive source mass, hence supplies the strict-improvement event used by removal monotonicity."
+    },
+    "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_fullSupport_density": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 finite-removal monotonicity from a full-support scaled-noise density: the positive strict-improvement event is derived from full support, while the ranking-law equalities identify the paper's family with the induced scaled-noise laws."
+    },
+    "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_rankByScore_source": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 scaled-noise RUM monotonicity: for `thetaH < thetaA`, ranking scores `x_i + noise_i / thetaA` is a contraction of `x_i + noise_i / thetaH`; hence the source model satisfies the finite-removal monotonicity certificate used by Theorem 1, provided the full-set strict improvement region has positive source measure."
+    },
+    "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_top_switch_set": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix A / Theorem 5 scaled-noise RUM monotonicity from a concrete top-switch source region: it is enough to exhibit positive source mass where the low-accuracy scores uniquely put a lower-valued candidate on top, while the high-accuracy scores uniquely put a higher-valued candidate on top."
+    },
+    "definition1_concreteMallowsSpec_asymptotic_first_dominance": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Definition 1 / Mallows asymptotic first dominance: as algorithmic Mallows accuracy tends to infinity, the all-algorithm payoff eventually exceeds the human-against-algorithm payoff used in Theorem 1."
+    },
+    "definition1_concreteMallowsSpec_atom_continuity": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Definition 1 / Mallows atomwise continuity: for the Mallows family with parameter `theta`, the probability of any fixed permutation varies continuously with positive `theta`."
+    },
+    "definition1_threeCandidate_gaussian_removalMonotonicity_of_scoreSpace_t_lt_one": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Definition 1 / Gaussian three-candidate RUM: for the concrete normalized Gaussian score law, a strict contraction toward ordered values satisfies the finite-removal monotonicity condition used by Theorem 1."
+    },
+    "definition1_threeCandidate_laplacian_removalMonotonicity_of_scoreSpace_t_lt_one": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Definition 1 / Laplace three-candidate RUM: for the concrete normalized Laplace score law, a strict contraction toward ordered values satisfies the finite-removal monotonicity condition used by Theorem 1."
+    },
+    "definition2_threeCandidate_gaussianStd_prefersIndependentReranking": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Definition 2 / Gaussian three-candidate RUM with arbitrary positive standard deviation: independent Gaussian score signals with ordered means prefer independent reranking."
+    },
+    "definition2_threeCandidate_gaussian_prefersIndependentReranking": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Definition 2 / Gaussian three-candidate RUM: independent Gaussian score signals with ordered means prefer independent reranking."
+    },
+    "definition2_threeCandidate_laplacian_contracted_prefersIndependentReranking": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Definition 2 / Laplace three-candidate RUM under contraction: contracted rate-`lam` scores induce the same ranking law as raw rate-`lam / t` scores, so the contracted source also prefers independent reranking."
+    },
+    "definition2_threeCandidate_laplacian_prefersIndependentReranking": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Definition 2 / Laplace three-candidate RUM: independent Laplace score signals with common positive rate and ordered locations prefer independent reranking."
+    },
+    "lemma1_gaussian_strictlyWellOrdered": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix C Lemma 1, Gaussian noise is strictly well-ordered."
+    },
+    "lemma1_laplacian_strictlyWellOrdered_of_overlap": {
+      "aliases": [],
+      "source_location": "formalized source note. This is the strict local replacement for",
+      "source_note": "",
+      "source_status": "formalized source note. This is the strict local replacement for",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix C Lemma 1, Laplacian strict local form: for ordered locations `a > b` and `c > d`, strict Laplacian well-ordering holds under the explicit overlap condition `b < c` and `d < a`, equivalently overlap of the open intervals `(b,a)` and `(d,c)`. the paper's false global strict Laplacian statement; the global theorem above is weak, and no named theorem or main-text result is affected."
+    },
+    "lemma1_laplacian_weaklyWellOrdered": {
+      "aliases": [],
+      "source_location": "formalized source note. The paper states global strict",
+      "source_note": "",
+      "source_status": "formalized source note. The paper states global strict",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix C Lemma 1, Laplacian weak form: the Laplacian density kernel satisfies the globally valid weak well-ordering inequality."
+    },
+    "mallowsSpec": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Paper Mallows family parameterization used by the compact review surface."
+    },
+    "strictlyWellOrderedNoise": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Paper Appendix C strict well-ordered noise predicate."
+    },
+    "theorem1_concrete_mallows_family": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Paper Theorem 1, concrete Mallows family form: for a strict center-ordered value profile and positive human accuracy, the concrete Mallows accuracy family has a more accurate algorithmic parameter witnessing the monoculture paradox."
+    },
+    "theorem1_from_paper_assumptions": {
+      "aliases": [],
+      "source_location": "paper theorem from source conditions.",
+      "source_note": "",
+      "source_status": "paper theorem from source conditions.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Paper Theorem 1, conditional family form: if a finite accuracy family satisfies the paper's Definition 1 analytic conditions, Definition 2 independent reranking condition, and Definition 3 weaker-competition condition, then every positive human accuracy admits a more accurate algorithmic accuracy witnessing the monoculture paradox. The `assumptions` input is the Lean package of those paper hypotheses. Concrete Mallows, Gaussian, and Laplace source routes below construct that package rather than assuming it as an external boundary."
+    },
+    "theorem2_gaussianStd_target_from_rum_source": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Theorem 2 / Gaussian RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Gaussian RUM law with standard deviation `1 / \u03b8`, then the monoculture-paradox target follows from the concrete source proof. The source-model proof supplies the Definition 2, Definition 3, finite-removal monotonicity, positive swapped-ranking mass, and high-accuracy concentration ingredients. Atomwise continuity of the finite ranking law is derived from the continuous Gaussian score source."
+    },
+    "theorem2_gaussianStd_target_from_rum_source_and_atom_continuity": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Compatibility alias for the older Gaussian source interface that exposed atomwise continuity as an explicit argument."
+    },
+    "theorem2_laplacianCanonical_target_from_rum_source": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Theorem 2 / canonical Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with rate `\u03b8`, then the monoculture-paradox target follows from the concrete source proof."
+    },
+    "theorem2_laplacianRate_target_from_continuous_rum_source": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Theorem 2 / continuous-rate Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with a positive strictly increasing continuous rate that tends to infinity, then the monoculture-paradox target follows from the concrete source proof."
+    },
+    "theorem2_laplacianRate_target_from_rum_source_and_atom_continuity": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Theorem 2 / Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with a positive strictly increasing rate that tends to infinity, then the monoculture-paradox target follows from atomwise continuity of the induced finite ranking law. The source-model proof supplies the Definition 2, Definition 3, finite-removal monotonicity, positive swapped-ranking mass, and high-accuracy concentration ingredients."
+    },
+    "theorem3_mallows_satisfies_paper_hypotheses": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Paper Theorem 3, Mallows form: for Mallows laws with a common center, if the algorithmic law is more accurate than the human law, then every strictly center-ordered value profile satisfies the paper's Definition 2 and Definition 3 hypotheses for the induced two-distribution model. Lean uses the inverse Mallows parameter `q`, so greater accuracy is `C.algorithm.q < C.human.q`. The rank-factorization formulas used by the source proof are proved for `MallowsSpec` and are not exposed as assumptions here."
+    },
+    "theorem4_mallows_all_human_sequence_optimal_of_q_le": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Theorem 4 / Mallows weak optimality: when human and algorithmic Mallows laws share the same center ranking and the human law is weakly more accurate, the all-human sequence is a best-response sequence in the multi-firm game. This route uses the reduced same-size prefix-cut weighted-extremes Mallows theorem, proved in Lean as `reflMallowsBestInSetPrefixCutFirstChoiceWeightedExtremes_of_q_lt`."
+    },
+    "theorem4_mallows_human_unique_at_each_history_of_q_lt": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Theorem 4 / Mallows strict uniqueness: if the human Mallows law has strictly lower inverse-noise parameter than the algorithmic law, then at every nonterminal history the human ranking distribution is the unique best response."
+    },
+    "theorem6_threeCandidate_gaussian_prefersWeakerCompetition_of_scoreSpace_t_lt_one": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix C Theorem 6 / Gaussian three-candidate RUM: if algorithmic scores are a strict contraction of the same independent Gaussian score realization, then the second mover prefers weaker competition."
+    },
+    "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_concreteNormalization_t_lt_one": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix C Theorem 6 / Laplacian three-candidate RUM: the concrete zero-mean Laplace score density is normalized in Lean, so the theorem has no remaining lambda-certificate premise."
+    },
+    "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_t_lt_one": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix C Theorem 6 / Laplacian three-candidate RUM: with normalized concrete Laplace scores, the second firm prefers weaker competition for `0 \u2264 t \u2264 1`, `t < 1`, and `x\u2083 < x\u2082 < x\u2081`."
+    },
+    "theorem7_laplacian_pairwise_conditional_derivative_cases": {
+      "aliases": [],
+      "source_location": "derived from source primitives.",
+      "source_note": "",
+      "source_status": "derived from source primitives.",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix C Theorem 7, Laplacian pairwise conditional derivative: for independent Laplace scores with `x_j < x_i`, the strict source probability ratio `Pr[X_i > X_j | X_i < a, X_j < a]` is flat to the left of `x_j`, strictly increasing between `x_j` and `x_i`, and strictly increasing to the right of `x_i`."
+    },
+    "theorem9_concrete_mallows_family_assumptions": {
+      "aliases": [],
+      "source_location": "direct source text",
+      "source_note": "",
+      "source_status": "direct source text",
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "statement": "- Appendix E / Theorem 9: concrete Mallows families satisfy the paper-level assumption package consumed by Theorem 1."
+    }
+  },
+  "paper": "KR21Monoculture",
+  "schema": 1,
+  "source_curated": true,
+  "source_inventory_kind": "source_curated",
+  "source_inventory_policy": "KR21 closeout inventory curated from arXiv:2101.05853 / PNAS 2021, DependencyDAG.tex, FINAL_VALIDATION_REPORT.md, and the paper-facing comments in PaperInterface.lean. The Laplacian strictness issue is represented as a source note, not as a paper-level caveat or proof boundary.",
+  "source_url": "https://arxiv.org/abs/2101.05853",
+  "title": "Algorithmic Monoculture and Social Welfare"
+}

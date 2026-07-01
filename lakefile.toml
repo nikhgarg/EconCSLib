@@ -21,6 +21,7 @@ defaultTargets = [
   "LBG24SpatialUnderreporting",
   "GKGMM19IterativeLocalVoting",
   "DGD26AdmissionsPredictability",
+  "KR21Monoculture",
 ]
 
 [leanOptions]
@@ -132,4 +133,8 @@ srcDir = "papers"
 
 [[lean_lib]]
 name = "DGD26AdmissionsPredictability"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "KR21Monoculture"
 srcDir = "papers"

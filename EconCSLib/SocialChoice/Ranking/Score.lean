@@ -1,5 +1,9 @@
+import EconCSLib.Foundations.Probability.RandomUtility
 import EconCSLib.SocialChoice.Ranking.Basic
+import EconCSLib.SocialChoice.Ranking.Sequential
+import Mathlib.Data.Fin.Tuple.Sort
 import Mathlib.Data.Real.Basic
+import Mathlib.Topology.Algebra.Order.Field
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -15,6 +19,248 @@ measurability or no-tie facts around these maps in their own measure layer.
 namespace EconCSLib
 namespace SocialChoice
 namespace Ranking
+
+/-! ## Generic score-ordered rankings -/
+
+/--
+A ranking weakly orders candidates by a score function when every earlier
+ranked candidate has weakly higher score than every later ranked candidate.
+-/
+def RankingWeaklyOrdersScores {n : ℕ}
+    (π : Ranking n) (score : Candidate n → ℝ) : Prop :=
+  ∀ {i j : Candidate n}, rankOf π i ≤ rankOf π j → score j ≤ score i
+
+/--
+The canonical ranking induced by a finite score vector, ordered by weakly
+decreasing score and using `Tuple.sort`'s deterministic tie-breaking.
+-/
+noncomputable def rankByScore {n : ℕ} (score : Candidate n → ℝ) : Ranking n :=
+  Tuple.sort (fun i : Candidate n => -score i)
+
+theorem rankByScore_eq_of_pairwise_lt_iff_of_noTies {n : ℕ}
+    {score score' : Candidate n → ℝ}
+    (hnoTie : ∀ i j : Candidate n, i ≠ j → score i ≠ score j)
+    (hlt_iff : ∀ i j : Candidate n, score i < score j ↔ score' i < score' j) :
+    rankByScore score' = rankByScore score := by
+  classical
+  let π : Ranking n := rankByScore score
+  have hπ_sort :
+      π = Tuple.sort (fun c : Candidate n => -score' c) := by
+    refine (Tuple.eq_sort_iff
+      (f := fun c : Candidate n => -score' c) (σ := π)).mpr ?_
+    constructor
+    · intro i j hij
+      by_cases hij_eq : i = j
+      · subst j
+        simp
+      · have hπ_ne : π i ≠ π j := fun h => hij_eq (π.injective h)
+        have hbase_ne : score (π i) ≠ score (π j) := hnoTie (π i) (π j) hπ_ne
+        have hbase_neg_le :
+            -score (π i) ≤ -score (π j) := by
+          simpa [π, rankByScore, Function.comp_def] using
+            (Tuple.monotone_sort (fun c : Candidate n => -score c) hij)
+        have hbase_le : score (π j) ≤ score (π i) := by
+          linarith
+        have hbase_lt : score (π j) < score (π i) := by
+          exact lt_of_le_of_ne hbase_le hbase_ne.symm
+        have hprime_lt : score' (π j) < score' (π i) :=
+          (hlt_iff (π j) (π i)).mp hbase_lt
+        change -score' (π i) ≤ -score' (π j)
+        linarith
+    · intro i j hij heq
+      have hij_ne : i ≠ j := ne_of_lt hij
+      have hπ_ne : π i ≠ π j := fun h => hij_ne (π.injective h)
+      have hbase_ne : score (π i) ≠ score (π j) := hnoTie (π i) (π j) hπ_ne
+      have hbase_neg_le :
+          -score (π i) ≤ -score (π j) := by
+        simpa [π, rankByScore, Function.comp_def] using
+          (Tuple.monotone_sort (fun c : Candidate n => -score c) hij.le)
+      have hbase_le : score (π j) ≤ score (π i) := by
+        linarith
+      have hbase_lt : score (π j) < score (π i) := by
+        exact lt_of_le_of_ne hbase_le hbase_ne.symm
+      have hprime_lt : score' (π j) < score' (π i) :=
+        (hlt_iff (π j) (π i)).mp hbase_lt
+      change -score' (π i) = -score' (π j) at heq
+      exfalso
+      linarith
+  simpa [π, rankByScore] using hπ_sort.symm
+
+/--
+Score-induced rankings are locally constant when score coordinates are
+continuous and the score vector has no ties at the base parameter.
+-/
+theorem eventually_rankByScore_eq_of_continuousAt_of_noTies {n : ℕ}
+    {score : ℝ → Candidate n → ℝ} {x : ℝ}
+    (hcont : ∀ c : Candidate n, ContinuousAt (fun θ : ℝ => score θ c) x)
+    (hnoTie : ∀ i j : Candidate n, i ≠ j → score x i ≠ score x j) :
+    ∀ᶠ θ in nhds x, rankByScore (score θ) = rankByScore (score x) := by
+  classical
+  have hpair :
+      ∀ i j : Candidate n,
+        ∀ᶠ θ in nhds x, score x i < score x j ↔ score θ i < score θ j := by
+    intro i j
+    by_cases hij : i = j
+    · subst j
+      exact Filter.Eventually.of_forall (fun θ => by simp)
+    · by_cases hlt : score x i < score x j
+      · have hdiff_pos : 0 < score x j - score x i := by linarith
+        have hdiff_cont :
+            ContinuousAt (fun θ : ℝ => score θ j - score θ i) x :=
+          (hcont j).sub (hcont i)
+        have hev :
+            ∀ᶠ θ in nhds x, 0 < score θ j - score θ i :=
+          hdiff_cont.eventually (isOpen_Ioi.mem_nhds hdiff_pos)
+        filter_upwards [hev] with θ hθ
+        constructor
+        · intro _h
+          linarith
+        · intro _h
+          exact hlt
+      · have hle : score x j ≤ score x i := le_of_not_gt hlt
+        have hne : score x j ≠ score x i := by
+          exact (hnoTie i j hij).symm
+        have hgt : score x j < score x i := lt_of_le_of_ne hle hne
+        have hdiff_pos : 0 < score x i - score x j := by linarith
+        have hdiff_cont :
+            ContinuousAt (fun θ : ℝ => score θ i - score θ j) x :=
+          (hcont i).sub (hcont j)
+        have hev :
+            ∀ᶠ θ in nhds x, 0 < score θ i - score θ j :=
+          hdiff_cont.eventually (isOpen_Ioi.mem_nhds hdiff_pos)
+        filter_upwards [hev] with θ hθ
+        constructor
+        · intro hxlt
+          exact (hlt hxlt).elim
+        · intro hθlt
+          linarith
+  have hall :
+      ∀ᶠ θ in nhds x,
+        ∀ i j : Candidate n, score x i < score x j ↔ score θ i < score θ j := by
+    simpa only [Filter.eventually_all] using hpair
+  filter_upwards [hall] with θ hθ
+  exact
+    rankByScore_eq_of_pairwise_lt_iff_of_noTies
+      (score := score x) (score' := score θ) hnoTie hθ
+
+theorem rankByScore_weaklyOrdersScores {n : ℕ} (score : Candidate n → ℝ) :
+    RankingWeaklyOrdersScores (rankByScore score) score := by
+  intro i j hrank
+  have hmono := Tuple.monotone_sort (fun i : Candidate n => -score i)
+  have hneg :
+      -score i ≤ -score j := by
+    simpa [rankByScore, rankOf, Function.comp_def] using hmono hrank
+  linarith
+
+/--
+If a score-induced ranking inverts a pair, then the first candidate's score is
+weakly below the second candidate's score.
+-/
+theorem score_le_of_invertedPair_rankByScore {n : ℕ}
+    {center : Ranking n} {score : Candidate n → ℝ}
+    {ab : Candidate n × Candidate n}
+    (hinv : invertedPair center (rankByScore score) ab) :
+    score ab.1 ≤ score ab.2 :=
+  rankByScore_weaklyOrdersScores score (le_of_lt hinv.2)
+
+/--
+If one candidate has strictly larger score than every other candidate, then it
+is the best element of the full candidate set under `rankByScore`.
+-/
+theorem bestInSet_rankByScore_univ_eq_of_strict_top {n : ℕ}
+    {score : Candidate n → ℝ} {c : Candidate n}
+    (htop : ∀ d : Candidate n, d ≠ c → score d < score c) :
+    bestInSet (rankByScore score) Finset.univ = c := by
+  let b : Candidate n := bestInSet (rankByScore score) Finset.univ
+  have huniv : (Finset.univ : Finset (Candidate n)).Nonempty :=
+    ⟨c, Finset.mem_univ c⟩
+  have hc_le : score c ≤ score b :=
+    rankByScore_weaklyOrdersScores score
+      (rankOf_bestInSet_le (rankByScore score) huniv (Finset.mem_univ c))
+  by_contra hbc
+  have hb_lt : score b < score c := htop b hbc
+  linarith
+
+theorem RankingWeaklyOrdersScores.score_le_bestInSet {n : ℕ}
+    {π : Ranking n} {score : Candidate n → ℝ}
+    (hπ : RankingWeaklyOrdersScores π score)
+    {remaining : Finset (Candidate n)} (hremaining : remaining.Nonempty)
+    {i : Candidate n} (hi : i ∈ remaining) :
+    score i ≤ score (bestInSet π remaining) :=
+  hπ (rankOf_bestInSet_le π hremaining hi)
+
+/--
+Finite-candidate best-in-set monotonicity under additive RUM score contraction.
+
+If one ranking orders raw scores and the other orders the corresponding
+contracted scores on the same remaining set, then the best remaining candidate
+under the contracted ranking has weakly higher true value than the best
+remaining candidate under the raw ranking.
+-/
+theorem value_bestInSet_le_of_rumContractScore_ordered_rankings {n : ℕ}
+    {t : ℝ} {value raw : Candidate n → ℝ}
+    {rawRanking contractRanking : Ranking n}
+    {remaining : Finset (Candidate n)}
+    (ht0 : 0 ≤ t) (htlt1 : t < 1)
+    (hremaining : remaining.Nonempty)
+    (hraw :
+      RankingWeaklyOrdersScores rawRanking raw)
+    (hcontract :
+      RankingWeaklyOrdersScores contractRanking
+        (fun i => EconCSLib.Probability.rumContractScore t (value i) (raw i))) :
+    value (bestInSet rawRanking remaining) ≤
+      value (bestInSet contractRanking remaining) :=
+  EconCSLib.Probability.rumContractScore_value_le_of_raw_max_on_and_contract_max_on
+    (t := t) (value := value) (raw := raw)
+    (feasible := fun i => i ∈ remaining)
+    ht0 htlt1
+    (bestInSet_mem rawRanking hremaining)
+    (bestInSet_mem contractRanking hremaining)
+    (fun i hi => hraw.score_le_bestInSet hremaining hi)
+    (fun i hi => hcontract.score_le_bestInSet hremaining hi)
+
+/--
+Concrete finite-candidate RUM contraction monotonicity for rankings obtained by
+sorting score vectors.
+-/
+theorem value_bestInSet_le_of_rankByScore_rumContractScore {n : ℕ}
+    {t : ℝ} {value raw : Candidate n → ℝ}
+    {remaining : Finset (Candidate n)}
+    (ht0 : 0 ≤ t) (htlt1 : t < 1)
+    (hremaining : remaining.Nonempty) :
+    value (bestInSet (rankByScore raw) remaining) ≤
+      value (bestInSet
+        (rankByScore
+          (fun i => EconCSLib.Probability.rumContractScore t (value i) (raw i)))
+        remaining) :=
+  value_bestInSet_le_of_rumContractScore_ordered_rankings
+    ht0 htlt1 hremaining
+    (rankByScore_weaklyOrdersScores raw)
+    (rankByScore_weaklyOrdersScores
+      (fun i => EconCSLib.Probability.rumContractScore t (value i) (raw i)))
+
+/--
+Deterministic strict full-set improvement under a top switch: if the raw score
+ranking selects a lower-valued candidate and the contracted score ranking
+selects a higher-valued candidate, then full-set best value strictly improves.
+-/
+theorem value_bestInSet_rankByScore_contract_strict_of_top_switch {n : ℕ}
+    {t : ℝ} {value raw : Candidate n → ℝ}
+    {low high : Candidate n}
+    (hvalue : value low < value high)
+    (hrawTop : ∀ d : Candidate n, d ≠ low → raw d < raw low)
+    (hcontractTop :
+      ∀ d : Candidate n, d ≠ high →
+        EconCSLib.Probability.rumContractScore t (value d) (raw d) <
+          EconCSLib.Probability.rumContractScore t (value high) (raw high)) :
+    value (bestInSet (rankByScore raw) Finset.univ) <
+      value (bestInSet
+        (rankByScore
+          (fun i => EconCSLib.Probability.rumContractScore t (value i) (raw i)))
+        Finset.univ) := by
+  rw [bestInSet_rankByScore_univ_eq_of_strict_top hrawTop]
+  rw [bestInSet_rankByScore_univ_eq_of_strict_top hcontractTop]
+  exact hvalue
 
 /-! ## Three-score order predicates -/
 
@@ -149,6 +395,45 @@ noncomputable def rum3RankByScores (s1 s2 s3 : ℝ) : Ranking 1 :=
 noncomputable def rum3RankByScoreFns {Ω : Type*}
     (r1 r2 r3 : Ω → ℝ) : Ω → Ranking 1 :=
   fun ω => rum3RankByScores (r1 ω) (r2 ω) (r3 ω)
+
+theorem rum3RankByScores_eq012_of_adjacent_order
+    {s1 s2 s3 : ℝ} (h21 : s2 ≤ s1) (h32 : s3 ≤ s2) :
+    rum3RankByScores s1 s2 s3 = rum3Ranking012 := by
+  have h31 : s3 ≤ s1 := le_trans h32 h21
+  simp [rum3RankByScores, h21, h31, h32]
+
+/-- If candidate 2 beats candidate 1 and candidate 1 beats candidate 3, the
+score ranking is exactly `[1,0,2]`. -/
+theorem rum3RankByScores_eq102_of_order
+    {s1 s2 s3 : ℝ} (h12 : s1 < s2) (h31 : s3 ≤ s1) :
+    rum3RankByScores s1 s2 s3 = rum3Ranking102 := by
+  have hnot0 : ¬ (s2 ≤ s1 ∧ s3 ≤ s1) := by
+    intro h
+    exact (not_lt_of_ge h.1) h12
+  have h1 : s1 < s2 ∧ s3 ≤ s2 := ⟨h12, le_trans h31 (le_of_lt h12)⟩
+  simp [rum3RankByScores, h1, h31]
+
+/-- Multiplying all three scores by a positive constant preserves the induced ranking. -/
+theorem rum3RankByScores_pos_mul
+    {c s1 s2 s3 : ℝ} (hc : 0 < c) :
+    rum3RankByScores (c * s1) (c * s2) (c * s3) =
+      rum3RankByScores s1 s2 s3 := by
+  simp [rum3RankByScores, mul_le_mul_iff_right₀ hc,
+    mul_lt_mul_iff_right₀ hc]
+
+theorem rum3RankByScores_ne012_imp_adjacent_inversion
+    {s1 s2 s3 : ℝ}
+    (h : rum3RankByScores s1 s2 s3 ≠ rum3Ranking012) :
+    s1 < s2 ∨ s2 < s3 := by
+  by_contra hnot
+  push Not at hnot
+  exact h (rum3RankByScores_eq012_of_adjacent_order hnot.1 hnot.2)
+
+theorem rum3RankByScoreFns_ne012_imp_adjacent_inversion
+    {Ω : Type*} {r1 r2 r3 : Ω → ℝ} {ω : Ω}
+    (h : rum3RankByScoreFns r1 r2 r3 ω ≠ rum3Ranking012) :
+    r1 ω < r2 ω ∨ r2 ω < r3 ω :=
+  rum3RankByScores_ne012_imp_adjacent_inversion h
 
 @[simp] theorem firstChoice_rum3RankByScores (s1 s2 s3 : ℝ) :
     firstChoice (rum3RankByScores s1 s2 s3) =

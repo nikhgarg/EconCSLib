@@ -1,0 +1,402 @@
+{
+  "generated_at": "2026-07-01T19:57:11Z",
+  "generator": "codex-gpt-5",
+  "generator_type": "model",
+  "items": {
+    "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "d2ae6bf0bfbc72e79b68dcbbf24b523d998bcecba72dc255fc84626646458d87",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 asymptotic optimality: it is enough to make the total source probability of adjacent inversions in the true ranking order arbitrarily small. The finite adjacent-union-bound argument then gives atomwise convergence to the true ranking.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : \u211d \u2192 MeasureTheory.Measure Omega) [inst_1 : \u2200 (theta : \u211d), MeasureTheory.IsProbabilityMeasure (mu theta)] (rank : \u211d \u2192 Omega \u2192 EconCSLib.SocialChoice.Ranking.Ranking n) (hrank : \u2200 (theta : \u211d), Measurable (rank theta)) (center : EconCSLib.SocialChoice.Ranking.Ranking n), (\u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 (\u2211 i, EconCSLib.measureProb (mu hi) fun omega => EconCSLib.SocialChoice.Ranking.invertedPair center (rank hi omega) (center i.castSucc, center i.succ)) < delta) \u2192 \u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 \u2200 (pi : EconCSLib.SocialChoice.Ranking.Ranking n), |((EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure (mu hi) (rank hi) \u22ef) pi).toReal - ((PMF.pure center) pi).toReal| < delta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs_tendsto": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "9db306e5bb734df49b7bbc87b5af10cd147aa85e20191c716371286a82c5e3cb",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 asymptotic optimality from an adjacent source-tail limit: if the total source probability of adjacent inversions in the true ranking order tends to zero, then the induced ranking law converges atomwise to the true ranking.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_atomwise_concentration_of_sum_adjacent_inversion_probs_tendsto :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : \u211d \u2192 MeasureTheory.Measure Omega) [inst_1 : \u2200 (theta : \u211d), MeasureTheory.IsProbabilityMeasure (mu theta)] (rank : \u211d \u2192 Omega \u2192 EconCSLib.SocialChoice.Ranking.Ranking n) (hrank : \u2200 (theta : \u211d), Measurable (rank theta)) (center : EconCSLib.SocialChoice.Ranking.Ranking n), Filter.Tendsto (fun theta => \u2211 i, EconCSLib.measureProb (mu theta) fun omega => EconCSLib.SocialChoice.Ranking.invertedPair center (rank theta omega) (center i.castSucc, center i.succ)) Filter.atTop (nhds 0) \u2192 \u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 \u2200 (pi : EconCSLib.SocialChoice.Ranking.Ranking n), |((EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure (mu hi) (rank hi) \u22ef) pi).toReal - ((PMF.pure center) pi).toReal| < delta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "ab0b63989f6e52b509c0963824d214b091a8e9578378eefced8aa6b1c7e212a9",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 asymptotic optimality for score-induced RUM rankings: it is enough to make the total source probability of adjacent true-neighbor score misorders arbitrarily small. This is the coordinate-level tail statement used in the paper's source argument.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : \u211d \u2192 MeasureTheory.Measure Omega) [inst_1 : \u2200 (theta : \u211d), MeasureTheory.IsProbabilityMeasure (mu theta)] (score : \u211d \u2192 Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (hrank : \u2200 (theta : \u211d), Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore (score theta omega)) (center : EconCSLib.SocialChoice.Ranking.Ranking n), (\u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 (\u2211 i, EconCSLib.measureProb (mu hi) fun omega => score hi omega (center i.castSucc) \u2264 score hi omega (center i.succ)) < delta) \u2192 \u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 \u2200 (pi : EconCSLib.SocialChoice.Ranking.Ranking n), |((EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure (mu hi) (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore (score hi omega)) \u22ef) pi).toReal - ((PMF.pure center) pi).toReal| < delta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs_tendsto": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "6a4d2f8e6c1df1629674749653612295191a934c231b4ec07e97d4d34c27e536",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 asymptotic optimality from a score-tail limit: for score-induced RUM rankings, it is enough that adjacent true-neighbor score misorder probabilities have total mass tending to zero.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_atomwise_concentration_of_sum_adjacent_score_misorder_probs_tendsto :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : \u211d \u2192 MeasureTheory.Measure Omega) [inst_1 : \u2200 (theta : \u211d), MeasureTheory.IsProbabilityMeasure (mu theta)] (score : \u211d \u2192 Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (hrank : \u2200 (theta : \u211d), Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore (score theta omega)) (center : EconCSLib.SocialChoice.Ranking.Ranking n), Filter.Tendsto (fun theta => \u2211 i, EconCSLib.measureProb (mu theta) fun omega => score theta omega (center i.castSucc) \u2264 score theta omega (center i.succ)) Filter.atTop (nhds 0) \u2192 \u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 \u2200 (pi : EconCSLib.SocialChoice.Ranking.Ranking n), |((EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure (mu hi) (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore (score hi omega)) \u22ef) pi).toReal - ((PMF.pure center) pi).toReal| < delta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_inversion_probs": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "71d4e7fa47408882fefacdd86945be78118762a3e6f376e07b113d235d49987a",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 asymptotic optimality: if high accuracy makes the total source probability of pairwise inversions arbitrarily small, then the induced ranking law converges atomwise to the true ranking.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_atomwise_concentration_of_sum_inversion_probs :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : \u211d \u2192 MeasureTheory.Measure Omega) [inst_1 : \u2200 (theta : \u211d), MeasureTheory.IsProbabilityMeasure (mu theta)] (rank : \u211d \u2192 Omega \u2192 EconCSLib.SocialChoice.Ranking.Ranking n) (hrank : \u2200 (theta : \u211d), Measurable (rank theta)) (center : EconCSLib.SocialChoice.Ranking.Ranking n), (\u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 (\u2211 ab, EconCSLib.measureProb (mu hi) fun omega => EconCSLib.SocialChoice.Ranking.invertedPair center (rank hi omega) ab) < delta) \u2192 \u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 \u2200 (pi : EconCSLib.SocialChoice.Ranking.Ranking n), |((EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure (mu hi) (rank hi) \u22ef) pi).toReal - ((PMF.pure center) pi).toReal| < delta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_atomwise_concentration_of_sum_inversion_probs_tendsto": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "099b666914a4fae1cff13e6c0a8fac7fb5cbf4ce128728de2a93a4194888dd46",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 asymptotic optimality from a source-tail limit: if the total source probability of pairwise inversions tends to zero, then the induced ranking law converges atomwise to the true ranking.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_atomwise_concentration_of_sum_inversion_probs_tendsto :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : \u211d \u2192 MeasureTheory.Measure Omega) [inst_1 : \u2200 (theta : \u211d), MeasureTheory.IsProbabilityMeasure (mu theta)] (rank : \u211d \u2192 Omega \u2192 EconCSLib.SocialChoice.Ranking.Ranking n) (hrank : \u2200 (theta : \u211d), Measurable (rank theta)) (center : EconCSLib.SocialChoice.Ranking.Ranking n), Filter.Tendsto (fun theta => \u2211 ab, EconCSLib.measureProb (mu theta) fun omega => EconCSLib.SocialChoice.Ranking.invertedPair center (rank theta omega) ab) Filter.atTop (nhds 0) \u2192 \u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 \u2200 (pi : EconCSLib.SocialChoice.Ranking.Ranking n), |((EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure (mu hi) (rank hi) \u22ef) pi).toReal - ((PMF.pure center) pi).toReal| < delta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_expectedBestInSet_monotonicity_of_finite_rankByScore_contraction": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "71b99cac89dfe04122137b444498ba0a56fdc25254af3fd8ee561535427553ad",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 deterministic finite-source monotonicity: if a finite source law over RUM score vectors is ranked once by raw scores and once after a strict contraction toward true values, then every nonempty remaining candidate set has weakly higher expected top value after contraction.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_expectedBestInSet_monotonicity_of_finite_rankByScore_contraction :\n\u2200 {n : \u2115} {Omega : Type u_1} [Fintype Omega] [DecidableEq Omega] (mu : PMF Omega) (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (raw : Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) {remaining : Finset (EconCSLib.SocialChoice.Ranking.Candidate n)} {t : \u211d}, 0 \u2264 t \u2192 t < 1 \u2192 remaining.Nonempty \u2192 EconCSLib.SocialChoice.Ranking.expectedBestInSet (PMF.map (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore (raw omega)) mu) value remaining \u2264 EconCSLib.SocialChoice.Ranking.expectedBestInSet (PMF.map (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => KR21Monoculture.paper_appendixC_contractedScore t (value i) (raw omega i)) mu) value remaining",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_expectedBestInSet_monotonicity_of_measure_rankByScore_contraction": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "8e6760d5c66882568f36742df6b39b3e394b16bd4b67f68d6f6325a2d3a1823a",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 continuous-source monotonicity: if a probability source over RUM score vectors is ranked once by raw scores and once after a strict contraction toward true values, then every nonempty remaining candidate set has weakly higher expected top value after contraction.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_expectedBestInSet_monotonicity_of_measure_rankByScore_contraction :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : MeasureTheory.Measure Omega) [inst_1 : MeasureTheory.IsProbabilityMeasure mu] (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (raw : Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) {remaining : Finset (EconCSLib.SocialChoice.Ranking.Candidate n)} {t : \u211d} (hrawRank : Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore (raw omega)) (hcontractRank : Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => KR21Monoculture.paper_appendixC_contractedScore t (value i) (raw omega i)), 0 \u2264 t \u2192 t < 1 \u2192 remaining.Nonempty \u2192 EconCSLib.SocialChoice.Ranking.expectedBestInSet (EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore (raw omega)) hrawRank) value remaining \u2264 EconCSLib.SocialChoice.Ranking.expectedBestInSet (EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => KR21Monoculture.paper_appendixC_contractedScore t (value i) (raw omega i)) hcontractRank) value remaining",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_expectedBestInSet_strict_of_measure_rankByScore_contraction": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "7158cbc39be44e1973326e5f7be1854ab6df50ef558d06f947caeeded4b5844d",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 strict continuous-source monotonicity: the same source-coupled contraction gives strict expected improvement when the strict pointwise-improvement region has positive source measure.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_expectedBestInSet_strict_of_measure_rankByScore_contraction :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : MeasureTheory.Measure Omega) [inst_1 : MeasureTheory.IsProbabilityMeasure mu] (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (raw : Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) {remaining : Finset (EconCSLib.SocialChoice.Ranking.Candidate n)} {t : \u211d} (hrawRank : Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore (raw omega)) (hcontractRank : Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => KR21Monoculture.paper_appendixC_contractedScore t (value i) (raw omega i)), 0 \u2264 t \u2192 t < 1 \u2192 remaining.Nonempty \u2192 0 < mu {omega | value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore (raw omega)) remaining) < value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore fun i => KR21Monoculture.paper_appendixC_contractedScore t (value i) (raw omega i)) remaining)} \u2192 EconCSLib.SocialChoice.Ranking.expectedBestInSet (EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore (raw omega)) hrawRank) value remaining < EconCSLib.SocialChoice.Ranking.expectedBestInSet (EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => KR21Monoculture.paper_appendixC_contractedScore t (value i) (raw omega i)) hcontractRank) value remaining",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoiseRankingPMF_atom_epsilonContinuousAt_of_ae_noTies": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "5318c65d7a9706b2deb441f6a0b2eb963d5bd19d31e141d325db645d74e023ce",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 scaled-noise atom continuity: if scaled scores have no pairwise ties almost surely at a positive accuracy, then every atom of the finite induced ranking law is continuous at that accuracy.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_scaledNoiseRankingPMF_atom_epsilonContinuousAt_of_ae_noTies :\n\u2200 {n : \u2115} (mu : MeasureTheory.Measure (EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d)) [inst : MeasureTheory.IsProbabilityMeasure mu] (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) {theta : \u211d}, 0 < theta \u2192 (\u2200\u1d50 (noise : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) \u2202mu, \u2200 (i j : EconCSLib.SocialChoice.Ranking.Candidate n), i \u2260 j \u2192 value i + noise i / theta \u2260 value j + noise j / theta) \u2192 \u2200 (pi : EconCSLib.SocialChoice.Ranking.Ranking n), EconCSLib.EpsilonContinuousAt (fun theta' => ((KR21Monoculture.paper_appendixA_scaledNoiseRankingPMF mu value theta') pi).toReal) theta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_adjacent_score_misorder_sum_tendsto": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "5009afcb370996234f095ecbd1e45a642ab756802e5c7faf1ea5749e32ca61d1",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 scaled-noise source tail: for fixed finite-dimensional noise, scores `value_i + noise_i / theta` have vanishing total adjacent true-neighbor score-misorder probability as accuracy tends to infinity.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_scaledNoise_adjacent_score_misorder_sum_tendsto :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : MeasureTheory.Measure Omega) [MeasureTheory.IsProbabilityMeasure mu] (noise : Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d), (\u2200 (c : EconCSLib.SocialChoice.Ranking.Candidate n), Measurable fun omega => noise omega c) \u2192 \u2200 (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (center : EconCSLib.SocialChoice.Ranking.Ranking n), (\u2200 (i : Fin (n + 1)), value (center i.succ) < value (center i.castSucc)) \u2192 Filter.Tendsto (fun theta => \u2211 i, EconCSLib.measureProb mu fun omega => value (center i.castSucc) + noise omega (center i.castSucc) / theta \u2264 value (center i.succ) + noise omega (center i.succ) / theta) Filter.atTop (nhds 0)",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_atomwise_concentration": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "970fff61246b9731c93ffed779e0e4d57ec437dd1b45adc0bc5d13e9e883e459",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 scaled-noise asymptotic optimality: fixed noise, a coordinate-measurable induced ranking, and strict adjacent true-value gaps imply atomwise convergence of the induced ranking law to the true ranking.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_scaledNoise_atomwise_concentration :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (mu : MeasureTheory.Measure Omega) [inst_1 : MeasureTheory.IsProbabilityMeasure mu] (noise : Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (hnoise : \u2200 (c : EconCSLib.SocialChoice.Ranking.Candidate n), Measurable fun omega => noise omega c) (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (center : EconCSLib.SocialChoice.Ranking.Ranking n), (\u2200 (i : Fin (n + 1)), value (center i.succ) < value (center i.castSucc)) \u2192 \u2200 (lower delta : \u211d), 0 < delta \u2192 \u2203 hi, lower < hi \u2227 \u2200 (pi : EconCSLib.SocialChoice.Ranking.Ranking n), |((EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun c => value c + noise omega c / hi) \u22ef) pi).toReal - ((PMF.pure center) pi).toReal| < delta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_noTie_ae_of_fullSupport_density": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "8b3bf2962e4b39c1fad3b2ecb945ef2ac1c3a1830baed6863ab15f916ea96b39",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 scaled-noise no-ties: an absolutely continuous finite noise-vector law gives probability zero to every pairwise scaled-score tie.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_scaledNoise_noTie_ae_of_fullSupport_density :\n\u2200 {n : \u2115} (mu : MeasureTheory.Measure (EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d)) [MeasureTheory.IsProbabilityMeasure mu] (D : (EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) \u2192 ENNReal), mu = MeasureTheory.volume.withDensity D \u2192 \u2200 (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) {theta : \u211d}, 0 < theta \u2192 \u2200\u1d50 (noise : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) \u2202mu, \u2200 (i j : EconCSLib.SocialChoice.Ranking.Candidate n), i \u2260 j \u2192 value i + noise i / theta \u2260 value j + noise j / theta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_rankByScore_measurable": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "12b5bc63471111d6128d78824d4ba80ba9db65165c0889ea8c0551b729394bf3",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 scaled-noise measurability: if each finite noise coordinate is measurable, then sorting the scaled-noise scores gives a measurable ranking-valued random variable.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_scaledNoise_rankByScore_measurable :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] (noise : Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d), (\u2200 (c : EconCSLib.SocialChoice.Ranking.Candidate n), Measurable fun omega => noise omega c) \u2192 \u2200 (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (theta : \u211d), Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun c => value c + noise omega c / theta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_scaledNoise_strict_fullset_improvement_pos_of_noise_fullSupport": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "23c57e210724bb5a6821e96d622c248aabd803f79fd2af30f971007cf9ebbb4b",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 scaled-noise strictness from full support: a positive-everywhere finite noise density gives positive source mass to the strict full-set improvement event whenever two candidates have a strict value gap and `thetaA > thetaH > 0`.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_scaledNoise_strict_fullset_improvement_pos_of_noise_fullSupport :\n\u2200 {n : \u2115} (D : (EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) \u2192 ENNReal), Measurable D \u2192 (\u2200 (noise : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d), D noise \u2260 0) \u2192 \u2200 (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) {thetaA thetaH : \u211d} {low high : EconCSLib.SocialChoice.Ranking.Candidate n}, 0 < thetaH \u2192 thetaH < thetaA \u2192 value low < value high \u2192 0 < (MeasureTheory.volume.withDensity D) {noise | value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore fun i => value i + noise i / thetaH) Finset.univ) < value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore fun i => value i + noise i / thetaA) Finset.univ)}",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_strict_fullset_improvement_pos_of_scoreSpace_fullSupport": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "2d7bc4988e922a5f63918f7ea33aed29077190b5ace296b4cde22043392c2062",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 strictness from full-support score density: for a genuine contraction and two candidates with a strict value gap, any positive-everywhere continuous score-space density gives positive mass to the strict full-set improvement event.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_strict_fullset_improvement_pos_of_scoreSpace_fullSupport :\n\u2200 {n : \u2115} (D : (EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) \u2192 ENNReal), Measurable D \u2192 (\u2200 (score : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d), D score \u2260 0) \u2192 \u2200 (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) {t : \u211d} {low high : EconCSLib.SocialChoice.Ranking.Candidate n}, 0 < t \u2192 t < 1 \u2192 value low < value high \u2192 0 < (MeasureTheory.volume.withDensity D) {score | value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore score) Finset.univ) < value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore fun i => KR21Monoculture.paper_appendixC_contractedScore t (value i) (score i)) Finset.univ)}",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_strict_fullset_improvement_pos_of_scoreSpace_topSwitch_parameters": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "888e219ed0e73b0a761427453f824cd0f33465f7b1b943949c66c7acac01afa3",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 strictness from explicit numerical margins: with a positive-everywhere score-space density, endpoint inequalities defining a raw-low / contracted-high top switch give positive strict-improvement mass.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_strict_fullset_improvement_pos_of_scoreSpace_topSwitch_parameters :\n\u2200 {n : \u2115} (D : (EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) \u2192 ENNReal), Measurable D \u2192 (\u2200 (score : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d), D score \u2260 0) \u2192 \u2200 (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) {t eps K : \u211d} {low high : EconCSLib.SocialChoice.Ranking.Candidate n}, 0 \u2264 t \u2192 0 < eps \u2192 0 < K \u2192 value low < value high \u2192 KR21Monoculture.paper_appendixC_contractedScore t (value low) eps < KR21Monoculture.paper_appendixC_contractedScore t (value high) (-(eps / 8)) \u2192 (\u2200 (d : EconCSLib.SocialChoice.Ranking.Candidate n), d \u2260 low \u2192 d \u2260 high \u2192 KR21Monoculture.paper_appendixC_contractedScore t (value d) (-K) < KR21Monoculture.paper_appendixC_contractedScore t (value high) (-(eps / 8))) \u2192 0 < (MeasureTheory.volume.withDensity D) {score | value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore score) Finset.univ) < value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore fun i => KR21Monoculture.paper_appendixC_contractedScore t (value i) (score i)) Finset.univ)}",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_strict_fullset_improvement_pos_of_scoreSpace_top_switch_openBox": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "870abaa709857ad821aeece7e1fefc1c50f07011700a1720bf5f2d3d92daa5e3",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 strictness from a continuous score-space box: for a positive density on finite score vectors, an explicit open box forcing a raw low-valued top choice and contracted high-valued top choice has positive source mass, hence supplies the strict-improvement event used by removal monotonicity.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_strict_fullset_improvement_pos_of_scoreSpace_top_switch_openBox :\n\u2200 {n : \u2115} (D : (EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) \u2192 ENNReal), Measurable D \u2192 \u2200 (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) {t : \u211d} {low high : EconCSLib.SocialChoice.Ranking.Candidate n} {a b : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d}, (\u2200 (i : EconCSLib.SocialChoice.Ranking.Candidate n), a i < b i) \u2192 (\u2200 score \u2208 Set.univ.pi fun i => Set.Ioo (a i) (b i), D score \u2260 0) \u2192 value low < value high \u2192 (\u2200 score \u2208 Set.univ.pi fun i => Set.Ioo (a i) (b i), \u2200 (d : EconCSLib.SocialChoice.Ranking.Candidate n), d \u2260 low \u2192 score d < score low) \u2192 (\u2200 score \u2208 Set.univ.pi fun i => Set.Ioo (a i) (b i), \u2200 (d : EconCSLib.SocialChoice.Ranking.Candidate n), d \u2260 high \u2192 KR21Monoculture.paper_appendixC_contractedScore t (value d) (score d) < KR21Monoculture.paper_appendixC_contractedScore t (value high) (score high)) \u2192 0 < (MeasureTheory.volume.withDensity D) {score | value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore score) Finset.univ) < value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore fun i => KR21Monoculture.paper_appendixC_contractedScore t (value i) (score i)) Finset.univ)}",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_fullSupport_density": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "6e280154b3fd8bda0ffcde7b261506f513b0d134f27dc73abcd1a2d0d386613a",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 finite-removal monotonicity from a full-support scaled-noise density: the positive strict-improvement event is derived from full support, while the ranking-law equalities identify the paper's family with the induced scaled-noise laws.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_fullSupport_density :\n\u2200 {n : \u2115} {F : KR21Monoculture.AccuracyFamily n} {thetaA thetaH : \u211d} (mu : MeasureTheory.Measure (EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d)) [inst : MeasureTheory.IsProbabilityMeasure mu] (D : (EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) \u2192 ENNReal), Measurable D \u2192 (\u2200 (noise : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d), D noise \u2260 0) \u2192 mu = MeasureTheory.volume.withDensity D \u2192 0 < thetaH \u2192 thetaH < thetaA \u2192 \u2200 (hrawRank : Measurable fun noise => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise i / thetaH) (haccurateRank : Measurable fun noise => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise i / thetaA), F.dist thetaH = EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun noise => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise i / thetaH) hrawRank \u2192 F.dist thetaA = EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun noise => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise i / thetaA) haccurateRank \u2192 \u2200 {low high : EconCSLib.SocialChoice.Ranking.Candidate n}, F.value low < F.value high \u2192 F.Theorem1RemovalMonotonicityAt thetaA thetaH",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_rankByScore_source": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "c90cc209e727b061263c58310bc155992964a63165828d91d30be61f29bdd523",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 scaled-noise RUM monotonicity: for `thetaH < thetaA`, ranking scores `x_i + noise_i / thetaA` is a contraction of `x_i + noise_i / thetaH`; hence the source model satisfies the finite-removal monotonicity certificate used by Theorem 1, provided the full-set strict improvement region has positive source measure.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_rankByScore_source :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] {F : KR21Monoculture.AccuracyFamily n} {thetaA thetaH : \u211d} (mu : MeasureTheory.Measure Omega) [inst_1 : MeasureTheory.IsProbabilityMeasure mu] (noise : Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d), 0 < thetaH \u2192 thetaH < thetaA \u2192 \u2200 (hrawRank : Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaH) (haccurateRank : Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaA), F.dist thetaH = EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaH) hrawRank \u2192 F.dist thetaA = EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaA) haccurateRank \u2192 0 < mu {omega | F.value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaH) Finset.univ) < F.value (KR21Monoculture.bestInSet (EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaA) Finset.univ)} \u2192 F.Theorem1RemovalMonotonicityAt thetaA thetaH",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_top_switch_set": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "44d7718959657631954b383547f390aee426f6248875e41c480b789dbc1b0a2c",
+      "tex_statement": "Paper-facing summary: - Appendix A / Theorem 5 scaled-noise RUM monotonicity from a concrete top-switch source region: it is enough to exhibit positive source mass where the low-accuracy scores uniquely put a lower-valued candidate on top, while the high-accuracy scores uniquely put a higher-valued candidate on top.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.appendixA_theorem1RemovalMonotonicityAt_of_scaledNoise_top_switch_set :\n\u2200 {n : \u2115} {Omega : Type u_1} [inst : MeasurableSpace Omega] {F : KR21Monoculture.AccuracyFamily n} {thetaA thetaH : \u211d} (mu : MeasureTheory.Measure Omega) [inst_1 : MeasureTheory.IsProbabilityMeasure mu] (noise : Omega \u2192 EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d), 0 < thetaH \u2192 thetaH < thetaA \u2192 \u2200 (hrawRank : Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaH) (haccurateRank : Measurable fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaA), F.dist thetaH = EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaH) hrawRank \u2192 F.dist thetaA = EconCSLib.SocialChoice.Ranking.rankingPMFOfMeasure mu (fun omega => EconCSLib.SocialChoice.Ranking.rankByScore fun i => F.value i + noise omega i / thetaA) haccurateRank \u2192 \u2200 {low high : EconCSLib.SocialChoice.Ranking.Candidate n} {S : Set Omega}, 0 < mu S \u2192 F.value low < F.value high \u2192 (\u2200 omega \u2208 S, \u2200 (d : EconCSLib.SocialChoice.Ranking.Candidate n), d \u2260 low \u2192 F.value d + noise omega d / thetaH < F.value low + noise omega low / thetaH) \u2192 (\u2200 omega \u2208 S, \u2200 (d : EconCSLib.SocialChoice.Ranking.Candidate n), d \u2260 high \u2192 F.value d + noise omega d / thetaA < F.value high + noise omega high / thetaA) \u2192 F.Theorem1RemovalMonotonicityAt thetaA thetaH",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition1_concreteMallowsSpec_asymptotic_first_dominance": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "4da14635e87978d664f10cb58f558561e5e9a819eced38b7f34bc0f2cc9847cb",
+      "tex_statement": "Paper-facing summary: - Definition 1 / Mallows asymptotic first dominance: as algorithmic Mallows accuracy tends to infinity, the all-algorithm payoff eventually exceeds the human-against-algorithm payoff used in Theorem 1.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.definition1_concreteMallowsSpec_asymptotic_first_dominance :\n\u2200 {n : \u2115} (center : EconCSLib.SocialChoice.Ranking.Ranking n) (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d), EconCSLib.SocialChoice.Ranking.StrictlyOrderedBy center value \u2192 \u2200 (thetaH lower : \u211d), 0 < thetaH \u2192 thetaH < lower \u2192 \u2203 hi, lower < hi \u2227 { dist := fun theta => (KR21Monoculture.concreteMallowsSpec center theta).law, value := value }.theorem1_g hi thetaH < { dist := fun theta => (KR21Monoculture.concreteMallowsSpec center theta).law, value := value }.theorem1_f hi thetaH",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition1_concreteMallowsSpec_atom_continuity": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "0bc1bebf31e3c44dbe61c30a7c2efd206bbdef7b4424a70865fc4bbda9efcfb3",
+      "tex_statement": "Paper-facing summary: - Definition 1 / Mallows atomwise continuity: for the Mallows family with parameter `theta`, the probability of any fixed permutation varies continuously with positive `theta`.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.definition1_concreteMallowsSpec_atom_continuity :\n\u2200 {n : \u2115} (center : EconCSLib.SocialChoice.Ranking.Ranking n) {theta : \u211d}, 0 < theta \u2192 \u2200 (pi : EconCSLib.SocialChoice.Ranking.Ranking n), EconCSLib.EpsilonContinuousAt (fun theta' => ((KR21Monoculture.concreteMallowsSpec center theta').law pi).toReal) theta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition1_threeCandidate_gaussian_removalMonotonicity_of_scoreSpace_t_lt_one": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "2caaa24006d1d0924d0220309d754253d7fb2f96af51338bb75b1506f5f55842",
+      "tex_statement": "Paper-facing summary: - Definition 1 / Gaussian three-candidate RUM: for the concrete normalized Gaussian score law, a strict contraction toward ordered values satisfies the finite-removal monotonicity condition used by Theorem 1.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.definition1_threeCandidate_gaussian_removalMonotonicity_of_scoreSpace_t_lt_one :\n\u2200 {F : KR21Monoculture.AccuracyFamily 1} {thetaA thetaH : \u211d} (x1 x2 x3 t : \u211d), F.dist thetaA = KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem8GaussianPDF 0) x1 x2 x3 \u22ef (KR21Monoculture.rum3ContractRankByScoreFns t x1 x2 x3 KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef \u2192 F.dist thetaH = KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem8GaussianPDF 0) x1 x2 x3 \u22ef (KR21Monoculture.rum3RankByScoreFns KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef \u2192 F.value 0 = x1 \u2192 F.value 1 = x2 \u2192 F.value 2 = x3 \u2192 0 \u2264 t \u2192 t \u2264 1 \u2192 t < 1 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 F.Theorem1RemovalMonotonicityAt thetaA thetaH",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition1_threeCandidate_laplacian_removalMonotonicity_of_scoreSpace_t_lt_one": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "1371eae771930ae62d6b23ae0fcbb47814a6d1280eb3e10d56e188dde43ccb36",
+      "tex_statement": "Paper-facing summary: - Definition 1 / Laplace three-candidate RUM: for the concrete normalized Laplace score law, a strict contraction toward ordered values satisfies the finite-removal monotonicity condition used by Theorem 1.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.definition1_threeCandidate_laplacian_removalMonotonicity_of_scoreSpace_t_lt_one :\n\u2200 {F : KR21Monoculture.AccuracyFamily 1} {thetaA thetaH lam x1 x2 x3 t : \u211d} (hlam : 0 < lam), F.dist thetaA = KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem7LaplacePDF lam 0) x1 x2 x3 \u22ef (KR21Monoculture.rum3ContractRankByScoreFns t x1 x2 x3 KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef \u2192 F.dist thetaH = KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem7LaplacePDF lam 0) x1 x2 x3 \u22ef (KR21Monoculture.rum3RankByScoreFns KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef \u2192 F.value 0 = x1 \u2192 F.value 1 = x2 \u2192 F.value 2 = x3 \u2192 0 \u2264 t \u2192 t \u2264 1 \u2192 t < 1 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 F.Theorem1RemovalMonotonicityAt thetaA thetaH",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition2_threeCandidate_gaussianStd_prefersIndependentReranking": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "10c523317328d8e4b9f6e09a4b36687ac9b8bbaa96fdfa332aeb24451486838c",
+      "tex_statement": "Paper-facing summary: - Definition 2 / Gaussian three-candidate RUM with arbitrary positive standard deviation: independent Gaussian score signals with ordered means prefer independent reranking.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.definition2_threeCandidate_gaussianStd_prefersIndependentReranking :\n\u2200 {\u03c3 x1 x2 x3 : \u211d} {value : EconCSLib.SocialChoice.Ranking.Candidate 1 \u2192 \u211d}, 0 < \u03c3 \u2192 value 1 < value 0 \u2192 value 2 < value 1 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 KR21Monoculture.Model.PrefersIndependentReranking (KR21Monoculture.rumRankingPMFOfMeasure (KR21Monoculture.theorem8GaussianDefinition2ScoreMeasureStd \u03c3 x1 x2 x3) (KR21Monoculture.rum3RankByScoreFns KR21Monoculture.theorem8GaussianDefinition2Score1 KR21Monoculture.theorem8GaussianDefinition2Score2 KR21Monoculture.theorem8GaussianDefinition2Score3) \u22ef) value",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition2_threeCandidate_gaussian_prefersIndependentReranking": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "e5718fb159f00d08a0188ff54efd968008ca43c46e35059e8c69bd9693953536",
+      "tex_statement": "Paper-facing summary: - Definition 2 / Gaussian three-candidate RUM: independent Gaussian score signals with ordered means prefer independent reranking.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.definition2_threeCandidate_gaussian_prefersIndependentReranking :\n\u2200 {x1 x2 x3 : \u211d} {value : EconCSLib.SocialChoice.Ranking.Candidate 1 \u2192 \u211d}, value 1 < value 0 \u2192 value 2 < value 1 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 KR21Monoculture.Model.PrefersIndependentReranking (KR21Monoculture.rumRankingPMFOfMeasure (KR21Monoculture.theorem8GaussianDefinition2ScoreMeasure x1 x2 x3) (KR21Monoculture.rum3RankByScoreFns KR21Monoculture.theorem8GaussianDefinition2Score1 KR21Monoculture.theorem8GaussianDefinition2Score2 KR21Monoculture.theorem8GaussianDefinition2Score3) \u22ef) value",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition2_threeCandidate_laplacian_contracted_prefersIndependentReranking": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "a4405da1f9d3c58e89d24fa18094c2bc2458d7b4f59b34f475b85ebc9430a7a2",
+      "tex_statement": "Paper-facing summary: - Definition 2 / Laplace three-candidate RUM under contraction: contracted rate-`lam` scores induce the same ranking law as raw rate-`lam / t` scores, so the contracted source also prefers independent reranking.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.definition2_threeCandidate_laplacian_contracted_prefersIndependentReranking :\n\u2200 {lam t x1 x2 x3 : \u211d} {value : EconCSLib.SocialChoice.Ranking.Candidate 1 \u2192 \u211d} (hlam : 0 < lam), 0 < t \u2192 value 1 < value 0 \u2192 value 2 < value 1 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 KR21Monoculture.Model.PrefersIndependentReranking (KR21Monoculture.theorem7LaplacianDefinition2ContractRankingPMF lam t x1 x2 x3 hlam) value",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "definition2_threeCandidate_laplacian_prefersIndependentReranking": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "654fdf5eb9b278680b83f9c4e0f5752879c355b8da5a9297ff823c16993c43f6",
+      "tex_statement": "Paper-facing summary: - Definition 2 / Laplace three-candidate RUM: independent Laplace score signals with common positive rate and ordered locations prefer independent reranking.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.definition2_threeCandidate_laplacian_prefersIndependentReranking :\n\u2200 {lam x1 x2 x3 : \u211d} {value : EconCSLib.SocialChoice.Ranking.Candidate 1 \u2192 \u211d} (hlam : 0 < lam), value 1 < value 0 \u2192 value 2 < value 1 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 KR21Monoculture.Model.PrefersIndependentReranking (KR21Monoculture.theorem7LaplacianDefinition2RankingPMF lam x1 x2 x3 hlam) value",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "lemma1_gaussian_strictlyWellOrdered": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "8f128e9ba31d5840edf48ee0a2b31dbcfac769af1293f82717b199f872aea6d0",
+      "tex_statement": "Paper-facing summary: - Appendix C Lemma 1, Gaussian noise is strictly well-ordered.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.lemma1_gaussian_strictlyWellOrdered :\n\u2200 {kappa : \u211d}, 0 < kappa \u2192 KR21Monoculture.StrictlyWellOrderedNoise (KR21Monoculture.gaussianNoiseKernel kappa)",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "lemma1_laplacian_strictlyWellOrdered_of_overlap": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "151df0ce0fad1850b2eadec25f7fa9fdd2c1cd6d1e66f6d9979737593218319c",
+      "tex_statement": "Paper-facing summary: - Appendix C Lemma 1, Laplacian strict local form: for ordered locations `a > b` and `c > d`, strict Laplacian well-ordering holds under the explicit overlap condition `b < c` and `d < a`, equivalently overlap of the open intervals `(b,a)` and `(d,c)`. the paper's false global strict Laplacian statement; the global theorem above is weak, and no named theorem or main-text result is affected.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.lemma1_laplacian_strictlyWellOrdered_of_overlap :\n\u2200 {lam a b c d : \u211d}, 0 < lam \u2192 b < a \u2192 d < c \u2192 b < c \u2192 d < a \u2192 KR21Monoculture.laplacianNoiseKernel lam (a - c) * KR21Monoculture.laplacianNoiseKernel lam (b - d) > KR21Monoculture.laplacianNoiseKernel lam (a - d) * KR21Monoculture.laplacianNoiseKernel lam (b - c)",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "lemma1_laplacian_weaklyWellOrdered": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "227861d58de06dae3bbd3df7bac1d09c7365807082db5ea58e93e1ff711899fb",
+      "tex_statement": "Paper-facing summary: - Appendix C Lemma 1, Laplacian weak form: the Laplacian density kernel satisfies the globally valid weak well-ordering inequality.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.lemma1_laplacian_weaklyWellOrdered :\n\u2200 {lam : \u211d}, 0 \u2264 lam \u2192 KR21Monoculture.WeaklyWellOrderedNoise (KR21Monoculture.laplacianNoiseKernel lam)",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "mallowsSpec": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "aff7b18353f8358ae62cace6596828178f7c970f6322170f82e824e6e14541b1",
+      "tex_statement": "Paper-facing summary: - Paper Mallows family parameterization used by the compact review surface.\n\nFull Lean statement:\nnoncomputable abbrev mallowsSpec {n : \u2115} (center : Ranking n) (theta : \u211d) := concreteMallowsSpec center theta",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "strictlyWellOrderedNoise": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "3616e571a89081f5149737035f54a06b2669b64a3f48f9cdfec050ad2fafef67",
+      "tex_statement": "Paper-facing summary: - Paper Appendix C strict well-ordered noise predicate.\n\nFull Lean statement:\nabbrev strictlyWellOrderedNoise (f : \u211d \u2192 \u211d) : Prop := StrictlyWellOrderedNoise f",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem1_concrete_mallows_family": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "0e804d2a039a73b2e31efc3f724b6b7febb7181cc8e6fa862bcf78aa1e5729f0",
+      "tex_statement": "Paper-facing summary: - Paper Theorem 1, concrete Mallows family form: for a strict center-ordered value profile and positive human accuracy, the concrete Mallows accuracy family has a more accurate algorithmic parameter witnessing the monoculture paradox.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem1_concrete_mallows_family :\n\u2200 {n : \u2115} (center : EconCSLib.SocialChoice.Ranking.Ranking n) (value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d) (hvalue : EconCSLib.SocialChoice.Ranking.StrictlyOrderedBy center value), 0 < n \u2192 \u2200 (\u03b8H : \u211d), 0 < \u03b8H \u2192 (KR21Monoculture.concreteMallowsAccuracyFamilySpec center value \u22ef).toAccuracyFamily.Theorem1Target \u03b8H",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem1_from_paper_assumptions": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "834e4d06494400eef3bdfdf16571c0e497898ff105d0d8a050ecff7a7e4d6b71",
+      "tex_statement": "Paper-facing summary: - Paper Theorem 1, conditional family form: if a finite accuracy family satisfies the paper's Definition 1 analytic conditions, Definition 2 independent reranking condition, and Definition 3 weaker-competition condition, then every positive human accuracy admits a more accurate algorithmic accuracy witnessing the monoculture paradox. The `assumptions` input is the Lean package of those paper hypotheses. Concrete Mallows, Gaussian, and Laplace source routes below construct that package rather than assuming it as an external boundary.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem1_from_paper_assumptions :\n\u2200 {n : \u2115} (F : KR21Monoculture.AccuracyFamily n) (\u03b8H : \u211d), 0 < \u03b8H \u2192 \u2200 (assumptions : F.Theorem1PaperAssumptions), F.Theorem1Target \u03b8H",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_gaussianStd_target_from_rum_source": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "5f8135c7c14c131be0f7b6991d6480170e84792f8294e3d9c70a89e1b869746a",
+      "tex_statement": "Paper-facing summary: - Theorem 2 / Gaussian RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Gaussian RUM law with standard deviation `1 / \u03b8`, then the monoculture-paradox target follows from the concrete source proof. The source-model proof supplies the Definition 2, Definition 3, finite-removal monotonicity, positive swapped-ranking mass, and high-accuracy concentration ingredients. Atomwise continuity of the finite ranking law is derived from the continuous Gaussian score source.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem2_gaussianStd_target_from_rum_source :\n\u2200 {F : KR21Monoculture.AccuracyFamily 1} {\u03b8H x1 x2 x3 : \u211d}, 0 < \u03b8H \u2192 F.value 0 = x1 \u2192 F.value 1 = x2 \u2192 F.value 2 = x3 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 (\u2200 (\u03b8 : \u211d), 0 < \u03b8 \u2192 F.dist \u03b8 = KR21Monoculture.rumRankingPMFOfMeasure (KR21Monoculture.theorem8GaussianDefinition2ScoreMeasureStd (1 / \u03b8) x1 x2 x3) (KR21Monoculture.rum3RankByScoreFns KR21Monoculture.theorem8GaussianDefinition2Score1 KR21Monoculture.theorem8GaussianDefinition2Score2 KR21Monoculture.theorem8GaussianDefinition2Score3) \u22ef) \u2192 F.Theorem1Target \u03b8H",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_gaussianStd_target_from_rum_source_and_atom_continuity": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "27b913616333a45bfa394457036ca3306fc8a5097fe84ea01078492420552280",
+      "tex_statement": "Paper-facing summary: - Compatibility alias for the older Gaussian source interface that exposed atomwise continuity as an explicit argument.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem2_gaussianStd_target_from_rum_source_and_atom_continuity :\n\u2200 {F : KR21Monoculture.AccuracyFamily 1} {\u03b8H x1 x2 x3 : \u211d}, 0 < \u03b8H \u2192 F.value 0 = x1 \u2192 F.value 1 = x2 \u2192 F.value 2 = x3 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 (\u2200 (\u03b8 : \u211d), 0 < \u03b8 \u2192 \u2200 (\u03c0 : EconCSLib.SocialChoice.Ranking.Ranking 1), EconCSLib.EpsilonContinuousAt (fun \u03b8' => ((F.dist \u03b8') \u03c0).toReal) \u03b8) \u2192 (\u2200 (\u03b8 : \u211d), 0 < \u03b8 \u2192 F.dist \u03b8 = KR21Monoculture.rumRankingPMFOfMeasure (KR21Monoculture.theorem8GaussianDefinition2ScoreMeasureStd (1 / \u03b8) x1 x2 x3) (KR21Monoculture.rum3RankByScoreFns KR21Monoculture.theorem8GaussianDefinition2Score1 KR21Monoculture.theorem8GaussianDefinition2Score2 KR21Monoculture.theorem8GaussianDefinition2Score3) \u22ef) \u2192 F.Theorem1Target \u03b8H",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_laplacianCanonical_target_from_rum_source": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "fbcc680ea05188ce161f7f7a885f198e96dfe0e0439b95b2969fce66fd05ab0b",
+      "tex_statement": "Paper-facing summary: - Theorem 2 / canonical Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with rate `\u03b8`, then the monoculture-paradox target follows from the concrete source proof.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem2_laplacianCanonical_target_from_rum_source :\n\u2200 {F : KR21Monoculture.AccuracyFamily 1} {\u03b8H x1 x2 x3 : \u211d}, 0 < \u03b8H \u2192 F.value 0 = x1 \u2192 F.value 1 = x2 \u2192 F.value 2 = x3 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 (\u2200 (\u03b8 : \u211d) (h\u03b8 : 0 < \u03b8), F.dist \u03b8 = KR21Monoculture.theorem7LaplacianDefinition2RankingPMF \u03b8 x1 x2 x3 h\u03b8) \u2192 F.Theorem1Target \u03b8H",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_laplacianRate_target_from_continuous_rum_source": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "27c491224b81beb21364e16f33796d07560953638043149fad20595e151b6c15",
+      "tex_statement": "Paper-facing summary: - Theorem 2 / continuous-rate Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with a positive strictly increasing continuous rate that tends to infinity, then the monoculture-paradox target follows from the concrete source proof.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem2_laplacianRate_target_from_continuous_rum_source :\n\u2200 {F : KR21Monoculture.AccuracyFamily 1} {\u03b8H x1 x2 x3 : \u211d} (lam : \u211d \u2192 \u211d) (hlam_pos : \u2200 (\u03b8 : \u211d), 0 < \u03b8 \u2192 0 < lam \u03b8), (\u2200 (\u03b8A \u03b8H : \u211d), 0 < \u03b8H \u2192 \u03b8H < \u03b8A \u2192 lam \u03b8H < lam \u03b8A) \u2192 (\u2200 (\u03b8 : \u211d), 0 < \u03b8 \u2192 ContinuousAt lam \u03b8) \u2192 Filter.Tendsto lam Filter.atTop Filter.atTop \u2192 0 < \u03b8H \u2192 F.value 0 = x1 \u2192 F.value 1 = x2 \u2192 F.value 2 = x3 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 (\u2200 (\u03b8 : \u211d) (h\u03b8 : 0 < \u03b8), F.dist \u03b8 = KR21Monoculture.theorem7LaplacianDefinition2RankingPMF (lam \u03b8) x1 x2 x3 \u22ef) \u2192 F.Theorem1Target \u03b8H",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem2_laplacianRate_target_from_rum_source_and_atom_continuity": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "f8373a6b05ec486535bfb56edccecc6a3cba71443635d6ab9dbb0a8c59e7391d",
+      "tex_statement": "Paper-facing summary: - Theorem 2 / Laplace RUM route from the concrete source model: if `F.dist \u03b8` is the three-candidate Laplace RUM law with a positive strictly increasing rate that tends to infinity, then the monoculture-paradox target follows from atomwise continuity of the induced finite ranking law. The source-model proof supplies the Definition 2, Definition 3, finite-removal monotonicity, positive swapped-ranking mass, and high-accuracy concentration ingredients.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem2_laplacianRate_target_from_rum_source_and_atom_continuity :\n\u2200 {F : KR21Monoculture.AccuracyFamily 1} {\u03b8H x1 x2 x3 : \u211d} (lam : \u211d \u2192 \u211d) (hlam_pos : \u2200 (\u03b8 : \u211d), 0 < \u03b8 \u2192 0 < lam \u03b8), (\u2200 (\u03b8A \u03b8H : \u211d), 0 < \u03b8H \u2192 \u03b8H < \u03b8A \u2192 lam \u03b8H < lam \u03b8A) \u2192 Filter.Tendsto lam Filter.atTop Filter.atTop \u2192 0 < \u03b8H \u2192 F.value 0 = x1 \u2192 F.value 1 = x2 \u2192 F.value 2 = x3 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 (\u2200 (\u03b8 : \u211d), 0 < \u03b8 \u2192 \u2200 (\u03c0 : EconCSLib.SocialChoice.Ranking.Ranking 1), EconCSLib.EpsilonContinuousAt (fun \u03b8' => ((F.dist \u03b8') \u03c0).toReal) \u03b8) \u2192 (\u2200 (\u03b8 : \u211d) (h\u03b8 : 0 < \u03b8), F.dist \u03b8 = KR21Monoculture.theorem7LaplacianDefinition2RankingPMF (lam \u03b8) x1 x2 x3 \u22ef) \u2192 F.Theorem1Target \u03b8H",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem3_mallows_satisfies_paper_hypotheses": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "304be94e71a4802443d23e42c94ec7f479a333b0eb00eb3c24814a2eff9b22e4",
+      "tex_statement": "Paper-facing summary: - Paper Theorem 3, Mallows form: for Mallows laws with a common center, if the algorithmic law is more accurate than the human law, then every strictly center-ordered value profile satisfies the paper's Definition 2 and Definition 3 hypotheses for the induced two-distribution model. Lean uses the inverse Mallows parameter `q`, so greater accuracy is `C.algorithm.q < C.human.q`. The rank-factorization formulas used by the source proof are proved for `MallowsSpec` and are not exposed as assumptions here.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem3_mallows_satisfies_paper_hypotheses :\n\u2200 {n : \u2115} (C : KR21Monoculture.MallowsComparison n) {value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d}, C.StrictlyCenterOrdered value \u2192 0 < n \u2192 C.algorithm.q < 1 \u2192 C.human.q < 1 \u2192 C.algorithm.q < C.human.q \u2192 (C.toModel value).PaperHypotheses",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem4_mallows_all_human_sequence_optimal_of_q_le": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "87887aac51f16982b957ffecc78783d6d48cb7e6c7154a4ecdea953ecfec4658",
+      "tex_statement": "Paper-facing summary: - Theorem 4 / Mallows weak optimality: when human and algorithmic Mallows laws share the same center ranking and the human law is weakly more accurate, the all-human sequence is a best-response sequence in the multi-firm game. This route uses the reduced same-size prefix-cut weighted-extremes Mallows theorem, proved in Lean as `reflMallowsBestInSetPrefixCutFirstChoiceWeightedExtremes_of_q_lt`.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem4_mallows_all_human_sequence_optimal_of_q_le :\n\u2200 {n k : \u2115} {human algorithm : KR21Monoculture.MallowsSpec n}, human.center = algorithm.center \u2192 human.q \u2264 algorithm.q \u2192 \u2200 {value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d}, EconCSLib.SocialChoice.Ranking.WeaklyOrderedBy human.center value \u2192 (KR21Monoculture.SequentialModel.ofMallows algorithm human value).IsSequentialBestResponseSequence k (KR21Monoculture.SequentialModel.allHumanSequence k)",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem4_mallows_human_unique_at_each_history_of_q_lt": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "dd633ba81f87cf6fedd09e1aa4952022c34653aeec117d673aee98aa7634f533",
+      "tex_statement": "Paper-facing summary: - Theorem 4 / Mallows strict uniqueness: if the human Mallows law has strictly lower inverse-noise parameter than the algorithmic law, then at every nonterminal history the human ranking distribution is the unique best response.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem4_mallows_human_unique_at_each_history_of_q_lt :\n\u2200 {n k : \u2115} {human algorithm : KR21Monoculture.MallowsSpec n}, human.center = algorithm.center \u2192 human.q < algorithm.q \u2192 \u2200 {value : EconCSLib.SocialChoice.Ranking.Candidate n \u2192 \u211d}, EconCSLib.SocialChoice.Ranking.StrictlyOrderedBy human.center value \u2192 (KR21Monoculture.SequentialModel.ofMallows algorithm human value).HumanUniquelyOptimalAtAllNonterminalHistories k",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem6_threeCandidate_gaussian_prefersWeakerCompetition_of_scoreSpace_t_lt_one": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "dbb502924fcf58ffd2f3e790b21c44081982194237cb9d6efb697b06b1f22075",
+      "tex_statement": "Paper-facing summary: - Appendix C Theorem 6 / Gaussian three-candidate RUM: if algorithmic scores are a strict contraction of the same independent Gaussian score realization, then the second mover prefers weaker competition.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem6_threeCandidate_gaussian_prefersWeakerCompetition_of_scoreSpace_t_lt_one :\n\u2200 (x1 x2 x3 t : \u211d) {value : EconCSLib.SocialChoice.Ranking.Candidate 1 \u2192 \u211d}, value 0 = x1 \u2192 value 1 = x2 \u2192 value 2 = x3 \u2192 0 \u2264 t \u2192 t \u2264 1 \u2192 t < 1 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 KR21Monoculture.Model.PrefersWeakerCompetition (KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem8GaussianPDF 0) x1 x2 x3 \u22ef (KR21Monoculture.rum3ContractRankByScoreFns t x1 x2 x3 KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef) (KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem8GaussianPDF 0) x1 x2 x3 \u22ef (KR21Monoculture.rum3RankByScoreFns KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef) value",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_concreteNormalization_t_lt_one": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "8544cd9a83c1e95274a973852f492ca0fad1b43d6a26acc8cb46d6c336726852",
+      "tex_statement": "Paper-facing summary: - Appendix C Theorem 6 / Laplacian three-candidate RUM: the concrete zero-mean Laplace score density is normalized in Lean, so the theorem has no remaining lambda-certificate premise.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_concreteNormalization_t_lt_one :\n\u2200 {lam x1 x2 x3 t : \u211d} {value : EconCSLib.SocialChoice.Ranking.Candidate 1 \u2192 \u211d} (hlam : 0 < lam), value 0 = x1 \u2192 value 1 = x2 \u2192 value 2 = x3 \u2192 0 \u2264 t \u2192 t \u2264 1 \u2192 t < 1 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 KR21Monoculture.Model.PrefersWeakerCompetition (KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem7LaplacePDF lam 0) x1 x2 x3 \u22ef (KR21Monoculture.rum3ContractRankByScoreFns t x1 x2 x3 KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef) (KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem7LaplacePDF lam 0) x1 x2 x3 \u22ef (KR21Monoculture.rum3RankByScoreFns KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef) value",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_t_lt_one": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "43bfe5c029662081dbd32adc2da1ae2cc6d1ffaa55bf30b94beff7ddfca0798c",
+      "tex_statement": "Paper-facing summary: - Appendix C Theorem 6 / Laplacian three-candidate RUM: with normalized concrete Laplace scores, the second firm prefers weaker competition for `0 \u2264 t \u2264 1`, `t < 1`, and `x\u2083 < x\u2082 < x\u2081`.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem6_threeCandidate_laplacian_prefersWeakerCompetition_of_scoreSpace_t_lt_one :\n\u2200 {lam x1 x2 x3 t : \u211d} {value : EconCSLib.SocialChoice.Ranking.Candidate 1 \u2192 \u211d}, 0 < lam \u2192 value 0 = x1 \u2192 value 1 = x2 \u2192 value 2 = x3 \u2192 \u2200 (hnorm : \u222b\u207b (\u03c9 : KR21Monoculture.paper_theorem6_scoreSpace), KR21Monoculture.rum3ScoreDensityENN (KR21Monoculture.theorem7LaplacePDF lam 0) x1 x2 x3 KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3 \u03c9 = 1), 0 \u2264 t \u2192 t \u2264 1 \u2192 t < 1 \u2192 x2 < x1 \u2192 x3 < x2 \u2192 KR21Monoculture.Model.PrefersWeakerCompetition (KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem7LaplacePDF lam 0) x1 x2 x3 hnorm (KR21Monoculture.rum3ContractRankByScoreFns t x1 x2 x3 KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef) (KR21Monoculture.paper_theorem6_normalizedScoreRankingPMF (KR21Monoculture.theorem7LaplacePDF lam 0) x1 x2 x3 hnorm (KR21Monoculture.rum3RankByScoreFns KR21Monoculture.paper_theorem6_score1 KR21Monoculture.paper_theorem6_score2 KR21Monoculture.paper_theorem6_score3) \u22ef) value",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem7_laplacian_pairwise_conditional_derivative_cases": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "11f472f3da1ae24d1e6a58326c3debbe7c26705e906263bdb46d7785c8718bd5",
+      "tex_statement": "Paper-facing summary: - Appendix C Theorem 7, Laplacian pairwise conditional derivative: for independent Laplace scores with `x_j < x_i`, the strict source probability ratio `Pr[X_i > X_j | X_i < a, X_j < a]` is flat to the left of `x_j`, strictly increasing between `x_j` and `x_i`, and strictly increasing to the right of `x_i`.\n\nFull Lean statement:\n@KR21Monoculture.PaperInterface.theorem7_laplacian_pairwise_conditional_derivative_cases :\n\u2200 {lam xi xj a : \u211d}, 0 < lam \u2192 xj < xi \u2192 (a < xj \u2192 HasDerivAt (fun a => KR21Monoculture.paper_theorem7_laplacian_product_strict_conditional_ratio_at lam xi xj a) 0 a \u2227 0 \u2264 0) \u2227 (xj < a \u2192 a < xi \u2192 \u2203 d, HasDerivAt (fun a => KR21Monoculture.paper_theorem7_laplacian_product_strict_conditional_ratio_at lam xi xj a) d a \u2227 0 < d) \u2227 (xi < a \u2192 \u2203 d, HasDerivAt (fun a => KR21Monoculture.paper_theorem7_laplacian_product_strict_conditional_ratio_at lam xi xj a) d a \u2227 0 < d) \u2227 \u2203 a d, xj < a \u2227 a < xi \u2227 HasDerivAt (fun a => KR21Monoculture.paper_theorem7_laplacian_product_strict_conditional_ratio_at lam xi xj a) d a \u2227 0 < d",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem9_concrete_mallows_family_assumptions": {
+      "comment": "Context-free Lean-to-TeX/source-summary draft generated from the current PaperInterface row. It preserves the full Lean statement and the paper-facing comment used by the dashboard.",
+      "lean_statement_sha256": "6b2ed4495b556c951c17f23f4c2a2958fac981a0420c704a7bff428fa87b1f2d",
+      "tex_statement": "Paper-facing summary: - Appendix E / Theorem 9: concrete Mallows families satisfy the paper-level assumption package consumed by Theorem 1.\n\nFull Lean statement:\nnoncomputable def theorem9_concrete_mallows_family_assumptions\n    {n : \u2115} (center : Ranking n) (value : Candidate n \u2192 \u211d)\n    (hvalue : StrictlyOrderedBy center value)\n    (hn : 0 < n) :\n    AccuracyFamily.Theorem1PaperAssumptions\n      (MallowsAccuracyFamilySpec.toAccuracyFamily\n        (concreteMallowsAccuracyFamilySpec center value hvalue)) :=\n  KR21Monoculture.paper_theorem9_concrete_mallows_family_assumptions\n    center value hvalue hn",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    }
+  },
+  "paper": "KR21Monoculture",
+  "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
+  "schema": 1
+}

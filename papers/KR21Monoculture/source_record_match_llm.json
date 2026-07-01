@@ -1,0 +1,75 @@
+{
+  "items": {
+    "Model.algorithmRanking": {
+      "classification": "nonpropositional_witness_data",
+      "reason": "This field is model data: a ranking distribution or value function. It does not by itself assert continuity, optimality, convergence, equilibrium, or another proposition-valued mathematical theorem.",
+      "source_location": "papers/KR21Monoculture/Game.lean",
+      "source_record_audit_sha256": "0791a51294f921090a1dec9610d705cdf39a5f751d227c3e54c9e8148bd47b4c",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "Model.humanRanking": {
+      "classification": "nonpropositional_witness_data",
+      "reason": "This field is model data: a ranking distribution or value function. It does not by itself assert continuity, optimality, convergence, equilibrium, or another proposition-valued mathematical theorem.",
+      "source_location": "papers/KR21Monoculture/Game.lean",
+      "source_record_audit_sha256": "0791a51294f921090a1dec9610d705cdf39a5f751d227c3e54c9e8148bd47b4c",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "Model.value": {
+      "classification": "nonpropositional_witness_data",
+      "reason": "This field is model data: a ranking distribution or value function. It does not by itself assert continuity, optimality, convergence, equilibrium, or another proposition-valued mathematical theorem.",
+      "source_location": "papers/KR21Monoculture/Game.lean",
+      "source_record_audit_sha256": "0791a51294f921090a1dec9610d705cdf39a5f751d227c3e54c9e8148bd47b4c",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "SequentialModel.algorithmRanking": {
+      "classification": "nonpropositional_witness_data",
+      "reason": "This field is model data: a ranking distribution or value function. It does not by itself assert continuity, optimality, convergence, equilibrium, or another proposition-valued mathematical theorem.",
+      "source_location": "papers/KR21Monoculture/Sequential.lean",
+      "source_record_audit_sha256": "0791a51294f921090a1dec9610d705cdf39a5f751d227c3e54c9e8148bd47b4c",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "SequentialModel.humanRanking": {
+      "classification": "nonpropositional_witness_data",
+      "reason": "This field is model data: a ranking distribution or value function. It does not by itself assert continuity, optimality, convergence, equilibrium, or another proposition-valued mathematical theorem.",
+      "source_location": "papers/KR21Monoculture/Sequential.lean",
+      "source_record_audit_sha256": "0791a51294f921090a1dec9610d705cdf39a5f751d227c3e54c9e8148bd47b4c",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "SequentialModel.value": {
+      "classification": "nonpropositional_witness_data",
+      "reason": "This field is model data: a ranking distribution or value function. It does not by itself assert continuity, optimality, convergence, equilibrium, or another proposition-valued mathematical theorem.",
+      "source_location": "papers/KR21Monoculture/Sequential.lean",
+      "source_record_audit_sha256": "0791a51294f921090a1dec9610d705cdf39a5f751d227c3e54c9e8148bd47b4c",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    },
+    "theorem1_from_paper_assumptions.assumptions : AccuracyFamily.Theorem1PaperAssumptions F": {
+      "classification": "validated_source_assumption",
+      "reason": "This is a theorem-condition package stated by the source paper, not an external proof boundary. It is visible in the interface and not used to claim the concrete Mallows/RUM instantiations.",
+      "source_evidence": "The visible `AccuracyFamily.Theorem1PaperAssumptions F` input is the paper's conditional theorem package: Definition 1 regularity, Definition 2 independent reranking, and Definition 3 weaker competition. Concrete Mallows/RUM source routes construct the needed packages separately.",
+      "source_location": "KR21 Theorem 1 statement and Definitions 1--3 hypotheses",
+      "source_record_audit_sha256": "0791a51294f921090a1dec9610d705cdf39a5f751d227c3e54c9e8148bd47b4c",
+      "validated_at": "2026-07-01T19:57:11Z",
+      "validator": "codex-gpt-5",
+      "validator_type": "model"
+    }
+  },
+  "paper": "KR21Monoculture",
+  "prompt_version": "source-record-v2-semantic-boundary-inputs",
+  "schema": 1,
+  "source_record_audit_sha256": "0791a51294f921090a1dec9610d705cdf39a5f751d227c3e54c9e8148bd47b4c",
+  "validated_at": "2026-07-01T19:57:11Z",
+  "validator": "codex-gpt-5",
+  "validator_type": "model"
+}

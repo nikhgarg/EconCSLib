@@ -1,6 +1,7 @@
 import EconCSLib.Foundations.Math.FiniteSum
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Probability.ProbabilityMassFunction.Integrals
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Fin.Basic
 import Mathlib.Data.Finset.Powerset
@@ -15,6 +16,13 @@ namespace EconCSLib
 noncomputable def pmfExp {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (f : α → ℝ) : ℝ :=
   ∑ a, (μ a).toReal * f a
+
+/-- Finite PMF expectation is the Bochner integral over the PMF's measure. -/
+theorem pmfExp_eq_integral_toMeasure {α : Type*} [MeasurableSpace α]
+    [MeasurableSingletonClass α] [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) :
+    pmfExp μ f = ∫ a, f a ∂μ.toMeasure := by
+  simpa [pmfExp] using (PMF.integral_eq_sum μ f).symm
 
 /-- Expectation for two independent PMF draws. -/
 noncomputable def pmfPairExp {α β : Type*}
@@ -2360,6 +2368,54 @@ theorem pmfProb_le_of_imp {α : Type*} [Fintype α] [DecidableEq α]
     simp [hp, hq]
   · by_cases hq : q a <;> simp [hp, hq]
 
+/--
+If a finite PMF puts less than `δ` mass outside `center`, then every atom is
+within `δ` of the pure point mass at `center`.
+-/
+theorem atomwise_close_to_pure_of_wrong_prob_lt
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (center : α) {δ : ℝ} (hδ : 0 < δ)
+    (hwrong : pmfProb μ (fun a => a ≠ center) < δ) :
+    ∀ a : α,
+      |(μ a).toReal - (((PMF.pure center : PMF α) a).toReal)| < δ := by
+  classical
+  intro a
+  by_cases ha : a = center
+  · subst a
+    have hcompl :
+        pmfProb μ (fun x => x ≠ center) = 1 - (μ center).toReal := by
+      rw [← pmfProb_singleton μ center]
+      simpa [Ne] using
+        (pmfProb_compl μ (fun x => x = center))
+    have hle : (μ center).toReal ≤ 1 := by
+      rw [← pmfProb_singleton μ center]
+      exact pmfProb_le_one μ (fun x => x = center)
+    have habs :
+        |(μ center).toReal -
+            (((PMF.pure center : PMF α) center).toReal)| =
+          1 - (μ center).toReal := by
+      have hpure :
+          (((PMF.pure center : PMF α) center).toReal) = 1 := by
+        simp [PMF.pure_apply]
+      rw [hpure]
+      rw [abs_of_nonpos]
+      · ring
+      · linarith
+    rw [habs, ← hcompl]
+    exact hwrong
+  · have hsingle_le :
+        pmfProb μ (fun x => x = a) ≤ pmfProb μ (fun x => x ≠ center) :=
+      pmfProb_le_of_imp μ (fun x => x = a) (fun x => x ≠ center) (by
+        intro x hx
+        exact fun hxc => ha (hx.symm.trans hxc))
+    have hmass_lt : (μ a).toReal < δ := by
+      rw [← pmfProb_singleton μ a]
+      exact lt_of_le_of_lt hsingle_le hwrong
+    have hpure : (((PMF.pure center : PMF α) a).toReal) = 0 := by
+      simp [PMF.pure_apply, ha]
+    rw [hpure, sub_zero, abs_of_nonneg ENNReal.toReal_nonneg]
+    exact hmass_lt
+
 /-- A finite PMF expectation of a pointwise nonnegative function is nonnegative. -/
 theorem pmfExp_nonneg_of_forall_nonneg {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (f : α → ℝ) (h : ∀ a, 0 ≤ f a) :
@@ -3583,6 +3639,62 @@ theorem pmfExp_lt_of_support_forall_lt {α : Type*}
   rw [hfg]
   exact pmfExp_lt_of_forall_le_exists_lt μ g c hle hex
 
+theorem abs_pmfExp_sub_le_sum_abs_atom_mul {α : Type*}
+    [Fintype α] [DecidableEq α]
+    (μ ν : PMF α) (f : α → ℝ) :
+    |pmfExp μ f - pmfExp ν f| ≤
+      ∑ a : α, |(μ a).toReal - (ν a).toReal| * |f a| := by
+  classical
+  unfold pmfExp
+  calc
+    |(∑ a : α, (μ a).toReal * f a) -
+        ∑ a : α, (ν a).toReal * f a|
+        = |∑ a : α, ((μ a).toReal - (ν a).toReal) * f a| := by
+          congr 1
+          rw [← Finset.sum_sub_distrib]
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          ring
+    _ ≤ ∑ a : α, |((μ a).toReal - (ν a).toReal) * f a| :=
+        Finset.abs_sum_le_sum_abs
+          (fun a : α => ((μ a).toReal - (ν a).toReal) * f a) Finset.univ
+    _ = ∑ a : α, |(μ a).toReal - (ν a).toReal| * |f a| := by
+        simp [abs_mul]
+
+theorem exists_atomwise_radius_pmfExp_close {α : Type*}
+    [Fintype α] [DecidableEq α]
+    (ν : PMF α) (f : α → ℝ) {ε : ℝ} (hε : 0 < ε) :
+    ∃ δ : ℝ, 0 < δ ∧
+      ∀ μ : PMF α,
+        (∀ a : α, |(μ a).toReal - (ν a).toReal| < δ) →
+          |pmfExp μ f - pmfExp ν f| < ε := by
+  classical
+  let S : ℝ := ∑ a : α, |f a|
+  have hS_nonneg : 0 ≤ S := by
+    dsimp [S]
+    exact Finset.sum_nonneg (fun a _ => abs_nonneg (f a))
+  refine ⟨ε / (S + 1), div_pos hε (by linarith), ?_⟩
+  intro μ hμ
+  have hbound :
+      ∑ a : α, |(μ a).toReal - (ν a).toReal| * |f a| ≤
+        (ε / (S + 1)) * S := by
+    calc
+      ∑ a : α, |(μ a).toReal - (ν a).toReal| * |f a|
+          ≤ ∑ a : α, (ε / (S + 1)) * |f a| := by
+            refine Finset.sum_le_sum ?_
+            intro a _
+            exact mul_le_mul_of_nonneg_right (le_of_lt (hμ a)) (abs_nonneg (f a))
+      _ = (ε / (S + 1)) * S := by
+            dsimp [S]
+            rw [Finset.mul_sum]
+  have hstrict : (ε / (S + 1)) * S < ε := by
+    have hden_pos : 0 < S + 1 := by linarith
+    rw [div_mul_eq_mul_div]
+    exact (div_lt_iff₀ hden_pos).2 (by nlinarith)
+  exact lt_of_le_of_lt
+    ((abs_pmfExp_sub_le_sum_abs_atom_mul μ ν f).trans hbound)
+    hstrict
+
 @[simp] theorem pmfExp_pure {α : Type*} [Fintype α] [DecidableEq α]
     (a : α) (f : α → ℝ) :
     pmfExp (PMF.pure a) f = f a := by
@@ -3694,6 +3806,24 @@ theorem cutoff_lt_pmfExp_of_support_ge_exists_gt
   rw [hExpEq]
   exact cutoff_lt_pmfExp_of_all_ge_exists_gt
     μ supportValue cutoff hsupport_ge hsupport_above
+
+/--
+If every positive-mass atom has strictly positive value, then the finite PMF
+expectation is strictly positive.
+-/
+theorem pmfExp_pos_of_support_forall_pos
+    {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α]
+    (μ : PMF α) (f : α → ℝ)
+    (hpos : ∀ a, 0 < (μ a).toReal → 0 < f a) :
+    0 < pmfExp μ f := by
+  have hneg :
+      pmfExp μ (fun a => - f a) < 0 := by
+    refine pmfExp_lt_of_support_forall_lt μ (fun a => - f a) 0 ?_
+    intro a hmass
+    exact neg_lt_zero.mpr (hpos a hmass)
+  have hneg_mean : - pmfExp μ f < 0 := by
+    simpa [pmfExp_neg] using hneg
+  linarith
 
 /--
 If a finite PMF has a positive-mass value strictly above its expectation, then

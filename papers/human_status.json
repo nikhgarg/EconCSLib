@@ -520,6 +520,33 @@
       }
     },
     {
+      "id": "KR21Monoculture",
+      "title": "Algorithmic Monoculture and Social Welfare",
+      "authors": "Jon Kleinberg and Manish Raghavan",
+      "publication": "arXiv:2101.05853",
+      "publication_year": 9999,
+      "source_url": "https://arxiv.org/abs/2101.05853",
+      "paper_info": "Algorithmic Monoculture and Social Welfare by Jon Kleinberg and Manish Raghavan; arXiv:2101.05853.",
+      "status": "Formalized",
+      "human_review": "0/49",
+      "human_translation": "0/49 reviewed",
+      "llm_as_judge_translation": "49/49 match",
+      "llm_as_judge_paper_coverage": "49/49 covered",
+      "lean_loc": 65646,
+      "main_note": "The main Mallows and three-candidate Gaussian/Laplace RUM routes are formalized.",
+      "main_note_citation": null,
+      "main_note_review": null,
+      "paper_folder": "papers/KR21Monoculture",
+      "review_entrypoint": "papers/KR21Monoculture/FINAL_VALIDATION_REPORT.md",
+      "artifacts": {
+        "readme": "papers/KR21Monoculture/README.md",
+        "paper_interface": "papers/KR21Monoculture/PaperInterface.lean",
+        "final_validation_report": "papers/KR21Monoculture/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/KR21Monoculture/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/KR21Monoculture/DependencyDAG.pdf"
+      }
+    },
+    {
       "id": "LOS02CombinatorialAuctions",
       "title": "Truth Revelation in Approximately Efficient Combinatorial Auctions",
       "authors": "Daniel Lehmann, Liadan Ita O'Callaghan, and Yoav Shoham",

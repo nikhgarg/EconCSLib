@@ -16,6 +16,50 @@ open Set
 open Filter Topology
 
 /--
+A strictly increasing real function with finite limit `L` at `+∞` stays
+strictly below `L` at every finite point.
+-/
+theorem strictMono_lt_tendsto_atTop_limit
+    {f : ℝ → ℝ} {L : ℝ} (hf : StrictMono f)
+    (hlim : Filter.Tendsto f Filter.atTop (nhds L)) (x : ℝ) :
+    f x < L := by
+  let y : ℝ := x + 1
+  have hxy : x < y := by
+    dsimp [y]
+    linarith
+  have hy_le : f y ≤ L := by
+    by_contra hnot
+    have hL_lt : L < f y := lt_of_not_ge hnot
+    have hlt : ∀ᶠ z in Filter.atTop, f z < f y :=
+      hlim (isOpen_Iio.mem_nhds (show L ∈ Iio (f y) by exact hL_lt))
+    have hgt : ∀ᶠ z in Filter.atTop, f y < f z :=
+      (Filter.eventually_gt_atTop y).mono fun z hz => hf hz
+    obtain ⟨z, hzlt, hzgt⟩ := (hlt.and hgt).exists
+    exact (not_lt_of_ge hzlt.le) hzgt
+  exact (hf hxy).trans_le hy_le
+
+/--
+A monotone real function with finite limit `L` at `+∞` stays strictly below
+`L` at `x` if it has a strict increase somewhere to the right of `x`.
+-/
+theorem monotone_lt_tendsto_atTop_limit_of_exists_strict_right
+    {f : ℝ → ℝ} {L x : ℝ} (hf : Monotone f)
+    (hlim : Filter.Tendsto f Filter.atTop (nhds L))
+    (hstrict : ∃ y : ℝ, x < y ∧ f x < f y) :
+    f x < L := by
+  rcases hstrict with ⟨y, _hxy, hxy_val⟩
+  have hy_le : f y ≤ L := by
+    by_contra hnot
+    have hL_lt : L < f y := lt_of_not_ge hnot
+    have hlt : ∀ᶠ z in Filter.atTop, f z < f y :=
+      hlim (isOpen_Iio.mem_nhds (show L ∈ Iio (f y) by exact hL_lt))
+    have hge : ∀ᶠ z in Filter.atTop, f y ≤ f z :=
+      (Filter.eventually_ge_atTop y).mono fun z hz => hf hz
+    obtain ⟨z, hzlt, hzge⟩ := (hlt.and hge).exists
+    exact not_lt_of_ge hzge hzlt
+  exact hxy_val.trans_le hy_le
+
+/--
 A countable subset of `ℝ` cannot cover a nonempty open interval.  The witness
 form is convenient when a proof has first shown that the bad points are
 countable.

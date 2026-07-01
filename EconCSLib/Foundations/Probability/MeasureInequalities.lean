@@ -3,11 +3,14 @@ import Mathlib.Data.Set.Disjoint
 import Mathlib.MeasureTheory.Integral.Indicator
 import Mathlib.MeasureTheory.Measure.OpenPos
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 import Mathlib.MeasureTheory.Measure.WithDensity
 import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 import Mathlib.MeasureTheory.OuterMeasure.BorelCantelli
 import Mathlib.Order.Filter.AtTopBot.Basic
+import Mathlib.Order.Filter.AtTopBot.Field
+import Mathlib.Probability.CDF
 import Mathlib.Probability.Independence.InfinitePi
 import Mathlib.Probability.Martingale.Convergence
 import Mathlib.Probability.Moments.SubGaussian
@@ -74,6 +77,124 @@ theorem measureProb_pos_of_measure_ne_zero
     (h : μ {a | p a} ≠ 0) :
     0 < measureProb μ p := by
   exact ENNReal.toReal_pos h (measure_ne_top μ {a | p a})
+
+/-- Event probabilities are preserved by measure-preserving measurable equivalences. -/
+theorem measureProb_preimage_equiv_of_measurePreserving
+    {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+    (e : α ≃ᵐ β) {μ : Measure α} {ν : Measure β}
+    (he : MeasurePreserving e μ ν) (p : β → Prop) :
+    measureProb μ (fun a => p (e a)) = measureProb ν p := by
+  unfold measureProb
+  exact congrArg ENNReal.toReal (he.measure_preimage_equiv {b | p b})
+
+/-- Event probabilities are preserved by measure-preserving maps. -/
+theorem measureProb_preimage_of_measurePreserving
+    {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+    (f : α → β) {μ : Measure α} {ν : Measure β}
+    (hf : MeasurePreserving f μ ν) (p : β → Prop)
+    (hp : MeasurableSet {b | p b}) :
+    measureProb μ (fun a => p (f a)) = measureProb ν p := by
+  unfold measureProb
+  rw [← hf.map_eq]
+  rw [Measure.map_apply hf.measurable hp]
+  rfl
+
+/--
+Pointwise strict inequalities integrate to strict inequalities under a
+probability measure.
+
+This is a small convenience wrapper around
+`integral_pos_iff_support_of_nonneg_ae`; it is useful when a fiberwise strict
+conditional-probability comparison must be averaged over the cutoff variable.
+-/
+theorem integral_lt_integral_of_forall_lt
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) [IsProbabilityMeasure μ]
+    {f g : α → ℝ}
+    (hf : Integrable f μ) (hg : Integrable g μ)
+    (hlt : ∀ a, f a < g a) :
+    ∫ a, f a ∂μ < ∫ a, g a ∂μ := by
+  have hdiff_int : Integrable (fun a => g a - f a) μ := hg.sub hf
+  have hdiff_nonneg : 0 ≤ᵐ[μ] fun a => g a - f a :=
+    Eventually.of_forall fun a => sub_nonneg.mpr (le_of_lt (hlt a))
+  have hsupport_pos :
+      0 < μ (Function.support fun a => g a - f a) := by
+    have hsupport :
+        Function.support (fun a => g a - f a) = Set.univ := by
+      ext a
+      simp [Function.support, ne_of_gt (sub_pos.mpr (hlt a))]
+    rw [hsupport]
+    simp
+  have hpos :
+      0 < ∫ a, g a - f a ∂μ :=
+    (integral_pos_iff_support_of_nonneg_ae hdiff_nonneg hdiff_int).2
+      hsupport_pos
+  have hsub :
+      (∫ a, g a - f a ∂μ) =
+        (∫ a, g a ∂μ) - ∫ a, f a ∂μ := by
+    exact integral_sub hg hf
+  linarith
+
+/--
+Pointwise weak inequalities integrate to strict inequalities when the strict
+region has positive measure.
+-/
+theorem integral_lt_integral_of_forall_le_of_measure_setOf_lt_pos
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) [IsProbabilityMeasure μ]
+    {f g : α → ℝ}
+    (hf : Integrable f μ) (hg : Integrable g μ)
+    (hle : ∀ a, f a ≤ g a)
+    (hpos : 0 < μ {a | f a < g a}) :
+    ∫ a, f a ∂μ < ∫ a, g a ∂μ := by
+  have hdiff_int : Integrable (fun a => g a - f a) μ := hg.sub hf
+  have hdiff_nonneg : 0 ≤ᵐ[μ] fun a => g a - f a :=
+    Eventually.of_forall fun a => sub_nonneg.mpr (hle a)
+  have hstrict_subset :
+      {a | f a < g a} ⊆ Function.support (fun a => g a - f a) := by
+    intro a ha
+    change g a - f a ≠ 0
+    exact ne_of_gt (sub_pos.mpr (show f a < g a from ha))
+  have hsupport_pos :
+      0 < μ (Function.support fun a => g a - f a) :=
+    lt_of_lt_of_le hpos (measure_mono hstrict_subset)
+  have hpos_int :
+      0 < ∫ a, g a - f a ∂μ :=
+    (integral_pos_iff_support_of_nonneg_ae hdiff_nonneg hdiff_int).2
+      hsupport_pos
+  have hsub :
+      (∫ a, g a - f a ∂μ) =
+        (∫ a, g a ∂μ) - ∫ a, f a ∂μ := by
+    exact integral_sub hg hf
+  linarith
+
+/--
+Average a fiberwise strict probability comparison.
+
+If the numerator event has source probability `∫ N`, the conditioning event has
+source probability `∫ D`, the comparison event has probability `P`, and every
+fiber satisfies `N a < P * D a`, then the averaged numerator is strictly below
+the product of the comparison-event probability and the conditioning-event
+probability.
+-/
+theorem measureProb_lt_mul_of_integral_fiber_lt
+    {α Ω : Type*} [MeasurableSpace α] [MeasurableSpace Ω]
+    (κ : Measure α) [IsProbabilityMeasure κ]
+    (ν : Measure Ω) [IsProbabilityMeasure ν]
+    (A B C : Ω → Prop)
+    {N D : α → ℝ} {P : ℝ}
+    (hN_int : Integrable N κ) (hD_int : Integrable D κ)
+    (hA : measureProb ν A = ∫ a, N a ∂κ)
+    (hB : measureProb ν B = ∫ a, D a ∂κ)
+    (hC : measureProb ν C = P)
+    (hlt : ∀ a, N a < P * D a) :
+    measureProb ν A < measureProb ν C * measureProb ν B := by
+  rw [hA, hB, hC]
+  have hPD_int : Integrable (fun a => P * D a) κ := hD_int.const_mul P
+  have hlt_int :
+      (∫ a, N a ∂κ) < ∫ a, P * D a ∂κ :=
+    integral_lt_integral_of_forall_lt κ hN_int hPD_int hlt
+  rwa [integral_const_mul] at hlt_int
 
 /-- Finite measure of a larger set transfers to every subset. -/
 theorem measure_ne_top_of_subset_of_ne_top
@@ -647,6 +768,127 @@ theorem withDensity_measureReal_pos_of_pos_on
   measureReal_pos_of_measure_ne_zero_ne_top (μ.withDensity D) s
     (withDensity_measure_ne_zero_of_pos_on μ D hD hs hμ hpos)
     hfinite
+
+/--
+A finite product of nonempty open real intervals has nonzero Lebesgue volume.
+-/
+theorem realPiOpenBox_volume_ne_zero
+    {ι : Type*} [Fintype ι] {a b : ι → ℝ}
+    (hab : ∀ i, a i < b i) :
+    (volume : Measure (ι → ℝ))
+      (Set.pi Set.univ (fun i => Set.Ioo (a i) (b i))) ≠ 0 := by
+  rw [Real.volume_pi_Ioo]
+  exact Finset.prod_ne_zero_iff.mpr (by
+    intro i _hi
+    exact ne_of_gt (ENNReal.ofReal_pos.mpr (sub_pos.mpr (hab i))))
+
+/--
+A coordinate-difference affine hyperplane in a finite real product has
+Lebesgue measure zero.
+-/
+theorem realPi_eval_sub_eq_volume_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {i j : ι} (hij : i ≠ j) (b : ℝ) :
+    (volume : Measure (ι → ℝ)) {x | x i - x j = b} = 0 := by
+  classical
+  let L : (ι → ℝ) →ₗ[ℝ] ℝ := {
+    toFun x := x i - x j
+    map_add' x y := by
+      simp [Pi.add_apply]
+      ring
+    map_smul' a x := by
+      simp [Pi.smul_apply]
+      ring }
+  let p : ι → ℝ := fun k => if k = i then b else 0
+  let S : AffineSubspace ℝ (ι → ℝ) := AffineSubspace.mk' p L.ker
+  have hp_i : p i = b := by simp [p]
+  have hp_j : p j = 0 := by simp [p, hij.symm]
+  have hS_eq : (S : Set (ι → ℝ)) = {x | x i - x j = b} := by
+    ext x
+    constructor
+    · intro hx
+      have hker : x -ᵥ p ∈ L.ker := by
+        simpa [S] using hx
+      have hL : L (x -ᵥ p) = 0 := by
+        simpa [LinearMap.mem_ker] using hker
+      simp [L, hp_i, hp_j] at hL
+      change x i - x j = b
+      linarith
+    · intro hx
+      have hL : L (x -ᵥ p) = 0 := by
+        simp [L, hp_i, hp_j]
+        change x i - x j = b at hx
+        change x i - b - x j = 0
+        linarith
+      simpa [S, LinearMap.mem_ker] using hL
+  have hS_ne_top : S ≠ ⊤ := by
+    intro htop
+    let q : ι → ℝ := fun k => if k = i then b + 1 else 0
+    have hqS : q ∈ S := by
+      rw [htop]
+      trivial
+    have hq : q i - q j = b := by
+      have hqSset : q ∈ (S : Set (ι → ℝ)) := hqS
+      rw [hS_eq] at hqSset
+      exact hqSset
+    have hqi : q i = b + 1 := by simp [q]
+    have hqj : q j = 0 := by simp [q, hij.symm]
+    linarith
+  simpa [hS_eq] using
+    (MeasureTheory.Measure.addHaar_affineSubspace
+      (volume : Measure (ι → ℝ)) S hS_ne_top)
+
+/--
+Coordinate-difference affine hyperplanes remain null after applying an
+arbitrary density to finite-product Lebesgue measure.
+-/
+theorem withDensity_realPi_eval_sub_eq_measure_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (D : (ι → ℝ) → ENNReal)
+    {i j : ι} (hij : i ≠ j) (b : ℝ) :
+    ((volume : Measure (ι → ℝ)).withDensity D) {x | x i - x j = b} = 0 :=
+  (MeasureTheory.withDensity_absolutelyContinuous
+    (volume : Measure (ι → ℝ)) D)
+    (realPi_eval_sub_eq_volume_zero hij b)
+
+/--
+Positive density on a finite real open box gives nonzero mass to any set
+containing that box.
+
+This is the reusable support certificate for finite-dimensional RUM source
+arguments: prove a concrete open box lies inside the desired source event, and
+that the density is positive on the box.
+-/
+theorem withDensity_realPiOpenBox_measure_ne_zero_of_subset
+    {ι : Type*} [Fintype ι]
+    (D : (ι → ℝ) → ENNReal) (hD : Measurable D)
+    {a b : ι → ℝ} (hab : ∀ i, a i < b i)
+    {s : Set (ι → ℝ)}
+    (hsubset :
+      Set.pi Set.univ (fun i => Set.Ioo (a i) (b i)) ⊆ s)
+    (hpos :
+      ∀ x, x ∈ Set.pi Set.univ (fun i => Set.Ioo (a i) (b i)) →
+        D x ≠ 0) :
+    ((volume : Measure (ι → ℝ)).withDensity D) s ≠ 0 := by
+  let box : Set (ι → ℝ) :=
+    Set.pi Set.univ (fun i => Set.Ioo (a i) (b i))
+  have hbox_meas : MeasurableSet box := by
+    dsimp [box]
+    exact MeasurableSet.univ_pi (fun i => measurableSet_Ioo)
+  have hbox_base_ne : (volume : Measure (ι → ℝ)) box ≠ 0 := by
+    simpa [box] using realPiOpenBox_volume_ne_zero (a := a) (b := b) hab
+  have hbox_density_ne :
+      ((volume : Measure (ι → ℝ)).withDensity D) box ≠ 0 := by
+    exact withDensity_measure_ne_zero_of_pos_on
+      (volume : Measure (ι → ℝ)) D hD hbox_meas hbox_base_ne
+      (by
+        intro x hx
+        exact hpos x (by simpa [box] using hx))
+  exact ne_of_gt
+    (lt_of_lt_of_le hbox_density_ne.bot_lt
+      (measure_mono (by
+        intro x hx
+        exact hsubset (by simpa [box] using hx))))
 
 /--
 Hoeffding upper-tail bound for a finite sum of independent bounded variables,
@@ -1586,6 +1828,115 @@ theorem measureProb_mono
     (himp : ∀ a, p a → q a) :
     measureProb μ p ≤ measureProb μ q :=
   measureProb_le_of_measure_le μ p q (measure_le_of_imp μ p q himp)
+
+/--
+For any real random variable under a probability measure, the probability of
+falling below a threshold tends to zero when the threshold tends to `-∞`.
+-/
+theorem measureProb_le_threshold_tendsto_zero_of_threshold_tendsto_atBot
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) [IsProbabilityMeasure μ]
+    (z : α → ℝ) (hz : Measurable z)
+    (threshold : ℝ → ℝ)
+    (hthreshold : Filter.Tendsto threshold Filter.atTop Filter.atBot) :
+    Filter.Tendsto
+      (fun θ : ℝ => measureProb μ (fun a => z a ≤ threshold θ))
+      Filter.atTop (nhds 0) := by
+  classical
+  let ν : Measure ℝ := Measure.map z μ
+  haveI : IsProbabilityMeasure ν :=
+    Measure.isProbabilityMeasure_map hz.aemeasurable
+  have hcdf :
+      Filter.Tendsto (fun x : ℝ => ProbabilityTheory.cdf ν x)
+        Filter.atBot (nhds 0) :=
+    ProbabilityTheory.tendsto_cdf_atBot ν
+  have heq :
+      (fun θ : ℝ => measureProb μ (fun a => z a ≤ threshold θ)) =
+        fun θ : ℝ => ProbabilityTheory.cdf ν (threshold θ) := by
+    funext θ
+    rw [ProbabilityTheory.cdf_eq_real]
+    change
+      (μ {a | z a ≤ threshold θ}).toReal =
+        ((Measure.map z μ) (Set.Iic (threshold θ))).toReal
+    rw [Measure.map_apply hz measurableSet_Iic]
+    rfl
+  rw [heq]
+  exact hcdf.comp hthreshold
+
+/--
+Special case of the lower-tail lemma for thresholds `-θ * gap` with
+`gap > 0`.
+-/
+theorem measureProb_le_neg_mul_tendsto_atTop_zero
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) [IsProbabilityMeasure μ]
+    (z : α → ℝ) (hz : Measurable z)
+    {gap : ℝ} (hgap : 0 < gap) :
+    Filter.Tendsto
+      (fun θ : ℝ => measureProb μ (fun a => z a ≤ -θ * gap))
+      Filter.atTop (nhds 0) := by
+  have hthreshold :
+      Filter.Tendsto (fun θ : ℝ => -θ * gap)
+        Filter.atTop Filter.atBot := by
+    simpa [neg_mul, mul_comm] using
+      (Filter.tendsto_id.atTop_mul_const_of_neg (show -gap < 0 by linarith))
+  exact measureProb_le_threshold_tendsto_zero_of_threshold_tendsto_atBot
+    μ z hz (fun θ : ℝ => -θ * gap) hthreshold
+
+/-- First-order union bound for two events, in real-valued `measureProb` form. -/
+theorem measureProb_or_le
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsFiniteMeasure μ]
+    (p q : α → Prop) :
+    measureProb μ (fun a => p a ∨ q a) ≤
+      measureProb μ p + measureProb μ q := by
+  have hset :
+      {a : α | p a ∨ q a} = {a : α | p a} ∪ {a : α | q a} := by
+    ext a
+    simp
+  unfold measureProb
+  rw [hset]
+  calc
+    (μ ({a : α | p a} ∪ {a : α | q a})).toReal
+        ≤ (μ {a : α | p a} + μ {a : α | q a}).toReal := by
+          exact ENNReal.toReal_mono
+            (by
+              exact ENNReal.add_ne_top.mpr
+                ⟨measure_ne_top μ {a : α | p a},
+                  measure_ne_top μ {a : α | q a}⟩)
+            (measure_union_le {a : α | p a} {a : α | q a})
+    _ = (μ {a : α | p a}).toReal + (μ {a : α | q a}).toReal := by
+          rw [ENNReal.toReal_add
+            (measure_ne_top μ {a : α | p a})
+            (measure_ne_top μ {a : α | q a})]
+
+/--
+Midpoint union bound: if one real-valued score is below another, then relative
+to any cutoff `m` either the first score is below `m` or the second score is
+above `m`.
+-/
+theorem measureProb_lt_le_midpoint_tails
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsFiniteMeasure μ]
+    (s1 s2 : α → ℝ) (m : ℝ) :
+    measureProb μ (fun a => s1 a < s2 a) ≤
+      measureProb μ (fun a => s1 a < m) +
+        measureProb μ (fun a => m < s2 a) := by
+  have hsubset :
+      {a : α | s1 a < s2 a} ⊆
+        {a : α | s1 a < m ∨ m < s2 a} := by
+    intro a ha
+    by_cases hleft : s1 a < m
+    · exact Or.inl hleft
+    · exact Or.inr (lt_of_le_of_lt (le_of_not_gt hleft) ha)
+  calc
+    measureProb μ (fun a => s1 a < s2 a)
+        ≤ measureProb μ (fun a => s1 a < m ∨ m < s2 a) :=
+          measureProb_le_of_measure_le μ
+            (fun a => s1 a < s2 a)
+            (fun a => s1 a < m ∨ m < s2 a)
+            (measure_mono hsubset)
+    _ ≤ measureProb μ (fun a => s1 a < m) +
+          measureProb μ (fun a => m < s2 a) :=
+          measureProb_or_le μ (fun a => s1 a < m) (fun a => m < s2 a)
 
 theorem measure_lt_of_imp_of_diff_ne_zero
     {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsFiniteMeasure μ]

@@ -1,8 +1,10 @@
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Group.List.Basic
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+import Mathlib.Data.List.GetD
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.Real.Basic
@@ -13,6 +15,79 @@ open scoped BigOperators
 
 namespace EconCSLib
 namespace FiniteSum
+
+/--
+A natural-valued process bounded initially by `base` and whose step increments
+are bounded by `increment` is bounded by the prefix sum of those increments.
+
+This is the reusable arithmetic core for finite-round transfer/tally arguments:
+instantiate `value i` as the quantity at round `i` and `increment i` as the
+maximum amount that can be added between rounds `i` and `i + 1`.
+-/
+theorem nat_value_le_base_add_sum_range_of_step_le
+    (value increment : ℕ → ℕ) {base : ℕ}
+    (hzero : value 0 ≤ base)
+    (hstep : ∀ i, value (i + 1) ≤ value i + increment i) :
+    ∀ i, value i ≤ base + ∑ j ∈ Finset.range i, increment j := by
+  intro i
+  induction i with
+  | zero =>
+      simpa using hzero
+  | succ i ih =>
+      calc
+        value (i + 1) ≤ value i + increment i := hstep i
+        _ ≤ (base + ∑ j ∈ Finset.range i, increment j) + increment i :=
+          Nat.add_le_add_right ih (increment i)
+        _ = base + ∑ j ∈ Finset.range (i + 1), increment j := by
+          rw [Finset.sum_range_succ]
+          rw [Nat.add_assoc]
+
+/--
+Prefix-bounded variant of `nat_value_le_base_add_sum_range_of_step_le`.
+The `prefixLen` parameter is useful when the process is only source-valid for
+an initial segment of a trace.
+-/
+theorem nat_value_le_base_add_sum_range_of_step_le_of_lt
+    (value increment : ℕ → ℕ) {base prefixLen : ℕ}
+    (hzero : value 0 ≤ base)
+    (hstep : ∀ i, i + 1 < prefixLen →
+      value (i + 1) ≤ value i + increment i) :
+    ∀ i, i < prefixLen →
+      value i ≤ base + ∑ j ∈ Finset.range i, increment j := by
+  intro i hi
+  induction i with
+  | zero =>
+      simpa using hzero
+  | succ i ih =>
+      have hi_prefix : i < prefixLen := Nat.lt_of_succ_lt hi
+      calc
+        value (i + 1) ≤ value i + increment i := hstep i hi
+        _ ≤ (base + ∑ j ∈ Finset.range i, increment j) + increment i :=
+          Nat.add_le_add_right (ih hi_prefix) (increment i)
+        _ = base + ∑ j ∈ Finset.range (i + 1), increment j := by
+          rw [Finset.sum_range_succ]
+          rw [Nat.add_assoc]
+
+/--
+The sum of the first `n` entries of a natural-number list is the range sum of
+the same list viewed as a zero-padded function with `List.getD`.
+-/
+theorem list_sum_take_eq_sum_range_getD (xs : List ℕ) :
+    ∀ n, (xs.take n).sum = ∑ i ∈ Finset.range n, xs.getD i 0 := by
+  intro n
+  induction n with
+  | zero =>
+      simp
+  | succ n ih =>
+      by_cases hn : n < xs.length
+      · rw [List.sum_take_succ xs n hn, ih, Finset.sum_range_succ]
+        rw [List.getD_eq_getElem (l := xs) (d := 0) hn]
+      · have hle : xs.length ≤ n := Nat.le_of_not_gt hn
+        have hle_succ : xs.length ≤ n + 1 := Nat.le_trans hle (Nat.le_succ n)
+        rw [List.take_of_length_le hle] at ih
+        rw [List.take_of_length_le hle_succ, ih, Finset.sum_range_succ]
+        rw [List.getD_eq_default (l := xs) (d := 0) hle]
+        simp
 
 /--
 If two functions on a finite type differ only at two distinct points, the whole
@@ -1117,6 +1192,102 @@ theorem finset_sum_le_sum_of_card_le_pairwise_sdiff
     _ ≤ (∑ b ∈ tdiff, f b) + ∑ a ∈ s ∩ t, f a :=
           add_le_add hdiff_sum le_rfl
     _ = ∑ b ∈ t, f b := ht_decomp.symm
+
+/--
+Natural-number version of `finset_sum_le_sum_of_card_le_pairwise_sdiff`.
+If `s` has no more elements than `t`, and every element in `s \ t` is bounded
+by every element in `t \ s`, then the `ℕ`-valued sum over `s` is at most the
+sum over `t`.
+-/
+theorem nat_finset_sum_le_sum_of_card_le_pairwise_sdiff
+    {α : Type*} [DecidableEq α]
+    (s t : Finset α) (f : α → ℕ)
+    (hcard : s.card ≤ t.card)
+    (hpair : ∀ a ∈ s \ t, ∀ b ∈ t \ s, f a ≤ f b) :
+    (∑ a ∈ s, f a) ≤ ∑ b ∈ t, f b := by
+  have hreal :
+      (∑ a ∈ s, (f a : ℝ)) ≤ ∑ b ∈ t, (f b : ℝ) :=
+    finset_sum_le_sum_of_card_le_pairwise_sdiff s t
+      (fun a => (f a : ℝ)) hcard
+      (by
+        intro a ha b hb
+        have h : (f a : ℝ) ≤ f b := by
+          exact_mod_cast hpair a ha b hb
+        simpa using h)
+      (by
+        intro b hb
+        have h : (0 : ℝ) ≤ f b := by
+          exact_mod_cast (Nat.zero_le (f b))
+        simpa using h)
+  exact_mod_cast hreal
+
+/--
+Natural-number exchange comparison against the first `k` entries of a nodup
+list.  This is the reusable finite core for "the sorted transfer prefix
+dominates any selected set of at most the same cardinality" arguments.
+-/
+theorem nat_finset_sum_le_list_take_map_sum_of_card_le_pairwise_sdiff
+    {α : Type*} [DecidableEq α]
+    (selected : Finset α) (order : List α) (f : α → ℕ) (k : ℕ)
+    (hnodup_take : (order.take k).Nodup)
+    (hcard : selected.card ≤ (order.take k).toFinset.card)
+    (hpair :
+      ∀ a ∈ selected \ (order.take k).toFinset,
+        ∀ b ∈ (order.take k).toFinset \ selected, f a ≤ f b) :
+    (∑ a ∈ selected, f a) ≤ ((order.take k).map f).sum := by
+  have hfinset :
+      (∑ a ∈ selected, f a) ≤
+        ∑ b ∈ (order.take k).toFinset, f b :=
+    nat_finset_sum_le_sum_of_card_le_pairwise_sdiff selected
+      (order.take k).toFinset f hcard hpair
+  have hprefix :
+      (∑ b ∈ (order.take k).toFinset, f b) =
+        ((order.take k).map f).sum := by
+    simpa using List.sum_toFinset f hnodup_take
+  exact hfinset.trans (le_of_eq hprefix)
+
+/--
+If a list is pairwise decreasing by a natural-valued score, then every element
+in the first `k` entries has score at least every listed element outside that
+prefix.
+-/
+theorem list_pairwise_decreasing_value_le_of_mem_not_mem_take
+    {α : Type*} [DecidableEq α] {order : List α} {f : α → ℕ} {k : ℕ}
+    (hsorted : order.Pairwise (fun a b => f b ≤ f a))
+    {later early : α}
+    (hlater_mem : later ∈ order)
+    (hlater_not_prefix : later ∉ (order.take k).toFinset)
+    (hearly_mem : early ∈ (order.take k).toFinset) :
+    f later ≤ f early := by
+  induction order generalizing k with
+  | nil =>
+      simp at hearly_mem
+  | cons head tail ih =>
+      cases k with
+      | zero =>
+          simp at hearly_mem
+      | succ k =>
+          rw [List.pairwise_cons] at hsorted
+          rcases hsorted with ⟨hhead, htail_sorted⟩
+          have hlater_tail : later ∈ tail := by
+            have hlater_cases : later = head ∨ later ∈ tail := by
+              simpa using hlater_mem
+            rcases hlater_cases with hlater_head | hlater_tail
+            · subst later
+              exact False.elim (hlater_not_prefix (by simp))
+            · exact hlater_tail
+          have hlater_not_tail_prefix :
+              later ∉ (tail.take k).toFinset := by
+            intro hlater_prefix
+            exact hlater_not_prefix (by simp [hlater_prefix])
+          have hearly_cases :
+              early = head ∨ early ∈ (tail.take k).toFinset := by
+            simpa using hearly_mem
+          rcases hearly_cases with hearly_head | hearly_tail
+          · subst early
+            exact hhead later hlater_tail
+          · exact ih htail_sorted hlater_tail hlater_not_tail_prefix
+              hearly_tail
 
 /--
 Discrete crossing for Boolean predicates on a finite integer interval. If a

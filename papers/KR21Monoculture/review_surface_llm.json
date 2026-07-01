@@ -1,0 +1,12 @@
+{
+  "judgment": "passes",
+  "paper": "KR21Monoculture",
+  "prompt_version": "review-surface-v2-semantic-paper-facing",
+  "reason": "Semantic review-surface pass: the 49 reviewed rows are paper-facing definitions, theorem endpoints, or explicitly documented source-note/corrected-source rows. Certificate and boundary helper declarations are listed as auxiliary in status.json and are not used as final paper-status rows.",
+  "review_rows": 49,
+  "review_surface_sha256": "6a8c7d46e26f784fdfab5bfac6816fe339147aeff007ab0ee51af86dfe5f2b94",
+  "schema": 1,
+  "validated_at": "2026-07-01T19:57:11Z",
+  "validator": "codex-gpt-5",
+  "validator_type": "model"
+}

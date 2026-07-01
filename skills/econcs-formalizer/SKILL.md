@@ -208,6 +208,19 @@ large-deviation. Open the most relevant shared files and reference notes before
 adding local scaffolding. If a reusable API exists, import and specialize it.
 This check belongs in the initial outside-of-Lean plan for every paper and
 again whenever a proof loop starts building wrappers around a standard concept.
+Also search related paper folders, especially completed or recently active
+papers in the same domain, before adding paper-local machinery. Many reusable
+algorithmic layers first appear inside a paper folder before being promoted to
+`EconCSLib/`; do not reinvent a simulator, runner, trace generator, dynamic
+process, checker pattern, certificate, or source-model constructor until you
+have searched sibling papers for the same domain nouns and declaration shapes.
+If two papers need the same machinery, elevate the common core into the shared
+library or route the current paper through the existing reusable paper layer as
+an interim step, rather than creating parallel incompatible APIs. Record in the
+outside-of-Lean plan which related paper folders were checked and why the chosen
+API is the one to build on. If the user, notes, or repository history suggest a
+specific same-domain paper already built the machinery, pause implementation and
+inspect that paper plus its imports before adding new declarations.
 For continuous equilibrium work in particular, check
 `EconCSLib.Foundations.Optimization.ChoiceEquilibriumAE`,
 `StrategicEquilibrium`, and the admissions/testing probability modules before
@@ -486,6 +499,7 @@ report language:
 | The paper/source model already implicitly or explicitly assumes the domain condition, such as positive capacity, more objects than slots, interior parameters, finite support, no ties, or a nondegenerate witness needed for an exact rather than at-most statement. | Not a caveat. Treat as a source theorem condition or source-model condition; use `paper_condition`, `source_text`, or `human_verified_source_implicit` in assumption/provenance sidecars. | "Additional/source condition: the theorem is stated with <condition>." Keep `main_caveat` blank if fully proved. |
 | The user approves an extra non-source restriction while still calling the paper formalized, such as an interior-quality condition needed for a strict inequality where boundary cases are equality. | `documented_additional_assumption`, not `documented_caveat`, unless the user/source review says this is a paper error. | "Additional assumption: strict <claim> is proved under <condition>; this is recorded as non-caveat." |
 | The source has a likely typo or finite-bound slip, but Lean proves the main asymptotic/source theorem through a corrected intermediate statement and the correction does not change the public theorem endpoint. | Source-quality note or proof-strategy deviation, not a paper caveat. | Put it under mathematical typos/source notes; keep status `formalized` and `main_caveat` blank. |
+| An appendix/intermediate lemma is globally false as printed, but Lean proves the named theorem or main-text result by a different source-valid route, and also records the exact corrected local condition plus counterexample. | Source note, not a status caveat, unless the false lemma is itself the paper-facing target being claimed as-is. | Keep status `formalized`; write a short math note with the paper statement, actual Lean statement, counterexample, whether the condition appears elsewhere in the source, and how downstream theorems avoid or use the repair. |
 | The source uses private data, empirical plots, implementation measurements, or descriptive program/class instantiations not needed for the mathematical theorem target. | Out of Lean theorem scope, not a caveat and not an additional assumption. | "Empirical/descriptive material is out of theorem scope." Do not list as remaining proof debt. |
 | Lean currently assumes a solver theorem, convergence theorem, process law, runtime bound, certificate, source-record field, or bridge predicate that should be proved from paper primitives. | Proof/library boundary: `partial_boundary`, `conditional`, or `partially formalized` until proved. | "Full formalization requires proving <single boundary>." Do not call it a caveat unless the final theorem statement itself differs from the paper. |
 | A converse, bridge lemma, or source derivation is missing but looks provable from the current source assumptions. | Missing proof debt. | Either prove it, or mark a proof boundary. Do not call it a caveat merely because it is not proved yet. |
@@ -498,6 +512,11 @@ inside a generic axiom that the recursive audit cannot identify.
 Do not use `formalized with caveat` for source-quality notes, poor OCR, or an
 audit observation that does not change the closed paper-facing theorem. Put that
 note in the final report and leave the status `formalized`.
+For such source notes, do not use `dag_caveat` styling or a caveat legend in
+the dependency DAG. Keep the named theorem/lemma node in its ordinary
+formalized style, mention the correction in concise paper-facing language, and
+put the detailed statement/counterexample in the final report or a focused
+math note.
 When a fully proved endpoint exposes a standard regularity condition needed to
 interpret a source formula (for example continuity/positivity needed for a
 Laplace-principle reading), classify it as a validation note if the user/source
@@ -766,6 +785,12 @@ rerun the sync script at that milestone. If a generated table needs
 display-only publication wording that differs from local provenance, use
 `papers/catalog.json` `publication_overrides` and leave paper-local
 `source_version` fields as the source/provenance record.
+If stale paper-local documentation or status is distorting the proof plan,
+causing closed work to be rediscovered, or could lead a human to stop the right
+proof campaign from an obsolete status belief, update the smallest paper-local
+README/handoff/status fields immediately. Still defer repository-wide generated
+README/docs/site/table refreshes until the next real milestone unless those
+generated files are the misleading decision source.
 Keep `sync_paper_status.py` metadata-only and fast by default. It should not
 import dashboard code, run Lean previews, refresh LLM sidecars, or perform
 closeout checks unless an explicit opt-in flag such as `--dashboard-audit` is
@@ -828,6 +853,13 @@ lists: do not chase those counts after each interface helper or proof wrapper.
 Let them be temporarily stale during active development and reconcile them in a
 single pass at the next real review, report, commit, publication, or handoff
 boundary.
+If stale documentation or status metadata is actively distorting the proof
+plan, causing the agent to redo closed work, or likely to make a human shut down
+the right proof campaign based on obsolete status beliefs, update the smallest
+paper-local docs/status fields immediately. This is a proof-planning fix, not
+routine documentation churn; keep it narrow and defer generated aggregate syncs
+unless the changed field is the aggregate source of truth for the current
+decision.
 Keep broader human-facing document churn low for the same reason. During an
 active proof session, do not refresh READMEs, DAGs, final-validation reports,
 website tables, or public status summaries for every helper lemma or small
@@ -1182,6 +1214,14 @@ load `references/proof-markets-social-choice.md` before building paper-local
 models. Start with reusable voting semantics under
 `EconCSLib/SocialChoice/Voting`, then keep paper folders as source-versioned
 thin wrappers and explicit empirical/simulation-boundary ledgers.
+Before adding any new STV/RCV simulator, generated trace, full-election-run,
+candidate-removal runner, Algorithm A/3/7 checker, or concrete algorithm type,
+search the existing voting library and same-domain paper folders first. In
+particular, inspect the GGRS RCV development and its imports, plus DGJ24/DGJ26
+shared declarations, for `STVTrace`, `generatedTrace`, `replaysFrom`,
+`minimalGroupElimination`, `canonicalProfileGroupElimination`, and
+source-run/checker APIs. Reuse or thinly wrap that machinery unless the plan
+records a concrete reason it cannot express the source algorithm.
 
 For papers with computational-complexity, hardness, approximation-hardness, or
 randomized-class claims, load `references/proof-algorithms-complexity.md` after
@@ -2534,6 +2574,11 @@ the Lean statements against the paper.
     needed to make the named-result dependency legible, and keep them visually
     subordinate to the source-named theorem/lemma nodes.
   - **Legend:** You MUST include a Legend using the shared helper macro from the preamble, e.g., `\daglegend{(legRes)(legLem)(legDef)(legOpen)}{Legend}`. Place legend nodes concisely at the top. For caveat entries inside the legend, use `dag_caveat_legend` rather than combining `dag_caveat` with `dag_template_legend`; the full-size red diamond is for graph nodes and makes the legend oversized.
+  - **Rendered inspection is required:** After changing a DAG, render the PDF
+    and inspect an image conversion. Check for legend/source-node overlap, arrow
+    collisions that obscure labels, stale caveat/open-boundary styling, and
+    Lean declaration names in node text. Do not rely on successful LaTeX
+    compilation as proof that the DAG is human-facing.
   - **Edge Routing (No Overlaps):** Use explicit positioning (`node distance`, `below=of`, `right=of`, `xshift`, `yshift`) carefully. **Prefer straight paths or simple orthogonal routing (`|-`, `-|`) whenever possible without overlap.** Use a column-based layout (the preamble standardizes horizontal spacing at `3cm` or `4cm` depending on the specific diagram needs) to ensure paths are clear and text boxes do not collide. Only use complex curves (`to[out=..., in=...]`) or bends when absolutely necessary to route around an immediate obstacle. Use `dag_arrow` and `dag_dashed_arrow` from the preamble for styling.
   - For dense paper DAGs, prioritize a visually auditable named-result topology
     over drawing every redundant instantiation arrow. If a theorem node already
@@ -3174,6 +3219,19 @@ pass:
   population shares or another explicit normalization has been assumed. When
   the Lean endpoint uses `tau_B < pi_B`, classify the raw-comparison sentence
   as a proof-text repair only.
+- Formula-bearing reviewed rows in `PaperInterface.lean` must have an explicit
+  `Source status:` line in the paper-facing comment. Use short labels such as
+  `Source status: derived from source primitives.`, `Source status: paper
+  theorem from source conditions.`, or `Source status: formalized source note.`
+  Do this before regenerating sidecars; the closeout audit treats missing
+  provenance lines as errors for formalized papers.
+- Do not put broad package constructors, certificate records, or imported
+  wrapper aliases in the reviewed surface merely because they are useful
+  summary endpoints. If a row returns a package/record/consequence type rather
+  than displaying the source formula or theorem subclaim directly, classify it
+  as auxiliary unless the report and source-map make the package fields
+  explicit and the audit accepts the row. Keep reviewed rows on displayed paper
+  formulas, named theorem endpoints, and exact source conditions.
 - Treat the final validation report itself as an audit target. Before final
   handoff, reread the report as a human reviewer would: it must be paper-facing,
   short enough to inspect, organized around source definitions and named theorem

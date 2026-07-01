@@ -1,0 +1,87 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={font=\sffamily\scriptsize},
+  every path/.append style={font=\sffamily\scriptsize}
+]
+
+\dagPaperMetadata{Algorithmic Monoculture and Social Welfare}{Jon Kleinberg and Manish Raghavan}{PNAS}{2021}{https://arxiv.org/pdf/2101.05853}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {Formalized};
+\node[dag_lemma, dag_template_legend] (legLem) at (3.4,0) {Formalized Lemma};
+\node[dag_model, dag_template_legend] (legDef) at (6.8,0) {Definition / Model};
+}
+\daglegend{(legRes)(legLem)(legDef)}{Legend}
+
+\begin{dagPaperBody}
+\begin{scope}[xshift=5.0cm,yshift=0.0cm]
+% --- Main model and theorem ---
+\node[dag_model, text width=4.5cm] (Def1) at (0,-4.0)
+  {\textbf{Definition 1}\\Accuracy-family regularity, high-accuracy optimality, and removal monotonicity};
+\node[dag_model, text width=4.5cm] (Def2) at (0,-6.8)
+  {\textbf{Definition 2}\\Independent reranking preference};
+\node[dag_model, text width=4.5cm] (Def3) at (0,-9.6)
+  {\textbf{Definition 3}\\Preference for weaker competition};
+\node[dag_result, text width=5.1cm] (Thm1) at (7.0,-6.8)
+  {\textbf{Theorem 1}\\Definitions 1--3 imply an algorithmic-monoculture welfare loss};
+
+% --- RUM branch ---
+\node[dag_result, text width=5.2cm] (Thm5) at (0,-12.8)
+  {\textbf{Theorem 5 / Appendix A}\\Scaled-noise RUMs satisfy the Definition 1 consequences used by Theorem 1};
+\node[dag_model, text width=4.3cm] (Def4) at (0,-15.8)
+  {\textbf{Definition 4}\\Well-ordered noise};
+\node[dag_lemma, text width=4.6cm] (Lemma1) at (0,-19.7)
+  {\textbf{Lemma 1}\\Gaussian strict well-ordering; Laplacian weak global and strict overlap forms};
+\node[dag_lemma, text width=4.9cm] (Lemmas23) at (5.9,-15.8)
+  {\textbf{Lemmas 2--3}\\Contraction controls bottom and middle first-choice probability changes};
+\node[dag_result, text width=4.9cm] (Thm6) at (12.0,-15.8)
+  {\textbf{Theorem 6}\\Three-candidate well-ordered RUMs satisfy Definition 3};
+\node[dag_result, text width=4.9cm] (Thm7) at (10.1,-19.7)
+  {\textbf{Theorem 7}\\Laplacian conditional pairwise derivative};
+\node[dag_result, text width=4.9cm] (Thm8) at (16.3,-19.7)
+  {\textbf{Theorem 8}\\Gaussian conditional pairwise derivative};
+\node[dag_result, text width=5.0cm] (RUMDef2) at (18.2,-15.8)
+  {\textbf{Appendix C Definition 2 route}\\Gaussian and Laplacian three-candidate RUMs satisfy independent reranking};
+\node[dag_result, text width=5.3cm] (Thm2) at (7.0,-12.8)
+  {\textbf{Theorem 2}\\Three-candidate Gaussian and Laplacian RUMs satisfy Theorem 1's hypotheses};
+
+% --- Mallows branch ---
+\node[dag_result, text width=4.9cm] (Thm9) at (0,-1.5)
+  {\textbf{Theorem 9 / Appendix D}\\Mallows family satisfies Definition 1};
+\node[dag_lemma, text width=4.9cm] (MallowsLemmas) at (7.0,-1.5)
+  {\textbf{Appendix E/F Lemmas 4--8}\\Mallows ratio, first-choice, first-mover, and pairwise-accuracy comparisons};
+\node[dag_result, text width=4.9cm] (Thm3) at (14.0,-1.5)
+  {\textbf{Theorem 3}\\Mallows model satisfies Definitions 2 and 3};
+\node[dag_result, text width=5.2cm] (Thm4) at (21.0,-1.5)
+  {\textbf{Theorem 4}\\When humans are weakly more accurate, all-human sequential choice is optimal; with strict accuracy it is uniquely optimal at every nonterminal history};
+
+% --- Main theorem edges ---
+\draw[dag_arrow] (Def1.east) -- (Thm1.north west);
+\draw[dag_arrow] (Def2.east) -- (Thm1.west);
+\draw[dag_arrow] (Def3.east) -- (Thm1.south west);
+
+% --- RUM edges ---
+\draw[dag_arrow] (Def4.east) -- (Lemmas23.west);
+\draw[dag_arrow] (Lemma1.east) -- ++(1.0,0) |- (Lemmas23.south);
+\draw[dag_arrow] (Lemmas23.east) -- (Thm6.west);
+\draw[dag_arrow] (Thm7.north) -- (RUMDef2.south west);
+\draw[dag_arrow] (Thm8.north) -- (RUMDef2.south east);
+\draw[dag_arrow] (RUMDef2.north) |- (Thm2.east);
+\draw[dag_arrow] (Thm6.north) -- (Thm2.south);
+\draw[dag_arrow] (Thm5.east) -- (Thm2.west);
+\draw[dag_arrow] (Thm2.north) -- (Thm1.south);
+
+% --- Mallows edges ---
+\draw[dag_arrow] (Thm9.south) -- (Def1.north);
+\draw[dag_arrow] (MallowsLemmas.east) -- (Thm3.west);
+\draw[dag_arrow] (Thm9.east) -- (MallowsLemmas.west);
+\draw[dag_arrow] (Thm3.south) |- (Thm1.north);
+\draw[dag_arrow] (Thm3.east) -- (Thm4.west);
+\end{scope}
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

@@ -23,6 +23,44 @@ theorem epsilonContinuousAt_of_continuousAt {f : ℝ → ℝ} {x : ℝ}
   rw [Metric.continuousAt_iff] at hf
   simpa [Real.dist_eq] using hf
 
+/--
+Composing an epsilon-delta continuous real function with a mathlib-continuous
+real change of parameter preserves epsilon-delta continuity.
+-/
+theorem epsilonContinuousAt_comp_of_continuousAt {f g : ℝ → ℝ} {x : ℝ}
+    (hf : EpsilonContinuousAt f (g x))
+    (hg : ContinuousAt g x) :
+    EpsilonContinuousAt (fun y => f (g y)) x := by
+  intro ε hε
+  rcases hf ε hε with ⟨δf, hδf_pos, hfδ⟩
+  rcases epsilonContinuousAt_of_continuousAt hg δf hδf_pos with
+    ⟨δg, hδg_pos, hgδ⟩
+  refine ⟨δg, hδg_pos, ?_⟩
+  intro y hy
+  exact hfδ (g y) (hgδ y hy)
+
+/--
+Epsilon-delta continuity is local: changing a function away from a
+neighborhood of the point does not affect continuity at that point.
+-/
+theorem epsilonContinuousAt_congr_eventually {f g : ℝ → ℝ} {x : ℝ}
+    (hf : EpsilonContinuousAt f x)
+    (hfg : ∀ᶠ y in nhds x, f y = g y)
+    (hx : f x = g x) :
+    EpsilonContinuousAt g x := by
+  intro ε hε
+  rcases hf ε hε with ⟨δf, hδf_pos, hδf⟩
+  rcases Metric.eventually_nhds_iff.1 hfg with ⟨δg, hδg_pos, hδg⟩
+  refine ⟨min δf δg, lt_min hδf_pos hδg_pos, ?_⟩
+  intro y hy
+  have hyf : |y - x| < δf := lt_of_lt_of_le hy (min_le_left δf δg)
+  have hyg : dist y x < δg := by
+    simpa [Real.dist_eq] using lt_of_lt_of_le hy (min_le_right δf δg)
+  have hy_eq : f y = g y := hδg hyg
+  calc
+    |g y - g x| = |f y - f x| := by rw [← hy_eq, ← hx]
+    _ < ε := hδf y hyf
+
 /-- Finite sums preserve mathlib continuity at a point. -/
 theorem continuousAt_finset_sum {ι : Type*} [DecidableEq ι]
     (s : Finset ι) {f : ι → ℝ → ℝ} {x : ℝ}

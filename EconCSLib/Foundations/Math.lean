@@ -19,6 +19,7 @@ import EconCSLib.Foundations.Math.Sequence
 import EconCSLib.Foundations.Math.Asymptotics
 import EconCSLib.Foundations.Math.GammaAsymptotics
 import EconCSLib.Foundations.Math.ExponentialBounds
+import EconCSLib.Foundations.Math.FiniteCorrelation
 import EconCSLib.Foundations.Math.IntervalCrossing
 import EconCSLib.Foundations.Math.EpsilonContinuity
 import EconCSLib.Foundations.Math.ThresholdCharacterization

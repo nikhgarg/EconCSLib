@@ -60,6 +60,13 @@ def expectedFirstMoverUtility {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
   pmfExp μ (fun π => value (firstChoice π))
 
+theorem expectedFirstMoverUtility_mul_value {n : ℕ}
+    (μ : PMF (Ranking n)) (c : ℝ) (value : Candidate n → ℝ) :
+    expectedFirstMoverUtility μ (fun i => c * value i) =
+      c * expectedFirstMoverUtility μ value := by
+  unfold expectedFirstMoverUtility
+  simp [pmfExp_const_mul]
+
 /-- Expected value of the candidate hired by the second mover when both firms use
 the same realized ranking. -/
 def expectedSecondMoverShared {n : ℕ}
@@ -82,6 +89,18 @@ def secondMoverUtility {n : ℕ} (value : Candidate n → ℝ)
 def expectedSecondMoverIndependent {n : ℕ}
     (μ₂ μ₁ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
   pmfPairExp μ₂ μ₁ (fun π σ => secondMoverUtility value π σ)
+
+@[simp] theorem secondMoverUtility_mul_value {n : ℕ}
+    (c : ℝ) (value : Candidate n → ℝ) (π σ : Ranking n) :
+    secondMoverUtility (fun i => c * value i) π σ =
+      c * secondMoverUtility value π σ := rfl
+
+theorem expectedSecondMoverIndependent_mul_value {n : ℕ}
+    (μ₂ μ₁ : PMF (Ranking n)) (c : ℝ) (value : Candidate n → ℝ) :
+    expectedSecondMoverIndependent μ₂ μ₁ (fun i => c * value i) =
+      c * expectedSecondMoverIndependent μ₂ μ₁ value := by
+  unfold expectedSecondMoverIndependent pmfPairExp
+  simp [pmfExp_const_mul]
 
 /--
 Gain to a fixed second-mover law from switching the first-mover law from
@@ -425,6 +444,51 @@ theorem expectedSecondMoverIndependent_sub_shared_eq_expectedRerankingGain
   rw [← expectedSecondMoverSharedOnPairs_eq_expectedSecondMoverShared]
   exact expectedSecondMoverIndependent_sub_sharedOnPairs_eq_expectedRerankingGain
     (μ := μ) (value := value)
+
+/--
+Source-shaped form of the independent-reranking gain: first condition on the
+shared/first-mover realized ranking `τ`, then compare an independent second
+draw's best remaining candidate against the shared ranking's second choice.
+-/
+theorem expectedRerankingGain_eq_expect_firstDraw_gain
+    {n : ℕ} (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedRerankingGain μ value =
+      pmfExp μ (fun τ =>
+        pmfExp μ (fun π =>
+          value (bestRemainingAfter π (firstChoice τ)) - value (secondChoice τ))) := by
+  have hgain :
+      expectedRerankingGain μ value =
+        expectedSecondMoverIndependent μ μ value - expectedSecondMoverShared μ value := by
+    exact (expectedSecondMoverIndependent_sub_shared_eq_expectedRerankingGain
+      (μ := μ) (value := value)).symm
+  have hswap :
+      pmfPairExp μ μ
+          (fun τ π => value (bestRemainingAfter π (firstChoice τ))) =
+        expectedSecondMoverIndependent μ μ value := by
+    unfold expectedSecondMoverIndependent secondMoverUtility
+    rw [pmfPairExp_swap]
+  rw [hgain]
+  symm
+  calc
+    pmfExp μ (fun τ =>
+        pmfExp μ (fun π =>
+          value (bestRemainingAfter π (firstChoice τ)) - value (secondChoice τ)))
+        =
+      pmfExp μ (fun τ =>
+        pmfExp μ (fun π => value (bestRemainingAfter π (firstChoice τ))) -
+          value (secondChoice τ)) := by
+        congr 1
+        funext τ
+        rw [pmfExp_sub, pmfExp_const]
+    _ =
+      pmfPairExp μ μ
+          (fun τ π => value (bestRemainingAfter π (firstChoice τ))) -
+        expectedSecondMoverShared μ value := by
+        unfold pmfPairExp expectedSecondMoverShared
+        rw [← pmfExp_sub]
+    _ = expectedSecondMoverIndependent μ μ value -
+        expectedSecondMoverShared μ value := by
+        rw [hswap]
 
 @[simp] theorem expectedRerankingGain_pure {n : ℕ}
     (π : Ranking n) (value : Candidate n → ℝ) :
@@ -814,6 +878,69 @@ theorem expectedRerankingGain_eq_expect_missProb_mul_gap {n : ℕ}
   funext π
   exact innerRerankingGain_eq_missProb_mul_gap (μ := μ) (value := value) (π := π)
 
+/--
+If every positive-mass second-mover ranking has positive expected gain against
+an independent first-mover draw, then independent reranking is strictly better.
+
+This is the finite-probability bridge behind Definition 2: the analytic or
+model-specific work can focus on the inner conditional gain for a fixed realized
+ranking, while this lemma performs the outer averaging over the ranking law.
+-/
+theorem expectedRerankingGain_pos_of_inner_support_pos {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hinner : ∀ π : Ranking n, 0 < (μ π).toReal →
+      0 < pmfExp μ (fun σ => rerankingGainOnPair value π σ)) :
+    0 < expectedRerankingGain μ value := by
+  unfold expectedRerankingGain pmfPairExp
+  exact pmfExp_pos_of_support_forall_pos μ
+    (fun π => pmfExp μ (fun σ => rerankingGainOnPair value π σ))
+    hinner
+
+/--
+Candidate-fiber conditional gains imply positive independent-reranking gain.
+
+This is the source-shaped Definition 2 bridge: condition on the first mover's
+first-choice candidate and average the independent second draw's gain within
+that fiber.
+-/
+theorem expectedRerankingGain_pos_of_firstChoice_conditional_gain_pos {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hcond : ∀ c : Candidate n,
+      0 < pmfProb μ (fun τ => firstChoice τ = c) →
+        0 < pmfConditionalExp μ (fun τ => firstChoice τ = c)
+          (fun τ =>
+            pmfExp μ (fun π =>
+              value (bestRemainingAfter π (firstChoice τ)) - value (secondChoice τ)))) :
+    0 < expectedRerankingGain μ value := by
+  rw [expectedRerankingGain_eq_expect_firstDraw_gain]
+  exact pmfExp_pos_of_state_conditionalExp_pos
+    (μ := μ) (state := fun τ : Ranking n => firstChoice τ)
+    (f := fun τ =>
+      pmfExp μ (fun π =>
+        value (bestRemainingAfter π (firstChoice τ)) - value (secondChoice τ)))
+    hcond
+
+/--
+Same as `expectedRerankingGain_pos_of_firstChoice_conditional_gain_pos`, with
+the fiber probability written using `firstChoiceProb`.
+-/
+theorem expectedRerankingGain_pos_of_firstChoiceProb_conditional_gain_pos {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hcond : ∀ c : Candidate n,
+      0 < firstChoiceProb μ c →
+        0 < pmfConditionalExp μ (fun τ => c = firstChoice τ)
+          (fun τ =>
+            pmfExp μ (fun π =>
+              value (bestRemainingAfter π (firstChoice τ)) - value (secondChoice τ)))) :
+    0 < expectedRerankingGain μ value := by
+  refine expectedRerankingGain_pos_of_firstChoice_conditional_gain_pos
+    (μ := μ) (value := value) ?_
+  intro c hc
+  have hc' : 0 < firstChoiceProb μ c := by
+    simpa [firstChoiceProb, eq_comm] using hc
+  have h := hcond c hc'
+  simpa [eq_comm] using h
+
 theorem expectedRerankingGain_nonneg_of_gap_nonneg {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
     (hgap : ∀ π : Ranking n, 0 ≤ valueGap value π) :
@@ -1166,6 +1293,34 @@ theorem prefersIndependentReranking_iff_expectedRerankingGain_pos {n : ℕ}
     (μ := μ) (value := value)
   constructor <;> intro hmain <;> linarith
 
+/--
+Supportwise positive inner reranking gains imply the paper's independent
+reranking preference.
+-/
+theorem prefersIndependentReranking_of_inner_support_pos {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hinner : ∀ π : Ranking n, 0 < (μ π).toReal →
+      0 < pmfExp μ (fun σ => rerankingGainOnPair value π σ)) :
+    PrefersIndependentReranking μ value := by
+  rw [prefersIndependentReranking_iff_expectedRerankingGain_pos]
+  exact expectedRerankingGain_pos_of_inner_support_pos μ value hinner
+
+/--
+Candidate-fiber conditional gains imply the paper's independent-reranking
+preference.
+-/
+theorem prefersIndependentReranking_of_firstChoiceProb_conditional_gain_pos {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hcond : ∀ c : Candidate n,
+      0 < firstChoiceProb μ c →
+        0 < pmfConditionalExp μ (fun τ => c = firstChoice τ)
+          (fun τ =>
+            pmfExp μ (fun π =>
+              value (bestRemainingAfter π (firstChoice τ)) - value (secondChoice τ)))) :
+    PrefersIndependentReranking μ value := by
+  rw [prefersIndependentReranking_iff_expectedRerankingGain_pos]
+  exact expectedRerankingGain_pos_of_firstChoiceProb_conditional_gain_pos μ value hcond
+
 /-- The second mover's gain from facing `μWorse` rather than `μBetter`. -/
 def weakerCompetitionGain {n : ℕ}
     (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
@@ -1180,6 +1335,20 @@ def PrefersWeakerCompetition {n : ℕ}
     (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ) : Prop :=
   expectedSecondMoverIndependent μWorse μBetter value <
     expectedSecondMoverIndependent μWorse μWorse value
+
+theorem prefersWeakerCompetition_mul_value_iff {n : ℕ}
+    (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ)
+    {c : ℝ} (hc : 0 < c) :
+    PrefersWeakerCompetition μBetter μWorse (fun i => c * value i) ↔
+      PrefersWeakerCompetition μBetter μWorse value := by
+  unfold PrefersWeakerCompetition
+  rw [expectedSecondMoverIndependent_mul_value,
+    expectedSecondMoverIndependent_mul_value]
+  constructor
+  · intro h
+    exact lt_of_mul_lt_mul_left h hc.le
+  · intro h
+    exact mul_lt_mul_of_pos_left h hc
 
 /-- Preference for weaker competition is positivity of the weaker-competition gain. -/
 theorem prefersWeakerCompetition_iff_weakerCompetitionGain_pos {n : ℕ}
@@ -1475,6 +1644,90 @@ theorem not_prefersIndependentReranking_of_all_valueGap_zero {n : ℕ}
   rw [prefersIndependentReranking_iff_expectedRerankingGain_pos] at hpref
   have hgain := expectedRerankingGain_eq_zero_of_all_valueGap_zero
     (μ := μ) (value := value) hgap
+  linarith
+
+/--
+Three-candidate first-mover monotonicity from first-choice probability shifts.
+
+If the better law strictly gains probability on the highest-valued candidate and
+does not gain probability on the lowest-valued candidate, then the expected
+first-mover value strictly increases.  The middle-candidate probability change
+is eliminated by total first-choice mass conservation.
+-/
+theorem expectedFirstMoverUtility_lt_of_fin3_top_gain_bottom_nongain
+    (μBetter μWorse : PMF (Ranking 1)) (value : Candidate 1 → ℝ)
+    {x1 x2 x3 : ℝ}
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (htop :
+      0 <
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (hbottom :
+      firstChoiceProb μBetter (2 : Candidate 1) -
+          firstChoiceProb μWorse (2 : Candidate 1) ≤ 0) :
+    expectedFirstMoverUtility μWorse value <
+      expectedFirstMoverUtility μBetter value := by
+  classical
+  let d0 : ℝ :=
+    firstChoiceProb μBetter (0 : Candidate 1) -
+      firstChoiceProb μWorse (0 : Candidate 1)
+  let d1 : ℝ :=
+    firstChoiceProb μBetter (1 : Candidate 1) -
+      firstChoiceProb μWorse (1 : Candidate 1)
+  let d2 : ℝ :=
+    firstChoiceProb μBetter (2 : Candidate 1) -
+      firstChoiceProb μWorse (2 : Candidate 1)
+  have hbetter_sum :
+      firstChoiceProb μBetter (0 : Candidate 1) +
+          firstChoiceProb μBetter (1 : Candidate 1) +
+          firstChoiceProb μBetter (2 : Candidate 1) = 1 := by
+    have hsum := sum_firstChoiceProb_eq_one (μ := μBetter) (n := 1)
+    change (∑ c : Fin 3, firstChoiceProb μBetter c) = 1 at hsum
+    rw [Fin.sum_univ_three] at hsum
+    exact hsum
+  have hworse_sum :
+      firstChoiceProb μWorse (0 : Candidate 1) +
+          firstChoiceProb μWorse (1 : Candidate 1) +
+          firstChoiceProb μWorse (2 : Candidate 1) = 1 := by
+    have hsum := sum_firstChoiceProb_eq_one (μ := μWorse) (n := 1)
+    change (∑ c : Fin 3, firstChoiceProb μWorse c) = 1 at hsum
+    rw [Fin.sum_univ_three] at hsum
+    exact hsum
+  have hd_sum : d0 + d1 + d2 = 0 := by
+    dsimp [d0, d1, d2]
+    linarith
+  have hdiff :
+      expectedFirstMoverUtility μBetter value -
+          expectedFirstMoverUtility μWorse value =
+        d0 * x1 + d1 * x2 + d2 * x3 := by
+    rw [expectedFirstMoverUtility_eq_sum_firstChoiceProb μBetter value]
+    rw [expectedFirstMoverUtility_eq_sum_firstChoiceProb μWorse value]
+    change
+      (∑ c : Fin 3, firstChoiceProb μBetter c * value c) -
+          (∑ c : Fin 3, firstChoiceProb μWorse c * value c) =
+        d0 * x1 + d1 * x2 + d2 * x3
+    rw [Fin.sum_univ_three]
+    rw [Fin.sum_univ_three]
+    simp [d0, d1, d2, hvalue1, hvalue2, hvalue3]
+    ring_nf
+  have hdelta_pos : 0 < d0 * (x1 - x2) := by
+    exact mul_pos (by simpa [d0] using htop) (sub_pos.mpr hx12)
+  have hbottom_term_nonneg : 0 ≤ d2 * (x3 - x2) := by
+    exact mul_nonneg_of_nonpos_of_nonpos
+      (by simpa [d2] using hbottom)
+      (le_of_lt (sub_neg.mpr hx23))
+  have halg :
+      d0 * x1 + d1 * x2 + d2 * x3 =
+        d0 * (x1 - x2) + d2 * (x3 - x2) := by
+    have hd1_eq : d1 = -d0 - d2 := by linarith
+    rw [hd1_eq]
+    ring
+  have hpos : 0 < d0 * x1 + d1 * x2 + d2 * x3 := by
+    rw [halg]
+    linarith
   linarith
 
 end

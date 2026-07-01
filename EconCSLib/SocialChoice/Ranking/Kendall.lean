@@ -1,6 +1,9 @@
 import EconCSLib.SocialChoice.Ranking.Basic
+import Mathlib.Data.Fin.SuccPredOrder
+import Mathlib.Data.Fin.Tuple.Sort
 import Mathlib.Data.Real.Basic
 import Mathlib.GroupTheory.Perm.Fin
+import Mathlib.Order.SuccPred.Archimedean
 import Mathlib.Order.Interval.Finset.Fin
 
 open scoped BigOperators
@@ -726,6 +729,100 @@ theorem kendallTau_center_trans {n : ℕ}
     refine ⟨pre, ?_, ?_⟩
     · simpa [inversionFinset] using hinvPre
     · simp [pre]
+
+/--
+A ranking with no inversions relative to a reference ranking is the reference
+ranking.
+-/
+theorem eq_of_forall_not_invertedPair {n : ℕ} (ρ π : Ranking n)
+    (h : ∀ ab : Candidate n × Candidate n, ¬ invertedPair ρ π ab) :
+    π = ρ := by
+  have hmono : Monotone (ρ.trans π.symm) := by
+    intro i j hij
+    by_contra hnot
+    have hij_ne : i ≠ j := by
+      intro heq
+      subst j
+      exact hnot le_rfl
+    have hij_lt : i < j := lt_of_le_of_ne hij hij_ne
+    have hlt : (ρ.trans π.symm) j < (ρ.trans π.symm) i :=
+      lt_of_not_ge hnot
+    have hinv : invertedPair ρ π (ρ i, ρ j) := by
+      constructor
+      · simpa [rankOf] using hij_lt
+      · simpa [rankOf, Equiv.trans_apply] using hlt
+    exact h (ρ i, ρ j) hinv
+  have hperm : ρ.trans π.symm = 1 :=
+    (Equiv.Perm.monotone_iff (ρ.trans π.symm)).mp hmono
+  apply Equiv.ext
+  intro i
+  have hi : (ρ.trans π.symm) i = i := by
+    rw [hperm]
+    rfl
+  have happly : ρ i = π i := by
+    simpa [Equiv.trans_apply] using congrArg π hi
+  exact happly.symm
+
+/-- Any ranking different from the reference has at least one inversion. -/
+theorem exists_invertedPair_of_ne {n : ℕ} {ρ π : Ranking n}
+    (hneq : π ≠ ρ) :
+    ∃ ab : Candidate n × Candidate n, invertedPair ρ π ab := by
+  by_contra hno
+  apply hneq
+  exact eq_of_forall_not_invertedPair ρ π (by
+    intro ab hinv
+    exact hno ⟨ab, hinv⟩)
+
+/--
+A ranking with no adjacent inversions relative to a reference ranking is the
+reference ranking.
+
+The adjacent pairs are indexed in the reference order: for `i : Fin (n + 1)`,
+the pair `(ρ i.castSucc, ρ i.succ)` is the pair of candidates occupying
+neighboring positions `i` and `i + 1` under `ρ`.
+-/
+theorem eq_of_forall_not_adjacent_invertedPair {n : ℕ} (ρ π : Ranking n)
+    (h : ∀ i : Fin (n + 1),
+      ¬ invertedPair ρ π (ρ i.castSucc, ρ i.succ)) :
+    π = ρ := by
+  have hmono : Monotone (ρ.trans π.symm) := by
+    refine monotone_of_le_succ ?_
+    intro a ha
+    obtain ⟨i, rfl⟩ :=
+      Fin.eq_castSucc_of_ne_last (by simpa using ha)
+    have hcenter_lt : rankOf ρ (ρ i.castSucc) < rankOf ρ (ρ i.succ) := by
+      simpa [rankOf] using i.castSucc_lt_succ
+    have hnot_rev :
+        ¬ rankOf π (ρ i.succ) < rankOf π (ρ i.castSucc) := by
+      intro hrev
+      exact h i ⟨hcenter_lt, hrev⟩
+    have hle_rank :
+        rankOf π (ρ i.castSucc) ≤ rankOf π (ρ i.succ) :=
+      le_of_not_gt hnot_rev
+    simpa [rankOf, Equiv.trans_apply] using hle_rank
+  have hperm : ρ.trans π.symm = 1 :=
+    (Equiv.Perm.monotone_iff (ρ.trans π.symm)).mp hmono
+  apply Equiv.ext
+  intro i
+  have hi : (ρ.trans π.symm) i = i := by
+    rw [hperm]
+    rfl
+  have happly : ρ i = π i := by
+    simpa [Equiv.trans_apply] using congrArg π hi
+  exact happly.symm
+
+/--
+Any ranking different from the reference has at least one adjacent inversion in
+the reference order.
+-/
+theorem exists_adjacent_invertedPair_of_ne {n : ℕ} {ρ π : Ranking n}
+    (hneq : π ≠ ρ) :
+    ∃ i : Fin (n + 1), invertedPair ρ π (ρ i.castSucc, ρ i.succ) := by
+  by_contra hno
+  apply hneq
+  exact eq_of_forall_not_adjacent_invertedPair ρ π (by
+    intro i hinv
+    exact hno ⟨i, hinv⟩)
 
 /-- The candidates occupying positions `i` and `j` in a ranking are distinct. -/
 theorem apply_ne_apply_of_ne {n : ℕ} (π : Ranking n) {i j : Candidate n}
