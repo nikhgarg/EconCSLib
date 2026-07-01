@@ -18,7 +18,7 @@
         "status": "draft",
         "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
       },
-      "review_entrypoint": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/DGD26AdmissionsPredictability/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 101,
@@ -37,36 +37,36 @@
       "artifacts": {
         "paper_interface": "papers/DGD26AdmissionsPredictability/PaperInterface.lean",
         "assumptions": "papers/DGD26AdmissionsPredictability/Assumptions.lean",
-        "final_validation_report": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/DGD26AdmissionsPredictability/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/DGD26AdmissionsPredictability/DependencyDAG.pdf",
-        "lap_variability_clean_proof_tex": "papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.tex",
-        "lap_variability_clean_proof_pdf": "papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.pdf"
+        "final_validation_report": "papers/DGD26AdmissionsPredictability/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/DGD26AdmissionsPredictability/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/DGD26AdmissionsPredictability/docs/DependencyDAG.pdf",
+        "lap_variability_clean_proof_tex": "papers/DGD26AdmissionsPredictability/docs/LAP_VARIABILITY_CLEAN_PROOF.tex",
+        "lap_variability_clean_proof_pdf": "papers/DGD26AdmissionsPredictability/docs/LAP_VARIABILITY_CLEAN_PROOF.pdf"
       },
       "review_surface": {
         "source_file": "papers/DGD26AdmissionsPredictability/PaperInterface.lean",
         "assumption_source_file": "papers/DGD26AdmissionsPredictability/Assumptions.lean",
         "llm_statement_review": {
-          "lean_to_tex_file": "papers/DGD26AdmissionsPredictability/lean_to_tex_llm.json",
-          "match_judgment_file": "papers/DGD26AdmissionsPredictability/statement_match_llm.json",
-          "review_surface_audit_file": "papers/DGD26AdmissionsPredictability/review_surface_llm.json",
-          "paper_coverage_audit_file": "papers/DGD26AdmissionsPredictability/paper_coverage_llm.json",
-          "assumption_judgment_file": "papers/DGD26AdmissionsPredictability/assumption_match_llm.json",
+          "lean_to_tex_file": "papers/DGD26AdmissionsPredictability/audit/lean_to_tex_llm.json",
+          "match_judgment_file": "papers/DGD26AdmissionsPredictability/audit/statement_match_llm.json",
+          "review_surface_audit_file": "papers/DGD26AdmissionsPredictability/audit/review_surface_llm.json",
+          "paper_coverage_audit_file": "papers/DGD26AdmissionsPredictability/audit/paper_coverage_llm.json",
+          "assumption_judgment_file": "papers/DGD26AdmissionsPredictability/audit/assumption_match_llm.json",
           "surface_audit_threshold": 30,
           "surface_warning_threshold": 120,
           "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, equivalence direction, conclusion, and named predicate application. Have an independent semantic LLM judge compare that TeX/prose translation with the original full paper statement, not just the theorem label or phrase. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, conclusions, and the semantics of every Lean premise. If a Lean premise is a named predicate or wrapper, the judge must inspect what that predicate means in the paper model; source-looking names are not evidence. Extra replay, certificate, process, bridge, source-row, or broad package assumptions must be judged `mismatch` or `uncertain`. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
         },
         "llm_paper_coverage_review": {
-          "paper_coverage_audit_file": "papers/DGD26AdmissionsPredictability/paper_coverage_llm.json",
+          "paper_coverage_audit_file": "papers/DGD26AdmissionsPredictability/audit/paper_coverage_llm.json",
           "policy": "Maintain a paper_statement_map.json inventory of source definitions, formulas, and named statements, then use a separate LLM pass to judge whether each source item is covered by one or more dashboard rows. This paper-level accounting is required before calling a full-paper formalization closed and is separate from row-local statement matching."
         },
         "llm_assumption_review": {
-          "assumption_judgment_file": "papers/DGD26AdmissionsPredictability/assumption_match_llm.json",
+          "assumption_judgment_file": "papers/DGD26AdmissionsPredictability/audit/assumption_match_llm.json",
           "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
         },
         "llm_source_record_review": {
-          "source_record_audit_file": "papers/DGD26AdmissionsPredictability/source_record_audit.json",
-          "source_record_judgment_file": "papers/DGD26AdmissionsPredictability/source_record_match_llm.json",
+          "source_record_audit_file": "papers/DGD26AdmissionsPredictability/audit/source_record_audit.json",
+          "source_record_judgment_file": "papers/DGD26AdmissionsPredictability/audit/source_record_match_llm.json",
           "policy": "Run the code-backed recursive source-record audit for any visible record, certificate, replay, process, bridge, source-row, or broad package premise. The LLM judge must classify each boundary-shaped input and recursive field by source evidence, Lean derivation, approved external boundary, or unresolved proof debt."
         },
         "assumption_policy": "strict",
@@ -219,7 +219,7 @@
       "build_target": "lake build DSWG24DiscretizationBias",
       "status": "formalized",
       "main_caveat": "",
-      "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/DSWG24DiscretizationBias/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 41,
@@ -238,16 +238,16 @@
       "artifacts": {
         "readme": "papers/DSWG24DiscretizationBias/README.md",
         "paper_interface": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
-        "final_validation_report": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/DSWG24DiscretizationBias/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/DependencyDAG.pdf",
+        "final_validation_report": "papers/DSWG24DiscretizationBias/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/DSWG24DiscretizationBias/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/docs/DependencyDAG.pdf",
         "source_text": "papers/DSWG24DiscretizationBias/DSWG24DiscretizationBias.txt",
         "assumptions": "papers/DSWG24DiscretizationBias/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
         "assumption_source_file": "papers/DSWG24DiscretizationBias/Assumptions.lean",
-        "llm_assumption_review": "papers/DSWG24DiscretizationBias/assumption_match_llm.json",
+        "llm_assumption_review": "papers/DSWG24DiscretizationBias/audit/assumption_match_llm.json",
         "assumption_policy": "strict",
         "assumption_names": [
           "assumption_theorem1_no_information_case",
@@ -339,9 +339,9 @@
     {
       "artifacts": {
         "assumptions": "papers/GCG24UserItemFairness/Assumptions.lean",
-        "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/GCG24UserItemFairness/DependencyDAG.tex",
-        "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/GCG24UserItemFairness/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/GCG24UserItemFairness/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/GCG24UserItemFairness/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
         "readme": "papers/GCG24UserItemFairness/README.md",
         "source_text": "papers/GCG24UserItemFairness/GCG24UserItemFairness.txt"
@@ -365,7 +365,7 @@
         "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
         "review_rows": 48
       },
-      "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GCG24UserItemFairness/docs/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
         "assumption_names": [
           "assumption_positive_recommendation_utilities",
@@ -422,7 +422,7 @@
           "theorem4_misestimation_tradeoff_typeOne"
         ],
         "llm_assumption_review": {
-          "assumption_judgment_file": "papers/GCG24UserItemFairness/assumption_match_llm.json",
+          "assumption_judgment_file": "papers/GCG24UserItemFairness/audit/assumption_match_llm.json",
           "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption or paper-statement condition rather than a proof assumption."
         },
         "slices": [
@@ -472,7 +472,7 @@
         "status": "draft",
         "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
       },
-      "review_entrypoint": "papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GGRS26CombattingGerrymanderingRCV/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 19,
@@ -492,34 +492,34 @@
         "readme": "papers/GGRS26CombattingGerrymanderingRCV/README.md",
         "paper_interface": "papers/GGRS26CombattingGerrymanderingRCV/PaperInterface.lean",
         "assumptions": "papers/GGRS26CombattingGerrymanderingRCV/Assumptions.lean",
-        "final_validation_report": "papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.pdf"
+        "final_validation_report": "papers/GGRS26CombattingGerrymanderingRCV/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GGRS26CombattingGerrymanderingRCV/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GGRS26CombattingGerrymanderingRCV/docs/DependencyDAG.pdf"
       },
       "review_surface": {
         "source_file": "papers/GGRS26CombattingGerrymanderingRCV/PaperInterface.lean",
         "assumption_source_file": "papers/GGRS26CombattingGerrymanderingRCV/Assumptions.lean",
         "llm_statement_review": {
-          "lean_to_tex_file": "papers/GGRS26CombattingGerrymanderingRCV/lean_to_tex_llm.json",
-          "match_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/statement_match_llm.json",
-          "review_surface_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/review_surface_llm.json",
-          "paper_coverage_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/paper_coverage_llm.json",
-          "assumption_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/assumption_match_llm.json",
+          "lean_to_tex_file": "papers/GGRS26CombattingGerrymanderingRCV/audit/lean_to_tex_llm.json",
+          "match_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/audit/statement_match_llm.json",
+          "review_surface_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/audit/review_surface_llm.json",
+          "paper_coverage_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/audit/paper_coverage_llm.json",
+          "assumption_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/audit/assumption_match_llm.json",
           "surface_audit_threshold": 30,
           "surface_warning_threshold": 120,
           "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, named predicate/wrapper application, equivalence direction, conclusion, and visible input. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label or phrase. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, conclusions, and the semantics of every Lean premise. If a Lean premise is a named predicate or wrapper, the judge must inspect what that predicate means in the paper model; source-looking names are not evidence. Extra replay, certificate, process, bridge, source-row, or broad package assumptions must be judged `mismatch` or `uncertain` unless explicitly source-backed or derived from source primitives. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
         },
         "llm_paper_coverage_review": {
-          "paper_coverage_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/paper_coverage_llm.json",
+          "paper_coverage_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/audit/paper_coverage_llm.json",
           "policy": "Maintain a paper_statement_map.json inventory of source definitions, formulas, and named statements, then use a separate LLM pass to judge whether each source item is covered by one or more dashboard rows. This paper-level accounting is required before calling a full-paper formalization closed and is separate from row-local statement matching."
         },
         "llm_assumption_review": {
-          "assumption_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/assumption_match_llm.json",
+          "assumption_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/audit/assumption_match_llm.json",
           "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
         },
         "llm_source_record_review": {
-          "source_record_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/source_record_audit.json",
-          "source_record_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/source_record_match_llm.json",
+          "source_record_audit_file": "papers/GGRS26CombattingGerrymanderingRCV/audit/source_record_audit.json",
+          "source_record_judgment_file": "papers/GGRS26CombattingGerrymanderingRCV/audit/source_record_match_llm.json",
           "policy": "Every visible replay, process, bridge, source-row, or certificate-shaped input must be mapped to source primitives, a Lean-checked constructor from source primitives, or an explicit partial boundary. Source-looking Lean names are not evidence."
         },
         "assumption_policy": "strict",
@@ -578,11 +578,11 @@
     {
       "artifacts": {
         "assumptions": "papers/GGSG19TopThree/Assumptions.lean",
-        "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/GGSG19TopThree/DependencyDAG.tex",
-        "final_validation_report": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/GGSG19TopThree/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/GGSG19TopThree/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/GGSG19TopThree/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/GGSG19TopThree/PaperInterface.lean",
-        "post_formalization_audit": "papers/GGSG19TopThree/POST_FORMALIZATION_AUDIT.md",
+        "post_formalization_audit": "papers/GGSG19TopThree/docs/POST_FORMALIZATION_AUDIT.md",
         "proof_interface": "papers/GGSG19TopThree/ProofInterface.lean",
         "readme": "papers/GGSG19TopThree/README.md",
         "source_archive": "papers/GGSG19TopThree/source.tar.gz",
@@ -612,7 +612,7 @@
         "review_rows": 17
       },
       "publication_venue": "HCOMP 2019",
-      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GGSG19TopThree/docs/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
         "assumption_names": [
           "assumption_strict_cross_tier_no_ties",
@@ -637,7 +637,7 @@
           "source_corollary_lem_mallowsnorando",
           "source_theorem_lem_mallowsnotWK_counterexample"
         ],
-        "llm_assumption_review": "papers/GGSG19TopThree/assumption_match_llm.json",
+        "llm_assumption_review": "papers/GGSG19TopThree/audit/assumption_match_llm.json",
         "slices": [
           {
             "id": "all",
@@ -677,7 +677,7 @@
         "label": "Goldberg-Hartline-Karlin-Saks-Wright 2006",
         "url": "https://www.sciencedirect.com/science/article/pii/S0899825606000303"
       },
-      "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GHW01DigitalGoods/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 30,
@@ -696,16 +696,16 @@
       "artifacts": {
         "readme": "papers/GHW01DigitalGoods/README.md",
         "paper_interface": "papers/GHW01DigitalGoods/PaperInterface.lean",
-        "final_validation_report": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/GHW01DigitalGoods/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf",
+        "final_validation_report": "papers/GHW01DigitalGoods/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GHW01DigitalGoods/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GHW01DigitalGoods/docs/DependencyDAG.pdf",
         "source_text": "papers/GHW01DigitalGoods/GHW01DigitalGoods.txt",
         "assumptions": "papers/GHW01DigitalGoods/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/GHW01DigitalGoods/PaperInterface.lean",
         "assumption_source_file": "papers/GHW01DigitalGoods/Assumptions.lean",
-        "llm_assumption_review": "papers/GHW01DigitalGoods/assumption_match_llm.json",
+        "llm_assumption_review": "papers/GHW01DigitalGoods/audit/assumption_match_llm.json",
         "assumption_policy": "strict",
         "assumption_names": [
           "assumption_high_value_scale_conditions",
@@ -779,7 +779,7 @@
       "status": "formalized",
       "main_caveat": "",
       "human_summary": "",
-      "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GJ18InformativeRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 15,
@@ -798,16 +798,16 @@
       "artifacts": {
         "readme": "papers/GJ18InformativeRatingSystems/README.md",
         "paper_interface": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
-        "final_validation_report": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/GJ18InformativeRatingSystems/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GJ18InformativeRatingSystems/DependencyDAG.pdf",
+        "final_validation_report": "papers/GJ18InformativeRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GJ18InformativeRatingSystems/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GJ18InformativeRatingSystems/docs/DependencyDAG.pdf",
         "source_archive": "papers/GJ18InformativeRatingSystems/source.tar.gz",
         "assumptions": "papers/GJ18InformativeRatingSystems/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
         "assumption_source_file": "papers/GJ18InformativeRatingSystems/Assumptions.lean",
-        "llm_assumption_review": "papers/GJ18InformativeRatingSystems/assumption_match_llm.json",
+        "llm_assumption_review": "papers/GJ18InformativeRatingSystems/audit/assumption_match_llm.json",
         "assumption_policy": "strict",
         "assumption_names": [
           "assumption_positive_match_rates",
@@ -868,7 +868,7 @@
       "status": "formalized",
       "main_caveat": "",
       "human_summary": "",
-      "review_entrypoint": "papers/GJ19OptimalBinaryRatingSystems/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GJ19OptimalBinaryRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 56,
@@ -888,10 +888,10 @@
         "readme": "papers/GJ19OptimalBinaryRatingSystems/README.md",
         "paper_interface": "papers/GJ19OptimalBinaryRatingSystems/PaperInterface.lean",
         "assumptions": "papers/GJ19OptimalBinaryRatingSystems/Assumptions.lean",
-        "final_validation_report": "papers/GJ19OptimalBinaryRatingSystems/FINAL_VALIDATION_REPORT.md",
-        "post_formalization_audit": "papers/GJ19OptimalBinaryRatingSystems/POST_FORMALIZATION_AUDIT.md",
-        "dependency_dag_tex": "papers/GJ19OptimalBinaryRatingSystems/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GJ19OptimalBinaryRatingSystems/DependencyDAG.pdf"
+        "final_validation_report": "papers/GJ19OptimalBinaryRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
+        "post_formalization_audit": "papers/GJ19OptimalBinaryRatingSystems/docs/POST_FORMALIZATION_AUDIT.md",
+        "dependency_dag_tex": "papers/GJ19OptimalBinaryRatingSystems/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GJ19OptimalBinaryRatingSystems/docs/DependencyDAG.pdf"
       },
       "review_surface": {
         "source_file": "papers/GJ19OptimalBinaryRatingSystems/PaperInterface.lean",
@@ -2565,14 +2565,14 @@
     {
       "artifacts": {
         "assumptions": "papers/GKGMM19IterativeLocalVoting/Assumptions.lean",
-        "dependency_dag_pdf": "papers/GKGMM19IterativeLocalVoting/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/GKGMM19IterativeLocalVoting/DependencyDAG.tex",
-        "final_validation_report": "papers/GKGMM19IterativeLocalVoting/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/GKGMM19IterativeLocalVoting/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/GKGMM19IterativeLocalVoting/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/GKGMM19IterativeLocalVoting/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/GKGMM19IterativeLocalVoting/PaperInterface.lean",
-        "paper_statement_map": "papers/GKGMM19IterativeLocalVoting/paper_statement_map.json",
+        "paper_statement_map": "papers/GKGMM19IterativeLocalVoting/audit/paper_statement_map.json",
         "proof_interface": "papers/GKGMM19IterativeLocalVoting/ProofInterface.lean",
         "readme": "papers/GKGMM19IterativeLocalVoting/README.md",
-        "review_status_export": "papers/GKGMM19IterativeLocalVoting/review_status_export.json",
+        "review_status_export": "papers/GKGMM19IterativeLocalVoting/audit/review_status_export.json",
         "start_here_next_agent": "papers/GKGMM19IterativeLocalVoting/START_HERE_NEXT_AGENT.md",
         "validator_ledger": "papers/GKGMM19IterativeLocalVoting/VALIDATOR_LEDGER.md",
         "week_pause_handoff": "papers/GKGMM19IterativeLocalVoting/HANDOFF_2026-06-19_WEEK_PAUSE.md"
@@ -2601,7 +2601,7 @@
         "path": "papers/GKGMM19IterativeLocalVoting/PaperInterface.lean",
         "review_rows": 47
       },
-      "review_entrypoint": "papers/GKGMM19IterativeLocalVoting/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GKGMM19IterativeLocalVoting/docs/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
         "assumption_names": [
           "assumption_conditions_c123",
@@ -2733,15 +2733,15 @@
           "appendix_theorem5_ssgm_convergence_boundary"
         ],
         "llm_assumption_review": {
-          "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/assumption_match_llm.json",
+          "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/audit/assumption_match_llm.json",
           "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean and listed either as a source assumption or as an explicit proof-boundary assumption. Source assumptions must be judged by an independent LLM as true paper/source model assumptions; proof-boundary assumptions must be judged and documented as partial-formalization boundaries."
         },
         "llm_statement_review": {
-          "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/assumption_match_llm.json",
-          "lean_to_tex_file": "papers/GKGMM19IterativeLocalVoting/lean_to_tex_llm.json",
-          "match_judgment_file": "papers/GKGMM19IterativeLocalVoting/statement_match_llm.json",
+          "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/audit/assumption_match_llm.json",
+          "lean_to_tex_file": "papers/GKGMM19IterativeLocalVoting/audit/lean_to_tex_llm.json",
+          "match_judgment_file": "papers/GKGMM19IterativeLocalVoting/audit/statement_match_llm.json",
           "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, equivalence direction, and conclusion. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions; conditional wrappers, source-row packages, omitted subclaims, weakened/strengthened statements, or broad aggregates must be judged `mismatch` or `uncertain`. A user-approved external/library proof boundary remains a raw `mismatch` with `resolution: conditional_boundary`, not a `matches` row. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review.",
-          "review_surface_audit_file": "papers/GKGMM19IterativeLocalVoting/review_surface_llm.json",
+          "review_surface_audit_file": "papers/GKGMM19IterativeLocalVoting/audit/review_surface_llm.json",
           "surface_audit_threshold": 30,
           "surface_warning_threshold": 120
         },
@@ -2849,9 +2849,9 @@
     {
       "artifacts": {
         "assumptions": "papers/GN21DriverSurgePricing/Assumptions.lean",
-        "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
-        "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/GN21DriverSurgePricing/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/GN21DriverSurgePricing/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/GN21DriverSurgePricing/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/GN21DriverSurgePricing/PaperInterface.lean",
         "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean",
         "readme": "papers/GN21DriverSurgePricing/README.md",
@@ -2878,7 +2878,7 @@
         "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
         "review_rows": 36
       },
-      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GN21DriverSurgePricing/docs/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
         "assumption_names": [
           "assumption_affine_single_state_parameter_domain",
@@ -2922,7 +2922,7 @@
           "review_theorem4_structural_policy_representatives",
           "review_theorem3_defined_reward_source_statement"
         ],
-        "llm_assumption_review": "papers/GN21DriverSurgePricing/assumption_match_llm.json",
+        "llm_assumption_review": "papers/GN21DriverSurgePricing/audit/assumption_match_llm.json",
         "slices": [
           {
             "id": "all",
@@ -2972,7 +2972,7 @@
       "status": "formalized",
       "main_caveat": "",
       "human_summary": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
-      "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GS62CollegeAdmissions/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 7,
@@ -2991,9 +2991,9 @@
       "artifacts": {
         "readme": "papers/GS62CollegeAdmissions/README.md",
         "paper_interface": "papers/GS62CollegeAdmissions/PaperInterface.lean",
-        "final_validation_report": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/GS62CollegeAdmissions/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GS62CollegeAdmissions/DependencyDAG.pdf"
+        "final_validation_report": "papers/GS62CollegeAdmissions/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GS62CollegeAdmissions/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GS62CollegeAdmissions/docs/DependencyDAG.pdf"
       },
       "review_surface": {
         "source_file": "papers/GS62CollegeAdmissions/PaperInterface.lean",
@@ -3044,7 +3044,7 @@
         "status": "human_written",
         "note": "Human-written summary supplied on 2026-06-28; preserve verbatim unless a human explicitly asks for a change."
       },
-      "review_entrypoint": "papers/LBG24SpatialUnderreporting/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/LBG24SpatialUnderreporting/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 27,
@@ -3064,25 +3064,25 @@
         "readme": "papers/LBG24SpatialUnderreporting/README.md",
         "paper_interface": "papers/LBG24SpatialUnderreporting/PaperInterface.lean",
         "assumptions": "papers/LBG24SpatialUnderreporting/Assumptions.lean",
-        "final_validation_report": "papers/LBG24SpatialUnderreporting/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/LBG24SpatialUnderreporting/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/LBG24SpatialUnderreporting/DependencyDAG.pdf",
-        "source_record_audit": "papers/LBG24SpatialUnderreporting/source_record_audit.json"
+        "final_validation_report": "papers/LBG24SpatialUnderreporting/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LBG24SpatialUnderreporting/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LBG24SpatialUnderreporting/docs/DependencyDAG.pdf",
+        "source_record_audit": "papers/LBG24SpatialUnderreporting/audit/source_record_audit.json"
       },
       "review_surface": {
         "source_file": "PaperInterface.lean",
         "assumption_source_file": "Assumptions.lean",
         "llm_statement_review": {
-          "lean_to_tex_file": "papers/LBG24SpatialUnderreporting/lean_to_tex_llm.json",
-          "match_judgment_file": "papers/LBG24SpatialUnderreporting/statement_match_llm.json",
-          "review_surface_audit_file": "papers/LBG24SpatialUnderreporting/review_surface_llm.json",
-          "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/assumption_match_llm.json",
+          "lean_to_tex_file": "papers/LBG24SpatialUnderreporting/audit/lean_to_tex_llm.json",
+          "match_judgment_file": "papers/LBG24SpatialUnderreporting/audit/statement_match_llm.json",
+          "review_surface_audit_file": "papers/LBG24SpatialUnderreporting/audit/review_surface_llm.json",
+          "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/audit/assumption_match_llm.json",
           "surface_audit_threshold": 30,
           "surface_warning_threshold": 120,
           "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, named predicate/wrapper application, equivalence direction, conclusion, and visible input. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label or phrase. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, conclusions, and the semantics of every Lean premise. If a Lean premise is a named predicate or wrapper, the judge must inspect what that predicate means in the paper model; source-looking names are not evidence. Extra replay, certificate, process, bridge, source-row, or broad package assumptions must be judged `mismatch` or `uncertain` unless explicitly source-backed or derived from source primitives. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
         },
         "llm_assumption_review": {
-          "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/assumption_match_llm.json",
+          "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/audit/assumption_match_llm.json",
           "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
         },
         "assumption_policy": "strict",
@@ -3254,7 +3254,7 @@
       "build_target": "lake build LG21TestOptionalPolicies",
       "status": "formalized",
       "main_caveat": "",
-      "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/LG21TestOptionalPolicies/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 23,
@@ -3275,9 +3275,9 @@
       "artifacts": {
         "readme": "papers/LG21TestOptionalPolicies/README.md",
         "paper_interface": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
-        "final_validation_report": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/LG21TestOptionalPolicies/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/DependencyDAG.pdf",
+        "final_validation_report": "papers/LG21TestOptionalPolicies/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LG21TestOptionalPolicies/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/docs/DependencyDAG.pdf",
         "proof_interface": "papers/LG21TestOptionalPolicies/ProofInterface.lean",
         "source_text": "papers/LG21TestOptionalPolicies/source.txt",
         "assumptions": "papers/LG21TestOptionalPolicies/Assumptions.lean"
@@ -3285,7 +3285,7 @@
       "review_surface": {
         "source_file": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
         "assumption_source_file": "papers/LG21TestOptionalPolicies/Assumptions.lean",
-        "llm_assumption_review": "papers/LG21TestOptionalPolicies/assumption_match_llm.json",
+        "llm_assumption_review": "papers/LG21TestOptionalPolicies/audit/assumption_match_llm.json",
         "assumption_policy": "strict",
         "assumption_names": [
           "assumption_section3_access_fraction_domain",
@@ -3350,7 +3350,7 @@
       "status": "partially formalized",
       "main_caveat": "Partial-formalization boundary: the Section 3 runtime/search layer and some rounded-IP/counterexample endpoints remain certificate boundaries; Sections 2 and 4 stay formalized at their existing boundary.",
       "human_summary": "Sections 2 and 4 are fully formalized. Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
-      "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/LMMS04FairDivision/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 48,
@@ -3371,9 +3371,9 @@
       "artifacts": {
         "readme": "papers/LMMS04FairDivision/README.md",
         "paper_interface": "papers/LMMS04FairDivision/PaperInterface.lean",
-        "final_validation_report": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/LMMS04FairDivision/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/LMMS04FairDivision/DependencyDAG.pdf",
+        "final_validation_report": "papers/LMMS04FairDivision/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LMMS04FairDivision/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LMMS04FairDivision/docs/DependencyDAG.pdf",
         "proof_interface": "papers/LMMS04FairDivision/ProofInterface.lean",
         "source_text": "papers/LMMS04FairDivision/LMMS04FairDivision.txt",
         "assumptions": "papers/LMMS04FairDivision/Assumptions.lean"
@@ -3381,7 +3381,7 @@
       "review_surface": {
         "source_file": "papers/LMMS04FairDivision/PaperInterface.lean",
         "assumption_source_file": "papers/LMMS04FairDivision/Assumptions.lean",
-        "llm_assumption_review": "papers/LMMS04FairDivision/assumption_match_llm.json",
+        "llm_assumption_review": "papers/LMMS04FairDivision/audit/assumption_match_llm.json",
         "assumption_policy": "strict",
         "assumption_names": [
           "assumption_nonnegative_alpha_bound",
@@ -3508,7 +3508,7 @@
       "status": "partially formalized",
       "main_caveat": "Partial-formalization boundary: the external computational-complexity consequences for the native Theorem 6.1 hardness and NP=ZPP claims remain reusable library infrastructure work.",
       "human_summary": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.",
-      "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/LOS02CombinatorialAuctions/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 39,
@@ -3529,9 +3529,9 @@
       "artifacts": {
         "readme": "papers/LOS02CombinatorialAuctions/README.md",
         "paper_interface": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
-        "final_validation_report": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/LOS02CombinatorialAuctions/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/DependencyDAG.pdf",
+        "final_validation_report": "papers/LOS02CombinatorialAuctions/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LOS02CombinatorialAuctions/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/docs/DependencyDAG.pdf",
         "proof_interface": "papers/LOS02CombinatorialAuctions/ProofInterface.lean",
         "source_text": "papers/LOS02CombinatorialAuctions/LOS02CombinatorialAuctions.txt",
         "assumptions": "papers/LOS02CombinatorialAuctions/Assumptions.lean"
@@ -3539,7 +3539,7 @@
       "review_surface": {
         "source_file": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
         "assumption_source_file": "papers/LOS02CombinatorialAuctions/Assumptions.lean",
-        "llm_assumption_review": "papers/LOS02CombinatorialAuctions/assumption_match_llm.json",
+        "llm_assumption_review": "papers/LOS02CombinatorialAuctions/audit/assumption_match_llm.json",
         "assumption_policy": "strict",
         "assumption_names": [
           "assumption_admissible_combinatorial_report_domain",
@@ -3646,7 +3646,7 @@
       "status": "formalized",
       "main_caveat": "",
       "human_summary": "Additional assumption recorded in the validation report: strict variance decrease is stated with 0 < q_v < 1.",
-      "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/MBJG25ProducerFairness/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 10,
         "total_rows": 27,
@@ -3670,16 +3670,16 @@
         "source_text": "papers/MBJG25ProducerFairness/MBJG25ProducerFairness.txt",
         "paper_interface": "papers/MBJG25ProducerFairness/PaperInterface.lean",
         "assumptions": "papers/MBJG25ProducerFairness/Assumptions.lean",
-        "final_validation_report": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/MBJG25ProducerFairness/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/MBJG25ProducerFairness/DependencyDAG.pdf",
+        "final_validation_report": "papers/MBJG25ProducerFairness/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/MBJG25ProducerFairness/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/MBJG25ProducerFairness/docs/DependencyDAG.pdf",
         "proof_interface": "papers/MBJG25ProducerFairness/ProofInterface.lean"
       },
       "review_surface": {
         "source_file": "papers/MBJG25ProducerFairness/PaperInterface.lean",
         "assumption_source_file": "papers/MBJG25ProducerFairness/Assumptions.lean",
         "llm_assumption_review": {
-          "assumption_judgment_file": "papers/MBJG25ProducerFairness/assumption_match_llm.json",
+          "assumption_judgment_file": "papers/MBJG25ProducerFairness/audit/assumption_match_llm.json",
           "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a paper/source model assumption, paper-statement condition, or documented caveat rather than a proof assumption."
         },
         "assumption_policy": "strict",
@@ -3754,7 +3754,7 @@
       "build_target": "lake build MSVV07AdWords",
       "status": "formalized",
       "main_caveat": "",
-      "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/MSVV07AdWords/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 43,
@@ -3775,9 +3775,9 @@
       "artifacts": {
         "readme": "papers/MSVV07AdWords/README.md",
         "paper_interface": "papers/MSVV07AdWords/PaperInterface.lean",
-        "final_validation_report": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/MSVV07AdWords/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/MSVV07AdWords/DependencyDAG.pdf",
+        "final_validation_report": "papers/MSVV07AdWords/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/MSVV07AdWords/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/MSVV07AdWords/docs/DependencyDAG.pdf",
         "proof_interface": "papers/MSVV07AdWords/ProofInterface.lean",
         "source_text": "papers/MSVV07AdWords/MSVV07AdWords.txt",
         "assumptions": "papers/MSVV07AdWords/Assumptions.lean"
@@ -3785,7 +3785,7 @@
       "review_surface": {
         "source_file": "papers/MSVV07AdWords/PaperInterface.lean",
         "assumption_source_file": "papers/MSVV07AdWords/Assumptions.lean",
-        "llm_assumption_review": "papers/MSVV07AdWords/assumption_match_llm.json",
+        "llm_assumption_review": "papers/MSVV07AdWords/audit/assumption_match_llm.json",
         "assumption_policy": "strict",
         "assumption_names": [
           "assumption_nonnegative_bids",
@@ -3845,9 +3845,9 @@
     },
     {
       "artifacts": {
-        "dependency_dag_pdf": "papers/PKG25NoFreeLunch/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/PKG25NoFreeLunch/DependencyDAG.tex",
-        "final_validation_report": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/PKG25NoFreeLunch/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/PKG25NoFreeLunch/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/PKG25NoFreeLunch/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/PKG25NoFreeLunch/PaperInterface.lean",
         "readme": "papers/PKG25NoFreeLunch/README.md"
       },
@@ -3875,7 +3875,7 @@
         "path": "papers/PKG25NoFreeLunch/PaperInterface.lean",
         "review_rows": 15
       },
-      "review_entrypoint": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/PKG25NoFreeLunch/docs/FINAL_VALIDATION_REPORT.md",
       "review_surface": {
         "include_names": [
           "definition_rounding_convention",
@@ -3895,10 +3895,10 @@
           "theorem_main_no_free_lunch"
         ],
         "llm_statement_review": {
-          "lean_to_tex_file": "papers/PKG25NoFreeLunch/lean_to_tex_llm.json",
-          "match_judgment_file": "papers/PKG25NoFreeLunch/statement_match_llm.json",
+          "lean_to_tex_file": "papers/PKG25NoFreeLunch/audit/lean_to_tex_llm.json",
+          "match_judgment_file": "papers/PKG25NoFreeLunch/audit/statement_match_llm.json",
           "policy": "Translate each Lean statement with an LLM that has no paper context; have a third LLM compare that TeX/prose translation with the original paper statement, record the model/agent validator metadata, and iterate on PaperInterface.lean until they match. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review.",
-          "review_surface_audit_file": "papers/PKG25NoFreeLunch/review_surface_llm.json",
+          "review_surface_audit_file": "papers/PKG25NoFreeLunch/audit/review_surface_llm.json",
           "surface_audit_threshold": 30,
           "surface_warning_threshold": 120
         },
@@ -3937,7 +3937,7 @@
         "status": "human_approved",
         "note": "Do not rewrite this summary without explicit human instruction."
       },
-      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 42,
@@ -3956,17 +3956,17 @@
       "artifacts": {
         "readme": "papers/PRPKG24AccuracyDiversity/README.md",
         "paper_interface": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
-        "final_validation_report": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
-        "post_formalization_audit": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md",
-        "dependency_dag_tex": "papers/PRPKG24AccuracyDiversity/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf",
+        "final_validation_report": "papers/PRPKG24AccuracyDiversity/docs/FINAL_VALIDATION_REPORT.md",
+        "post_formalization_audit": "papers/PRPKG24AccuracyDiversity/docs/POST_FORMALIZATION_AUDIT.md",
+        "dependency_dag_tex": "papers/PRPKG24AccuracyDiversity/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/docs/DependencyDAG.pdf",
         "source_text": "papers/PRPKG24AccuracyDiversity/PRPKG24AccuracyDiversity.txt",
         "assumptions": "papers/PRPKG24AccuracyDiversity/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
         "assumption_source_file": "papers/PRPKG24AccuracyDiversity/Assumptions.lean",
-        "llm_assumption_review": "papers/PRPKG24AccuracyDiversity/assumption_match_llm.json",
+        "llm_assumption_review": "papers/PRPKG24AccuracyDiversity/audit/assumption_match_llm.json",
         "assumption_policy": "strict",
         "assumption_names": [
           "assumption_example1_positive_calibrated_exponential_parameters",
@@ -4054,7 +4054,7 @@
       "build_target": "lake build Roth82StableMatching",
       "status": "formalized",
       "main_caveat": "",
-      "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/Roth82StableMatching/docs/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 29,
@@ -4074,15 +4074,15 @@
         "readme": "papers/Roth82StableMatching/README.md",
         "paper_interface": "papers/Roth82StableMatching/PaperInterface.lean",
         "assumptions": "papers/Roth82StableMatching/Assumptions.lean",
-        "final_validation_report": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/Roth82StableMatching/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/Roth82StableMatching/DependencyDAG.pdf"
+        "final_validation_report": "papers/Roth82StableMatching/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/Roth82StableMatching/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/Roth82StableMatching/docs/DependencyDAG.pdf"
       },
       "review_surface": {
         "source_file": "papers/Roth82StableMatching/PaperInterface.lean",
         "assumption_source_file": "papers/Roth82StableMatching/Assumptions.lean",
         "llm_assumption_review": {
-          "assumption_judgment_file": "papers/Roth82StableMatching/assumption_match_llm.json",
+          "assumption_judgment_file": "papers/Roth82StableMatching/audit/assumption_match_llm.json",
           "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
         },
         "assumption_policy": "strict",

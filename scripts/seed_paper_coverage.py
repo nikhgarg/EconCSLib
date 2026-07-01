@@ -145,6 +145,7 @@ def main() -> int:
         out = folder / DEFAULT_LLM_PAPER_COVERAGE_FILE
         if out.exists() and not args.force:
             raise SystemExit(f"{out} exists; use --force to overwrite")
+        out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     return 0
 

@@ -811,7 +811,7 @@ def main() -> int:
         "import_module": f"{args.paper}.PaperInterface",
         "prompt_version": SOURCE_RECORD_PROMPT_VERSION,
         "source_record_audit_sha256": stable_digest(audit_surface),
-        "source_record_judgment_file": "source_record_match_llm.json",
+        "source_record_judgment_file": "audit/source_record_match_llm.json",
         "expected_input_judgment_keys": sorted(
             {str(item["judgment_key"]) for item in boundary_input_items}
         ),

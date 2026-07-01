@@ -9,7 +9,7 @@
   "status": "formalized",
   "main_caveat": "",
   "human_summary": "",
-  "review_entrypoint": "papers/GJ19OptimalBinaryRatingSystems/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/GJ19OptimalBinaryRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 56,
@@ -29,10 +29,10 @@
     "readme": "papers/GJ19OptimalBinaryRatingSystems/README.md",
     "paper_interface": "papers/GJ19OptimalBinaryRatingSystems/PaperInterface.lean",
     "assumptions": "papers/GJ19OptimalBinaryRatingSystems/Assumptions.lean",
-    "final_validation_report": "papers/GJ19OptimalBinaryRatingSystems/FINAL_VALIDATION_REPORT.md",
-    "post_formalization_audit": "papers/GJ19OptimalBinaryRatingSystems/POST_FORMALIZATION_AUDIT.md",
-    "dependency_dag_tex": "papers/GJ19OptimalBinaryRatingSystems/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/GJ19OptimalBinaryRatingSystems/DependencyDAG.pdf"
+    "final_validation_report": "papers/GJ19OptimalBinaryRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
+    "post_formalization_audit": "papers/GJ19OptimalBinaryRatingSystems/docs/POST_FORMALIZATION_AUDIT.md",
+    "dependency_dag_tex": "papers/GJ19OptimalBinaryRatingSystems/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/GJ19OptimalBinaryRatingSystems/docs/DependencyDAG.pdf"
   },
   "review_surface": {
     "source_file": "papers/GJ19OptimalBinaryRatingSystems/PaperInterface.lean",

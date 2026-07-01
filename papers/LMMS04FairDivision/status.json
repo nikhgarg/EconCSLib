@@ -8,7 +8,7 @@
   "status": "partially formalized",
   "main_caveat": "Partial-formalization boundary: the Section 3 runtime/search layer and some rounded-IP/counterexample endpoints remain certificate boundaries; Sections 2 and 4 stay formalized at their existing boundary.",
   "human_summary": "Sections 2 and 4 are fully formalized. Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
-  "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/LMMS04FairDivision/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 48,
@@ -29,9 +29,9 @@
   "artifacts": {
     "readme": "papers/LMMS04FairDivision/README.md",
     "paper_interface": "papers/LMMS04FairDivision/PaperInterface.lean",
-    "final_validation_report": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/LMMS04FairDivision/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/LMMS04FairDivision/DependencyDAG.pdf",
+    "final_validation_report": "papers/LMMS04FairDivision/docs/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/LMMS04FairDivision/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/LMMS04FairDivision/docs/DependencyDAG.pdf",
     "proof_interface": "papers/LMMS04FairDivision/ProofInterface.lean",
     "source_text": "papers/LMMS04FairDivision/LMMS04FairDivision.txt",
     "assumptions": "papers/LMMS04FairDivision/Assumptions.lean"
@@ -39,7 +39,7 @@
   "review_surface": {
     "source_file": "papers/LMMS04FairDivision/PaperInterface.lean",
     "assumption_source_file": "papers/LMMS04FairDivision/Assumptions.lean",
-    "llm_assumption_review": "papers/LMMS04FairDivision/assumption_match_llm.json",
+    "llm_assumption_review": "papers/LMMS04FairDivision/audit/assumption_match_llm.json",
     "assumption_policy": "strict",
     "assumption_names": [
       "assumption_nonnegative_alpha_bound",

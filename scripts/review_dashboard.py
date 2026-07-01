@@ -37,18 +37,21 @@ PAPERS_DIR = ROOT / "papers"
 DEFAULT_PAPER_LOG_FILE = "paper_theorem_validations.jsonl"
 DEFAULT_PAPER_INTERFACE_CACHE_FILE = "paper_interface_cache.json"
 DEFAULT_PAPER_STATUS_FILE = "status.json"
-DEFAULT_LLM_LEAN_TO_TEX_FILE = "lean_to_tex_llm.json"
-DEFAULT_LLM_STATEMENT_JUDGE_FILE = "statement_match_llm.json"
-DEFAULT_LLM_REVIEW_SURFACE_FILE = "review_surface_llm.json"
-DEFAULT_LLM_PAPER_COVERAGE_FILE = "paper_coverage_llm.json"
-DEFAULT_LLM_ASSUMPTION_JUDGE_FILE = "assumption_match_llm.json"
+PAPER_DOCS_DIR = "docs"
+PAPER_AUDIT_DIR = "audit"
+FINAL_VALIDATION_REPORT_FILE = f"{PAPER_DOCS_DIR}/FINAL_VALIDATION_REPORT.md"
+DEFAULT_LLM_LEAN_TO_TEX_FILE = f"{PAPER_AUDIT_DIR}/lean_to_tex_llm.json"
+DEFAULT_LLM_STATEMENT_JUDGE_FILE = f"{PAPER_AUDIT_DIR}/statement_match_llm.json"
+DEFAULT_LLM_REVIEW_SURFACE_FILE = f"{PAPER_AUDIT_DIR}/review_surface_llm.json"
+DEFAULT_LLM_PAPER_COVERAGE_FILE = f"{PAPER_AUDIT_DIR}/paper_coverage_llm.json"
+DEFAULT_LLM_ASSUMPTION_JUDGE_FILE = f"{PAPER_AUDIT_DIR}/assumption_match_llm.json"
 DEFAULT_ASSUMPTION_SOURCE_FILE = "Assumptions.lean"
 REQUIRED_LLM_LEAN_TO_TEX_PROMPT_VERSION = "lean-to-tex-v3-strict-context-free-semantic-inputs"
 REQUIRED_LLM_STATEMENT_PROMPT_VERSION = "statement-match-v3-semantic-full-statement"
 REQUIRED_LLM_PAPER_COVERAGE_PROMPT_VERSION = "paper-coverage-v2-source-grounded-source-to-dashboard"
 REQUIRED_LLM_REVIEW_SURFACE_PROMPT_VERSION = "review-surface-v2-semantic-paper-facing"
 REQUIRED_LLM_ASSUMPTION_PROMPT_VERSION = "assumption-provenance-v3-semantic-exact-premise-source"
-PAPER_STATEMENT_MAP_FILE = "paper_statement_map.json"
+PAPER_STATEMENT_MAP_FILE = f"{PAPER_AUDIT_DIR}/paper_statement_map.json"
 REVIEW_SURFACE_LLM_AUDIT_THRESHOLD = 30
 REVIEW_SURFACE_WARN_THRESHOLD = 120
 PAPER_INTERFACE_CACHE_SCHEMA = 16
@@ -64,6 +67,20 @@ REVIEW_DECL_KINDS = {
     "class",
     "inductive",
 }
+
+
+def paper_relative_file(folder: Path, preferred: str, legacy: str | None = None) -> Path:
+    """Return the organized paper-local path, falling back to a legacy root file."""
+
+    preferred_path = folder / preferred
+    if preferred_path.exists() or legacy is None:
+        return preferred_path
+    legacy_path = folder / legacy
+    if legacy_path.exists():
+        return legacy_path
+    return preferred_path
+
+
 ASSUMPTION_DECL_NAME_RE = re.compile(
     r"^(?:paper_)?assumption(?:_|$)|^source_assumption(?:_|$)|_assumption(?:_|$)"
 )
@@ -964,7 +981,7 @@ def parse_paper_text_statements(folder: Path) -> dict[str, str]:
 def parse_paper_statement_map(folder: Path) -> dict[str, str]:
     """Load explicit paper-source line ranges for dashboard statements."""
 
-    map_path = folder / PAPER_STATEMENT_MAP_FILE
+    map_path = paper_relative_file(folder, PAPER_STATEMENT_MAP_FILE, "paper_statement_map.json")
     if not map_path.exists() or not map_path.is_file():
         return {}
 
@@ -1032,7 +1049,7 @@ def paper_statement_inventory(folder: Path) -> dict[str, dict[str, Any]]:
     best treated as a prompt scaffold, not a closeout-quality source inventory.
     """
 
-    map_path = folder / PAPER_STATEMENT_MAP_FILE
+    map_path = paper_relative_file(folder, PAPER_STATEMENT_MAP_FILE, "paper_statement_map.json")
     if map_path.exists() and map_path.is_file():
         try:
             payload = json.loads(map_path.read_text(encoding="utf-8"))
@@ -1288,19 +1305,19 @@ def load_llm_lean_to_tex_drafts(folder: Path) -> dict[str, str]:
 def llm_statement_judgments_file(folder: Path) -> Path:
     """Return the preferred LLM statement-match judgment sidecar for a paper."""
 
-    tracked_path = folder / DEFAULT_LLM_STATEMENT_JUDGE_FILE
+    tracked_path = paper_relative_file(folder, DEFAULT_LLM_STATEMENT_JUDGE_FILE, "statement_match_llm.json")
     if tracked_path.exists() and tracked_path.is_file():
         return tracked_path
-    return folder / ".review_traces" / DEFAULT_LLM_STATEMENT_JUDGE_FILE
+    return folder / ".review_traces" / "statement_match_llm.json"
 
 
 def llm_paper_coverage_file(folder: Path) -> Path:
     """Return the preferred LLM source-paper coverage sidecar for a paper."""
 
-    tracked_path = folder / DEFAULT_LLM_PAPER_COVERAGE_FILE
+    tracked_path = paper_relative_file(folder, DEFAULT_LLM_PAPER_COVERAGE_FILE, "paper_coverage_llm.json")
     if tracked_path.exists() and tracked_path.is_file():
         return tracked_path
-    return folder / ".review_traces" / DEFAULT_LLM_PAPER_COVERAGE_FILE
+    return folder / ".review_traces" / "paper_coverage_llm.json"
 
 
 def _normalize_llm_match_judgment(raw: Any) -> str:
@@ -1769,10 +1786,10 @@ def load_llm_paper_coverage_audit(folder: Path) -> dict[str, Any]:
 def llm_review_surface_file(folder: Path) -> Path:
     """Return the preferred LLM review-surface audit sidecar for a paper."""
 
-    tracked_path = folder / DEFAULT_LLM_REVIEW_SURFACE_FILE
+    tracked_path = paper_relative_file(folder, DEFAULT_LLM_REVIEW_SURFACE_FILE, "review_surface_llm.json")
     if tracked_path.exists() and tracked_path.is_file():
         return tracked_path
-    return folder / ".review_traces" / DEFAULT_LLM_REVIEW_SURFACE_FILE
+    return folder / ".review_traces" / "review_surface_llm.json"
 
 
 def _normalize_surface_audit_judgment(raw: Any) -> str:
@@ -1861,10 +1878,10 @@ def load_llm_review_surface_audit(folder: Path) -> dict[str, Any]:
 def llm_assumption_judgments_file(folder: Path) -> Path:
     """Return the preferred LLM paper-assumption provenance sidecar."""
 
-    tracked_path = folder / DEFAULT_LLM_ASSUMPTION_JUDGE_FILE
+    tracked_path = paper_relative_file(folder, DEFAULT_LLM_ASSUMPTION_JUDGE_FILE, "assumption_match_llm.json")
     if tracked_path.exists() and tracked_path.is_file():
         return tracked_path
-    return folder / ".review_traces" / DEFAULT_LLM_ASSUMPTION_JUDGE_FILE
+    return folder / ".review_traces" / "assumption_match_llm.json"
 
 
 def _normalize_assumption_judgment(raw: Any) -> str:
@@ -2157,10 +2174,10 @@ def load_llm_assumption_judgments(folder: Path) -> dict[str, dict[str, Any]]:
 def llm_lean_to_tex_drafts_file(folder: Path) -> Path:
     """Return the preferred Lean-to-TeX draft sidecar for a paper."""
 
-    tracked_path = folder / DEFAULT_LLM_LEAN_TO_TEX_FILE
+    tracked_path = paper_relative_file(folder, DEFAULT_LLM_LEAN_TO_TEX_FILE, "lean_to_tex_llm.json")
     if tracked_path.exists() and tracked_path.is_file():
         return tracked_path
-    return folder / ".review_traces" / DEFAULT_LLM_LEAN_TO_TEX_FILE
+    return folder / ".review_traces" / "lean_to_tex_llm.json"
 
 
 def _run_pdftotext_bbox(pdf_path: Path, page: int) -> str:
@@ -3061,11 +3078,15 @@ def paper_interface_cache_file(paper: str | Path) -> Path:
 
 def _cache_source_hashes(folder: Path) -> dict[str, str]:
     interface_path = review_source_file(folder)
-    report_path = folder / "FINAL_VALIDATION_REPORT.md"
+    report_path = paper_relative_file(
+        folder, FINAL_VALIDATION_REPORT_FILE, "FINAL_VALIDATION_REPORT.md"
+    )
     tex_path = find_paper_tex_source(folder)
     text_path = find_paper_text(folder)
     pdf_path = find_paper_pdf(folder)
-    statement_map_path = folder / PAPER_STATEMENT_MAP_FILE
+    statement_map_path = paper_relative_file(
+        folder, PAPER_STATEMENT_MAP_FILE, "paper_statement_map.json"
+    )
     llm_tex_path = llm_lean_to_tex_drafts_file(folder)
     llm_judge_path = llm_statement_judgments_file(folder)
     llm_surface_path = llm_review_surface_file(folder)
@@ -3289,7 +3310,7 @@ def review_items_for_paper(folder: Path, use_cache: bool = True) -> list[ReviewI
             return cached
 
     interface = review_source_file(folder)
-    report = folder / "FINAL_VALIDATION_REPORT.md"
+    report = paper_relative_file(folder, FINAL_VALIDATION_REPORT_FILE, "FINAL_VALIDATION_REPORT.md")
     items = parse_interface_items(interface, report if report.exists() else None, folder)
     attach_rendered_statement_images(folder, items)
     return items
@@ -3506,7 +3527,16 @@ def paper_coverage_audit_required(folder: Path, inventory: dict[str, dict[str, A
         return True
     if explicit_enabled:
         return True
-    return bool(inventory and (folder / PAPER_STATEMENT_MAP_FILE).exists())
+    return bool(
+        inventory
+        and paper_relative_file(folder, PAPER_STATEMENT_MAP_FILE, "paper_statement_map.json").exists()
+    )
+
+
+def _is_statement_map_source(source: object) -> bool:
+    """Return whether an inventory source label names the statement-map sidecar."""
+
+    return str(source or "") in {PAPER_STATEMENT_MAP_FILE, "paper_statement_map.json"}
 
 
 SOURCE_NAMED_CLAIM_RE = re.compile(
@@ -3650,7 +3680,9 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
     """Summarize source-paper statement coverage by the review dashboard surface."""
 
     inventory = paper_statement_inventory(folder)
-    statement_map_path = folder / PAPER_STATEMENT_MAP_FILE
+    statement_map_path = paper_relative_file(
+        folder, PAPER_STATEMENT_MAP_FILE, "paper_statement_map.json"
+    )
     statement_map_payload: dict[str, Any] = {}
     if statement_map_path.exists() and statement_map_path.is_file():
         try:
@@ -3667,7 +3699,7 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
         or statement_map_payload.get("source_curated") is False
     )
     has_explicit_inventory = bool(inventory) and any(
-        str(item.get("source") or "") == PAPER_STATEMENT_MAP_FILE
+        _is_statement_map_source(item.get("source"))
         for item in inventory.values()
     )
     inventory_hash = paper_statement_inventory_digest(inventory)
@@ -3685,13 +3717,13 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
     inventory_missing_source_url = sorted(
         key
         for key, item in inventory.items()
-        if str(item.get("source") or "") == PAPER_STATEMENT_MAP_FILE
+        if _is_statement_map_source(item.get("source"))
         and not str(item.get("source_url") or "").strip()
     )
     inventory_missing_source_provenance = sorted(
         key
         for key, item in inventory.items()
-        if str(item.get("source") or "") == PAPER_STATEMENT_MAP_FILE
+        if _is_statement_map_source(item.get("source"))
         and not (
             str(item.get("source_location") or "").strip()
             or str(item.get("source_note") or "").strip()

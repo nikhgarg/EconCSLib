@@ -1,14 +1,14 @@
 {
   "artifacts": {
     "assumptions": "papers/GKGMM19IterativeLocalVoting/Assumptions.lean",
-    "dependency_dag_pdf": "papers/GKGMM19IterativeLocalVoting/DependencyDAG.pdf",
-    "dependency_dag_tex": "papers/GKGMM19IterativeLocalVoting/DependencyDAG.tex",
-    "final_validation_report": "papers/GKGMM19IterativeLocalVoting/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_pdf": "papers/GKGMM19IterativeLocalVoting/docs/DependencyDAG.pdf",
+    "dependency_dag_tex": "papers/GKGMM19IterativeLocalVoting/docs/DependencyDAG.tex",
+    "final_validation_report": "papers/GKGMM19IterativeLocalVoting/docs/FINAL_VALIDATION_REPORT.md",
     "paper_interface": "papers/GKGMM19IterativeLocalVoting/PaperInterface.lean",
-    "paper_statement_map": "papers/GKGMM19IterativeLocalVoting/paper_statement_map.json",
+    "paper_statement_map": "papers/GKGMM19IterativeLocalVoting/audit/paper_statement_map.json",
     "proof_interface": "papers/GKGMM19IterativeLocalVoting/ProofInterface.lean",
     "readme": "papers/GKGMM19IterativeLocalVoting/README.md",
-    "review_status_export": "papers/GKGMM19IterativeLocalVoting/review_status_export.json",
+    "review_status_export": "papers/GKGMM19IterativeLocalVoting/audit/review_status_export.json",
     "start_here_next_agent": "papers/GKGMM19IterativeLocalVoting/START_HERE_NEXT_AGENT.md",
     "validator_ledger": "papers/GKGMM19IterativeLocalVoting/VALIDATOR_LEDGER.md",
     "week_pause_handoff": "papers/GKGMM19IterativeLocalVoting/HANDOFF_2026-06-19_WEEK_PAUSE.md"
@@ -37,7 +37,7 @@
     "path": "papers/GKGMM19IterativeLocalVoting/PaperInterface.lean",
     "review_rows": 47
   },
-  "review_entrypoint": "papers/GKGMM19IterativeLocalVoting/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/GKGMM19IterativeLocalVoting/docs/FINAL_VALIDATION_REPORT.md",
   "review_surface": {
     "assumption_names": [
       "assumption_conditions_c123",
@@ -169,15 +169,15 @@
       "appendix_theorem5_ssgm_convergence_boundary"
     ],
     "llm_assumption_review": {
-      "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/assumption_match_llm.json",
+      "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/audit/assumption_match_llm.json",
       "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean and listed either as a source assumption or as an explicit proof-boundary assumption. Source assumptions must be judged by an independent LLM as true paper/source model assumptions; proof-boundary assumptions must be judged and documented as partial-formalization boundaries."
     },
     "llm_statement_review": {
-      "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/assumption_match_llm.json",
-      "lean_to_tex_file": "papers/GKGMM19IterativeLocalVoting/lean_to_tex_llm.json",
-      "match_judgment_file": "papers/GKGMM19IterativeLocalVoting/statement_match_llm.json",
+      "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/audit/assumption_match_llm.json",
+      "lean_to_tex_file": "papers/GKGMM19IterativeLocalVoting/audit/lean_to_tex_llm.json",
+      "match_judgment_file": "papers/GKGMM19IterativeLocalVoting/audit/statement_match_llm.json",
       "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, equivalence direction, and conclusion. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions; conditional wrappers, source-row packages, omitted subclaims, weakened/strengthened statements, or broad aggregates must be judged `mismatch` or `uncertain`. A user-approved external/library proof boundary remains a raw `mismatch` with `resolution: conditional_boundary`, not a `matches` row. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review.",
-      "review_surface_audit_file": "papers/GKGMM19IterativeLocalVoting/review_surface_llm.json",
+      "review_surface_audit_file": "papers/GKGMM19IterativeLocalVoting/audit/review_surface_llm.json",
       "surface_audit_threshold": 30,
       "surface_warning_threshold": 120
     },

@@ -1,6 +1,6 @@
 *.pdf
-!DependencyDAG.pdf
-!LAP_VARIABILITY_CLEAN_PROOF.pdf
+!docs/DependencyDAG.pdf
+!docs/LAP_VARIABILITY_CLEAN_PROOF.pdf
 source.pdf
 source.txt
 source_tex/

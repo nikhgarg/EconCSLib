@@ -8,7 +8,7 @@
   "status": "formalized",
   "main_caveat": "",
   "human_summary": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
-  "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/GS62CollegeAdmissions/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 7,
@@ -27,9 +27,9 @@
   "artifacts": {
     "readme": "papers/GS62CollegeAdmissions/README.md",
     "paper_interface": "papers/GS62CollegeAdmissions/PaperInterface.lean",
-    "final_validation_report": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/GS62CollegeAdmissions/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/GS62CollegeAdmissions/DependencyDAG.pdf"
+    "final_validation_report": "papers/GS62CollegeAdmissions/docs/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/GS62CollegeAdmissions/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/GS62CollegeAdmissions/docs/DependencyDAG.pdf"
   },
   "review_surface": {
     "source_file": "papers/GS62CollegeAdmissions/PaperInterface.lean",

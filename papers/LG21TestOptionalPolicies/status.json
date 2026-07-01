@@ -7,7 +7,7 @@
   "build_target": "lake build LG21TestOptionalPolicies",
   "status": "formalized",
   "main_caveat": "",
-  "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/LG21TestOptionalPolicies/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 23,
@@ -28,9 +28,9 @@
   "artifacts": {
     "readme": "papers/LG21TestOptionalPolicies/README.md",
     "paper_interface": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
-    "final_validation_report": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/LG21TestOptionalPolicies/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/DependencyDAG.pdf",
+    "final_validation_report": "papers/LG21TestOptionalPolicies/docs/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/LG21TestOptionalPolicies/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/docs/DependencyDAG.pdf",
     "proof_interface": "papers/LG21TestOptionalPolicies/ProofInterface.lean",
     "source_text": "papers/LG21TestOptionalPolicies/source.txt",
     "assumptions": "papers/LG21TestOptionalPolicies/Assumptions.lean"
@@ -38,7 +38,7 @@
   "review_surface": {
     "source_file": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
     "assumption_source_file": "papers/LG21TestOptionalPolicies/Assumptions.lean",
-    "llm_assumption_review": "papers/LG21TestOptionalPolicies/assumption_match_llm.json",
+    "llm_assumption_review": "papers/LG21TestOptionalPolicies/audit/assumption_match_llm.json",
     "assumption_policy": "strict",
     "assumption_names": [
       "assumption_section3_access_fraction_domain",

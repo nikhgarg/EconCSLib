@@ -12,7 +12,7 @@
     "status": "draft",
     "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
   },
-  "review_entrypoint": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/DGD26AdmissionsPredictability/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 101,
@@ -31,36 +31,36 @@
   "artifacts": {
     "paper_interface": "papers/DGD26AdmissionsPredictability/PaperInterface.lean",
     "assumptions": "papers/DGD26AdmissionsPredictability/Assumptions.lean",
-    "final_validation_report": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/DGD26AdmissionsPredictability/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/DGD26AdmissionsPredictability/DependencyDAG.pdf",
-    "lap_variability_clean_proof_tex": "papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.tex",
-    "lap_variability_clean_proof_pdf": "papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.pdf"
+    "final_validation_report": "papers/DGD26AdmissionsPredictability/docs/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/DGD26AdmissionsPredictability/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/DGD26AdmissionsPredictability/docs/DependencyDAG.pdf",
+    "lap_variability_clean_proof_tex": "papers/DGD26AdmissionsPredictability/docs/LAP_VARIABILITY_CLEAN_PROOF.tex",
+    "lap_variability_clean_proof_pdf": "papers/DGD26AdmissionsPredictability/docs/LAP_VARIABILITY_CLEAN_PROOF.pdf"
   },
   "review_surface": {
     "source_file": "papers/DGD26AdmissionsPredictability/PaperInterface.lean",
     "assumption_source_file": "papers/DGD26AdmissionsPredictability/Assumptions.lean",
     "llm_statement_review": {
-      "lean_to_tex_file": "papers/DGD26AdmissionsPredictability/lean_to_tex_llm.json",
-      "match_judgment_file": "papers/DGD26AdmissionsPredictability/statement_match_llm.json",
-      "review_surface_audit_file": "papers/DGD26AdmissionsPredictability/review_surface_llm.json",
-      "paper_coverage_audit_file": "papers/DGD26AdmissionsPredictability/paper_coverage_llm.json",
-      "assumption_judgment_file": "papers/DGD26AdmissionsPredictability/assumption_match_llm.json",
+      "lean_to_tex_file": "papers/DGD26AdmissionsPredictability/audit/lean_to_tex_llm.json",
+      "match_judgment_file": "papers/DGD26AdmissionsPredictability/audit/statement_match_llm.json",
+      "review_surface_audit_file": "papers/DGD26AdmissionsPredictability/audit/review_surface_llm.json",
+      "paper_coverage_audit_file": "papers/DGD26AdmissionsPredictability/audit/paper_coverage_llm.json",
+      "assumption_judgment_file": "papers/DGD26AdmissionsPredictability/audit/assumption_match_llm.json",
       "surface_audit_threshold": 30,
       "surface_warning_threshold": 120,
       "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, equivalence direction, conclusion, and named predicate application. Have an independent semantic LLM judge compare that TeX/prose translation with the original full paper statement, not just the theorem label or phrase. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, conclusions, and the semantics of every Lean premise. If a Lean premise is a named predicate or wrapper, the judge must inspect what that predicate means in the paper model; source-looking names are not evidence. Extra replay, certificate, process, bridge, source-row, or broad package assumptions must be judged `mismatch` or `uncertain`. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
     },
     "llm_paper_coverage_review": {
-      "paper_coverage_audit_file": "papers/DGD26AdmissionsPredictability/paper_coverage_llm.json",
+      "paper_coverage_audit_file": "papers/DGD26AdmissionsPredictability/audit/paper_coverage_llm.json",
       "policy": "Maintain a paper_statement_map.json inventory of source definitions, formulas, and named statements, then use a separate LLM pass to judge whether each source item is covered by one or more dashboard rows. This paper-level accounting is required before calling a full-paper formalization closed and is separate from row-local statement matching."
     },
     "llm_assumption_review": {
-      "assumption_judgment_file": "papers/DGD26AdmissionsPredictability/assumption_match_llm.json",
+      "assumption_judgment_file": "papers/DGD26AdmissionsPredictability/audit/assumption_match_llm.json",
       "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
     },
     "llm_source_record_review": {
-      "source_record_audit_file": "papers/DGD26AdmissionsPredictability/source_record_audit.json",
-      "source_record_judgment_file": "papers/DGD26AdmissionsPredictability/source_record_match_llm.json",
+      "source_record_audit_file": "papers/DGD26AdmissionsPredictability/audit/source_record_audit.json",
+      "source_record_judgment_file": "papers/DGD26AdmissionsPredictability/audit/source_record_match_llm.json",
       "policy": "Run the code-backed recursive source-record audit for any visible record, certificate, replay, process, bridge, source-row, or broad package premise. The LLM judge must classify each boundary-shaped input and recursive field by source evidence, Lean derivation, approved external boundary, or unresolved proof debt."
     },
     "assumption_policy": "strict",

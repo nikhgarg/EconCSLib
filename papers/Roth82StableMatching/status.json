@@ -7,7 +7,7 @@
   "build_target": "lake build Roth82StableMatching",
   "status": "formalized",
   "main_caveat": "",
-  "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/Roth82StableMatching/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 29,
@@ -27,15 +27,15 @@
     "readme": "papers/Roth82StableMatching/README.md",
     "paper_interface": "papers/Roth82StableMatching/PaperInterface.lean",
     "assumptions": "papers/Roth82StableMatching/Assumptions.lean",
-    "final_validation_report": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/Roth82StableMatching/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/Roth82StableMatching/DependencyDAG.pdf"
+    "final_validation_report": "papers/Roth82StableMatching/docs/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/Roth82StableMatching/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/Roth82StableMatching/docs/DependencyDAG.pdf"
   },
   "review_surface": {
     "source_file": "papers/Roth82StableMatching/PaperInterface.lean",
     "assumption_source_file": "papers/Roth82StableMatching/Assumptions.lean",
     "llm_assumption_review": {
-      "assumption_judgment_file": "papers/Roth82StableMatching/assumption_match_llm.json",
+      "assumption_judgment_file": "papers/Roth82StableMatching/audit/assumption_match_llm.json",
       "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
     },
     "assumption_policy": "strict",

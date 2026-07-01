@@ -80,14 +80,15 @@ For public-safe paths, prefer the latest semantically valid artifact:
 - DAG PDFs, validation reports, and generated paper artifacts: use the newest
   version that matches the current paper status and source surface. If a PDF is
   copied, copy its TeX/source input when that input is tracked and public-safe.
-- LLM-as-judge sidecars (`lean_to_tex_llm.json`, `statement_match_llm.json`,
-  `paper_coverage_llm.json`, `assumption_match_llm.json`,
-  `source_record_match_llm.json`): use the sidecar that matches the current
-  Lean declarations, current source inventory, current prompt version, and
-  current digest fields. A newer timestamp is not enough.
-- Source records (`source_record_audit.json`, `paper_statement_map.json`): use
-  the version generated from the current Lean/source inventory. Regenerate when
-  in doubt.
+- LLM-as-judge sidecars (`audit/lean_to_tex_llm.json`,
+  `audit/statement_match_llm.json`, `audit/paper_coverage_llm.json`,
+  `audit/assumption_match_llm.json`, `audit/source_record_match_llm.json`): use
+  the sidecar that matches the current Lean declarations, current source
+  inventory, current prompt version, and current digest fields. A newer
+  timestamp is not enough.
+- Source records (`audit/source_record_audit.json`,
+  `audit/paper_statement_map.json`): use the version generated from the current
+  Lean/source inventory. Regenerate when in doubt.
 - Aggregate files (`papers/status.json`, `papers/human_status.json`,
   `docs/PAPER_STATUS.md`, `README.md`, `site/index.html`): never copy across
   the public/private boundary. Regenerate them in the destination checkout.

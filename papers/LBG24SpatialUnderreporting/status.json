@@ -13,7 +13,7 @@
     "status": "human_written",
     "note": "Human-written summary supplied on 2026-06-28; preserve verbatim unless a human explicitly asks for a change."
   },
-  "review_entrypoint": "papers/LBG24SpatialUnderreporting/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/LBG24SpatialUnderreporting/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 27,
@@ -33,25 +33,25 @@
     "readme": "papers/LBG24SpatialUnderreporting/README.md",
     "paper_interface": "papers/LBG24SpatialUnderreporting/PaperInterface.lean",
     "assumptions": "papers/LBG24SpatialUnderreporting/Assumptions.lean",
-    "final_validation_report": "papers/LBG24SpatialUnderreporting/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/LBG24SpatialUnderreporting/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/LBG24SpatialUnderreporting/DependencyDAG.pdf",
-    "source_record_audit": "papers/LBG24SpatialUnderreporting/source_record_audit.json"
+    "final_validation_report": "papers/LBG24SpatialUnderreporting/docs/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/LBG24SpatialUnderreporting/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/LBG24SpatialUnderreporting/docs/DependencyDAG.pdf",
+    "source_record_audit": "papers/LBG24SpatialUnderreporting/audit/source_record_audit.json"
   },
   "review_surface": {
     "source_file": "PaperInterface.lean",
     "assumption_source_file": "Assumptions.lean",
     "llm_statement_review": {
-      "lean_to_tex_file": "papers/LBG24SpatialUnderreporting/lean_to_tex_llm.json",
-      "match_judgment_file": "papers/LBG24SpatialUnderreporting/statement_match_llm.json",
-      "review_surface_audit_file": "papers/LBG24SpatialUnderreporting/review_surface_llm.json",
-      "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/assumption_match_llm.json",
+      "lean_to_tex_file": "papers/LBG24SpatialUnderreporting/audit/lean_to_tex_llm.json",
+      "match_judgment_file": "papers/LBG24SpatialUnderreporting/audit/statement_match_llm.json",
+      "review_surface_audit_file": "papers/LBG24SpatialUnderreporting/audit/review_surface_llm.json",
+      "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/audit/assumption_match_llm.json",
       "surface_audit_threshold": 30,
       "surface_warning_threshold": 120,
       "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, named predicate/wrapper application, equivalence direction, conclusion, and visible input. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label or phrase. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, conclusions, and the semantics of every Lean premise. If a Lean premise is a named predicate or wrapper, the judge must inspect what that predicate means in the paper model; source-looking names are not evidence. Extra replay, certificate, process, bridge, source-row, or broad package assumptions must be judged `mismatch` or `uncertain` unless explicitly source-backed or derived from source primitives. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
     },
     "llm_assumption_review": {
-      "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/assumption_match_llm.json",
+      "assumption_judgment_file": "papers/LBG24SpatialUnderreporting/audit/assumption_match_llm.json",
       "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
     },
     "assumption_policy": "strict",

@@ -57,20 +57,21 @@ machine-readable source of truth for curated review rows and slices.
 ## Lean-To-TeX Drafts
 
 The Lean-to-TeX draft column can be overridden by a paper-local
-`lean_to_tex_llm.json` file in the paper root. Use this for stable,
+`audit/lean_to_tex_llm.json` file. Use this for stable,
 context-free drafts generated from `PaperInterface.lean` alone, without reading
-the source paper. The legacy `.review_traces/lean_to_tex_llm.json` location is
-still read when no tracked paper-root draft exists.
+the source paper. The legacy paper-root and `.review_traces/lean_to_tex_llm.json`
+locations are still read when no tracked `audit/` draft exists.
 
 The intended workflow has three independent statement passes:
 
 1. The formalization agent writes the compact paper-facing Lean statement in
    `PaperInterface.lean`.
 2. A second LLM, given only that Lean statement and no paper context, translates
-   it to paper-style LaTeX/prose and saves the result in `lean_to_tex_llm.json`.
+   it to paper-style LaTeX/prose and saves the result in
+   `audit/lean_to_tex_llm.json`.
 3. An independent semantic LLM judge, given only the original paper statement and the translated
    LaTeX/prose, judges whether they match and saves the result in
-   `statement_match_llm.json`.
+   `audit/statement_match_llm.json`.
 4. A separate assumption-provenance LLM, given only the paper source text for
    the claimed assumptions and the assumption declarations from `Assumptions.lean`,
    judges whether every listed assumption is truly a paper/source model
@@ -97,7 +98,7 @@ is complete only when it is derived in Lean from the paper's source model
 primitives or from separately validated paper assumptions. If the formula is
 asserted as a source row, theorem premise, certificate field, capacity identity,
 normalization, or other undischarged proof boundary, record it in
-`Assumptions.lean`/`assumption_match_llm.json` or mark the downstream endpoint
+`Assumptions.lean`/`audit/assumption_match_llm.json` or mark the downstream endpoint
 partial until it is derived.
 
 The same rule applies to reusable library certificates. A library theorem may
@@ -126,8 +127,8 @@ Use this workflow in two modes:
 - Initial target-setting pass: run near the beginning of a paper, after the
   source inventory and first `PaperInterface.lean` skeleton, before investing in
   long proofs. This lightweight pass only establishes that the Lean statements
-  are the right formalization targets. Generate `lean_to_tex_llm.json` from the
-  full expanded Lean statements, generate `statement_match_llm.json` against the
+  are the right formalization targets. Generate `audit/lean_to_tex_llm.json` from the
+  full expanded Lean statements, generate `audit/statement_match_llm.json` against the
   complete original paper theorem/definition/formula text, run
   `python3 scripts/review_dashboard.py --paper <paper> --statement-precheck`,
   then run `python3 scripts/review_dashboard.py --paper <paper>
@@ -141,7 +142,7 @@ Use this workflow in two modes:
   Lean-to-TeX and statement-judge pass, plus the review-surface audit when row
   count requires it, the assumption-provenance pass when assumptions exist, the
   `Statement Translation Audit` section in
-  `FINAL_VALIDATION_REPORT.md`, and the full `--precheck`.
+  `docs/FINAL_VALIDATION_REPORT.md`, and the full `--precheck`.
 
 For both modes, every dashboard row needs one concrete source statement. If the
 automatic TeX/text extraction is missing, over-broad, or pulls in surrounding
@@ -186,7 +187,8 @@ list.
 For older papers, item values may also be plain strings containing the
 translation; the dashboard accepts both forms.
 
-`statement_match_llm.json` is tracked in the paper root when used.
+`audit/statement_match_llm.json` is tracked when used. Legacy paper-root files
+are still read for older papers.
 It has schema:
 
 ```json
@@ -279,7 +281,7 @@ certificate, or proof convenience as an unreviewed theorem premise. Instead:
 3. List every assumption declaration in paper-local `status.json`
    `review_surface.assumption_names`.
 4. Save an independent source-assumption judgment in
-   `assumption_match_llm.json`.
+   `audit/assumption_match_llm.json`.
 
 For new proof work, prefer deriving the premise or using the named assumption
 declaration directly in the theorem signature. For existing broad
@@ -393,14 +395,14 @@ record, certificate, replay, process, bridge, source-row package, or broad model
 predicate. Run:
 
 ```bash
-python3 skills/econcs-formalizer/scripts/source_record_audit.py --paper <PaperFolder> --out papers/<PaperFolder>/source_record_audit.json
+python3 skills/econcs-formalizer/scripts/source_record_audit.py --paper <PaperFolder> --out papers/<PaperFolder>/audit/source_record_audit.json
 ```
 
 The generated payload contains `prompt_version:
 "source-record-v2-semantic-boundary-inputs"`, the current audit digest,
 boundary-shaped visible theorem inputs, recursive source-record fields, and a
 judge prompt. Save the independent LLM judgments in
-`source_record_match_llm.json` with the same prompt version and current
+`audit/source_record_match_llm.json` with the same prompt version and current
 `source_record_audit_sha256`.
 
 Each boundary-shaped theorem input must be classified by source evidence, a
@@ -417,7 +419,7 @@ For any paper whose dashboard has more than 30 rows, run a separate LLM pass
 before broad human review. Give that LLM the dashboard row names and paper-facing
 summaries, but no proof context, and ask whether every row is a paper-facing
 definition, formula, or named source statement that belongs in the human review
-surface. Save the result in paper-root `review_surface_llm.json`.
+surface. Save the result in `audit/review_surface_llm.json`.
 
 At 120 or more rows, the dashboard always shows an oversized-surface warning.
 That warning is intentional: even if the LLM audit passes, a human should first
@@ -539,7 +541,7 @@ python3 scripts/review_dashboard.py --paper ABC24ShortTitle --export-format json
 ```
 
 Use `validators-md` to refresh the paper-facing validator table in
-`FINAL_VALIDATION_REPORT.md`. It lists every dashboard/PaperInterface row, the
+`docs/FINAL_VALIDATION_REPORT.md`. It lists every dashboard/PaperInterface row, the
 validators recorded for that row, and validator comments.
 
 In server mode, machine-readable status is available at:

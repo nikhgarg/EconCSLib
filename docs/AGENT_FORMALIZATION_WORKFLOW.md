@@ -6,9 +6,9 @@ human-facing project overview.
 ## Documentation Split
 
 - Human-facing docs should be strategic, short, and readable without Lean
-  expertise. The top-level `README.md`, paper `FINAL_VALIDATION_REPORT.md`
-  files, `PaperInterface.lean`, and `DependencyDAG.pdf` are the main human
-  surfaces.
+  expertise. The top-level `README.md`, paper
+  `docs/FINAL_VALIDATION_REPORT.md` files, `PaperInterface.lean`, and
+  `docs/DependencyDAG.pdf` are the main human surfaces.
 - Agent-facing docs may be detailed and operational. This file,
   `docs/ARCHITECTURE.md`, `docs/ECONCSLIB_DOMAIN_INDEX.md`, and
   `skills/econcs-formalizer/` contain workflow rules, implementation
@@ -31,7 +31,9 @@ Write and maintain a short proof/formalization plan before proving in Lean.
 
 The agent should think through the proof and formalization plan outside Lean
 before proving, especially where the paper is underspecified. Keep that plan in
-`FORMALIZATION_PLAN.md` and update it as the proof route changes.
+the private workspace as `FORMALIZATION_PLAN.md` and update it as the proof
+route changes. Do not publish planning, handoff, or progress markdown in the
+public paper folder unless the user explicitly asks for that artifact.
 At the beginning of every paper audit or new formalization, the first plan
 section should be an extended outside-Lean paper sanity pass: read the source,
 check every named result and formula-bearing displayed claim for plausible
@@ -63,17 +65,24 @@ must record the sections from
 
 ## Required Paper Artifacts
 
-Each paper folder should contain:
+Each public paper folder should keep the root focused on executable paper code
+and machine-readable status. It should contain:
 
 - `.gitignore`
-- `README.md`
-- `DependencyDAG.tex`
-- `FORMALIZATION_PLAN.md`
 - `MainTheorems.lean`
 - `PaperInterface.lean`
 - `status.json`
+- `review-dashboard.sh`
+- `docs/DependencyDAG.tex`
+- `docs/DependencyDAG.pdf`
+- `docs/FINAL_VALIDATION_REPORT.md` when a paper has a final validation claim
+- `audit/*.json` for tracked LLM/source-audit sidecars
 - locally cached source PDF, ignored by Git
 - locally cached `pdftotext` extraction, when licensing permits
+
+Private paper folders may additionally keep `README.md`,
+`FORMALIZATION_PLAN.md`, handoff notes, source audits, and other progress
+documents. Keep those private by default.
 
 Completed papers should also have:
 
@@ -81,7 +90,7 @@ Completed papers should also have:
   `PaperInterface.lean` too large to review directly.
 - `PostPaperAudit.lean` when an exhaustive source-numbered endpoint ledger is
   useful.
-- `FINAL_VALIDATION_REPORT.md` with definitions, named theorem statements,
+- `docs/FINAL_VALIDATION_REPORT.md` with definitions, named theorem statements,
   proof deviations, assumptions, gaps, and verification outcomes.
 - A concise caveat-repair memo when the final status is `formalized with
   caveat` because of real source discrepancies. Prefer a TeX source plus
@@ -93,7 +102,6 @@ Completed papers should also have:
 
 ## What The Agent Should Keep Current
 
-- `README.md`: source version, status table, and exact caveats.
 - `status.json`: paper-local source of truth for paper status, dashboard review
   rows/slices, interface metadata, and artifact paths. After editing it, run
   `python3 scripts/sync_paper_status.py` to regenerate the detailed aggregate
@@ -110,8 +118,8 @@ Completed papers should also have:
   not rewrite the summary unless a human explicitly asks for that exact edit.
   Audit scripts may require a nonempty summary for non-formalized papers, but
   should not pressure edit or shorten human-written or human-approved prose.
-- `FORMALIZATION_PLAN.md`: lightweight outside-Lean proof scratchpad.
-- `DependencyDAG.tex`: proof map with every named result and definition-like
+- Private `FORMALIZATION_PLAN.md`: lightweight outside-Lean proof scratchpad.
+- `docs/DependencyDAG.tex`: proof map with every named result and definition-like
   paper object represented; status and caveat text should agree with
   `status.json`.
 - `MainTheorems.lean`: implementation-level source-faithful wrappers.
@@ -120,7 +128,9 @@ Completed papers should also have:
 - `ProofInterface.lean`: optional implementation-facing theorem endpoint
   surface for broad wrapper families and proof-seam checks.
 - `PostPaperAudit.lean`: exhaustive endpoint ledger when useful.
-- `FINAL_VALIDATION_REPORT.md`: final human report.
+- `docs/FINAL_VALIDATION_REPORT.md`: final human report.
+- `audit/*.json`: LLM-as-judge, source-statement-map, source-record, and
+  assumption-provenance sidecars.
 
 If the paper proof is imprecise, the agent should build a defensible proof
 strategy, formalize that strategy, and record the deviation in the validation
@@ -137,7 +147,7 @@ should move into `EconCSLib` for other papers to reuse. Elevate local/low-risk
 items when the destination module is clear and the build can be checked. If the
 move needs broader API design, keep the paper-facing wrapper in place and record
 the candidate, destination module, and reusable proof idea in
-`FINAL_VALIDATION_REPORT.md`.
+`docs/FINAL_VALIDATION_REPORT.md`.
 
 Library certificate APIs are allowed and often preferable. A reusable theorem may
 require an explicit certificate, witness, external-boundary hypothesis, or
@@ -225,15 +235,14 @@ the statement/assumption judges for visible paper-facing text.
 
 When the agent says a paper is done, inspect:
 
-1. `FINAL_VALIDATION_REPORT.md`
+1. `docs/FINAL_VALIDATION_REPORT.md`
 2. `PaperInterface.lean`
-3. `DependencyDAG.pdf`
-4. `README.md`
+3. `docs/DependencyDAG.pdf`
+4. `status.json`
 5. `PostPaperAudit.lean`, only if an exhaustive endpoint ledger is needed
 
 The post-formalization audit must inspect the report and DAG before handoff.
-After the final report, `POST_FORMALIZATION_AUDIT.md`, or `DependencyDAG.tex`
-changes, run:
+After the final report, post-formalization audit, or DAG source changes, run:
 
 ```bash
 python3 scripts/audit_repository.py --paper <paper> --paper-closeout --include-active --info-limit 0
@@ -355,11 +364,11 @@ before spending much time on proofs:
 2. Build the initial source inventory and a compact `PaperInterface.lean`
    skeleton containing the paper-facing definitions and named statements you
    intend to formalize.
-3. Generate `lean_to_tex_llm.json` from those Lean statements alone, with no
+3. Generate `audit/lean_to_tex_llm.json` from those Lean statements alone, with no
    paper context. The translation must preserve every visible binder,
    hypothesis, domain condition, equivalence/implication direction, and
    conclusion.
-4. Generate `statement_match_llm.json` by asking a separate judge to compare
+4. Generate `audit/statement_match_llm.json` by asking a separate judge to compare
    only the complete original paper statement and the Lean-to-TeX draft. A
    `matches` verdict requires the same hypotheses, subparts, quantifiers,
    domains, constants, normalizations, signs, inequality directions, and
@@ -395,7 +404,7 @@ pending/failing to passing only after a current run records the exact version,
 inputs, validator metadata, and recognized success judgment for the current
 Lean and paper source.
 For public-facing closeout, this includes an explicit current
-`review_surface_llm.json` pass even when the dashboard has 30 or fewer rows; the
+`audit/review_surface_llm.json` pass even when the dashboard has 30 or fewer rows; the
 30-row threshold is an early workflow prompt, not a closeout exemption.
 
 At a statement-review boundary, run the independent LLM statement workflow:
@@ -403,12 +412,12 @@ At a statement-review boundary, run the independent LLM statement workflow:
 1. Curate `PaperInterface.lean` to the paper-facing Lean definitions and named
    statements that should actually be formalized.
    If the dashboard has more than 30 rows, run a separate no-paper-context LLM
-   review-surface audit and save `review_surface_llm.json`; if it has 50 or
+   review-surface audit and save `audit/review_surface_llm.json`; if it has 50 or
    more rows, treat that as an oversized-surface warning and curate before broad
    human review.
 2. Ask a separate LLM, with no paper context, to translate each current Lean
    statement into paper-style LaTeX/prose. Save stable outputs in
-   `lean_to_tex_llm.json`. New tracked entries should use
+   `audit/lean_to_tex_llm.json`. New tracked entries should use
    `{ "tex_statement": "...", "lean_statement_sha256": "..." }` so stale
    translation drafts can be detected, and the sidecar should record
    `prompt_version: "lean-to-tex-v3-strict-context-free-semantic-inputs"`. The translation
@@ -419,7 +428,7 @@ At a statement-review boundary, run the independent LLM statement workflow:
    proof-route summary.
 3. Ask an independent semantic LLM judge, with no Lean/proof context, to compare
    the original paper statement against the translated LaTeX/prose. Save verdicts and reasons in
-   `statement_match_llm.json`, including current Lean, paper, and TeX statement
+   `audit/statement_match_llm.json`, including current Lean, paper, and TeX statement
    digests plus validator/model metadata, and record
    `prompt_version: "statement-match-v3-semantic-full-statement"`. The judge
    must compare the full source statement semantically, not just the theorem
@@ -443,7 +452,7 @@ At a statement-review boundary, run the independent LLM statement workflow:
    declare it in paper-local `Assumptions.lean`, list it in `status.json`
    `review_surface.assumption_names`, and ask a separate source-assumption
    judge to confirm that it is an explicit paper/source model assumption. Save
-   this in `assumption_match_llm.json`, with
+   this in `audit/assumption_match_llm.json`, with
    `prompt_version: "assumption-provenance-v3-semantic-exact-premise-source"`.
    Do not try to hide such a premise by making the `PaperInterface.lean` row an
    `abbrev` alias to a proof-facing theorem. The audit expands review-surface
@@ -453,7 +462,7 @@ At a statement-review boundary, run the independent LLM statement workflow:
    still counts unless it is derived or routed through the explicit assumption
    ledger.
    If `Assumptions.lean` uses `-- audit-premise:` comments, group approval is
-   not enough: every exact premise must have an `assumption_match_llm.json`
+   not enough: every exact premise must have an `audit/assumption_match_llm.json`
    `premise_judgments` entry with a source location. Mark non-source or
    not-yet-derived premises as `partial_boundary` and keep the paper status
    partial until those premises are derived or source-matched.
@@ -475,8 +484,8 @@ At a statement-review boundary, run the independent LLM statement workflow:
    paper-facing `#print axioms` audit and expanded-statement review.
 6. If any reviewed theorem mentions a record, certificate, replay, process,
    bridge, source-row package, or broad model predicate, generate
-   `source_record_audit.json` with the skill helper and save
-   `source_record_match_llm.json` with `prompt_version:
+   `audit/source_record_audit.json` with the skill helper and save
+   `audit/source_record_match_llm.json` with `prompt_version:
    "source-record-v2-semantic-boundary-inputs"`. Each boundary-shaped visible
    input needs source evidence, a Lean derivation from paper primitives, an
    approved external boundary, or an unresolved finding. A source-looking Lean
@@ -504,7 +513,7 @@ source-statement extraction failure first. Fix the source map/report sections,
 or record one paper-wide source-map issue, before accepting row-by-row
 uncertainty.
 
-When updating `FINAL_VALIDATION_REPORT.md`, refresh its paper-facing validator
+When updating `docs/FINAL_VALIDATION_REPORT.md`, refresh its paper-facing validator
 ledger with:
 
 ```bash

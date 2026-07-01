@@ -7,7 +7,7 @@
   "build_target": "lake build MSVV07AdWords",
   "status": "formalized",
   "main_caveat": "",
-  "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/MSVV07AdWords/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 43,
@@ -28,9 +28,9 @@
   "artifacts": {
     "readme": "papers/MSVV07AdWords/README.md",
     "paper_interface": "papers/MSVV07AdWords/PaperInterface.lean",
-    "final_validation_report": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/MSVV07AdWords/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/MSVV07AdWords/DependencyDAG.pdf",
+    "final_validation_report": "papers/MSVV07AdWords/docs/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/MSVV07AdWords/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/MSVV07AdWords/docs/DependencyDAG.pdf",
     "proof_interface": "papers/MSVV07AdWords/ProofInterface.lean",
     "source_text": "papers/MSVV07AdWords/MSVV07AdWords.txt",
     "assumptions": "papers/MSVV07AdWords/Assumptions.lean"
@@ -38,7 +38,7 @@
   "review_surface": {
     "source_file": "papers/MSVV07AdWords/PaperInterface.lean",
     "assumption_source_file": "papers/MSVV07AdWords/Assumptions.lean",
-    "llm_assumption_review": "papers/MSVV07AdWords/assumption_match_llm.json",
+    "llm_assumption_review": "papers/MSVV07AdWords/audit/assumption_match_llm.json",
     "assumption_policy": "strict",
     "assumption_names": [
       "assumption_nonnegative_bids",

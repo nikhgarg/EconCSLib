@@ -7,7 +7,7 @@
   "build_target": "lake build DSWG24DiscretizationBias",
   "status": "formalized",
   "main_caveat": "",
-  "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/DSWG24DiscretizationBias/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 41,
@@ -26,16 +26,16 @@
   "artifacts": {
     "readme": "papers/DSWG24DiscretizationBias/README.md",
     "paper_interface": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
-    "final_validation_report": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/DSWG24DiscretizationBias/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/DependencyDAG.pdf",
+    "final_validation_report": "papers/DSWG24DiscretizationBias/docs/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/DSWG24DiscretizationBias/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/docs/DependencyDAG.pdf",
     "source_text": "papers/DSWG24DiscretizationBias/DSWG24DiscretizationBias.txt",
     "assumptions": "papers/DSWG24DiscretizationBias/Assumptions.lean"
   },
   "review_surface": {
     "source_file": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
     "assumption_source_file": "papers/DSWG24DiscretizationBias/Assumptions.lean",
-    "llm_assumption_review": "papers/DSWG24DiscretizationBias/assumption_match_llm.json",
+    "llm_assumption_review": "papers/DSWG24DiscretizationBias/audit/assumption_match_llm.json",
     "assumption_policy": "strict",
     "assumption_names": [
       "assumption_theorem1_no_information_case",

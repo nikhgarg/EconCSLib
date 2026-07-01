@@ -1,8 +1,8 @@
 {
   "artifacts": {
-    "dependency_dag_pdf": "papers/PKG25NoFreeLunch/DependencyDAG.pdf",
-    "dependency_dag_tex": "papers/PKG25NoFreeLunch/DependencyDAG.tex",
-    "final_validation_report": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_pdf": "papers/PKG25NoFreeLunch/docs/DependencyDAG.pdf",
+    "dependency_dag_tex": "papers/PKG25NoFreeLunch/docs/DependencyDAG.tex",
+    "final_validation_report": "papers/PKG25NoFreeLunch/docs/FINAL_VALIDATION_REPORT.md",
     "paper_interface": "papers/PKG25NoFreeLunch/PaperInterface.lean",
     "readme": "papers/PKG25NoFreeLunch/README.md"
   },
@@ -30,7 +30,7 @@
     "path": "papers/PKG25NoFreeLunch/PaperInterface.lean",
     "review_rows": 15
   },
-  "review_entrypoint": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/PKG25NoFreeLunch/docs/FINAL_VALIDATION_REPORT.md",
   "review_surface": {
     "include_names": [
       "definition_rounding_convention",
@@ -50,10 +50,10 @@
       "theorem_main_no_free_lunch"
     ],
     "llm_statement_review": {
-      "lean_to_tex_file": "papers/PKG25NoFreeLunch/lean_to_tex_llm.json",
-      "match_judgment_file": "papers/PKG25NoFreeLunch/statement_match_llm.json",
+      "lean_to_tex_file": "papers/PKG25NoFreeLunch/audit/lean_to_tex_llm.json",
+      "match_judgment_file": "papers/PKG25NoFreeLunch/audit/statement_match_llm.json",
       "policy": "Translate each Lean statement with an LLM that has no paper context; have a third LLM compare that TeX/prose translation with the original paper statement, record the model/agent validator metadata, and iterate on PaperInterface.lean until they match. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review.",
-      "review_surface_audit_file": "papers/PKG25NoFreeLunch/review_surface_llm.json",
+      "review_surface_audit_file": "papers/PKG25NoFreeLunch/audit/review_surface_llm.json",
       "surface_audit_threshold": 30,
       "surface_warning_threshold": 120
     },

@@ -8,7 +8,7 @@
   "status": "partially formalized",
   "main_caveat": "Partial-formalization boundary: the external computational-complexity consequences for the native Theorem 6.1 hardness and NP=ZPP claims remain reusable library infrastructure work.",
   "human_summary": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.",
-  "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/LOS02CombinatorialAuctions/docs/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
     "total_rows": 39,
@@ -29,9 +29,9 @@
   "artifacts": {
     "readme": "papers/LOS02CombinatorialAuctions/README.md",
     "paper_interface": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
-    "final_validation_report": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
-    "dependency_dag_tex": "papers/LOS02CombinatorialAuctions/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/DependencyDAG.pdf",
+    "final_validation_report": "papers/LOS02CombinatorialAuctions/docs/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/LOS02CombinatorialAuctions/docs/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/docs/DependencyDAG.pdf",
     "proof_interface": "papers/LOS02CombinatorialAuctions/ProofInterface.lean",
     "source_text": "papers/LOS02CombinatorialAuctions/LOS02CombinatorialAuctions.txt",
     "assumptions": "papers/LOS02CombinatorialAuctions/Assumptions.lean"
@@ -39,7 +39,7 @@
   "review_surface": {
     "source_file": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
     "assumption_source_file": "papers/LOS02CombinatorialAuctions/Assumptions.lean",
-    "llm_assumption_review": "papers/LOS02CombinatorialAuctions/assumption_match_llm.json",
+    "llm_assumption_review": "papers/LOS02CombinatorialAuctions/audit/assumption_match_llm.json",
     "assumption_policy": "strict",
     "assumption_names": [
       "assumption_admissible_combinatorial_report_domain",

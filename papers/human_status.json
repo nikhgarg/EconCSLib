@@ -27,13 +27,13 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GS62CollegeAdmissions",
-      "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GS62CollegeAdmissions/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/GS62CollegeAdmissions/README.md",
         "paper_interface": "papers/GS62CollegeAdmissions/PaperInterface.lean",
-        "final_validation_report": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/GS62CollegeAdmissions/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GS62CollegeAdmissions/DependencyDAG.pdf"
+        "final_validation_report": "papers/GS62CollegeAdmissions/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GS62CollegeAdmissions/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GS62CollegeAdmissions/docs/DependencyDAG.pdf"
       }
     },
     {
@@ -54,14 +54,14 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/Roth82StableMatching",
-      "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/Roth82StableMatching/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/Roth82StableMatching/README.md",
         "paper_interface": "papers/Roth82StableMatching/PaperInterface.lean",
         "assumptions": "papers/Roth82StableMatching/Assumptions.lean",
-        "final_validation_report": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/Roth82StableMatching/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/Roth82StableMatching/DependencyDAG.pdf"
+        "final_validation_report": "papers/Roth82StableMatching/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/Roth82StableMatching/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/Roth82StableMatching/docs/DependencyDAG.pdf"
       }
     },
     {
@@ -85,13 +85,13 @@
       },
       "main_note_review": null,
       "paper_folder": "papers/GHW01DigitalGoods",
-      "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GHW01DigitalGoods/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/GHW01DigitalGoods/README.md",
         "paper_interface": "papers/GHW01DigitalGoods/PaperInterface.lean",
-        "final_validation_report": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/GHW01DigitalGoods/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf",
+        "final_validation_report": "papers/GHW01DigitalGoods/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GHW01DigitalGoods/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GHW01DigitalGoods/docs/DependencyDAG.pdf",
         "source_text": "papers/GHW01DigitalGoods/GHW01DigitalGoods.txt",
         "assumptions": "papers/GHW01DigitalGoods/Assumptions.lean"
       }
@@ -114,13 +114,13 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/MSVV07AdWords",
-      "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/MSVV07AdWords/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/MSVV07AdWords/README.md",
         "paper_interface": "papers/MSVV07AdWords/PaperInterface.lean",
-        "final_validation_report": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/MSVV07AdWords/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/MSVV07AdWords/DependencyDAG.pdf",
+        "final_validation_report": "papers/MSVV07AdWords/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/MSVV07AdWords/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/MSVV07AdWords/docs/DependencyDAG.pdf",
         "proof_interface": "papers/MSVV07AdWords/ProofInterface.lean",
         "source_text": "papers/MSVV07AdWords/MSVV07AdWords.txt",
         "assumptions": "papers/MSVV07AdWords/Assumptions.lean"
@@ -144,15 +144,15 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GJ19OptimalBinaryRatingSystems",
-      "review_entrypoint": "papers/GJ19OptimalBinaryRatingSystems/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GJ19OptimalBinaryRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/GJ19OptimalBinaryRatingSystems/README.md",
         "paper_interface": "papers/GJ19OptimalBinaryRatingSystems/PaperInterface.lean",
         "assumptions": "papers/GJ19OptimalBinaryRatingSystems/Assumptions.lean",
-        "final_validation_report": "papers/GJ19OptimalBinaryRatingSystems/FINAL_VALIDATION_REPORT.md",
-        "post_formalization_audit": "papers/GJ19OptimalBinaryRatingSystems/POST_FORMALIZATION_AUDIT.md",
-        "dependency_dag_tex": "papers/GJ19OptimalBinaryRatingSystems/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GJ19OptimalBinaryRatingSystems/DependencyDAG.pdf"
+        "final_validation_report": "papers/GJ19OptimalBinaryRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
+        "post_formalization_audit": "papers/GJ19OptimalBinaryRatingSystems/docs/POST_FORMALIZATION_AUDIT.md",
+        "dependency_dag_tex": "papers/GJ19OptimalBinaryRatingSystems/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GJ19OptimalBinaryRatingSystems/docs/DependencyDAG.pdf"
       }
     },
     {
@@ -173,14 +173,14 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GGSG19TopThree",
-      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GGSG19TopThree/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "assumptions": "papers/GGSG19TopThree/Assumptions.lean",
-        "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/GGSG19TopThree/DependencyDAG.tex",
-        "final_validation_report": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/GGSG19TopThree/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/GGSG19TopThree/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/GGSG19TopThree/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/GGSG19TopThree/PaperInterface.lean",
-        "post_formalization_audit": "papers/GGSG19TopThree/POST_FORMALIZATION_AUDIT.md",
+        "post_formalization_audit": "papers/GGSG19TopThree/docs/POST_FORMALIZATION_AUDIT.md",
         "proof_interface": "papers/GGSG19TopThree/ProofInterface.lean",
         "readme": "papers/GGSG19TopThree/README.md",
         "source_archive": "papers/GGSG19TopThree/source.tar.gz",
@@ -207,13 +207,13 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GJ18InformativeRatingSystems",
-      "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GJ18InformativeRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/GJ18InformativeRatingSystems/README.md",
         "paper_interface": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
-        "final_validation_report": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/GJ18InformativeRatingSystems/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GJ18InformativeRatingSystems/DependencyDAG.pdf",
+        "final_validation_report": "papers/GJ18InformativeRatingSystems/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GJ18InformativeRatingSystems/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GJ18InformativeRatingSystems/docs/DependencyDAG.pdf",
         "source_archive": "papers/GJ18InformativeRatingSystems/source.tar.gz",
         "assumptions": "papers/GJ18InformativeRatingSystems/Assumptions.lean"
       }
@@ -236,13 +236,13 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LG21TestOptionalPolicies",
-      "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/LG21TestOptionalPolicies/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/LG21TestOptionalPolicies/README.md",
         "paper_interface": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
-        "final_validation_report": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/LG21TestOptionalPolicies/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/DependencyDAG.pdf",
+        "final_validation_report": "papers/LG21TestOptionalPolicies/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LG21TestOptionalPolicies/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/docs/DependencyDAG.pdf",
         "proof_interface": "papers/LG21TestOptionalPolicies/ProofInterface.lean",
         "source_text": "papers/LG21TestOptionalPolicies/source.txt",
         "assumptions": "papers/LG21TestOptionalPolicies/Assumptions.lean"
@@ -266,12 +266,12 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GN21DriverSurgePricing",
-      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GN21DriverSurgePricing/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "assumptions": "papers/GN21DriverSurgePricing/Assumptions.lean",
-        "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
-        "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/GN21DriverSurgePricing/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/GN21DriverSurgePricing/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/GN21DriverSurgePricing/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/GN21DriverSurgePricing/PaperInterface.lean",
         "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean",
         "readme": "papers/GN21DriverSurgePricing/README.md",
@@ -299,14 +299,14 @@
         "note": "Do not rewrite this summary without explicit human instruction."
       },
       "paper_folder": "papers/PRPKG24AccuracyDiversity",
-      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/PRPKG24AccuracyDiversity/README.md",
         "paper_interface": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
-        "final_validation_report": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
-        "post_formalization_audit": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md",
-        "dependency_dag_tex": "papers/PRPKG24AccuracyDiversity/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf",
+        "final_validation_report": "papers/PRPKG24AccuracyDiversity/docs/FINAL_VALIDATION_REPORT.md",
+        "post_formalization_audit": "papers/PRPKG24AccuracyDiversity/docs/POST_FORMALIZATION_AUDIT.md",
+        "dependency_dag_tex": "papers/PRPKG24AccuracyDiversity/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/docs/DependencyDAG.pdf",
         "source_text": "papers/PRPKG24AccuracyDiversity/PRPKG24AccuracyDiversity.txt",
         "assumptions": "papers/PRPKG24AccuracyDiversity/Assumptions.lean"
       }
@@ -329,12 +329,12 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GCG24UserItemFairness",
-      "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GCG24UserItemFairness/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "assumptions": "papers/GCG24UserItemFairness/Assumptions.lean",
-        "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/GCG24UserItemFairness/DependencyDAG.tex",
-        "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/GCG24UserItemFairness/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/GCG24UserItemFairness/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/GCG24UserItemFairness/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
         "readme": "papers/GCG24UserItemFairness/README.md",
         "source_text": "papers/GCG24UserItemFairness/GCG24UserItemFairness.txt"
@@ -361,11 +361,11 @@
         "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
       },
       "paper_folder": "papers/PKG25NoFreeLunch",
-      "review_entrypoint": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/PKG25NoFreeLunch/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
-        "dependency_dag_pdf": "papers/PKG25NoFreeLunch/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/PKG25NoFreeLunch/DependencyDAG.tex",
-        "final_validation_report": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/PKG25NoFreeLunch/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/PKG25NoFreeLunch/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/PKG25NoFreeLunch/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/PKG25NoFreeLunch/PaperInterface.lean",
         "readme": "papers/PKG25NoFreeLunch/README.md"
       }
@@ -388,13 +388,13 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/DSWG24DiscretizationBias",
-      "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/DSWG24DiscretizationBias/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/DSWG24DiscretizationBias/README.md",
         "paper_interface": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
-        "final_validation_report": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/DSWG24DiscretizationBias/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/DependencyDAG.pdf",
+        "final_validation_report": "papers/DSWG24DiscretizationBias/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/DSWG24DiscretizationBias/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/docs/DependencyDAG.pdf",
         "source_text": "papers/DSWG24DiscretizationBias/DSWG24DiscretizationBias.txt",
         "assumptions": "papers/DSWG24DiscretizationBias/Assumptions.lean"
       }
@@ -420,15 +420,15 @@
         "note": "Do not rewrite this summary without explicit human instruction."
       },
       "paper_folder": "papers/MBJG25ProducerFairness",
-      "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/MBJG25ProducerFairness/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/MBJG25ProducerFairness/README.md",
         "source_text": "papers/MBJG25ProducerFairness/MBJG25ProducerFairness.txt",
         "paper_interface": "papers/MBJG25ProducerFairness/PaperInterface.lean",
         "assumptions": "papers/MBJG25ProducerFairness/Assumptions.lean",
-        "final_validation_report": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/MBJG25ProducerFairness/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/MBJG25ProducerFairness/DependencyDAG.pdf",
+        "final_validation_report": "papers/MBJG25ProducerFairness/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/MBJG25ProducerFairness/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/MBJG25ProducerFairness/docs/DependencyDAG.pdf",
         "proof_interface": "papers/MBJG25ProducerFairness/ProofInterface.lean"
       }
     },
@@ -453,15 +453,15 @@
         "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
       },
       "paper_folder": "papers/DGD26AdmissionsPredictability",
-      "review_entrypoint": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/DGD26AdmissionsPredictability/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "paper_interface": "papers/DGD26AdmissionsPredictability/PaperInterface.lean",
         "assumptions": "papers/DGD26AdmissionsPredictability/Assumptions.lean",
-        "final_validation_report": "papers/DGD26AdmissionsPredictability/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/DGD26AdmissionsPredictability/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/DGD26AdmissionsPredictability/DependencyDAG.pdf",
-        "lap_variability_clean_proof_tex": "papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.tex",
-        "lap_variability_clean_proof_pdf": "papers/DGD26AdmissionsPredictability/LAP_VARIABILITY_CLEAN_PROOF.pdf"
+        "final_validation_report": "papers/DGD26AdmissionsPredictability/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/DGD26AdmissionsPredictability/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/DGD26AdmissionsPredictability/docs/DependencyDAG.pdf",
+        "lap_variability_clean_proof_tex": "papers/DGD26AdmissionsPredictability/docs/LAP_VARIABILITY_CLEAN_PROOF.tex",
+        "lap_variability_clean_proof_pdf": "papers/DGD26AdmissionsPredictability/docs/LAP_VARIABILITY_CLEAN_PROOF.pdf"
       }
     },
     {
@@ -485,14 +485,14 @@
         "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
       },
       "paper_folder": "papers/GGRS26CombattingGerrymanderingRCV",
-      "review_entrypoint": "papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GGRS26CombattingGerrymanderingRCV/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/GGRS26CombattingGerrymanderingRCV/README.md",
         "paper_interface": "papers/GGRS26CombattingGerrymanderingRCV/PaperInterface.lean",
         "assumptions": "papers/GGRS26CombattingGerrymanderingRCV/Assumptions.lean",
-        "final_validation_report": "papers/GGRS26CombattingGerrymanderingRCV/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GGRS26CombattingGerrymanderingRCV/DependencyDAG.pdf"
+        "final_validation_report": "papers/GGRS26CombattingGerrymanderingRCV/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GGRS26CombattingGerrymanderingRCV/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GGRS26CombattingGerrymanderingRCV/docs/DependencyDAG.pdf"
       }
     },
     {
@@ -513,13 +513,13 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LOS02CombinatorialAuctions",
-      "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/LOS02CombinatorialAuctions/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/LOS02CombinatorialAuctions/README.md",
         "paper_interface": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
-        "final_validation_report": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/LOS02CombinatorialAuctions/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/DependencyDAG.pdf",
+        "final_validation_report": "papers/LOS02CombinatorialAuctions/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LOS02CombinatorialAuctions/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/docs/DependencyDAG.pdf",
         "proof_interface": "papers/LOS02CombinatorialAuctions/ProofInterface.lean",
         "source_text": "papers/LOS02CombinatorialAuctions/LOS02CombinatorialAuctions.txt",
         "assumptions": "papers/LOS02CombinatorialAuctions/Assumptions.lean"
@@ -543,13 +543,13 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LMMS04FairDivision",
-      "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/LMMS04FairDivision/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/LMMS04FairDivision/README.md",
         "paper_interface": "papers/LMMS04FairDivision/PaperInterface.lean",
-        "final_validation_report": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/LMMS04FairDivision/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/LMMS04FairDivision/DependencyDAG.pdf",
+        "final_validation_report": "papers/LMMS04FairDivision/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LMMS04FairDivision/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LMMS04FairDivision/docs/DependencyDAG.pdf",
         "proof_interface": "papers/LMMS04FairDivision/ProofInterface.lean",
         "source_text": "papers/LMMS04FairDivision/LMMS04FairDivision.txt",
         "assumptions": "papers/LMMS04FairDivision/Assumptions.lean"
@@ -576,17 +576,17 @@
         "note": "Human-written summary supplied on 2026-06-28; preserve verbatim unless a human explicitly asks for a change."
       },
       "paper_folder": "papers/GKGMM19IterativeLocalVoting",
-      "review_entrypoint": "papers/GKGMM19IterativeLocalVoting/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/GKGMM19IterativeLocalVoting/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "assumptions": "papers/GKGMM19IterativeLocalVoting/Assumptions.lean",
-        "dependency_dag_pdf": "papers/GKGMM19IterativeLocalVoting/DependencyDAG.pdf",
-        "dependency_dag_tex": "papers/GKGMM19IterativeLocalVoting/DependencyDAG.tex",
-        "final_validation_report": "papers/GKGMM19IterativeLocalVoting/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_pdf": "papers/GKGMM19IterativeLocalVoting/docs/DependencyDAG.pdf",
+        "dependency_dag_tex": "papers/GKGMM19IterativeLocalVoting/docs/DependencyDAG.tex",
+        "final_validation_report": "papers/GKGMM19IterativeLocalVoting/docs/FINAL_VALIDATION_REPORT.md",
         "paper_interface": "papers/GKGMM19IterativeLocalVoting/PaperInterface.lean",
-        "paper_statement_map": "papers/GKGMM19IterativeLocalVoting/paper_statement_map.json",
+        "paper_statement_map": "papers/GKGMM19IterativeLocalVoting/audit/paper_statement_map.json",
         "proof_interface": "papers/GKGMM19IterativeLocalVoting/ProofInterface.lean",
         "readme": "papers/GKGMM19IterativeLocalVoting/README.md",
-        "review_status_export": "papers/GKGMM19IterativeLocalVoting/review_status_export.json",
+        "review_status_export": "papers/GKGMM19IterativeLocalVoting/audit/review_status_export.json",
         "start_here_next_agent": "papers/GKGMM19IterativeLocalVoting/START_HERE_NEXT_AGENT.md",
         "validator_ledger": "papers/GKGMM19IterativeLocalVoting/VALIDATOR_LEDGER.md",
         "week_pause_handoff": "papers/GKGMM19IterativeLocalVoting/HANDOFF_2026-06-19_WEEK_PAUSE.md"
@@ -613,15 +613,15 @@
         "note": "Human-written summary supplied on 2026-06-28; preserve verbatim unless a human explicitly asks for a change."
       },
       "paper_folder": "papers/LBG24SpatialUnderreporting",
-      "review_entrypoint": "papers/LBG24SpatialUnderreporting/FINAL_VALIDATION_REPORT.md",
+      "review_entrypoint": "papers/LBG24SpatialUnderreporting/docs/FINAL_VALIDATION_REPORT.md",
       "artifacts": {
         "readme": "papers/LBG24SpatialUnderreporting/README.md",
         "paper_interface": "papers/LBG24SpatialUnderreporting/PaperInterface.lean",
         "assumptions": "papers/LBG24SpatialUnderreporting/Assumptions.lean",
-        "final_validation_report": "papers/LBG24SpatialUnderreporting/FINAL_VALIDATION_REPORT.md",
-        "dependency_dag_tex": "papers/LBG24SpatialUnderreporting/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/LBG24SpatialUnderreporting/DependencyDAG.pdf",
-        "source_record_audit": "papers/LBG24SpatialUnderreporting/source_record_audit.json"
+        "final_validation_report": "papers/LBG24SpatialUnderreporting/docs/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LBG24SpatialUnderreporting/docs/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LBG24SpatialUnderreporting/docs/DependencyDAG.pdf",
+        "source_record_audit": "papers/LBG24SpatialUnderreporting/audit/source_record_audit.json"
       }
     }
   ]

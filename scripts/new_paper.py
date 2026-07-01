@@ -148,10 +148,11 @@ public workspaces unless redistribution rights have been checked separately.
 - Implementation theorem file: `{folder}/MainTheorems.lean`
 - Human-facing theorem file: `{folder}/PaperInterface.lean`
 - Machine-readable status source: `{folder}/status.json`
-- Outside-Lean proof plan: `{folder}/FORMALIZATION_PLAN.md`
-- Final validation report: `{folder}/FINAL_VALIDATION_REPORT.md`
-- Dependency DAG: `{folder}/DependencyDAG.tex`
-- Rendered DAG: `{folder}/DependencyDAG.pdf`
+- Private outside-Lean proof plan: `{folder}/FORMALIZATION_PLAN.md`
+- Final validation report: `{folder}/docs/FINAL_VALIDATION_REPORT.md`
+- Dependency DAG: `{folder}/docs/DependencyDAG.tex`
+- Rendered DAG: `{folder}/docs/DependencyDAG.pdf`
+- LLM/source audit sidecars: `{folder}/audit/*.json`
 
 `PaperInterface.lean` should be readable on its own: expose source formulas and
 direct theorem statements there, with short proofs that call into
@@ -186,11 +187,11 @@ sanity pass, shared-library reuse checkpoint, and formal target/boundary map
 before serious theorem proving. Alert the user early about any major issue.
 After that source inventory and the first compact `PaperInterface.lean`
 skeleton exist, run the smaller statement target-setting pass: populate
-`lean_to_tex_llm.json`, populate `statement_match_llm.json`, and run
+`audit/lean_to_tex_llm.json`, populate `audit/statement_match_llm.json`, and run
 `python3 scripts/review_dashboard.py --paper {folder} --statement-precheck`.
-Also populate `paper_statement_map.json` for the paper's source definitions,
+Also populate `audit/paper_statement_map.json` for the paper's source definitions,
 formulas, and named claims, then run the paper-level coverage pass and save
-`paper_coverage_llm.json`: this asks whether every source statement that should
+`audit/paper_coverage_llm.json`: this asks whether every source statement that should
 be represented is covered by at least one dashboard row. This source-to-row
 accounting is separate from the row-local statement judge. A source-visible
 definition, example, remark, proposition, theorem/corollary, or main-text lemma
@@ -203,14 +204,14 @@ only to correct theorem targets and premise provenance; do not update the DAG,
 final validation report, human-review log, or review-surface audit just because
 this early check ran.
 
-At review boundaries, populate `lean_to_tex_llm.json` with context-free
+At review boundaries, populate `audit/lean_to_tex_llm.json` with context-free
 Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. The
 translator must preserve every visible variable, binder, hypothesis, domain
 condition, named predicate/wrapper application, equivalence direction, and
 conclusion; it must not summarize a theorem as an endpoint label, source-like
 phrase, or proof route, or omit conditions that appear in the Lean statement.
 New tracked entries should use `{{ "tex_statement": "...",
-"lean_statement_sha256": "..." }}`. Then populate `statement_match_llm.json`
+"lean_statement_sha256": "..." }}`. Then populate `audit/statement_match_llm.json`
 with an independent no-context judgment of whether each translation matches the
 original full paper statement, including all hypotheses, subparts, quantifiers,
 domains, constants, normalizations, signs, inequality directions, conclusions,
@@ -239,19 +240,19 @@ until rerun against the current Lean/source inputs.
 If any paper-facing theorem takes a hypothesis that is not proved from prior
 Lean declarations, declare that hypothesis in `Assumptions.lean`, list it in
 `status.json` `review_surface.assumption_names`, and populate
-`assumption_match_llm.json` with an independent judgment that it is a true
+`audit/assumption_match_llm.json` with an independent judgment that it is a true
 paper/source model assumption rather than a proof shortcut.
 The repository audit follows paper-local helper chains recursively: a theorem
 is not closed if any helper it depends on still consumes an unvalidated
 certificate, source-row equation, hidden hypothesis, or proof-boundary premise.
 Do not use `axiom`, `constant`, `opaque`, or unsafe declarations to bypass that
 provenance boundary.
-If the dashboard has more than 30 rows, also populate `review_surface_llm.json`
+If the dashboard has more than 30 rows, also populate `audit/review_surface_llm.json`
 with a no-paper-context LLM audit that checks whether every dashboard row is a
 paper-facing definition, formula, or named statement. At 120 or more rows, treat
 the dashboard as oversized and curate `PaperInterface.lean` or
 `status.json.review_surface.include_names` before broad human review.
-For public-facing closeout, populate a current `review_surface_llm.json` even
+For public-facing closeout, populate a current `audit/review_surface_llm.json` even
 when the dashboard has 30 or fewer rows; the row threshold is an early review
 prompt, not a final-audit exemption.
 Before a full-formalization closeout, rerun
@@ -342,7 +343,7 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
                     "summary; do not rewrite a human_approved summary without explicit human instruction."
                 ),
             },
-            "review_entrypoint": f"papers/{folder}/FINAL_VALIDATION_REPORT.md",
+            "review_entrypoint": f"papers/{folder}/docs/FINAL_VALIDATION_REPORT.md",
             "human_review": {
                 "reviewed_rows": 0,
                 "total_rows": 0,
@@ -359,22 +360,21 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
                 "maintainability_issue": None,
             },
             "artifacts": {
-                "readme": f"papers/{folder}/README.md",
                 "paper_interface": f"papers/{folder}/PaperInterface.lean",
                 "assumptions": f"papers/{folder}/Assumptions.lean",
-                "final_validation_report": f"papers/{folder}/FINAL_VALIDATION_REPORT.md",
-                "dependency_dag_tex": f"papers/{folder}/DependencyDAG.tex",
-                "dependency_dag_pdf": f"papers/{folder}/DependencyDAG.pdf",
+                "final_validation_report": f"papers/{folder}/docs/FINAL_VALIDATION_REPORT.md",
+                "dependency_dag_tex": f"papers/{folder}/docs/DependencyDAG.tex",
+                "dependency_dag_pdf": f"papers/{folder}/docs/DependencyDAG.pdf",
             },
             "review_surface": {
                 "source_file": f"papers/{folder}/PaperInterface.lean",
                 "assumption_source_file": f"papers/{folder}/Assumptions.lean",
                 "llm_statement_review": {
-                    "lean_to_tex_file": f"papers/{folder}/lean_to_tex_llm.json",
-                    "match_judgment_file": f"papers/{folder}/statement_match_llm.json",
-                    "review_surface_audit_file": f"papers/{folder}/review_surface_llm.json",
-                    "paper_coverage_audit_file": f"papers/{folder}/paper_coverage_llm.json",
-                    "assumption_judgment_file": f"papers/{folder}/assumption_match_llm.json",
+                    "lean_to_tex_file": f"papers/{folder}/audit/lean_to_tex_llm.json",
+                    "match_judgment_file": f"papers/{folder}/audit/statement_match_llm.json",
+                    "review_surface_audit_file": f"papers/{folder}/audit/review_surface_llm.json",
+                    "paper_coverage_audit_file": f"papers/{folder}/audit/paper_coverage_llm.json",
+                    "assumption_judgment_file": f"papers/{folder}/audit/assumption_match_llm.json",
                     "surface_audit_threshold": 30,
                     "surface_warning_threshold": 120,
                     "policy": (
@@ -399,7 +399,7 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
                     ),
                 },
                 "llm_paper_coverage_review": {
-                    "paper_coverage_audit_file": f"papers/{folder}/paper_coverage_llm.json",
+                    "paper_coverage_audit_file": f"papers/{folder}/audit/paper_coverage_llm.json",
                     "policy": (
                         "Maintain a paper_statement_map.json inventory of source definitions, "
                         "formulas, and named statements, then use a separate LLM pass to judge "
@@ -409,7 +409,7 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
                     ),
                 },
                 "llm_assumption_review": {
-                    "assumption_judgment_file": f"papers/{folder}/assumption_match_llm.json",
+                    "assumption_judgment_file": f"papers/{folder}/audit/assumption_match_llm.json",
                     "policy": (
                         "Every paper-facing theorem premise not derived from prior Lean declarations "
                         "must be declared in Assumptions.lean, listed in assumption_names, "
@@ -418,8 +418,8 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
                     ),
                 },
                 "llm_source_record_review": {
-                    "source_record_audit_file": f"papers/{folder}/source_record_audit.json",
-                    "source_record_judgment_file": f"papers/{folder}/source_record_match_llm.json",
+                    "source_record_audit_file": f"papers/{folder}/audit/source_record_audit.json",
+                    "source_record_judgment_file": f"papers/{folder}/audit/source_record_match_llm.json",
                     "policy": (
                         "Run the code-backed recursive source-record audit for any visible "
                         "record, certificate, replay, process, bridge, source-row, or broad "
@@ -596,7 +596,7 @@ def source_record_match_llm_text(folder: str) -> str:
 
 def dag_text() -> str:
     return r"""\documentclass[tikz,border=10pt]{standalone}
-\input{../../docs/tikz/dag_preamble.tex}
+\input{../../../docs/tikz/dag_preamble.tex}
 
 \begin{document}
 
@@ -750,7 +750,7 @@ def assumption_source_text(title: str, folder: str, namespace: str) -> str:
 This file is the only paper-local place for assumptions that are not derived in
 Lean. Keep it small. Each declaration must be explicitly stated by the paper,
 listed in `status.json` `review_surface.assumption_names`, and judged in
-`assumption_match_llm.json` as a true source/model assumption rather than a
+`audit/assumption_match_llm.json` as a true source/model assumption rather than a
 proof convenience.
 
 Use `-- audit-premise: <exact Lean binder>` comments to route hidden theorem
@@ -845,7 +845,7 @@ end {namespace}
 
 def gitignore_text() -> str:
     return """*.pdf
-!DependencyDAG.pdf
+!docs/DependencyDAG.pdf
 *.aux
 *.log
 *.fls
@@ -1011,7 +1011,7 @@ completed yet, and no human dashboard sign-off has been recorded.
 - Lean folder: `papers/{folder}`
 - Human-facing theorem file: `papers/{folder}/PaperInterface.lean`
 - Paper assumption file: `papers/{folder}/Assumptions.lean`
-- DAG artifacts: `papers/{folder}/DependencyDAG.tex`, `papers/{folder}/DependencyDAG.pdf`
+- DAG artifacts: `papers/{folder}/docs/DependencyDAG.tex`, `papers/{folder}/docs/DependencyDAG.pdf`
 - Lean footprint: not measured
 
 ## 4. Researcher Summary of Checked Results
@@ -1043,7 +1043,7 @@ None yet.
 ## 12. Paper Assumption Provenance
 Every paper-facing theorem premise that is not derived in Lean should appear as
 a named assumption declaration in `Assumptions.lean`, be listed in `status.json`
-`review_surface.assumption_names`, and be checked in `assumption_match_llm.json`
+`review_surface.assumption_names`, and be checked in `audit/assumption_match_llm.json`
 as a true paper/source model assumption.
 
 | Assumption declaration | Lean declaration | Source location / statement | Assumption validators | Comments |
@@ -1138,19 +1138,22 @@ def main() -> int:
 
     paper_dir = PAPERS / folder
     paper_dir.mkdir(parents=True, exist_ok=True)
+    docs_dir = paper_dir / "docs"
+    audit_dir = paper_dir / "audit"
+    docs_dir.mkdir(exist_ok=True)
+    audit_dir.mkdir(exist_ok=True)
 
     pdf = paper_dir / "source.pdf"
     txt = paper_dir / "source.txt"
 
     write_file(paper_dir / ".gitignore", gitignore_text(), args.force)
-    write_file(paper_dir / "README.md", readme_text(args, folder), args.force)
     write_file(paper_dir / "status.json", status_text(args, folder), args.force)
-    write_file(paper_dir / "lean_to_tex_llm.json", lean_to_tex_llm_text(folder), args.force)
-    write_file(paper_dir / "statement_match_llm.json", statement_match_llm_text(folder), args.force)
-    write_file(paper_dir / "review_surface_llm.json", review_surface_llm_text(folder), args.force)
-    write_file(paper_dir / "paper_coverage_llm.json", paper_coverage_llm_text(folder), args.force)
-    write_file(paper_dir / "assumption_match_llm.json", assumption_match_llm_text(folder), args.force)
-    write_file(paper_dir / "source_record_match_llm.json", source_record_match_llm_text(folder), args.force)
+    write_file(audit_dir / "lean_to_tex_llm.json", lean_to_tex_llm_text(folder), args.force)
+    write_file(audit_dir / "statement_match_llm.json", statement_match_llm_text(folder), args.force)
+    write_file(audit_dir / "review_surface_llm.json", review_surface_llm_text(folder), args.force)
+    write_file(audit_dir / "paper_coverage_llm.json", paper_coverage_llm_text(folder), args.force)
+    write_file(audit_dir / "assumption_match_llm.json", assumption_match_llm_text(folder), args.force)
+    write_file(audit_dir / "source_record_match_llm.json", source_record_match_llm_text(folder), args.force)
     launch_script = paper_dir / "review-dashboard.sh"
     write_file(
         launch_script,
@@ -1159,16 +1162,11 @@ def main() -> int:
     )
     launch_script.chmod(0o755)
     write_file(
-        paper_dir / "FORMALIZATION_PLAN.md",
-        formalization_plan_text(args.title or "", namespace),
-        args.force,
-    )
-    write_file(
-        paper_dir / "FINAL_VALIDATION_REPORT.md",
+        docs_dir / "FINAL_VALIDATION_REPORT.md",
         final_validation_report_text(args.title or "", folder),
         args.force,
     )
-    write_file(paper_dir / "DependencyDAG.tex", dag_text(), args.force)
+    write_file(docs_dir / "DependencyDAG.tex", dag_text(), args.force)
     write_file(paper_dir / "MainTheorems.lean", main_theorems_text(args.title or "", namespace), args.force)
     write_file(
         paper_dir / "Assumptions.lean",

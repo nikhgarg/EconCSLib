@@ -252,6 +252,9 @@ def human_translation_label(payload: dict[str, Any]) -> str:
 
 
 def llm_statement_judgments_file(folder: Path) -> Path | None:
+    tracked = folder / "audit" / "statement_match_llm.json"
+    if tracked.exists() and tracked.is_file():
+        return tracked
     tracked = folder / "statement_match_llm.json"
     if tracked.exists() and tracked.is_file():
         return tracked
@@ -537,7 +540,9 @@ def llm_paper_coverage_label(
         except Exception:
             pass
 
-    statement_map = load_json_object(folder / "paper_statement_map.json")
+    statement_map = load_json_object(folder / "audit" / "paper_statement_map.json")
+    if not statement_map:
+        statement_map = load_json_object(folder / "paper_statement_map.json")
     inventory_kind = str(statement_map.get("source_inventory_kind") or "")
     inventory_scaffold = (
         statement_map.get("source_curated") is False
@@ -546,7 +551,9 @@ def llm_paper_coverage_label(
     )
     map_items = statement_map.get("items")
     total = len(map_items) if isinstance(map_items, dict) else 0
-    coverage = load_json_object(folder / "paper_coverage_llm.json")
+    coverage = load_json_object(folder / "audit" / "paper_coverage_llm.json")
+    if not coverage:
+        coverage = load_json_object(folder / "paper_coverage_llm.json")
     audit_kind = str(coverage.get("audit_kind") or coverage.get("coverage_audit_kind") or "")
     coverage_scaffold = (
         coverage.get("source_grounded") is not True

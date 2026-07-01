@@ -50,17 +50,35 @@ ACTIVE_PAPERS = audit_config_string_set("active_papers")
 GENERIC_SOURCE_HYGIENE_ALLOWED_TERMS = audit_config_string_set(
     "generic_source_hygiene_allowed_terms"
 )
+
+
+def paper_relative_file(folder: Path, preferred: str, legacy: str | None = None) -> Path:
+    """Return the organized paper-local path, falling back to a legacy root file."""
+
+    preferred_path = folder / preferred
+    if preferred_path.exists() or legacy is None:
+        return preferred_path
+    legacy_path = folder / legacy
+    if legacy_path.exists():
+        return legacy_path
+    return preferred_path
+
+
+PAPER_DOCS_DIR = "docs"
+PAPER_AUDIT_DIR = "audit"
+FINAL_VALIDATION_REPORT_FILE = f"{PAPER_DOCS_DIR}/FINAL_VALIDATION_REPORT.md"
+POST_FORMALIZATION_AUDIT_FILE = f"{PAPER_DOCS_DIR}/POST_FORMALIZATION_AUDIT.md"
+DEPENDENCY_DAG_TEX_FILE = f"{PAPER_DOCS_DIR}/DependencyDAG.tex"
+DEPENDENCY_DAG_PDF_FILE = f"{PAPER_DOCS_DIR}/DependencyDAG.pdf"
 REQUIRED_PAPER_FILES = {
     ".gitignore",
-    "DependencyDAG.tex",
-    "FORMALIZATION_PLAN.md",
     "MainTheorems.lean",
     "PaperInterface.lean",
-    "README.md",
+    "status.json",
 }
 REQUIRED_GITIGNORE_PATTERNS = {
     "*.pdf",
-    "!DependencyDAG.pdf",
+    "!docs/DependencyDAG.pdf",
     "*.aux",
     "*.log",
     "*.fls",
@@ -70,10 +88,10 @@ REQUIRED_GITIGNORE_PATTERNS = {
 REVIEW_LAUNCHER_NAME = "review-dashboard.sh"
 REVIEW_LAUNCHER_TARGET = "scripts/launch_review_dashboard.sh"
 REVIEW_TRACE_CACHE = ".review_traces/paper_interface_cache.json"
-DEFAULT_LLM_ASSUMPTION_JUDGE_FILE = "assumption_match_llm.json"
+DEFAULT_LLM_ASSUMPTION_JUDGE_FILE = f"{PAPER_AUDIT_DIR}/assumption_match_llm.json"
 DEFAULT_ASSUMPTION_SOURCE_FILE = "Assumptions.lean"
-DEFAULT_SOURCE_RECORD_AUDIT_FILE = "source_record_audit.json"
-DEFAULT_SOURCE_RECORD_JUDGE_FILE = "source_record_match_llm.json"
+DEFAULT_SOURCE_RECORD_AUDIT_FILE = f"{PAPER_AUDIT_DIR}/source_record_audit.json"
+DEFAULT_SOURCE_RECORD_JUDGE_FILE = f"{PAPER_AUDIT_DIR}/source_record_match_llm.json"
 SOURCE_RECORD_AUDIT_HELPER = ROOT / "skills" / "econcs-formalizer" / "scripts" / "source_record_audit.py"
 REQUIRED_LLM_ASSUMPTION_PROMPT_VERSION = "assumption-provenance-v3-semantic-exact-premise-source"
 REQUIRED_LLM_STATEMENT_PROMPT_VERSION = "statement-match-v3-semantic-full-statement"
@@ -918,10 +936,10 @@ def check_paper_contract(include_active: bool) -> list[Finding]:
             if not (folder / filename).exists():
                 findings.append(Finding("ERROR", folder, f"missing required file `{filename}`"))
 
-        dag_pdf = folder / "DependencyDAG.pdf"
+        dag_pdf = paper_relative_file(folder, DEPENDENCY_DAG_PDF_FILE, "DependencyDAG.pdf")
         if not dag_pdf.exists():
             findings.append(Finding("WARN", folder, "rendered `DependencyDAG.pdf` is absent locally"))
-        dag_tex = folder / "DependencyDAG.tex"
+        dag_tex = paper_relative_file(folder, DEPENDENCY_DAG_TEX_FILE, "DependencyDAG.tex")
         if dag_tex.exists():
             dag_text = dag_tex.read_text(encoding="utf-8")
             if DAG_REQUIRED_PREAMBLE not in dag_text:
@@ -1081,7 +1099,9 @@ def check_final_report_status_alignment(
         if folder.name in ACTIVE_PAPERS and not include_active:
             continue
         status_file = folder / "status.json"
-        report = folder / "FINAL_VALIDATION_REPORT.md"
+        report = paper_relative_file(
+            folder, FINAL_VALIDATION_REPORT_FILE, "FINAL_VALIDATION_REPORT.md"
+        )
         if not status_file.exists() or not report.exists():
             continue
         try:
@@ -1125,7 +1145,9 @@ def check_final_report_human_facing_front_matter(
             continue
         if folder.name in ACTIVE_PAPERS and not include_active:
             continue
-        report = folder / "FINAL_VALIDATION_REPORT.md"
+        report = paper_relative_file(
+            folder, FINAL_VALIDATION_REPORT_FILE, "FINAL_VALIDATION_REPORT.md"
+        )
         if not report.exists():
             continue
         report_text = report.read_text(encoding="utf-8")
@@ -1298,10 +1320,14 @@ def check_dag_and_validation_report_closeout(
         if not is_closeout_status(status):
             continue
 
-        report = folder / "FINAL_VALIDATION_REPORT.md"
-        post_audit = folder / "POST_FORMALIZATION_AUDIT.md"
-        dag_tex = folder / "DependencyDAG.tex"
-        dag_pdf = folder / "DependencyDAG.pdf"
+        report = paper_relative_file(
+            folder, FINAL_VALIDATION_REPORT_FILE, "FINAL_VALIDATION_REPORT.md"
+        )
+        post_audit = paper_relative_file(
+            folder, POST_FORMALIZATION_AUDIT_FILE, "POST_FORMALIZATION_AUDIT.md"
+        )
+        dag_tex = paper_relative_file(folder, DEPENDENCY_DAG_TEX_FILE, "DependencyDAG.tex")
+        dag_pdf = paper_relative_file(folder, DEPENDENCY_DAG_PDF_FILE, "DependencyDAG.pdf")
 
         if not report.exists():
             findings.append(
@@ -1964,7 +1990,7 @@ def paper_statement_sidecar_findings(
         findings.append(
             Finding(
                 severity,
-                folder / "review_surface_llm.json",
+                folder / f"{PAPER_AUDIT_DIR}/review_surface_llm.json",
                 f"`{paper_id}` review-surface audit needs attention: "
                 + (", ".join(reasons) if reasons else "unknown issue"),
             )
@@ -2006,7 +2032,7 @@ def paper_statement_sidecar_findings(
         findings.append(
             Finding(
                 severity,
-                folder / "paper_coverage_llm.json",
+                folder / f"{PAPER_AUDIT_DIR}/paper_coverage_llm.json",
                 f"`{paper_id}` paper-coverage audit needs attention: "
                 + (", ".join(parts) if parts else "unknown issue"),
             )
@@ -2057,7 +2083,7 @@ def paper_statement_sidecar_findings(
             findings.append(
                 Finding(
                     severity,
-                    folder / "paper_coverage_llm.json",
+                    folder / f"{PAPER_AUDIT_DIR}/paper_coverage_llm.json",
                     f"`{paper_id}` source-to-Lean audit needs attention: " + ", ".join(parts),
                 )
             )
@@ -2079,7 +2105,7 @@ def paper_statement_sidecar_findings(
         findings.append(
             Finding(
                 severity,
-                folder / "statement_match_llm.json",
+                folder / f"{PAPER_AUDIT_DIR}/statement_match_llm.json",
                 f"`{paper_id}` statement-translation audit needs attention: "
                 + (", ".join(parts) if parts else "unknown issue"),
             )
@@ -2103,7 +2129,7 @@ def paper_statement_sidecar_findings(
         findings.append(
             Finding(
                 severity,
-                folder / "assumption_match_llm.json",
+                folder / f"{PAPER_AUDIT_DIR}/assumption_match_llm.json",
                 f"`{paper_id}` assumption-provenance audit needs attention: "
                 + (", ".join(parts) if parts else "unknown issue"),
             )
@@ -2786,7 +2812,9 @@ def source_record_validated_boundary_premises(
 def current_statement_conditional_boundary_rows(folder: Path) -> set[str]:
     """Return rows with current LLM-reviewed conditional statement boundaries."""
 
-    path = folder / "statement_match_llm.json"
+    path = paper_relative_file(
+        folder, f"{PAPER_AUDIT_DIR}/statement_match_llm.json", "statement_match_llm.json"
+    )
     payload = load_json_object(path)
     if not payload or payload.get("schema") != 1:
         return set()
@@ -4162,7 +4190,9 @@ def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
 
         interface = folder / "PaperInterface.lean"
         audit = folder / "PostPaperAudit.lean"
-        report = folder / "FINAL_VALIDATION_REPORT.md"
+        report = paper_relative_file(
+            folder, FINAL_VALIDATION_REPORT_FILE, "FINAL_VALIDATION_REPORT.md"
+        )
         aggregator = PAPERS / f"{folder.name}.lean"
 
         if folder.name in interface_required and not interface.exists():
@@ -4254,7 +4284,10 @@ def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
                     )
                 )
 
-        for markdown_report in (report, folder / "POST_FORMALIZATION_AUDIT.md"):
+        post_audit = paper_relative_file(
+            folder, POST_FORMALIZATION_AUDIT_FILE, "POST_FORMALIZATION_AUDIT.md"
+        )
+        for markdown_report in (report, post_audit):
             if markdown_report.exists():
                 findings.extend(check_report_declaration_inventory(markdown_report))
 
@@ -5193,7 +5226,10 @@ def check_status_label_vocabulary() -> list[Finding]:
         ROOT / "docs" / "GARG_AUTHOR_FORMALIZATION_REPORT.md",
         ROOT / "site" / "index.html",
     ]
-    paths.extend(sorted(PAPERS.glob("*/FINAL_VALIDATION_REPORT.md")))
+    for folder in paper_dirs(include_template=True):
+        paths.append(
+            paper_relative_file(folder, FINAL_VALIDATION_REPORT_FILE, "FINAL_VALIDATION_REPORT.md")
+        )
     for path in paths:
         if not path.exists():
             continue

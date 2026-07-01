@@ -1,5 +1,5 @@
 *.pdf
-!DependencyDAG.pdf
+!docs/DependencyDAG.pdf
 *.tar.gz
 source.txt
 source_tex/

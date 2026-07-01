@@ -140,7 +140,7 @@ validated source assumption, a proved primitive consequence, or an explicitly
 approved external boundary.
 This recursive audit must be code-backed before closeout. Run or extend the
 skill helper
-`python3 skills/econcs-formalizer/scripts/source_record_audit.py --paper <paper-folder> --out papers/<paper-folder>/source_record_audit.json`
+`python3 skills/econcs-formalizer/scripts/source_record_audit.py --paper <paper-folder> --out papers/<paper-folder>/audit/source_record_audit.json`
 so the audit payload is generated from the current Lean files, includes Lean
 `#check` output for the paper rows and structure fields, and gives the LLM judge
 the actual kernel-checked statements rather than a prose summary. The judge
@@ -392,16 +392,17 @@ top-level estimate, inspect for embedded parent transcript token events before
 publishing the table.
 When the latest green endpoint is a source-sequence, source-certificate, or
 analytic boundary rather than the actual paper distribution/object, say that
-plainly in the handoff and README. Name the exact identification bridge still
-missing; do not let a compiled certificate wrapper read like the paper theorem
-is fully closed.
+plainly in the private handoff/plan and public status/final report. Name the
+exact identification bridge still missing; do not let a compiled certificate
+wrapper read like the paper theorem is fully closed.
 For a pause of several days or longer, create or refresh a paper-local
 `START_HERE_NEXT_AGENT.md` that is shorter than the full handoff: current
 validation commands, shared-worktree caveats, the exact active proof seam,
 strongest reusable endpoints, and what not to work on next. Link it from the
-paper README and front repository status so a future agent has one obvious
-startup path. Link it from the audit/final-validation report only during a
-paper-done or user-requested post-validation pass.
+private paper README/plan and front repository status so a future agent has one
+obvious startup path. Keep this handoff private by default; link it from the
+audit/final-validation report only during a paper-done or user-requested
+post-validation pass.
 For a week-scale pause after a long proof push, also create a dated
 paper-local handoff such as `HANDOFF_YYYY-MM-DD_WEEK_PAUSE.md` and make
 `START_HERE_NEXT_AGENT.md` point to it first. That week-pause note should name
@@ -412,10 +413,10 @@ large theorem files.
 If the latest green declarations are support endpoints rather than closed
 paper results, say so explicitly in the handoff and do not over-mark the DAG.
 If a paper is being paused for a stronger future model, say that explicitly in
-the paper README/handoff and in the front repository status entries. Name the
-three or fewer exact proof seams that remain and the strongest public wrapper or
-certificate for each. Do not leave vague optimistic status such as "one bridge
-remains" when multiple paper-level proof campaigns are still open.
+the private handoff/plan and in the front repository status entries. Name the
+three or fewer exact proof seams that remain and the strongest public wrapper
+or certificate for each. Do not leave vague optimistic status such as "one
+bridge remains" when multiple paper-level proof campaigns are still open.
 When a remaining seam is a large family of repetitive row/table
 identifications, package those facts into a source-shaped structure and expose
 a single packaged bridge before stopping. Handoffs should point future agents
@@ -740,7 +741,7 @@ paper-facing theorem no longer takes it as an input, that certificate is
 discharged. Do not imply additional certificates are needed; for fully
 formalized papers, status comments may be empty.
 If a named paper theorem is closed but a downstream corollary or application
-that uses it is still conditional, split the README/DAG entries. The named
+that uses it is still conditional, split the status/DAG entries. The named
 paper theorem should stay green with its actual statement; the conditional
 application should get its own row or node. Do not let a harder follow-on
 endpoint make the source theorem look unformalized.
@@ -1118,10 +1119,10 @@ the relevant proof reference file, not here.
 When a long session ends before validation, write a paper-local handoff note
 before stopping. Include the files touched, the latest unvalidated theorem
 families, the intended proof route, exact next validation command, and likely
-fragile Lean points. Link that handoff from the paper README so a future agent
-does not need chat context. Do not update the post-paper audit report or final
-validation report for this intermediate stop unless the paper is done or the
-user explicitly requested post-validation.
+fragile Lean points. Link that handoff from the private paper README/plan so a
+future agent does not need chat context. Do not publish that handoff or update
+the post-paper audit report/final validation report for this intermediate stop
+unless the paper is done or the user explicitly requested post-validation.
 After validation succeeds, immediately update the handoff/status language from
 "unvalidated" to the exact command that passed. Do not leave stale caveats that
 force the next agent to rerun work just to learn whether the current additions
@@ -1132,7 +1133,7 @@ guidance here.
 
 Follow the original paper's proof structure as closely as is practical. Preserve
 named definitions, lemmas, propositions, and theorem numbers in Lean declaration
-names, docstrings, and README status rows. When deviating from the paper proof
+names, docstrings, and status rows. When deviating from the paper proof
 because Lean needs a reusable intermediate lemma or a cleaner finite/discrete
 interface, make the deviation explicit and keep the paper-facing wrapper close
 to the original named result.
@@ -1501,8 +1502,11 @@ formalization, execute the standard intake before deep proof work:
   and review dashboard. Keep public theorem signatures stable once proof work
   begins; if translation is wrong, repair the statement early rather than
   letting proof search drift the target.
-- Create the paper folder contract artifacts immediately: `README.md`,
-  `DependencyDAG.tex`, `MainTheorems.lean`, and local `.gitignore`.
+- Create the paper folder contract artifacts immediately: local `.gitignore`,
+  `status.json`, `MainTheorems.lean`, `PaperInterface.lean`,
+  `docs/DependencyDAG.tex`, and the private `FORMALIZATION_PLAN.md` scratchpad.
+  Public paper folders should not track paper-local README/planning/handoff
+  markdown unless the user explicitly asks for it.
 - Draft paper-facing theorem signatures before building a helper tower. If the
   direct statement is too hard, create an explicit bridge theorem whose name and
   assumptions describe the remaining gap.
@@ -1515,27 +1519,33 @@ formalization, execute the standard intake before deep proof work:
   seams that pass the second-paper test, such as finite PMF/Markov kernels/MDPs,
   probability inequalities, monotonicity/comparison lemmas, allocation
   primitives, or mechanism interfaces.
-- Keep a live README status table from the first scaffold onward. Each row must
-  distinguish source-faithful wrappers, auxiliary analogues, conditional
-  wrappers, and unstarted paper results.
+- Keep a live private status table or plan from the first scaffold onward. The
+  public source of truth is `status.json`; each row must distinguish
+  source-faithful wrappers, auxiliary analogues, conditional wrappers, and
+  unstarted paper results.
 
 ### 1.3 Paper Folder Contract
 
 Each paper-specific folder should be auditable by a human who wants to compare
 the Lean statements against the paper.
 
-- **Required Template Structure:** Every paper folder must strictly follow the `papers/TEMPLATE/` format. This includes:
-  1. A `README.md` (see details below).
-  2. A `DependencyDAG.tex` providing the proof roadmap.
-  3. A `MainTheorems.lean` file holding the paper-facing wrappers.
-  4. A `PaperInterface.lean` file holding the compact human-facing definitions
+- **Required Template Structure:** Every public paper folder must keep the root
+  focused on Lean/status files and put human/audit artifacts in subfolders:
+  1. A `status.json` file holding the paper status and dashboard metadata.
+  2. A `docs/DependencyDAG.tex` proof roadmap and rendered
+     `docs/DependencyDAG.pdf`.
+  3. A `docs/FINAL_VALIDATION_REPORT.md` when the paper has a final validation
+     claim.
+  4. `audit/*.json` for tracked LLM/source-audit sidecars.
+  5. A `MainTheorems.lean` file holding the paper-facing wrappers.
+  6. A `PaperInterface.lean` file holding the compact human-facing definitions
      and named theorem statements.
-  5. A local `.gitignore` file.
+  7. A local `.gitignore` file.
 - **Local Gitignores:** Every paper folder *must* contain its own `.gitignore`
   that ignores local source PDFs and LaTeX auxiliaries such as `*.aux`, `*.log`,
   `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, but it must not hide the rendered
   dependency DAG. If the folder uses a broad `*.pdf` ignore for source PDFs, add
-  an explicit `!DependencyDAG.pdf` exception. The overall repo `.gitignore` may
+  an explicit `!docs/DependencyDAG.pdf` exception. The overall repo `.gitignore` may
   contain generic LaTeX auxiliary patterns and source-cache patterns with
   explicit exceptions for project-written planning/audit/handoff/citation notes.
   Do not add a blanket paper-local `*.txt` ignore if it would hide useful
@@ -1550,8 +1560,10 @@ the Lean statements against the paper.
   garbled. These PDF, extracted-text, and source-archive caches are working
   artifacts, not public repository content by default. Keep them local/ignored
   in public checkouts unless redistribution rights have been checked.
-  Project-written `.txt` planning notes, handoffs, audits, and
-  `citation_source.txt` are different; those may be tracked when useful. Work
+  Project-written `.txt` planning notes, handoffs, and audit notes are private
+  by default. Public paper folders should track only source-safe citation notes,
+  final reports, DAG/proof artifacts, Lean files, `status.json`, and audit JSON
+  sidecars unless the user explicitly asks for another progress artifact. Work
   from local caches when they exist; do not repeatedly search the web or re-run
   extraction unless the source PDF or source archive changes.
 - Public filtered checkouts may omit ignored source PDFs, extracted text caches,
@@ -1560,14 +1572,17 @@ the Lean statements against the paper.
   public source URL and any local ignored cache used for the audit, and treat
   repository-audit missing-source-cache warnings as public-release packaging
   notes rather than theorem gaps.
-- **README Requirements:** The `README.md` must clearly identify the exact
-  source version of the paper (e.g., arXiv version `vX`, conference year) and provide URLs.
+- **Private README/Plan Requirements:** If a private paper `README.md` or
+  `FORMALIZATION_PLAN.md` exists, it must clearly identify the exact source
+  version of the paper (for example arXiv version `vX` or conference year) and
+  provide URLs. Public-facing source/version information belongs in
+  `status.json` and `docs/FINAL_VALIDATION_REPORT.md`.
 - **DAG Node Wording:** `DependencyDAG.tex` is a proof roadmap for humans, not
   a formalization changelog. Once a node is marked formalized, its text should
   state or briefly summarize the paper claim. Do not fill green nodes with
   implementation notes such as helper families, algebra rewrites, or "closed"
-  status language; keep those details in the README status table, proof notes,
-  or handoff files. Partial/conditional nodes may mention the missing proof
+    status language; keep those details in private status/proof notes or the
+    final report. Partial/conditional nodes may mention the missing proof
   obligation, but should still foreground the paper statement. During a pause
   or handoff pass, audit the DAG for this specifically: if a node reads like a
   session log, rewrite it before rendering.
@@ -2452,8 +2467,8 @@ the Lean statements against the paper.
     machinery that closed it. Do not fill a closed theorem box with internal
     helper names, certificate layers, construction details, or a list of every
     bridge lemma. Also omit old compatibility/sufficient routes and alternate
-    proof attempts from the visual node. Put those details in the README status
-    row, proof comments, or the final report during post-validation.
+    proof attempts from the visual node. Put those details in private proof
+    notes, proof comments, or the final report during post-validation.
     Include the actual source-facing conclusion or a faithful short formula
     summary in the DAG node itself so a human can recognize the paper result
     without opening the Lean file. For example, a closed Gaussian lemma node
@@ -2479,16 +2494,16 @@ the Lean statements against the paper.
     states that it satisfies particular definitions or conditions, it is
     acceptable to omit duplicate long cross-edges when those edges would create
     text or box overlap; keep the exact status and remaining assumptions in the
-    node text and README row.
+    node text and `status.json`/final report.
 - Keep the DAG updated after every major paper update (for example: a named
   paper theorem/lemma closed, a dependency refactor that changes proof flow, or
-  a status transition in the controlled README/DAG vocabulary).
+  a status transition in the controlled status/DAG vocabulary).
 - Keep the paper DAG paper-facing. Its primary nodes should be the source's
   named definitions, lemmas, propositions, theorems, and corollaries. Do not
   replace a source theorem with internal implementation layers such as finite
   analogues, certificate packages, or continuous instantiation steps unless the
-  source itself is organized that way. Put those engineering layers in the
-  README status table or proof comments, and use the DAG to show how the
+  source itself is organized that way. Put those engineering layers in private
+  proof notes, proof comments, or the final report, and use the DAG to show how the
   paper's named results relate and which of them are formalized, conditional,
   caveated, or open.
   Do not include empirical, numerical, simulation, benchmark, data-study, or
@@ -2518,8 +2533,9 @@ the Lean statements against the paper.
   statement from any density, CDF, or integral representation used in the proof.
   If Lean closes the integral or closed-form layer but has not yet proved the
   measure-theoretic bridge from `Pr[...]` to that integral (for example, an
-  independence/Fubini/density derivation), keep the theorem conditional in the
-  README/DAG and explicitly name the probability-to-integral bridge that remains.
+  independence/Fubini/density derivation), keep the theorem conditional in
+  `status.json`, the DAG, and the final report, and explicitly name the
+  probability-to-integral bridge that remains.
 - For stochastic-process convergence results, do not translate a source proof
   that concludes "with probability 1" into a deterministic per-path theorem
   unless the paper explicitly proves the deterministic statement. If Lean has
@@ -2532,22 +2548,23 @@ the Lean statements against the paper.
 - When a proof step invokes an external cited analytic theorem that is not in
   Mathlib, encode that input as a named paper-local hypothesis or definition
   (for example, a `Sampford...Bound` assumption), prove the source's downstream
-  reduction from that exact hypothesis, and keep the README/DAG conditional
+  reduction from that exact hypothesis, and keep `status.json`/DAG conditional
   until the cited theorem itself or an acceptable imported library theorem is
   formalized.
-- When such a cited theorem is later formalized locally, immediately update the
-  paper README/DAG to remove that exact assumption while preserving any broader
-  remaining bridge. For example, if a scalar density/integral layer is now
+- When such a cited theorem is later formalized locally, immediately update
+  `status.json` and the DAG to remove that exact assumption while preserving
+  any broader remaining bridge. For example, if a scalar density/integral layer is now
   unconditional but the source theorem is still a probability statement, mark
   the scalar layer as closed and keep only the probability-to-integral bridge as
   the theorem-level blocker.
-- In this repository's `papers/[Paper]/DependencyDAG.tex` layout, the shared
-  preamble input is `\input{../../docs/tikz/dag_preamble.tex}`. Render from the
-  paper folder (`cd papers/<Paper> && latexmk -pdf DependencyDAG.tex`) or use a
-  LaTeX invocation that preserves that relative path; running `latexmk
-  papers/<Paper>/DependencyDAG.tex` from the repo root resolves the preamble
-  relative to the wrong directory and wastes a build cycle. Verify the DAG
-  renders after changing the preamble path or moving a paper folder.
+- In this repository's public `papers/[Paper]/docs/DependencyDAG.tex` layout,
+  the shared preamble input is
+  `\input{../../../docs/tikz/dag_preamble.tex}`. Render from the paper `docs/`
+  folder (`cd papers/<Paper>/docs && latexmk -pdf DependencyDAG.tex`) or use
+  `scripts/compile_dependency_dags.sh`; running `latexmk
+  papers/<Paper>/docs/DependencyDAG.tex` from the repo root resolves the
+  preamble relative to the wrong directory and wastes a build cycle. Verify the
+  DAG renders after changing the preamble path or moving a paper folder.
 - Use the shared DAG header helpers instead of manual coordinate shifts:
   `\dagPaperMetadata` for the top-left source block,
   `\dagPaperLegendRightOfMetadata{...}` for the legend row to its right, and
@@ -2558,15 +2575,15 @@ the Lean statements against the paper.
   crop: if graph nodes extend left of the metadata block, add a local
   `xshift` inside `dagPaperBody`; the metadata should remain the visual
   top-left anchor, with the legend to its right and the graph below.
-- If a theorem is only conditional, the README must name the exact certificate
-  or assumption declaration that remains. Do not describe it vaguely as
-  "technical details".
+- If a theorem is only conditional, the private README/plan and public
+  `status.json`/final report must name the exact certificate or assumption
+  declaration that remains. Do not describe it vaguely as "technical details".
 - Distinguish certificate interfaces from certificate assumptions. A
   paper-local certificate/interface structure is just a formal proof boundary:
   it is an **assumption** only when the paper-facing theorem still takes an
   inhabitant or hypothesis as an explicit input. It is **discharged** when the
   paper folder constructs the witness/certificate and the final paper-facing
-  wrapper applies it internally. README/DAG status must say which case holds.
+  wrapper applies it internally. `status.json`/DAG/final-report status must say which case holds.
   Auxiliary explicit-input variants are fine, but they must not make the source
   theorem look closed unless there is also a closed wrapper that no longer
   exposes those inputs.
@@ -2574,10 +2591,11 @@ the Lean statements against the paper.
   source-faithful. If Lean proves an auxiliary finite analogue, certificate
   interface, or deliberately weakened bridge, name it as an auxiliary
   declaration (for example `paper_aux_*` or a name that explicitly says
-  `finite_analogue`) and mark the source theorem as partial/open in the README
-  and DAG.
-- The paper `README.md` is the live status ledger and handoff document for
-  partial progress. A `FINAL_VALIDATION_REPORT.md` is not a handoff note; it is
+  `finite_analogue`) and mark the source theorem as partial/open in
+  `status.json` and the DAG.
+- The private paper `README.md` or `FORMALIZATION_PLAN.md` is the live status
+  ledger and handoff document for partial progress. A
+  `docs/FINAL_VALIDATION_REPORT.md` is not a handoff note; it is
   the concise human assessment created only when making a final claim
   about a paper, or when the user explicitly asks for post-validation of a
   completed proof phase. It must answer whether the paper is formalized, what
@@ -2585,23 +2603,24 @@ the Lean statements against the paper.
   the Lean proof followed the paper strategy or used a different route. Keep it
   short and paper-facing; move long operational ledgers, status-report
   transcripts, source-line inventories, and verbose boundary details to
-  `POST_FORMALIZATION_AUDIT.md`, `SOURCE_AUDIT.md`, `PostPaperAudit.lean`, or
-  the README as appropriate. When
+  `docs/POST_FORMALIZATION_AUDIT.md`, private source-audit/handoff notes,
+  `PostPaperAudit.lean`, or the private README/plan as appropriate. When
   creating or updating a final validation report, also update the front
   repository `README.md` paper-status table and
   `docs/ECONCSLEAN_CURRENT_STATUS.md` so the public entry points match the
   paper-local verdict.
-- For paper-specific status questions, the paper folder `README.md`,
-  `DependencyDAG.tex`, paper-facing theorem files, and current targeted Lean
-  build are the source of truth. Older author-wide notes or campaign reports
-  are historical/secondary and may be stale; never use them to override a
-  paper-local README/DAG plus successful build.
+- For paper-specific status questions, `status.json`,
+  `docs/DependencyDAG.tex`, paper-facing theorem files, private status notes
+  when present, and current targeted Lean build are the source of truth. Older
+  author-wide notes or campaign reports are historical/secondary and may be
+  stale; never use them to override paper-local status/DAG plus successful
+  build.
 - **Post-paper audit protocol:** Before claiming that a paper is done, create
-  or update a paper-local final audit. Do this even if a README, DAG, report,
+  or update a paper-local final audit. Do this even if status, DAG, report,
   or successful build already exists; those artifacts are not a substitute for
   the importable audit ledger. The audit must check all four artifacts:
-  the source paper via local ignored cache or source URL, `README.md`,
-  `DependencyDAG.tex`, and the
+  the source paper via local ignored cache or source URL, `status.json`,
+  `docs/DependencyDAG.tex`, and the
   paper-facing Lean file(s).
   - Source check: search the cached text for every named paper `Definition`,
     `Lemma`, `Proposition`, `Theorem`, and `Corollary` using a concrete search
@@ -2610,13 +2629,13 @@ the Lean statements against the paper.
     from the recorded source URL before the audit rather than committing the
     generated paper text. List the source line or section in the audit report,
     and say explicitly if no numbered definitions/propositions were found.
-  - README check: every named source item must have a row using the controlled
+  - Status check: every named source item must have a row using the controlled
     status vocabulary from `docs/STATUS.md`, and every non-`formalized` row must
     name the exact remaining declaration, certificate, or reason for deferral.
   - DAG check: every named result node must have a style consistent with the
-    README row. Solid arrows mean Lean-checked dependencies; dashed arrows
+    status row. Solid arrows mean Lean-checked dependencies; dashed arrows
     mean paper-route/context links or unresolved dependencies. A green node with
-    a dashed incoming edge is allowed only if the README/audit says the dashed
+    a dashed incoming edge is allowed only if the status/audit says the dashed
     edge is not required by the formal proof.
   - Lean check: create a compiling `PostPaperAudit.lean` or equivalent ledger
     in the paper folder. It must be importable from the paper root module and
@@ -2637,19 +2656,19 @@ the Lean statements against the paper.
     and any useful generic certificate constructors plus the generic theorem
     conclusion obtained from those constructors. Keep assumptions/certificates
     in the signature only when they are genuine remaining paper obligations, and
-    name them explicitly in the README/DAG.
-  - Report check: create or update `FINAL_VALIDATION_REPORT.md` in the paper
-    folder. It must state whether the paper is formalized, the exact source
+    name them explicitly in `status.json` and the DAG.
+  - Report check: create or update `docs/FINAL_VALIDATION_REPORT.md` in the
+    paper folder. It must state whether the paper is formalized, the exact source
     version, the named-result inventory, any deliberate model conventions or
-    proof-route deviations, the commands run, and links to the README, DAG, and
+    proof-route deviations, the commands run, and links to status, DAG, and
     audit ledger. If the report needs detailed source line mappings, helper
     theorem inventories, source-facing surface listings, or important-boundary
     implementation notes to preserve context, move those details into
-    `POST_FORMALIZATION_AUDIT.md` or `SOURCE_AUDIT.md` and summarize only the
+    `docs/POST_FORMALIZATION_AUDIT.md` or private audit notes and summarize only the
     human-relevant conclusion in the final report.
   - Build check: after updating the audit, run the targeted paper build and
     render the DAG from the paper folder. Also run a placeholder grep over the
-    claimed paper and library files, a stale-status grep over the README/DAG/
+    claimed paper and library files, a stale-status grep over `status.json`/DAG/
     final report, and `git diff --check`. Do not mark the audit complete until
     all required commands succeed.
 - **Post-formalization library elevation pass:** Once a paper theorem closes,
@@ -2745,19 +2764,21 @@ search.
   for exact theorem names, and `git diff --stat` before full diffs. Prefer one
   well-sized context read over many failed micro-reads when preparing an edit.
 - Before saying a paper is "done" or "fully formalized," perform a paper-local
-  validation pass: read the paper README theorem-status rows, inspect the DAG
+  validation pass: read `status.json` and any private theorem-status notes,
+  inspect the DAG
   status for the named main results, check the paper-facing theorem file for
   the strongest closed wrappers, run the targeted `lake build <module>`, and
   search only the target Lean files for real proof placeholders such as
   `sorry`, `admit`, or `axiom`, for example
   `rg -n "sorry|admit|axiom" papers/<Paper> --glob '*.lean'`. Ignore cached
-  PDF text, README prose, skill files, and comments when doing placeholder
+  PDF text, markdown prose, skill files, and comments when doing placeholder
   searches; otherwise ordinary instructional text creates false positives.
   If auxiliary certificate/BFS/interface theorems still take explicit inputs,
   verify that the final source wrapper does not expose them before calling the
   source theorem closed.
-- After closing a paper seam, run a stale-status grep over the paper README,
-  DAG, and, during post-validation, final report before committing, for example:
+- After closing a paper seam, run a stale-status grep over `status.json`, the
+  DAG, private status notes when present, and, during post-validation, final
+  report before committing, for example:
   `rg "Previous status|not formalized|partially formalized|conditional|none for|source wrappers partial" papers/<Paper>`.
   Stale ledger wording is often the only remaining "gap" after Lean is green.
   Keep legend entries if the template includes them, but no actual paper node
@@ -2772,21 +2793,23 @@ search.
   theorem.
 - Do not revisit closed layers first. Search for the strongest current endpoint
   and the precise "remaining" text, then work on that next bridge. In this repo,
-  paper README rows and `docs/ECONCSLEAN_CURRENT_STATUS.md` should say which
-  algebra, symmetry, probability, or model-integration layers are already closed.
+  `status.json`, private status notes, and aggregate status docs should say
+  which algebra, symmetry, probability, or model-integration layers are already
+  closed.
 - When stopping or moving papers, document "do not redo" information: closed
   theorem layers, the current endpoint, the next bridge, known traps, and the
   last passing build command. This prevents future agents from spending tokens
   re-deriving the same orientation.
 - If the user asks to stop soon, first pick a named theorem/lemma endpoint that
   can be made green quickly, finish that wrapper, and run the targeted module
-  plus paper-root builds. Only then update the README/DAG/skill handoff. Do not
+  plus paper-root builds. Only then update `status.json`, the DAG, and private
+  handoff notes. Do not
   start a fresh hard proof branch just before documenting a handoff.
 - Before committing a pause handoff, expose any newly closed internal theorem
   through the paper-facing wrapper layer if it is part of the source proof
   audit. Otherwise the next agent has to rediscover that the lemma exists
-  internally. Update the paper README/status/DAG from those public wrapper
-  names rather than from private proof-local names.
+  internally. Update `status.json`, the DAG, and private status notes from
+  those public wrapper names rather than from private proof-local names.
 
 ### 1.5 Workflow
 
@@ -2870,7 +2893,8 @@ search.
    proof state. Include useful failed proof attempts, Lean error patterns, and
    successful repair lemmas when they would help future retrieval or prevent the
    same dead end. If a paper is plausibly beyond the current model's effective
-   proof-search capacity, make that explicit in the paper README and handoff:
+   proof-search capacity, make that explicit in the private handoff and public
+   status:
    name the reduced target, record failed/counterexample-search evidence, and
    mark it as a future stronger-model pickup instead of leaving an ambiguous
    stale conditional theorem. Also update the root `README.md` and
@@ -3070,11 +3094,11 @@ pass:
   away from zero. If adding that assumption would make the theorem much easier
   while preserving the intended source claim, add it explicitly to the Lean
   statement, mark the result conditional if needed, and surface the decision to
-  the human in the README/DAG/report rather than spending days on a stronger
+  the human in `status.json`, the DAG, and the report rather than spending days on a stronger
   all-domain theorem.
 - If a result remains conditional, ensure assumptions/certificates are explicit
-  in both the theorem statement and the paper README status table, with exact
-  declaration names and no vague wording.
+  in both the theorem statement and `status.json`, with exact declaration names
+  and no vague wording.
 - Produce a final human-facing report in the paper folder alongside the DAG
   artifacts (TikZ source and rendered image). This report is not for routine
   handoff or an implementation inventory. It is the concise final assessment a
@@ -3354,8 +3378,8 @@ pass:
   errors or other active-paper warnings into that paper's validation report.
   Mention unrelated global audit failures in the agent final/status message or
   a separate repository-maintenance note instead.
-- Update the paper-local `status.json` at the same time as the paper README,
-  DAG, and final report, using the exact caveats from the final report. Then
+- Update the paper-local `status.json` at the same time as the DAG and final
+  report, using the exact caveats from the final report. Then
   run `python3 scripts/sync_paper_status.py` so the generated top-level
   `README.md` status block, `docs/PAPER_STATUS.md`, `papers/status.json`,
   `papers/human_status.json`, and `site/index.html` status table all move

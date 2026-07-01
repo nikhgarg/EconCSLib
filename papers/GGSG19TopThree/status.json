@@ -1,11 +1,11 @@
 {
   "artifacts": {
     "assumptions": "papers/GGSG19TopThree/Assumptions.lean",
-    "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf",
-    "dependency_dag_tex": "papers/GGSG19TopThree/DependencyDAG.tex",
-    "final_validation_report": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_pdf": "papers/GGSG19TopThree/docs/DependencyDAG.pdf",
+    "dependency_dag_tex": "papers/GGSG19TopThree/docs/DependencyDAG.tex",
+    "final_validation_report": "papers/GGSG19TopThree/docs/FINAL_VALIDATION_REPORT.md",
     "paper_interface": "papers/GGSG19TopThree/PaperInterface.lean",
-    "post_formalization_audit": "papers/GGSG19TopThree/POST_FORMALIZATION_AUDIT.md",
+    "post_formalization_audit": "papers/GGSG19TopThree/docs/POST_FORMALIZATION_AUDIT.md",
     "proof_interface": "papers/GGSG19TopThree/ProofInterface.lean",
     "readme": "papers/GGSG19TopThree/README.md",
     "source_archive": "papers/GGSG19TopThree/source.tar.gz",
@@ -35,7 +35,7 @@
     "review_rows": 17
   },
   "publication_venue": "HCOMP 2019",
-  "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+  "review_entrypoint": "papers/GGSG19TopThree/docs/FINAL_VALIDATION_REPORT.md",
   "review_surface": {
     "assumption_names": [
       "assumption_strict_cross_tier_no_ties",
@@ -60,7 +60,7 @@
       "source_corollary_lem_mallowsnorando",
       "source_theorem_lem_mallowsnotWK_counterexample"
     ],
-    "llm_assumption_review": "papers/GGSG19TopThree/assumption_match_llm.json",
+    "llm_assumption_review": "papers/GGSG19TopThree/audit/assumption_match_llm.json",
     "slices": [
       {
         "id": "all",

@@ -66,6 +66,8 @@ def default_build_target(paper_dir: Path, paper: str) -> str:
 def existing_json_sidecars(paper_dir: Path) -> list[Path]:
     names = [
         "status.json",
+    ]
+    sidecars = [
         "assumption_match_llm.json",
         "lean_to_tex_llm.json",
         "paper_coverage_llm.json",
@@ -75,7 +77,10 @@ def existing_json_sidecars(paper_dir: Path) -> list[Path]:
         "source_record_match_llm.json",
         "statement_match_llm.json",
     ]
-    return [paper_dir / name for name in names if (paper_dir / name).exists()]
+    paths = [paper_dir / name for name in names]
+    paths.extend(paper_dir / "audit" / name for name in sidecars)
+    paths.extend(paper_dir / name for name in sidecars)
+    return [path for path in paths if path.exists()]
 
 
 def path_arg(raw: str) -> Path:

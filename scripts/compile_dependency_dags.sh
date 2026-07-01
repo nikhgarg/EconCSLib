@@ -5,9 +5,13 @@ root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$root"
 
 status=0
-for f in papers/*/DependencyDAG.tex; do
+shopt -s nullglob
+for f in papers/*/docs/DependencyDAG.tex papers/*/DependencyDAG.tex; do
   d=$(dirname "$f")
-  b=$(basename "$d")
+  b=$(basename "$(dirname "$d")")
+  if [[ "$d" != */docs ]]; then
+    b=$(basename "$d")
+  fi
   log="/tmp/dag_compile_${b}.log"
   echo "Compiling $f"
   if (cd "$d" && latexmk -pdf -interaction=nonstopmode -halt-on-error DependencyDAG.tex >"$log" 2>&1); then

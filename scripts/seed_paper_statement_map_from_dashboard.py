@@ -120,6 +120,7 @@ def main() -> int:
             continue
         if path.exists() and not args.force:
             continue
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     return 0
 
