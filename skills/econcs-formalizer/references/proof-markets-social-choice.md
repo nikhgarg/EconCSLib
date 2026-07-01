@@ -355,6 +355,14 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   first-choice branches first, expose aggregate brackets or pair-sums, and use
   diagonal-plus-weighted regrouping when individual two-branch brackets can be
   negative but the total recurrence should cancel.
+- For stubborn sequential Mallows optimality proofs, shrink the target before
+  trying a broad weak-order monotonicity theorem. A useful route is: delete
+  absent extremes and trivial cuts, reduce to a same-size prefix-cut
+  weighted-extremes cancellation, prove the first-choice prefix-cut probability
+  comparisons, and then route the paper theorem through remaining-utility
+  dominance. If this route replaces a proof sketch that appeals to a broader
+  monotonicity principle, record the mathematical route concisely in the final
+  report rather than listing implementation lemma names.
 - When using loose Kendall-layer index bounds, prove and reuse no-gap support
   lemmas before chaining adjacent layer inequalities: if a higher identity
   Kendall layer is nonempty, every lower layer is nonempty. This lets adjacent

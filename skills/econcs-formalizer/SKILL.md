@@ -2713,6 +2713,14 @@ the Lean statements against the paper.
   the source paper via local ignored cache or source URL, `status.json`,
   `docs/DependencyDAG.tex`, and the
   paper-facing Lean file(s).
+  Before running this closeout, refresh the active workflow instructions from
+  the repository you are publishing from, especially after another agent or
+  recent pull changed audit scripts or skills. A prior successful closeout under
+  an older protocol is not evidence that the current protocol is satisfied. If
+  the current gate requires an independent holistic source audit, source-record
+  sidecar, rendered-DAG inspection note, or other paper-local artifact, create
+  that artifact and rerun the targeted closeout audit before opening or updating
+  a public PR.
   - Source check: search the cached text for every named paper `Definition`,
     `Lemma`, `Proposition`, `Theorem`, and `Corollary` using a concrete search
     such as `rg -n "THEOREM|Theorem|LEMMA|Lemma|COROLLARY|Corollary|PROPOSITION|Proposition|DEFINITION|Definition" <cached-text>`.
