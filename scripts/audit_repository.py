@@ -1881,6 +1881,19 @@ def paper_lean_declaration_index(folder: Path) -> dict[str, list[LeanDeclaration
     return declarations
 
 
+def resolve_declaration_name(
+    declaration_index: dict[str, list[LeanDeclaration]], name: object
+) -> list[LeanDeclaration]:
+    """Resolve an unqualified or module-qualified declaration name."""
+
+    target = str(name or "").strip()
+    if not target:
+        return []
+    if target in declaration_index:
+        return declaration_index[target]
+    return declaration_index.get(target.rsplit(".", 1)[-1], [])
+
+
 def library_lean_files() -> list[Path]:
     """Return tracked reusable-library Lean files."""
 
@@ -1998,6 +2011,7 @@ def paper_statement_sidecar_findings(
     """
 
     severity = completed_status_finding_severity(status)
+    findings = paper_statement_map_declaration_findings(paper_id, folder, status)
     try:
         from review_dashboard import (
             assumption_provenance_audit_summary,
@@ -2013,7 +2027,7 @@ def paper_statement_sidecar_findings(
         paper_coverage = paper_coverage_audit_summary(folder, items)
         assumptions = assumption_provenance_audit_summary(folder, items)
     except Exception as exc:  # noqa: BLE001 - audit should report parser failures.
-        return [
+        return findings + [
             Finding(
                 severity,
                 folder,
@@ -2021,7 +2035,6 @@ def paper_statement_sidecar_findings(
             )
         ]
 
-    findings: list[Finding] = []
     strict_evidence_required = status in {
         "formalized",
         "formalized with caveat",
@@ -2211,6 +2224,80 @@ def source_equation_wrapper_candidates(name: str, decl_names: set[str]) -> list[
         if any(marker in candidate for marker in SOURCE_EQUATION_WRAPPER_MARKERS):
             candidates.append(candidate)
     return sorted(candidates)
+
+
+def paper_statement_map_declaration_findings(
+    paper_id: str,
+    folder: Path,
+    status: object,
+) -> list[Finding]:
+    """Check that source-inventory Lean declaration names resolve."""
+
+    statement_map = folder / PAPER_AUDIT_DIR / "paper_statement_map.json"
+    if not statement_map.exists():
+        return []
+    try:
+        payload = json.loads(statement_map.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [
+            Finding(
+                completed_status_finding_severity(status),
+                statement_map,
+                f"`{paper_id}` source inventory is not readable JSON: {exc}",
+            )
+        ]
+    items = payload.get("items") if isinstance(payload, dict) else None
+    if not isinstance(items, dict):
+        return []
+
+    paper_declarations = paper_lean_declaration_index(folder)
+    library_declarations = library_lean_declaration_index()
+    missing: list[str] = []
+    malformed: list[str] = []
+    for source_key, item in items.items():
+        if not isinstance(item, dict):
+            continue
+        raw_declarations = item.get("lean_declarations")
+        if raw_declarations is None:
+            continue
+        if not isinstance(raw_declarations, list):
+            malformed.append(str(source_key))
+            continue
+        for raw_name in raw_declarations:
+            name = str(raw_name or "").strip()
+            if not name:
+                malformed.append(str(source_key))
+                continue
+            if resolve_declaration_name(paper_declarations, name):
+                continue
+            if resolve_declaration_name(library_declarations, name):
+                continue
+            missing.append(f"{source_key}:{name}")
+
+    findings: list[Finding] = []
+    severity = completed_status_finding_severity(status)
+    if malformed:
+        findings.append(
+            Finding(
+                severity,
+                statement_map,
+                f"`{paper_id}` source inventory has malformed lean_declarations for "
+                + ", ".join(malformed[:8])
+                + ("; ..." if len(malformed) > 8 else ""),
+            )
+        )
+    if missing:
+        findings.append(
+            Finding(
+                severity,
+                statement_map,
+                f"`{paper_id}` source inventory names {len(missing)} Lean declaration(s) "
+                "that do not resolve in paper-local or reusable-library Lean files: "
+                + ", ".join(missing[:8])
+                + ("; ..." if len(missing) > 8 else ""),
+            )
+        )
+    return findings
 
 
 def is_signature_only_review_alias(kind: str, source: str) -> bool:
@@ -4237,7 +4324,19 @@ def check_paper_facing_ledgers(include_active: bool) -> list[Finding]:
         if folder.name in ACTIVE_PAPERS and not include_active:
             continue
 
+        review_surface: dict[str, object] = {}
+        status_file = folder / "status.json"
+        if status_file.exists():
+            try:
+                status_payload = json.loads(status_file.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                status_payload = {}
+            if isinstance(status_payload, dict) and isinstance(status_payload.get("review_surface"), dict):
+                review_surface = status_payload["review_surface"]  # type: ignore[assignment]
+        review_source = review_surface_source_file_path(folder, review_surface)
         ledger_candidates = [folder / "MainTheorems.lean", folder / "PaperInterface.lean"]
+        if review_source.exists() and review_source not in ledger_candidates:
+            ledger_candidates.append(review_source)
         existing = [path for path in ledger_candidates if path.exists()]
         if not existing:
             continue
@@ -4248,7 +4347,12 @@ def check_paper_facing_ledgers(include_active: bool) -> list[Finding]:
                 findings.append(
                     Finding("ERROR", ledger, "paper-facing ledger still contains template placeholders")
                 )
-            if not LEAN_DECL_RE.search(text):
+            compact_import_shim = (
+                ledger.name == "PaperInterface.lean"
+                and review_source.exists()
+                and review_source.resolve() != ledger.resolve()
+            )
+            if not compact_import_shim and not LEAN_DECL_RE.search(text):
                 findings.append(
                     Finding("WARN", ledger, "paper-facing ledger has no theorem/lemma/def/abbrev declarations")
                 )
@@ -4277,6 +4381,17 @@ def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
             folder, FINAL_VALIDATION_REPORT_FILE, "FINAL_VALIDATION_REPORT.md"
         )
         aggregator = PAPERS / f"{folder.name}.lean"
+        review_surface: dict[str, object] = {}
+        status_file = folder / "status.json"
+        if status_file.exists():
+            try:
+                status_payload = json.loads(status_file.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                status_payload = {}
+            if isinstance(status_payload, dict) and isinstance(status_payload.get("review_surface"), dict):
+                review_surface = status_payload["review_surface"]  # type: ignore[assignment]
+        review_source = review_surface_source_file_path(folder, review_surface)
+        human_interface = review_source if review_source.exists() else interface
 
         if folder.name in interface_required and not interface.exists():
             findings.append(
@@ -4303,11 +4418,17 @@ def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
                 findings.append(
                     Finding("ERROR", interface, "human-facing interface should not use tuple witnesses")
                 )
+        if human_interface.exists():
+            text = human_interface.read_text(encoding="utf-8")
+            if "PProd" in text:
+                findings.append(
+                    Finding("ERROR", human_interface, "human-facing interface should not use tuple witnesses")
+                )
             if INTERFACE_WITNESS_RE.search(text):
                 findings.append(
                     Finding(
                         "ERROR",
-                        interface,
+                        human_interface,
                         "human-facing interface should not expose tuple/prod witness declarations",
                     )
                 )
@@ -4315,7 +4436,7 @@ def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
                 findings.append(
                     Finding(
                         "WARN",
-                        interface,
+                        human_interface,
                         "human-facing interface has no visible definition/abbrev declarations",
                     )
                 )
@@ -4327,7 +4448,7 @@ def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
             )
             if not has_theorem_or_theorem_alias:
                 findings.append(
-                    Finding("WARN", interface, "human-facing interface has no visible theorem statements")
+                    Finding("WARN", human_interface, "human-facing interface has no visible theorem statements")
                 )
 
         if audit.exists():
@@ -5441,11 +5562,18 @@ def check_readme_status_tables(
                 loc = fields.get("Lines of Code", "")
                 if loc and not re.fullmatch(r"\d{1,3}(?:,\d{3})*|\d+", loc):
                     findings.append(Finding("ERROR", readme, f"generated README has invalid Lines of Code `{loc}`"))
-                required_links = [
-                    (
+                if status == "paper draft":
+                    review_link = (
+                        "Agent source audit",
+                        r"Agent source audit:\s+\[[^\]]+\]\(docs/AGENT_SOURCE_AUDIT\.md\)",
+                    )
+                else:
+                    review_link = (
                         "Final validation report",
                         r"Final validation report:\s+\[[^\]]+\]\(FINAL_VALIDATION_REPORT\.md\)",
-                    ),
+                    )
+                required_links = [
+                    review_link,
                     (
                         "Dependency DAG",
                         r"Dependency DAG:\s+\[[^\]]+\]\(docs/DependencyDAG\.pdf\)",

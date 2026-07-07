@@ -4,10 +4,12 @@ import EconCSLib.Algorithms.Online
 import EconCSLib.Algorithms.Complexity.Yao
 import EconCSLib.Algorithms.Online.AdWords
 import EconCSLib.Algorithms.Online.Regret
+import EconCSLib.Learning.Statistics
 import EconCSLib.Learning.Bandits.ThompsonSampling
 import EconCSLib.MechanismDesign.Auctions
 import EconCSLib.SocialChoice
 import EconCSLib.Markets.Matching
+import EconCSLib.Applications.AlgorithmicFairness
 import EconCSLib.Applications.Admissions
 import EconCSLib.Applications.RecommenderSystems
 

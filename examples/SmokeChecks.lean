@@ -6,6 +6,7 @@ import EconCSLib.Foundations.Probability.Gaussian
 import EconCSLib.Foundations.Probability.MDP
 import EconCSLib.MechanismDesign.Auctions
 import GHW01DigitalGoods.MainTheorems
+import EOS07GSP.MainTheorems
 import EconCSLib.Applications.RecommenderSystems.PolicyAveraging
 import EconCSLib.Markets.Matching
 import EconCSLib.Algorithms.Online

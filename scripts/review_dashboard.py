@@ -1045,6 +1045,12 @@ def parse_paper_statement_map(folder: Path) -> dict[str, str]:
             for alias in raw_item.get("aliases", []) or []:
                 if isinstance(alias, str) and alias.strip():
                     _add_statement_variant(statements, alias.strip(), text)
+            for alias in raw_item.get("lean_declarations", []) or []:
+                if isinstance(alias, str) and alias.strip():
+                    _add_statement_variant(statements, alias.strip(), text)
+            for alias in raw_item.get("support_lean_declarations", []) or []:
+                if isinstance(alias, str) and alias.strip():
+                    _add_statement_variant(statements, alias.strip(), text)
             continue
         source_text_file = str(raw_item.get("source_text_file") or "source.txt").strip()
         if not source_text_file or "/" in source_text_file or "\\" in source_text_file:
@@ -1075,6 +1081,12 @@ def parse_paper_statement_map(folder: Path) -> dict[str, str]:
             continue
         _add_statement_variant(statements, key.strip(), text)
         for alias in raw_item.get("aliases", []) or []:
+            if isinstance(alias, str) and alias.strip():
+                _add_statement_variant(statements, alias.strip(), text)
+        for alias in raw_item.get("lean_declarations", []) or []:
+            if isinstance(alias, str) and alias.strip():
+                _add_statement_variant(statements, alias.strip(), text)
+        for alias in raw_item.get("support_lean_declarations", []) or []:
             if isinstance(alias, str) and alias.strip():
                 _add_statement_variant(statements, alias.strip(), text)
     return statements
@@ -3547,9 +3559,25 @@ def paper_coverage_audit_required(folder: Path, inventory: dict[str, dict[str, A
 
     payload = load_review_slice_payload(folder)
     explicit = payload.get("paper_coverage_required")
+    explicit_configured = False
     if isinstance(explicit, str):
-        explicit_enabled = explicit.strip().lower() in {"1", "true", "yes", "required", "on"}
+        normalized_explicit = explicit.strip().lower()
+        explicit_configured = normalized_explicit in {
+            "0",
+            "1",
+            "false",
+            "true",
+            "no",
+            "yes",
+            "not required",
+            "optional",
+            "required",
+            "off",
+            "on",
+        }
+        explicit_enabled = normalized_explicit in {"1", "true", "yes", "required", "on"}
     elif isinstance(explicit, bool):
+        explicit_configured = True
         explicit_enabled = explicit
     else:
         explicit_enabled = False
@@ -3568,10 +3596,12 @@ def paper_coverage_audit_required(folder: Path, inventory: dict[str, dict[str, A
         or status_value.startswith("partially formalized")
         or status_value.startswith("conditional")
     )
+    if status_value == "paper draft":
+        return explicit_enabled if explicit_configured else False
     if public_facing_status:
         return True
-    if explicit_enabled:
-        return True
+    if explicit_configured:
+        return explicit_enabled
     return bool(
         inventory
         and (folder / PAPER_STATEMENT_MAP_FILE).exists()
@@ -3970,35 +4000,38 @@ def paper_coverage_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
             unknown.append(key)
 
     coverage_needs_attention = bool(
-        missing_inventory
-        or unresolved_statement_map
-        or (audit_required and inventory_is_scaffold)
-        or missing_required
-        or missing_source_grounded_audit
-        or coverage_metadata_missing
-        or inventory_missing_source_url
-        or inventory_missing_source_provenance
-        or missing_coverage
-        or missing_statement_digest
-        or stale_statement
-        or stale_inventory
-        or stale_surface
-        or invalid_row_links
-        or partial
-        or missing
-        or uncertain
-        or unknown
-        or covered_without_rows
-        or covered_without_reason
-        or covered_with_seed_reason
-        or covered_without_source_evidence
-        or support_without_declarations
-        or support_without_reason
-        or support_without_source_evidence
-        or required_out_of_scope
-        or out_of_scope_without_reason
-        or out_of_scope_without_source_evidence
-        or extra_coverage
+        audit_required
+        and (
+            missing_inventory
+            or unresolved_statement_map
+            or inventory_is_scaffold
+            or missing_required
+            or missing_source_grounded_audit
+            or coverage_metadata_missing
+            or inventory_missing_source_url
+            or inventory_missing_source_provenance
+            or missing_coverage
+            or missing_statement_digest
+            or stale_statement
+            or stale_inventory
+            or stale_surface
+            or invalid_row_links
+            or partial
+            or missing
+            or uncertain
+            or unknown
+            or covered_without_rows
+            or covered_without_reason
+            or covered_with_seed_reason
+            or covered_without_source_evidence
+            or support_without_declarations
+            or support_without_reason
+            or support_without_source_evidence
+            or required_out_of_scope
+            or out_of_scope_without_reason
+            or out_of_scope_without_source_evidence
+            or extra_coverage
+        )
     )
     source_to_lean_needs_attention = bool(
         coverage_needs_attention

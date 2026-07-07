@@ -916,11 +916,21 @@ def generated_paper_readme_block(folder: Path, payload: dict[str, Any]) -> str:
 
     link_lines = []
     if review_path:
+        review_label = (
+            "Agent source audit"
+            if str(payload.get("status", "")).strip().lower() == "paper draft"
+            else "Final validation report"
+        )
         link_lines.append(
-            f"- Final validation report: {markdown_file_link(folder, review_path, Path(review_path).name)}"
+            f"- {review_label}: {markdown_file_link(folder, review_path, Path(review_path).name)}"
         )
     else:
-        link_lines.append("- Final validation report: not tracked in this folder.")
+        review_label = (
+            "Agent source audit"
+            if str(payload.get("status", "")).strip().lower() == "paper draft"
+            else "Final validation report"
+        )
+        link_lines.append(f"- {review_label}: not tracked in this folder.")
     if dag_path:
         link_lines.append(f"- Dependency DAG: {markdown_file_link(folder, dag_path, Path(dag_path).name)}")
     else:
