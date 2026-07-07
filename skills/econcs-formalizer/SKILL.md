@@ -69,6 +69,14 @@ where the local cache lives, then use that copy for subsequent source checks.
 Prefer source TeX over PDF text extraction for displayed formulas, numbered
 equations, theorem labels, and appendix proof steps; PDF text is often good
 enough for orientation but too noisy to settle algebraic disputes.
+Before asserting that the source has an issue, a theorem is fixed, or a
+coauthor-facing edit is still needed, check the current authoritative source
+cache for that paper. Old source-issue memos, validation reports, LLM sidecars,
+session notes, and prior suggested-edits files are leads, not evidence about
+the current draft or published source. State the distinction explicitly when
+needed: "the repo memo records X" is weaker than "the current source still
+contains X." If the source changed, classify the old finding as still present,
+changed, removed, or not rechecked before repeating it.
 
 Use `formalized` as the repository status word for Lean-checked paper results.
 Lean verification is the mechanism, not a separate paper status. Do not answer
@@ -190,6 +198,11 @@ full statement sidecar regeneration, DAG/final-report audit updates, and
 for that validation phase. The eventual closeout gate must report missing,
 stale, or unresolved `source_record_audit.json` /
 `source_record_match_llm.json` sidecars as assumption/provenance findings.
+In a proof-production turn, spend time on proof-side progress first. Do not
+refresh DAGs, validation reports, generated status tables, broad audit
+sidecars, or commit/push solely because an intermediate theorem changed; wait
+until the paper closes, a genuine proof milestone needs checkpointing, or the
+user explicitly asks for those artifacts.
 Treat the configured review source as a closed review surface, not a scratch
 file. By default this is `PaperInterface.lean`, but large papers may set
 `status.json` `review_surface.source_file` to `AuditInterface.lean` so
@@ -1647,10 +1660,114 @@ new drafts may arrive while formalization is in progress.
   new-draft remapping checklist. The digest is part of the source contract:
   if it changes, old source-match and coverage judgments do not automatically
   apply.
+- For Overleaf-backed drafts, clone or fetch the Overleaf repository only when
+  the user instructs you to do so, then treat the cached checkout as source
+  material. Record the local clone path, remote URL, commit, commit date, and
+  authoritative TeX entrypoint in `status.json` and `DRAFT_VERSION_MAP.md`;
+  list non-authoritative entrypoints separately so future agents do not prove
+  against the wrong version. By default, do not edit manuscript, bibliography,
+  figure, style, or source files in the Overleaf checkout and do not push to
+  Overleaf. If the user wants draft feedback, create or update only a separate
+  suggested-edits file whose filename includes `codex`, for example
+  `codex-suggested-edits.tex`; do this unless the user explicitly authorizes
+  another Overleaf edit.
+- Treat a `codex` suggested-edits file as a coauthor-facing repair document,
+  not an audit log. It should start with how to use the file and an executive
+  repair order, then proceed issue by issue. Include a short color key near the
+  top if red markup is used, for example that red text marks suggested
+  manuscript changes or replacement formula fragments. Do not include
+  Codex-facing workflow boilerplate such as "Codex should only edit this file";
+  keep operational constraints in the skill, status files, or handoff notes.
+  For each issue, state an explicit `Paper location` line with the current
+  section/subsection/appendix location, classify whether it is a theorem repair,
+  appendix proof alignment, notation/convention mismatch, formula typo, prose
+  overstatement, simulation scope label, or source/build cleanup, explain why
+  the issue matters, and give the narrow manuscript edit to make. Provide
+  actual drop-in replacement text where possible; merge replacement text into
+  the issue-by-issue workflow rather than duplicating it in a later section.
+- Before finalizing or refreshing a `codex` suggested-edits file, build a
+  complete source-issue reconciliation ledger. Inventory every current issue
+  source available in the paper folder: main/broader/source-issue memos,
+  caveat-summary TeX, final validation report "Paper Issues" and "Other Source
+  Notes" sections, `DRAFT_VERSION_MAP.md`, `docs/AGENT_SOURCE_AUDIT.md`,
+  `status.json` caveat fields, and Lean review/audit rows whose names or
+  comments mention caveat, source discrepancy, printed formula, corrected
+  formula, typo, source repair, or external assumption. Verify each item
+  against the current source cache. For every item, record exactly one status:
+  `included` with the suggested-edits section, `omitted_by_user` with the
+  user's explicit instruction, `resolved_in_current_source`, `stale_or_not_current`,
+  or `not_coauthor_facing` with a reason. Do not finish the suggested-edits pass
+  until every current issue is either included or explicitly omitted by the
+  user.
+- Treat smaller proof-text typos, appendix-only repairs, prose qualifications,
+  figure/simulation scope labels, and issues that do not block Lean compilation
+  as eligible suggested-edits items. Do not omit an issue merely because it is
+  outside the compact theorem DAG, not a headline caveat, or already handled by
+  a corrected Lean endpoint. Conversely, if the user says to remove or ignore an
+  item, preserve that instruction in the reconciliation ledger so regeneration
+  does not reintroduce it.
+- In suggested-edits files, make the changed words and formula fragments visually
+  obvious. Use red macros such as `\red{...}` or `\mred{...}` for the exact
+  inserted or corrected material, while leaving unchanged context uncolored.
+  This is especially useful when a replacement paragraph mostly preserves the
+  original wording. If a user says an item is not actually a main-text problem,
+  remove or downgrade that issue rather than preserving the old audit framing.
+  If the user asks to remove a finding, remove that finding only; do not
+  silently remove a distinct source issue with similar terminology unless the
+  current source check shows it is stale too.
+- For tiny edits, avoid full-phrase replacements that look identical to the
+  source except for one repeated word, sign, or subscript. Write the edit as an
+  explicit action such as "delete the second occurrence of `model`" or "replace
+  the plus sign by a minus sign", then show only the corrected fragment in red.
+  The goal is that a coauthor can see the delta without doing a character-level
+  diff.
+- Separate main-text correctness from appendix/proof-text repair. If the main
+  theorem statement is correct under a global paper assumption but an appendix
+  proof derives the wrong direction, frame the suggestion as appendix proof
+  alignment, not as a main-text theorem flaw. Conversely, if a displayed formula
+  or theorem statement is wrong, name that directly and give the corrected
+  formula. Do not recommend repeated downstream edits when the intended repair
+  is one upstream definition or notation change.
+- For threshold characterizations over a feasible interval, do not force an
+  interior or endpoint range such as `(0,1]` unless the source proof establishes
+  the needed endpoint signs. A source-faithful repair can be to weaken the
+  threshold to a real number: thresholds above the feasible interval mean the
+  comparison always holds on the interval, and thresholds at or below the lower
+  endpoint mean it never holds. Prefer that weakening over inventing a new
+  endpoint assumption when it preserves the paper's intended iff statement.
+- Smaller source-edit suggestions still need context. Do not leave them as a
+  bare punch list. For each small edit, explain the source-local location, the
+  failure mode it prevents for a reader or formalization, whether it changes the
+  model or only the display/prose, and the quick consistency check after the
+  edit. Mark these as local cleanup rather than formalization blockers unless
+  they change a paper-facing theorem or proof dependency.
+- Before refreshing a suggested-edits note from an older audit, re-check the
+  current draft source. Remove stale findings that are no longer present, such
+  as old abstract planning text or previously missing bibliography keys, rather
+  than preserving them for history. Include source/build hygiene items only when
+  they are still current and coauthor-facing; do not mix private agent workflow
+  reminders into the suggested-edits document.
+- Do not include meta provenance notes in the coauthor-facing suggested-edits
+  document, such as "Current-source note", "these notes were refreshed against
+  the current source", "older issue memo", or "the old invalid proof step is
+  already commented out". Put that audit history in the reconciliation ledger,
+  `DRAFT_VERSION_MAP.md`, `docs/AGENT_SOURCE_AUDIT.md`, or handoff notes. The
+  suggested-edits file should state the current substantive conclusion and the
+  actionable manuscript change.
+- Standalone suggested-edits documents should avoid fragile internal
+  cross-references. Prefer prose such as "the smaller source edits section
+  below" over `Section~\ref{...}`. If internal labels are truly needed, compile
+  in a clean output directory and verify there are no unresolved references, but
+  do not rely on stale Overleaf/local auxiliary files.
+- Build suggested-edits PDFs outside the Overleaf checkout, for example with
+  `latexmk -outdir=/tmp/...`, and copy back only the `.tex` file unless the user
+  asks for compiled artifacts. If auxiliary files are accidentally generated in
+  the Overleaf checkout, remove only those generated artifacts. Do not commit or
+  push the Overleaf repository unless the user explicitly requests that target.
 - Keep cached draft PDFs, extracted text, and source archives ignored/local
   unless redistribution rights are explicit. Track source-safe artifacts such as
   `citation_source.txt`, `DRAFT_VERSION_MAP.md`, `FORMALIZATION_PLAN.md`,
-  `audit/paper_statement_map.json`, and an agent source audit.
+  `audit/paper_statement_map.json`, and `docs/AGENT_SOURCE_AUDIT.md`.
 - Build the first `audit/paper_statement_map.json` from the draft source itself,
   using stable source-item IDs that do not depend only on theorem numbering.
   Numbered aliases are useful, but the stable key should survive renumbering.
@@ -1688,13 +1805,15 @@ the Lean statements against the paper.
   1. A `status.json` file holding the paper status and dashboard metadata.
   2. A `docs/DependencyDAG.tex` proof roadmap and rendered
      `docs/DependencyDAG.pdf`.
-  3. A `FINAL_VALIDATION_REPORT.md` when the paper has a final validation
+  3. A `docs/AGENT_SOURCE_AUDIT.md` holistic source-first audit when an
+     agent-source audit has been run.
+  4. A `FINAL_VALIDATION_REPORT.md` when the paper has a final validation
      claim.
-  4. `audit/*.json` for tracked LLM/source-audit sidecars.
-  5. A `MainTheorems.lean` file holding the paper-facing wrappers.
-  6. A `PaperInterface.lean` file holding the compact human-facing definitions
+  5. `audit/*.json` for tracked LLM/source-audit sidecars.
+  6. A `MainTheorems.lean` file holding the paper-facing wrappers.
+  7. A `PaperInterface.lean` file holding the compact human-facing definitions
      and named theorem statements.
-  7. A local `.gitignore` file.
+  8. A local `.gitignore` file.
 - **Local Gitignores:** Every paper folder *must* contain its own `.gitignore`
   that ignores local source PDFs and LaTeX auxiliaries such as `*.aux`, `*.log`,
   `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, but it must not hide the rendered
