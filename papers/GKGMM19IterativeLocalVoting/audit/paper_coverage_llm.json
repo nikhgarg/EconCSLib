@@ -610,18 +610,18 @@
     },
     "source_appendix_theorem4_expected_subgradient": {
       "audit_kind": "source_to_dashboard_llm",
-      "coverage": "conditional_boundary",
-      "dashboard_evidence": "Linked review row(s): appendix_theorem4_expected_subgradient_boundary",
-      "reason": "The source item is exposed as explicit dashboard row(s) with row-local statement-match judgments; no compactness-based omission remains.",
+      "coverage": "covered",
+      "dashboard_evidence": "Linked review row(s): appendix_theorem4_expected_subgradient",
+      "reason": "Appendix Theorem 4 is proved rather than assumed. The dashboard row `appendix_theorem4_expected_subgradient` exposes the concrete finite-coordinate interchange statement, discharged from `EconCSLib.Optimization.finiteSubgradientAt_integral`; the previous paper-local axiom was removed.",
       "review_rows": [
-        "appendix_theorem4_expected_subgradient_boundary"
+        "appendix_theorem4_expected_subgradient"
       ],
       "source_evidence": "Source inventory entry source_appendix_theorem4_expected_subgradient at Appendix Theorem 4: Appendix Theorem 4 boundary: expected selected subgradients are subgradients of the expected objective.",
       "source_grounded": true,
       "statement_sha256": "e83f794bb9ecfb39902ff7f7587627b0240597a547d8624c6a86e94ad8742e21",
       "support_declarations": [],
-      "validated_at": "2026-06-29T20:39:31Z",
-      "validator": "codex-gpt-5.5-semantic-rejudge",
+      "validated_at": "2026-08-15T00:00:00Z",
+      "validator": "mechanical-update-pending-rejudge",
       "validator_type": "model"
     },
     "source_appendix_theorem5_ssgm_convergence": {

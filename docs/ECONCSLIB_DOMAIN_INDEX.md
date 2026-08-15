@@ -54,7 +54,18 @@ when you need material from a domain quickly.
     (`Approximation`, `Argmax`, `Certificate`, `FiniteSearch`,
     `LinearProgram`, `MoveGraph`, `ChoiceEquilibrium`, `ChoiceEquilibriumAE`,
     `BinaryChoice`, `BinaryChoiceAE`, `BinaryPolicyGame`,
-    `StrategicEquilibrium`, `Endpoint`)
+    `StrategicEquilibrium`, `Endpoint`, `ProjectedSubgradient`,
+    `ExpectedSubgradient`, `StochasticSubgradient`)
+    - `ProjectedSubgradient`: paper-independent vocabulary for projected
+      (stochastic) subgradient iterations: `FiniteSubgradientAt`,
+      `ProjectionOnto`, `FiniteProjectedSSGMUpdateAt`,
+      `FollowsFiniteProjectedSSGM`,
+      `FollowsFiniteProjectedSampleSubgradientMethod`, and the Robbins-Monro
+      `SSGMStepSizeConditions`.
+    - `ExpectedSubgradient`: the interchange theorem
+      `finiteSubgradientAt_integral`, showing that an a.e.-selected integrable
+      subgradient has expectation that is a subgradient of the expected
+      objective.
     - `Approximation`: benchmark/dual upper-bound sandwich certificates for
       approximation and competitive-ratio proofs, including additive-error
       variants.

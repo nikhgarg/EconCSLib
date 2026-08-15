@@ -21,26 +21,6 @@
         "hC : assumption_conditions_c123 E"
       ]
     },
-    "assumption_expected_subgradient_theorem": {
-      "judgment": "partial_boundary",
-      "lean_statement_sha256": "bf35fd524498e3a7ddef54878cf8f18f0594752526d067e7ab02d4cc054701ff",
-      "paper_statement_sha256": "029fd484ca9fb1cf34da483a9bfc11339b1f2b3136b2ae011dddedb701348207",
-      "prompt_version": "assumption-provenance-v3-semantic-exact-premise-source",
-      "reason": "This is not a source primitive assumption; it is a theorem-shaped proof boundary for Appendix Theorem 4, now exposed separately so coverage and premise provenance do not silently pass.",
-      "validated_at": "2026-06-29T20:39:31Z",
-      "validator": "codex-gpt-5.5-semantic-rejudge",
-      "validator_type": "model",
-      "premise_judgments": {
-        "hExpectedSubgradient : assumption_expected_subgradient_theorem": {
-          "judgment": "partial_boundary",
-          "reason": "Premise inherits the row-level provenance judgment. This is not a source primitive assumption; it is a theorem-shaped proof boundary for Appendix Theorem 4, now exposed separately so coverage and premise provenance do not silently pass.",
-          "source_location": ""
-        }
-      },
-      "premises": [
-        "hExpectedSubgradient : assumption_expected_subgradient_theorem"
-      ]
-    },
     "assumption_ssgm_convergence_theorem": {
       "judgment": "partial_boundary",
       "lean_statement_sha256": "69711b911a751bc25aaf4f6e4c5d4937e6c4ae5c011d2463a45010ad47285db6",

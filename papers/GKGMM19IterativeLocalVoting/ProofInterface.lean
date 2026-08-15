@@ -5775,7 +5775,7 @@ theorem proof_theorem3_finite_paperRadiusProgress_directionalEquilibrium
 /--
 Historical finite-coordinate comparison interface for the generic
 `SSGMConvergenceBoundary` marker.  The current public route uses the
-theorem-shaped axiom `assumption_ssgm_convergence_theorem`; this record remains
+theorem-shaped premise `assumption_ssgm_convergence_theorem`; this record remains
 only as proof-facing scaffolding showing how the older marker-based obligations
 factor through finite-coordinate source data. Theorem 3 is not an SSGM boundary
 field here: it is discharged by the environment's deterministic Model B drift
@@ -6202,7 +6202,7 @@ theorem proof_finiteCoordinateILVFullPaperConsequences_of_fullSourceSemantics_ss
 
 /--
 Current finite-coordinate paper closeout using the approved single theorem-shaped
-SSGM axiom.  No other Lean axiom is used; the non-SSGM source semantics are the
+SSGM boundary premise.  No Lean axiom is used; the non-SSGM source semantics are the
 visible fields of `FiniteCoordinateILVFullConcreteSourceModel`.
 -/
 theorem proof_finiteCoordinateILVFullPaperConsequences_of_fullConcreteSourceModel
@@ -6210,15 +6210,16 @@ theorem proof_finiteCoordinateILVFullPaperConsequences_of_fullConcreteSourceMode
     [MeasurableSpace Voter] [MeasurableSingletonClass Voter]
     [Fintype Coord] [Nonempty Coord]
     {E : ILVEnvironment Voter (Coord → ℝ)}
-    (M : FiniteCoordinateILVFullConcreteSourceModel E) :
+    (M : FiniteCoordinateILVFullConcreteSourceModel E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     FiniteCoordinateILVFullPaperConsequences E := by
   exact
     proof_finiteCoordinateILVFullPaperConsequences_of_fullConcreteSourceModel_ssgmConvergence
-      M (assumption_ssgm_convergence_theorem E)
+      M hSSGM
 
 /--
 Granular finite-coordinate paper closeout using the approved single
-theorem-shaped SSGM axiom.  No other Lean axiom is used; all non-SSGM source
+theorem-shaped SSGM boundary premise.  No Lean axiom is used; all non-SSGM source
 semantics are visible in theorem-specific and Theorem 3 fields.
 -/
 theorem proof_finiteCoordinateILVFullPaperConsequences_of_fullSourceSemantics
@@ -6226,11 +6227,12 @@ theorem proof_finiteCoordinateILVFullPaperConsequences_of_fullSourceSemantics
     [MeasurableSpace Voter] [MeasurableSingletonClass Voter]
     [Fintype Coord] [Nonempty Coord]
     {E : ILVEnvironment Voter (Coord → ℝ)}
-    (M : FiniteCoordinateILVFullSourceSemantics E) :
+    (M : FiniteCoordinateILVFullSourceSemantics E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     FiniteCoordinateILVFullPaperConsequences E := by
   exact
     proof_finiteCoordinateILVFullPaperConsequences_of_fullSourceSemantics_ssgmConvergence
-      M (assumption_ssgm_convergence_theorem E)
+      M hSSGM
 
 /--
 Granular full source semantics with the refined Theorem 2 primitive trace
@@ -6748,11 +6750,12 @@ theorem
     [MeasurableSpace Voter] [MeasurableSingletonClass Voter]
     [Fintype Coord] [Nonempty Coord]
     {E : ILVEnvironment Voter (Coord → ℝ)}
-    (M : FiniteCoordinateILVFullSampledProjectedSourceSemantics E) :
+    (M : FiniteCoordinateILVFullSampledProjectedSourceSemantics E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     FiniteCoordinateILVFullProjectedPaperConsequences M := by
   exact
     proof_finiteCoordinateILVFullProjectedPaperConsequences_of_fullSampledProjectedSourceSemantics_ssgmConvergence
-      M (assumption_ssgm_convergence_theorem E)
+      M hSSGM
 
 theorem proof_finiteCoordinateILVFullPaperConsequences_of_fullPrimitiveSourceSemantics_ssgmConvergence
     {Voter Coord : Type*} [Fintype Voter]
@@ -6783,22 +6786,24 @@ theorem proof_finiteCoordinateILVFullPaperConsequences_of_fullPrimitiveSourceSem
     [MeasurableSpace Voter] [MeasurableSingletonClass Voter]
     [Fintype Coord] [Nonempty Coord]
     {E : ILVEnvironment Voter (Coord → ℝ)}
-    (M : FiniteCoordinateILVFullPrimitiveSourceSemantics E) :
+    (M : FiniteCoordinateILVFullPrimitiveSourceSemantics E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     FiniteCoordinateILVFullPaperConsequences E := by
   exact
     proof_finiteCoordinateILVFullPaperConsequences_of_fullPrimitiveSourceSemantics_ssgmConvergence
-      M (assumption_ssgm_convergence_theorem E)
+      M hSSGM
 
 theorem proof_finiteCoordinateILVFullPaperConsequences_of_fullSampledSourceSemantics
     {Voter Coord : Type*} [Fintype Voter]
     [MeasurableSpace Voter] [MeasurableSingletonClass Voter]
     [Fintype Coord] [Nonempty Coord]
     {E : ILVEnvironment Voter (Coord → ℝ)}
-    (M : FiniteCoordinateILVFullSampledSourceSemantics E) :
+    (M : FiniteCoordinateILVFullSampledSourceSemantics E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     FiniteCoordinateILVFullPaperConsequences E := by
   exact
     proof_finiteCoordinateILVFullPaperConsequences_of_fullSampledSourceSemantics_ssgmConvergence
-      M (assumption_ssgm_convergence_theorem E)
+      M hSSGM
 
 theorem proof_coordinate_noncollision_of_forall_notMem_coordinateEqualityBadEvent
     {Coord : Type*} (trajectory ideal : ℕ → Coord → ℝ)

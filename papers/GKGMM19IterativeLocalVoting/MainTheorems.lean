@@ -13,6 +13,7 @@ import Mathlib.Probability.ProductMeasure
 import Mathlib.Probability.Moments.SubGaussian
 import EconCSLib.Foundations.Math.FiniteSum
 import EconCSLib.Foundations.Math.FiniteDimensionalNormsDerivative
+import EconCSLib.Foundations.Optimization.ProjectedSubgradient
 import EconCSLib.Foundations.Probability.BoundedDensity
 import EconCSLib.Foundations.Probability.Weighted
 
@@ -1040,11 +1041,7 @@ positive steps, square-summability, and divergent partial sums. The square and
 sum conditions use shifted indices because Lean's natural numbers start at zero.
 -/
 def SSGMStepSizeConditions (radius : ℕ → ℝ) : Prop :=
-  (∀ t : ℕ, 0 < t → 0 < radius t) ∧
-    Summable (fun t : ℕ => (radius (t + 1)) ^ 2) ∧
-      Filter.Tendsto
-        (fun n : ℕ => ∑ t ∈ Finset.range n, radius (t + 1))
-        Filter.atTop Filter.atTop
+  EconCSLib.Optimization.SSGMStepSizeConditions radius
 
 theorem ilvRadius_ssgmStepSizeConditions {r0 : ℝ} (hr0 : 0 < r0) :
     SSGMStepSizeConditions (ilvRadius r0) := by
@@ -1434,7 +1431,7 @@ theorem modelBFiniteResponseAt_neg_lpCostGradientCandidate_formula
 
 /-- A projection operator onto the feasible solution space `X`. -/
 def ProjectionOnto {Point : Type*} (X : Set Point) (project : Point → Point) : Prop :=
-  ∀ y, project y ∈ X
+  EconCSLib.Optimization.ProjectionOnto X project
 
 /--
 Norm-minimizing version of the projection notation `[·]_X`, parameterized by the
@@ -1560,10 +1557,8 @@ def FiniteProjectedSSGMUpdateAt
     (project : (Coord → ℝ) → Coord → ℝ)
     (previous : Coord → ℝ) (radius : ℝ)
     (subgradient noise bias next : Coord → ℝ) : Prop :=
-  next =
-    project
-      (fun i => previous i -
-        radius * (subgradient i + noise i + bias i))
+  EconCSLib.Optimization.FiniteProjectedSSGMUpdateAt project previous radius
+    subgradient noise bias next
 
 theorem finiteProjectedSSGMUpdateAt_formula
     {Coord : Type*}
@@ -1598,10 +1593,7 @@ if the affine lower bound with slope `g` holds at every point.
 def FiniteSubgradientAt
     {Coord : Type*} [Fintype Coord]
     (cost : (Coord → ℝ) → ℝ) (x g : Coord → ℝ) : Prop :=
-  ∀ y,
-    cost x +
-      EconCSLib.FiniteDimensionalNorms.coordinateLinearFunctional g
-        (fun i => y i - x i) ≤ cost y
+  EconCSLib.Optimization.FiniteSubgradientAt cost x g
 
 theorem finiteSubgradientAt_formula
     {Coord : Type*} [Fintype Coord]
@@ -2104,9 +2096,8 @@ def FollowsFiniteProjectedSSGM
     (project : (Coord → ℝ) → Coord → ℝ)
     (trajectory : ℕ → Coord → ℝ) (radius : ℕ → ℝ)
     (subgradient noise bias : ℕ → Coord → ℝ) : Prop :=
-  ∀ t : ℕ,
-    FiniteProjectedSSGMUpdateAt project (trajectory t) (radius (t + 1))
-      (subgradient t) (noise t) (bias t) (trajectory (t + 1))
+  EconCSLib.Optimization.FollowsFiniteProjectedSSGM project trajectory radius
+    subgradient noise bias
 
 theorem followsFiniteProjectedSSGM_formula
     {Coord : Type*}
@@ -2179,8 +2170,8 @@ def FollowsFiniteProjectedSampleSubgradientMethod
     (project : (Coord → ℝ) → Coord → ℝ)
     (trajectory : ℕ → Coord → ℝ) (radius : ℕ → ℝ)
     (subgradient noise bias : ℕ → Coord → ℝ) : Prop :=
-  FollowsFiniteProjectedSSGM project trajectory radius subgradient noise bias ∧
-    ∀ t : ℕ, FiniteSubgradientAt (sampleCost t) (trajectory t) (subgradient t)
+  EconCSLib.Optimization.FollowsFiniteProjectedSampleSubgradientMethod
+    sampleCost project trajectory radius subgradient noise bias
 
 theorem followsFiniteProjectedSubgradientMethod_formula
     {Coord : Type*} [Fintype Coord]
