@@ -197,7 +197,7 @@
     },
     "source_appendix_theorem4_expected_subgradient": {
       "aliases": [
-        "appendix_theorem4_expected_subgradient_boundary"
+        "appendix_theorem4_expected_subgradient"
       ],
       "source_location": "Appendix Theorem 4",
       "source_url": "https://arxiv.org/pdf/1702.07984; published article: https://doi.org/10.1613/jair.1.11358",

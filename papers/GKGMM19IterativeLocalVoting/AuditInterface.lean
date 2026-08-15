@@ -220,7 +220,7 @@ Rules for completing this file:
 - `finite_coordinate_full_sampled_projected_paper_consequences_with_ssgm` and
   `finite_coordinate_full_sampled_projected_paper_consequences`: projected
   finite-coordinate closeout from sampled source semantics; the latter uses
-  only the approved theorem-shaped SSGM axiom and records the constrained
+  only the approved theorem-shaped SSGM boundary premise and records the constrained
   Theorem 3 alternative plus the full-space exact recovery theorem.
 -/
 
@@ -1343,18 +1343,23 @@ def paper_definition4_dlcd_formula
           dlcdBudgetUtility isExpense componentUtility deficitWeight x
 
 /--
-Appendix Theorem 4 boundary: expected selected subgradients are subgradients
-of the expected objective.
+Appendix Theorem 4: expected selected subgradients are subgradients of the
+expected objective.
+
+This is now a proved theorem rather than a boundary.  It is stated at the
+concrete finite-coordinate instantiation, so "subgradient" is the actual
+subgradient inequality and "expected" is the actual Bochner integral.
+
+Source status: covered; the interchange result is proved in the reusable
+library module `EconCSLib.Foundations.Optimization.ExpectedSubgradient` and no
+external boundary remains for this row.
 -/
-theorem appendix_theorem4_expected_subgradient_boundary
-    {Point Theta Grad : Type*}
-    (isSampleSubgradient : Point → Theta → Grad → Prop)
-    (expected : (Theta → Grad) → Grad)
-    (isExpectedSubgradient : Point → Grad → Prop) :
-    ExpectedSubgradientTheoremStatement
-      isSampleSubgradient expected isExpectedSubgradient :=
-  assumption_expected_subgradient_theorem
-    isSampleSubgradient expected isExpectedSubgradient
+theorem appendix_theorem4_expected_subgradient
+    {Coord Theta : Type*} [Fintype Coord] [MeasurableSpace Theta]
+    (μ : MeasureTheory.Measure Theta)
+    (cost : Theta → (Coord → ℝ) → ℝ) :
+    ExpectedSubgradientTheoremStatement μ cost :=
+  expected_subgradient_theorem μ cost
 
 /--
 Appendix Theorem 5 boundary: the stochastic subgradient method convergence
@@ -1362,9 +1367,10 @@ bundle quoted by the paper.
 -/
 theorem appendix_theorem5_ssgm_convergence_boundary
     {Voter Coord : Type*} [Fintype Coord] [Nonempty Coord]
-    (E : ILVEnvironment Voter (Coord → ℝ)) :
+    (E : ILVEnvironment Voter (Coord → ℝ))
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     FiniteCoordinateILVSSGMConvergenceTheorems E :=
-  assumption_ssgm_convergence_theorem E
+  hSSGM
 
 /--
 Proposition 2 median-set source formula: the paper's median target is the set
@@ -2563,7 +2569,7 @@ Theorem 1: under C1-C3, Lp-normed utilities, Model A or B response, and
 `(p,q) = (2,2), (1,inf), (inf,1)`, ILV with Lq neighborhoods converges w.p. 1
 to the societal optimum for finite-coordinate environments.  The visible source
 hypotheses themselves construct the deterministic case certificate; the only
-remaining axiom used by this row is the theorem-shaped SSGM convergence bundle
+remaining input used by this row is the theorem-shaped SSGM convergence bundle
 in `Assumptions.lean`.
 
 Source status: conditional boundary; the deterministic source hypotheses are
@@ -2571,18 +2577,19 @@ visible and the remaining convergence input is the approved SSGM theorem.
 -/
 theorem theorem1_lp_normed_dual_cases
     {Voter Coord : Type*} [Fintype Coord] [Nonempty Coord]
-    (E : ILVEnvironment Voter (Coord → ℝ)) :
+    (E : ILVEnvironment Voter (Coord → ℝ))
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     theorem1Statement E := by
   exact
     theorem1Statement_of_sourceBridge_ssgmConvergence
       (theorem1SourceToSSGMBridge_of_visible_hypotheses E)
-      (assumption_ssgm_convergence_theorem E).theorem1_convergence
+      hSSGM.theorem1_convergence
 
 /--
 Theorem 2: under C1-C3, Lp-normed utilities, and Model B response, ILV with Lq
 neighborhoods converges w.p. 1 to the societal optimum for finite Holder-dual
 `p,q > 0`, for finite-coordinate environments satisfying the concrete
-deterministic source model.  The only remaining axiom used by this row is the
+deterministic source model.  The only remaining input used by this row is the
 theorem-shaped SSGM convergence bundle in `Assumptions.lean`.
 
 Source status: conditional boundary; the deterministic source semantics are
@@ -2591,62 +2598,66 @@ explicit and the remaining convergence input is the approved SSGM theorem.
 theorem theorem2_modelB_holder_dual_norms
     {Voter Coord : Type*} [Fintype Coord] [Nonempty Coord]
     (E : ILVEnvironment Voter (Coord → ℝ))
-    (T2 : Theorem2PrimitiveSourceSemantics E) :
+    (T2 : Theorem2PrimitiveSourceSemantics E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     theorem2Statement E := by
   exact
     theorem2Statement_of_sourceSemantics_ssgmConvergence
       (theorem2SourceSemantics_of_primitive T2)
-      (assumption_ssgm_convergence_theorem E).theorem2_convergence
+      hSSGM.theorem2_convergence
 
 /--
 Proposition 1: under C1-C3 and weighted-Euclidean utilities, ILV with L2
 neighborhoods converges w.p. 1 to the societal optimum for Model A or B
 response, for finite-coordinate environments satisfying the concrete
-deterministic source model.  The only remaining axiom used by this row is the
+deterministic source model.  The only remaining input used by this row is the
 theorem-shaped SSGM convergence bundle in `Assumptions.lean`.
 -/
 theorem proposition1_weighted_euclidean_l2
     {Voter Coord : Type*} [Fintype Coord] [Nonempty Coord]
     (E : ILVEnvironment Voter (Coord → ℝ))
-    (P1 : Proposition1SourceSemantics E) :
+    (P1 : Proposition1SourceSemantics E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     proposition1Statement E := by
   exact
     proposition1Statement_of_sourceSemantics_ssgmConvergence P1
-      (assumption_ssgm_convergence_theorem E).proposition1_convergence
+      hSSGM.proposition1_convergence
 
 /--
 Proposition 2: under C1-C3 and decomposable utilities, ILV with Linf
 neighborhoods converges w.p. 1 to a point in the coordinate-wise median set for
 Model A or B response, for finite-coordinate environments satisfying the
-concrete deterministic source model.  The only remaining axiom used by this row
+concrete deterministic source model.  The only remaining input used by this row
 is the theorem-shaped SSGM convergence bundle in `Assumptions.lean`.
 -/
 theorem proposition2_decomposable_linf_medians
     {Voter : Type} {Coord : Type} [Fintype Coord] [Nonempty Coord] [DecidableEq Coord]
     (E : ILVEnvironment Voter (Coord → ℝ))
-    (S : Proposition2FiniteCoordinateSourceSemantics E) :
+    (S : Proposition2FiniteCoordinateSourceSemantics E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     proposition2FiniteCoordinateStatement E := by
   exact
     proof_proposition2FiniteCoordinateStatement_of_finiteCoordinateSourceSemantics_ssgmConvergence
       S
-      (assumption_ssgm_convergence_theorem E).proposition2_convergence
+      hSSGM.proposition2_convergence
 
 /--
 Proposition 2, finite-coordinate/product-box route: under C1-C3 and
 decomposable utilities whose coordinates are the ambient finite coordinates,
 ILV with `L∞` neighborhoods converges w.p. 1 to the coordinatewise median set
 for Model A or B response.  The `L∞` replacement property is derived from the
-finite source semantics; the only Lean axiom used here is the theorem-shaped
+finite source semantics; the only remaining input here is the theorem-shaped
 SSGM convergence bundle.
 -/
 theorem proposition2_finite_coordinate_decomposable_linf_medians
     {Voter : Type} {Coord : Type} [Fintype Coord] [Nonempty Coord] [DecidableEq Coord]
     (E : ILVEnvironment Voter (Coord → ℝ))
-    (S : Proposition2FiniteCoordinateSourceSemantics E) :
+    (S : Proposition2FiniteCoordinateSourceSemantics E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     proposition2FiniteCoordinateStatement E := by
   exact
     proof_proposition2FiniteCoordinateStatement_of_finiteCoordinateSourceSemantics_ssgmConvergence
-      S (assumption_ssgm_convergence_theorem E).proposition2_convergence
+      S hSSGM.proposition2_convergence
 
 /--
 Theorem 3 corrected projected-trace route: this is the paper-faithful version
@@ -2763,17 +2774,19 @@ theorem finite_coordinate_full_sampled_projected_paper_consequences_with_ssgm
 
 /--
 No-hidden-premise sampled projected finite-coordinate paper closeout using the
-approved single theorem-shaped SSGM axiom and no other paper-local Lean axiom.
+approved single theorem-shaped SSGM boundary premise and no paper-local Lean
+axiom of any kind.
 -/
 theorem finite_coordinate_full_sampled_projected_paper_consequences
     {Voter Coord : Type*} [Fintype Voter]
     [MeasurableSpace Voter] [MeasurableSingletonClass Voter]
     [Fintype Coord] [Nonempty Coord]
     (E : ILVEnvironment Voter (Coord → ℝ))
-    (M : FiniteCoordinateILVFullSampledProjectedSourceSemantics E) :
+    (M : FiniteCoordinateILVFullSampledProjectedSourceSemantics E)
+    (hSSGM : assumption_ssgm_convergence_theorem E) :
     FiniteCoordinateILVFullProjectedPaperConsequences M := by
   exact
     proof_finiteCoordinateILVFullProjectedPaperConsequences_of_fullSampledProjectedSourceSemantics
-      M
+      M hSSGM
 
 end GKGMM19IterativeLocalVoting

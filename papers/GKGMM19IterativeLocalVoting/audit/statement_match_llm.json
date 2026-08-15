@@ -133,7 +133,7 @@
       "validator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "appendix_theorem4_expected_subgradient_boundary": {
+    "appendix_theorem4_expected_subgradient": {
       "judgment": "matches",
       "lean_statement_sha256": "0f9b33efe2fb2f583a61f945886cf7b0f6e453736695fa8c42cf11b44a05312f",
       "paper_statement_sha256": "e83f794bb9ecfb39902ff7f7587627b0240597a547d8624c6a86e94ad8742e21",

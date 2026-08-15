@@ -89,5 +89,12 @@ known mathematical or library boundaries that keep the partial papers partial:
   infrastructure.
 - `GKGMM19IterativeLocalVoting`: reusable SSGM convergence theorem, followed by
   expanded or explicitly closed DAG coverage for every source-numbered cluster.
+  Two prerequisites were identified on 2026-08-15 and are recorded in that
+  paper's `FINAL_VALIDATION_REPORT.md` section 5: the Theorem 1 and
+  Proposition 2 boundary certificates carry no projected-SSGM trace, and
+  `ILVEnvironment.convergesWithProbabilityOne` has no almost-sure semantics.
+  Both must be fixed before the boundary can be discharged. The paper's two
+  inconsistent `axiom` declarations were removed on the same date: Appendix
+  Theorem 4 is now proved, and the SSGM boundary is an explicit premise.
 - `LBG24SpatialUnderreporting`: discharge or explicitly accept the remaining
   source-model/process boundaries.

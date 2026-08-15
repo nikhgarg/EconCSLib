@@ -3255,7 +3255,7 @@
         "reviewed_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs",
         "stale_rows": 0,
-        "total_rows": 47
+        "total_rows": 46
       },
       "human_summary": "Full formalization requires proving stochastic subgradient descent convergence. Theorem 3 is proved as a constrained alternative in general and as the original statement under the explicit full-space condition.",
       "human_summary_review": {
@@ -3277,8 +3277,7 @@
       "review_surface": {
         "assumption_names": [
           "assumption_conditions_c123",
-          "assumption_ssgm_convergence_theorem",
-          "assumption_expected_subgradient_theorem"
+          "assumption_ssgm_convergence_theorem"
         ],
         "assumption_policy": "source-plus-proof-boundary",
         "assumption_source_file": "papers/GKGMM19IterativeLocalVoting/Assumptions.lean",
@@ -3401,7 +3400,7 @@
           "proposition1_weighted_euclidean_l2",
           "proposition2_decomposable_linf_medians",
           "theorem3_statement_of_full_sampled_projected_source_semantics_univ",
-          "appendix_theorem4_expected_subgradient_boundary",
+          "appendix_theorem4_expected_subgradient",
           "appendix_theorem5_ssgm_convergence_boundary"
         ],
         "llm_assumption_review": {
@@ -3418,8 +3417,7 @@
           "surface_warning_threshold": 120
         },
         "proof_boundary_names": [
-          "assumption_ssgm_convergence_theorem",
-          "assumption_expected_subgradient_theorem"
+          "assumption_ssgm_convergence_theorem"
         ],
         "slices": [
           {

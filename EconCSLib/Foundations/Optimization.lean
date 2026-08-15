@@ -8,9 +8,11 @@ import EconCSLib.Foundations.Optimization.BinaryChoiceAE
 import EconCSLib.Foundations.Optimization.BinaryPolicyGame
 import EconCSLib.Foundations.Optimization.Certificate
 import EconCSLib.Foundations.Optimization.Endpoint
+import EconCSLib.Foundations.Optimization.ExpectedSubgradient
 import EconCSLib.Foundations.Optimization.FiniteSearch
 import EconCSLib.Foundations.Optimization.LinearProgram
 import EconCSLib.Foundations.Optimization.MoveGraph
+import EconCSLib.Foundations.Optimization.ProjectedSubgradient
 import EconCSLib.Foundations.Optimization.StochasticSubgradient
 import EconCSLib.Foundations.Optimization.StrategicEquilibrium
 
@@ -54,6 +56,12 @@ Aggregate import for reusable optimization primitives.
   primal/dual feasibility, weak duality, and optimality certificates.
 - `EconCSLib.Foundations.Optimization.MoveGraph`: exchange/local-move
   optimality from reachability and monotone moves.
+- `EconCSLib.Foundations.Optimization.ProjectedSubgradient`: paper-independent
+  vocabulary for projected (stochastic) subgradient iterations: the subgradient
+  inequality, the projected update rule, and Robbins-Monro step-size conditions.
+- `EconCSLib.Foundations.Optimization.ExpectedSubgradient`: the interchange
+  theorem identifying an expected sampled subgradient as a subgradient of the
+  expected objective.
 - `EconCSLib.Foundations.Optimization.StochasticSubgradient`: the audited
   library-level boundary for stochastic subgradient convergence consequences.
 -/

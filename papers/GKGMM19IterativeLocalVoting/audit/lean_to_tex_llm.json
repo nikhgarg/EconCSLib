@@ -97,7 +97,7 @@
       "translator": "codex-gpt-5.5-semantic-rejudge",
       "validator_type": "model"
     },
-    "appendix_theorem4_expected_subgradient_boundary": {
+    "appendix_theorem4_expected_subgradient": {
       "lean_statement_sha256": "0f9b33efe2fb2f583a61f945886cf7b0f6e453736695fa8c42cf11b44a05312f",
       "prompt_version": "lean-to-tex-v3-strict-context-free-semantic-inputs",
       "tex_statement": "\\forall {Point : Type u_1} {Theta : Type u_2} {Grad : Type u_3} (isSampleSubgradient : Point \\to Theta \\to Grad \\to Prop) (expected : (Theta \\to Grad) \\to Grad) (isExpectedSubgradient : Point \\to Grad \\to Prop), ExpectedSubgradientTheoremStatement isSampleSubgradient expected isExpectedSubgradient",

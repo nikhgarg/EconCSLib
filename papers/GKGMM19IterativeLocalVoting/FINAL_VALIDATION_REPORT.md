@@ -1,6 +1,6 @@
 # Final Validation Report: Iterative Local Voting for Collective Decision-making in Continuous Spaces
 
-Updated: 2026-07-03
+Updated: 2026-08-15
 
 ## 1. Human Verdict
 Partially formalized. Theorems 1-2 and Propositions 1-2 are formalized except
@@ -13,8 +13,8 @@ below.
 ## 2. Closeout Status
 - Completion status: partially formalized.
 - One-sentence recap: Full formalization requires proving stochastic subgradient descent convergence. Theorem 3 is proved as a constrained alternative in general and as the original statement under the explicit full-space condition.
-- Lean footprint: 23,483 paper-local Lean LOC; `PaperInterface.lean` is a 17-line compact entrypoint; `AuditInterface.lean` is 2,772 lines and contains the 47 configured dashboard/LLM-as-judge declarations.
-- Audit summary: source coverage has 39 covered, 8 conditional_boundary, 1 not_a_paper_target; statement LLM-as-judge has 41 matches, 5 mismatch; resolutions: 5 conditional_boundary; Lean-to-TeX has 44 row translations; assumption provenance has 1 paper_condition, 2 partial_boundary; source-record classification has 2 proved_from_primitives, 68 validated_source_assumption, 22 container_recursively_audited, 19 nonpropositional_witness_data, 4 approved_external_boundary; source-record audit reports 47 review rows, 3 boundary inputs, 0 recursion failures; review-surface audit passes over 47 review rows; holistic source-first audit PASS; DAG/source-json audit PASS in `docs/PUBLIC_DAG_HOLISTIC_AUDIT_2026-07-02.md`.
+- Lean footprint: 23,517 paper-local Lean LOC; `PaperInterface.lean` is a 17-line compact entrypoint; `AuditInterface.lean` contains the 46 configured dashboard/LLM-as-judge declarations.
+- Audit summary: source coverage has 40 covered, 7 conditional_boundary, 1 not_a_paper_target; statement LLM-as-judge has 41 matches, 5 mismatch; resolutions: 5 conditional_boundary; Lean-to-TeX has 44 row translations; assumption provenance has 1 paper_condition, 2 partial_boundary; source-record classification has 2 proved_from_primitives, 68 validated_source_assumption, 22 container_recursively_audited, 19 nonpropositional_witness_data, 4 approved_external_boundary; source-record audit reports 47 review rows, 3 boundary inputs, 0 recursion failures; review-surface audit passes over 47 review rows; holistic source-first audit PASS; DAG/source-json audit PASS in `docs/PUBLIC_DAG_HOLISTIC_AUDIT_2026-07-02.md`.
 
 ## 3. Source and Scope
 - Paper: Garg, Kamble, Goel, Marn, and Munagala, "Iterative Local Voting for
@@ -41,13 +41,55 @@ below.
 - The paper's ILV definitions and source models are represented at the paper-facing interface.
 - Theorems 1-2 and Propositions 1-2 are proved up to the single reusable stochastic-subgradient convergence theorem.
 - Theorem 3 is proved as a constrained alternative in general, and the original statement is recovered under the explicit full-space condition.
-- No other non-paper mathematical assumption is intended beyond the SSGM convergence boundary.
+- No other non-paper mathematical assumption is intended beyond the SSGM convergence boundary, which is carried as an explicit premise rather than an axiom. The paper folder contains no `axiom` declaration.
 
 ## 5. Remaining Boundaries and Gaps
-The only intended remaining mathematical boundary for Theorems 1-2 and Propositions 1-2 is the reusable stochastic subgradient descent convergence theorem. Theorem 3 has no SSGM boundary; in general constrained spaces Lean proves the constrained alternative, and the original statement is recovered under the explicit full-space condition.
+The only intended remaining mathematical boundary for Theorems 1-2 and Propositions 1-2 is the reusable stochastic subgradient descent convergence theorem, now carried as the explicit premise `SSGMConvergenceBoundaryPremise` rather than as a paper-local axiom. Theorem 3 has no SSGM boundary; in general constrained spaces Lean proves the constrained alternative, and the original statement is recovered under the explicit full-space condition.
+
+Two further items are known to need work before this paper can be closed out as
+fully formalized. They are recorded here rather than silently carried:
+
+- **The SSGM boundary shape is still too strong for Theorem 1 and Proposition 2.**
+  `Theorem1SSGMCaseCertificate` and `Proposition2SSGMCaseCertificate` package only
+  source hypotheses (C1-C3, utility form, response model, norm pair). They never
+  mention the Algorithm 1 update rule, so as stated they do not restrict the
+  environment's trajectory at all. Theorem 2 and Proposition 1 do not have this
+  problem: `Theorem2FiniteSSGMBridge.ssgmInputs` and `Proposition1FiniteSSGMBridge`
+  already carry a projected-SSGM trace. Before the boundary can be discharged,
+  Theorem 1 and Proposition 2 need matching trace-carrying bridges.
+- **`ILVEnvironment.convergesWithProbabilityOne` has no probabilistic content.**
+  It is a free `Prop`-valued field of the environment record, and the trace
+  sources supply `subgradient`, `noise`, and `bias` as deterministic sequences
+  `ℕ → Coord → ℝ`. There is no probability space, filtration, or conditional
+  expectation in the SSGM layer, so "with probability 1" is currently a name
+  rather than a statement. Discharging the boundary requires giving that field
+  genuine almost-sure semantics.
 
 ## 6. Additional Assumptions Beyond Paper
-None.
+None. The paper folder contains no `axiom`; the only non-source input is the
+explicit SSGM convergence premise `assumption_ssgm_convergence_theorem`, which
+callers must supply.
+
+### Re-judging required after the 2026-08-15 soundness fix
+
+The Lean side is rebuilt and verified, but the model- and human-facing review
+artifacts still carry judgments made against the previous declarations and are
+correctly reported as stale by `scripts/audit_repository.py`. They must be
+re-run before this paper is signed off:
+
+- `audit/review_surface_llm.json`: stale review-surface digest.
+- `audit/paper_coverage_llm.json`: stale review-surface digest and stale
+  row-local statement judgments.
+- `audit/statement_match_llm.json`: missing and stale Lean-to-TeX drafts and
+  statement-judge rows for the changed declarations.
+- `audit/source_record_audit.json` and `audit/source_record_match_llm.json`:
+  stale source-record digest, so the recorded source-record judgments are no
+  longer tied to the current payload.
+
+These are deliberately not hand-edited beyond the mechanical rename of the
+Appendix Theorem 4 row and the removal of the judgment for the deleted
+assumption: fabricating LLM-as-judge or human review verdicts would defeat the
+purpose of the audit surface.
 
 ## 7. Proof-Strategy Deviations
 None. The human-facing differences are formalization boundaries, not separate
@@ -55,8 +97,41 @@ proof-strategy deviations: Theorems 1-2 and Propositions 1-2 depend on the
 single reusable-library stochastic subgradient convergence theorem, and Theorem
 3 is reported as a statement/status boundary in the verdict and DAG.
 
+### Soundness fix (2026-08-15)
+
+This paper previously carried two paper-local `axiom` declarations. Both were
+inconsistent: each derived `False` on its own, which made every result depending
+on them vacuous.
+
+- `assumption_expected_subgradient_theorem` (Appendix Theorem 4) was quantified
+  over three unrelated abstract predicates `isSampleSubgradient`, `expected`, and
+  `isExpectedSubgradient`, with nothing tying them together. Instantiating the
+  first as always true and the third as always false derived `False` directly.
+  It has been replaced by `expected_subgradient_theorem`, stated at the concrete
+  finite-coordinate instantiation and **proved** from the new reusable library
+  theorem `EconCSLib.Optimization.finiteSubgradientAt_integral`.
+- `assumption_ssgm_convergence_theorem` asserted
+  `FiniteCoordinateILVSSGMConvergenceTheorems E` for an arbitrary environment `E`.
+  Because `E.convergesWithProbabilityOne` is a free field, instantiating it as
+  `fun _ _ => False` while satisfying every hypothesis field also derived `False`.
+  It is now the explicit premise `SSGMConvergenceBoundaryPremise`, threaded
+  through the interface rows as a hypothesis. Nothing is postulated, so the
+  development is consistent and the paper endpoints are honestly conditional.
+
+After this change `grep '^axiom'` under `papers/` returns nothing, and every
+GKGMM19 endpoint reports only `propext`, `Classical.choice`, and `Quot.sound`.
+
 ## 8. Proof Tricks Worth Reusing
-- None
+- `EconCSLib.Foundations.Optimization.ProjectedSubgradient` now holds the
+  paper-independent projected subgradient vocabulary that used to be duplicated
+  here: `FiniteSubgradientAt`, `ProjectionOnto`, `FiniteProjectedSSGMUpdateAt`,
+  `FollowsFiniteProjectedSSGM`,
+  `FollowsFiniteProjectedSampleSubgradientMethod`, and
+  `SSGMStepSizeConditions`. The paper-local names are now thin wrappers.
+- `EconCSLib.Foundations.Optimization.ExpectedSubgradient` proves the
+  expected-subgradient interchange by integrating the pointwise subgradient
+  inequality (`integral_mono_ae` plus linearity). This is the reusable form of
+  Appendix Theorem 4 and should be used instead of assuming the interchange.
 
 ## 9. Mathematical Typos or Other Fixes Suggested in the Source Paper
 None found.

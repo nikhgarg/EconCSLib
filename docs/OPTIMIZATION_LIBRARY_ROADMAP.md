@@ -251,6 +251,35 @@ Reusable target:
 - compactness-free epsilon certificates for asymptotic upper/lower bounds.
 - transfer from finite optimality certificates to limiting optimal values.
 
+## Stochastic Subgradient Layer
+
+Status: partially built.
+
+Done:
+
+- `ProjectedSubgradient`: the projected (stochastic) subgradient vocabulary,
+  promoted out of `papers/GKGMM19IterativeLocalVoting` so that a convergence
+  theorem can be stated against it. Includes the subgradient inequality, the
+  projected update rule, the sample-subgradient method predicate, and the
+  Robbins-Monro step-size conditions.
+- `ExpectedSubgradient`: the expected-subgradient interchange theorem, proved by
+  integrating the pointwise subgradient inequality. This discharges what
+  GKGMM19 previously carried as an Appendix Theorem 4 axiom.
+
+Next, in dependency order:
+
+- nonnegative supermartingale almost-sure convergence. Mathlib has
+  `MeasureTheory.Submartingale.ae_tendsto_limitProcess` but no supermartingale
+  analogue; derive it via `Submartingale (-f)` plus the L1 bound `E f n <= E f 0`.
+  This is a plausible mathlib upstream contribution.
+- the Robbins-Siegmund almost-supermartingale lemma.
+- the quasi-Fejer distance recursion for the projected update, from
+  nonexpansiveness of the projection onto a closed convex set.
+- projected stochastic subgradient almost-sure convergence, replacing the
+  `SSGMConvergenceBoundary` marker in `StochasticSubgradient` with a real
+  theorem. This is the remaining blocker for closing out
+  `papers/GKGMM19IterativeLocalVoting`.
+
 ## Promotion Rule
 
 Upstream a lemma when it satisfies at least one of these:
