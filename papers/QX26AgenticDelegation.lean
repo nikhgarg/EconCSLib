@@ -1,1 +1,1 @@
-import QX26AgenticDelegation.ProofInterface
+import QX26AgenticDelegation.PaperInterface
