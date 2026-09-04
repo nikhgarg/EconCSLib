@@ -146,3 +146,7 @@ srcDir = "papers"
 [[lean_lib]]
 name = "HT26EFXChores"
 srcDir = "papers"
+
+[[lean_lib]]
+name = "QX26AgenticDelegation"
+srcDir = "papers"
